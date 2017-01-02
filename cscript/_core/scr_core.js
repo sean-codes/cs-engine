@@ -953,7 +953,7 @@ cs.network = {
     ws : {},
     connect : function(options){
         var host = options.hostname == 'undefined' ? window.location.host : options.hostname;
-        var url = (ssl) ? `wss://${host}:${options.port}` : `ws://${host}:${options.port}`;
+        var url = (options.ssl) ? `wss://${host}:${options.port}` : `ws://${host}:${options.port}`;
         var ws = new WebSocket(url); 
         ws.onopen = function(){ cs.network.onconnect() }
         ws.onclose = function(){ cs.network.ondisconnect() }
