@@ -1,7 +1,7 @@
-#Basic Setup
+#CS-Engine
+A game engine for building 2D games
 
-To get started quickly simply grab the engine.zip file and paste it into a folder on your web server. I will explain the basic files below. Once the engine is more complete I will wrap it inside a web IDE so it will be possible to develop through either this website and export or develop directly on your web server.
-
+#Setup
 The main file is three main parts. The Style Sheet, the loader/compiler PHP script, and the JavaScript init function.
 
     <html>
@@ -19,7 +19,6 @@ The main file is three main parts. The Style Sheet, the loader/compiler PHP scri
 After the init function is where we will create objects or load maps.
 
 #Loading Sprites
-
 Sprites are stored in the _sprites folder and automatically loaded by the load.php.
 
 The file name is used to define properties of the sprite
@@ -37,7 +36,6 @@ This image will now be usable:
 Use -1 as the frame argument to animate the sprite.
 
 #Objects
-
 Objects are stored in the _objects folder. To create a new object create a new js file in the _objects folder. The files in this folders will be loaded by the load.php at runtime.
 
     <script src="cscript/_objects/obj_something.js?"></script>
@@ -72,7 +70,6 @@ To create the object add after the init() function to cs.obj.create('obj_name', 
     </script>
 
 #Drawing Functions
-
 CS Engine has functions for drawing sprites and shapes. You can change settings of the current layer using the set functions.
 
 Sprites:
@@ -125,7 +122,6 @@ Note: The set function are reset after any drawing event! They are layer specifi
     cs.draw.rect(0, 0, 40, 40, true);
 
 #The Game Camera
-
 The game camera is the area the game and GUI is drawn to. The GUI and Game are drawn to hidden canvases separately then drawn to the view/camera canvas. There are a couple settings that can be tweeked to change the view.
 
 The maxWidth and maxHeight set the maximum literal pixel size of the canvas. The engine will then try to get the closest aspect ratio to the size you set. Then it will be stretched with CSS to make fill the entire screen.
