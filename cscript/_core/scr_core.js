@@ -952,7 +952,7 @@ cs.math = {
 cs.network = {
     ws : {},
     connect : function(options){
-        var host = hostname == '' ? window.location.host : options.hostname;
+        var host = options.hostname == 'undefined' ? window.location.host : options.hostname;
         var url = (ssl) ? `wss://${host}:${options.port}` : `ws://${host}:${options.port}`;
         var ws = new WebSocket(url); 
         ws.onopen = function(){ cs.network.onconnect() }
