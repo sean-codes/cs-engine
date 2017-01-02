@@ -952,8 +952,12 @@ cs.math = {
 cs.network = {
     ws : {},
     connect : function(options){
-        var host = options.hostname == 'undefined' ? window.location.host : options.hostname;
-        var url = (options.ssl) ? `wss://${host}:${options.port}` : `ws://${host}:${options.port}`;
+        var host = (options.ip == undefined) ? window.location.host : options.hostname;
+        if(options.ssl == undefined || options.ssl == false){
+            var url = `ws://${host}:${options.port}`;
+        } else {
+            var url = `wss://${host}:${options.port}`;
+        }
         var ws = new WebSocket(url); 
         ws.onopen = function(){ cs.network.onconnect() }
         ws.onclose = function(){ cs.network.ondisconnect() }
