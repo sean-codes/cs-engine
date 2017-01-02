@@ -951,9 +951,9 @@ cs.math = {
 //---------------------------------------------------------------------------------------------//
 cs.network = {
     ws : {},
-    connect : function(port, hostname = ''){
-        var host = hostname == '' ? window.location.host : hostname;
-        var url = (host == '127.0.0.1') ? `ws://${host}:9999` : `wss://${host}:9999`;
+    connect : function(options){
+        var host = hostname == '' ? window.location.host : options.hostname;
+        var url = (ssl) ? `wss://${host}:${options.port}` : `ws://${host}:${options.port}`;
         var ws = new WebSocket(url); 
         ws.onopen = function(){ cs.network.onconnect() }
         ws.onclose = function(){ cs.network.ondisconnect() }

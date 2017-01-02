@@ -18,7 +18,7 @@
 			cs.global.networkControl = {
 				list: []
 			}
-			cs.network.connect(9999);
+			cs.network.connect({ port:9999, ssl: false });
 
 			cs.obj.create('obj_light', 0, 0);
 			cs.obj.create('obj_buttons', 100, 100);
