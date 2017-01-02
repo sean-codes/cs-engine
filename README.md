@@ -1,8 +1,8 @@
 #CS-Engine
-A game engine for building 2D games
+An engine for building 2D games
 
 #Setup
-The main file is three main parts. The Style Sheet, the loader/compiler PHP script, and the JavaScript init function.
+The engine is three main parts. The Style Sheet, the loader/compiler PHP script, and the JavaScript init function.
 
     <html>
        <head>
