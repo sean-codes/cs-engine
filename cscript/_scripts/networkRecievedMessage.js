@@ -1,32 +1,38 @@
 cs.script.networkReceivedMessage = function(message){
+	var network = cs.global.networkControl;
 	var message = JSON.parse(message);
+
 	switch(message.type){
 		case 'connect':
-			console.log('My ID is: ' + message.id);
-			cs.network.send({
-				type: 'connect'
-			});
+			console.log('Connected ID: ' + message.id);
+			network.id = message.id;
+			cs.network.send({ type: 'connect', x: network.x, y: network.y });
 			break;
 
 		case 'newPlayers':
+			console.log(message);
 			message.list.forEach(function(player){
-				console.log('add new player: ' + player.id);
-				var newPlayer = cs.obj.create('obj_otherplayer', 100, 100);
-				cs.global.networkControl.list.push({
+				var newPlayer = cs.obj.create('obj_otherplayer', player.x, player.y);
+				network.list[player.id] = {
 					id: player.id,
 					obj: cs.obj.list[newPlayer]
-				});
+				};
+			});
+			break;
+
+		case 'endPlayers':
+			message.list.forEach(function(player){
+				cs.obj.destroy(network.list[player.id].obj.id);
 			});
 			break;
 
 		case 'movement':
-			console.log(message.keys);
-			cs.global.networkControl.list.forEach(function(player){
-				if(player.id == message.id){
-					console.log('make it happen');
-					player.obj.keys = message.keys;
-				}
-			})
+			var obj = network.list[message.id].obj;
+			obj.keys = message.keys;
+			obj.x = message.x; 
+			obj.y = message.y;
+			obj.hspeed = message.hspeed;
+			obj.vspeed = message.vspeed;
 			break;
 	}
 }
