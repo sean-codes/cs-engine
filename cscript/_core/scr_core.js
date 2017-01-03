@@ -954,9 +954,9 @@ cs.network = {
     connect : function(options){
         var host = (options.ip == undefined) ? window.location.host : options.hostname;
         if(options.ssl == undefined || options.ssl == false){
-            var url = `ws://${host}:${options.port}`;
+            var url = "ws://"+host+":"+options.port;
         } else {
-            var url = `wss://${host}:${options.port}`;
+            var url = "wss://"+host+":"+options.port;
         }
         var ws = new WebSocket(url); 
         ws.onopen = function(){ cs.network.onconnect() }
