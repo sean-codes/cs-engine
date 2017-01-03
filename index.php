@@ -15,7 +15,7 @@
 		
 		<script>
 			cs.init('view');
-			cs.global.networkControl = { list: [] }
+			cs.global.networkControl = { id: -1, list: {} }
 			cs.network.connect({ port:9999, ssl: false });
 
 			cs.obj.create('obj_light', 0, 0);
