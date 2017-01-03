@@ -70,9 +70,10 @@ cs.obj.load('obj_player', function(){
 	cs.draw.sprite('spr_player', this.dir, this.x, this.y);
 
 	//Networking!
+	var network = cs.global.networkControl;
+	network.x = this.x; network.y = this.y;
 	if(!cs.script.compareObj(keys, this.old_keys)){
 		this.old_keys = keys;
-		//cs.network.send(keys);
-		cs.script.networkSendMovement(keys);
+		cs.script.networkSendMovement(this);
 	}
 });
