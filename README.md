@@ -48,17 +48,14 @@ Inside the new js file you will need to create the object by using:
 Copy this into your new js file and change the 'obj_name' string to the name of your object.
 
 
-    cs.obj.load('obj_name', function(){
-        //-------------------------------------------------------------------------------------------//
-        //-------------------------------------| Create |--------------------------------------------//
-        //-------------------------------------------------------------------------------------------//
-        this.width = 16;
-        this.height = 16;
-    }, function(){
-        //-------------------------------------------------------------------------------------------//
-        //--------------------------------------| Step |---------------------------------------------//
-        //-------------------------------------------------------------------------------------------//
-    	cs.draw.sprite('spr', 0, this.x, this.y);
+    cs.obj.load('obj_name', {
+        create: function(){
+            this.width = 16;
+            this.height = 16;
+        }, 
+        step: function(){
+    	   cs.draw.sprite('spr', 0, this.x, this.y);
+       }
     });
 
 To create the object add after the init() function to cs.obj.create('obj_name', x, y);

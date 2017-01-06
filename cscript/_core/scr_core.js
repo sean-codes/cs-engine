@@ -114,13 +114,12 @@ cs.obj = {
         this.list[obj_id].touch = cs.touch.create(this.list[obj_id].draw == 'gui');
         return obj_id;
     },
-    load : function(name, create, step, draw){
+    load : function(name, options){
         var cnt = this.types.length;
         this.types[name] = {
             name : name,
-            create : create,
-            step : step, 
-            draw : draw
+            create : options.create,
+            step : options.step
         }
     },
     destroy : function(id){

@@ -7,7 +7,6 @@
 
 		<!-- Compile Game Engine -->
 		<?php include(dirname(__FILE__) . "/cscript/scr_load.php"); ?>
-
 	</head> 
 	<body>
 		<!--Game Area-->
@@ -22,7 +21,6 @@
 			cs.obj.create('obj_buttons', 100, 100);
 			cs.obj.create('obj_crate', 300, 336);
 			cs.obj.create('obj_player', 40, 40);
-			
 			
 			var tx = 0;
 			while(tx < cs.room.width){
