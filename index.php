@@ -6,7 +6,7 @@
 		<link rel="stylesheet" type="text/css" href="css.css?v=1" />
 
 		<!-- Compile Game Engine -->
-		<?php include(dirname(__FILE__) . DIRECTORY_SEPARATOR . "cscript" . DIRECTORY_SEPARATOR . "scr_load.php"); ?>
+		<?php include(dirname(__FILE__) . "/cscript/scr_load.php"); ?>
 
 	</head> 
 	<body>
