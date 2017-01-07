@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>cs-engine</title>
+		<!-- View Setup -->
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+		<link rel="stylesheet" type="text/css" href="../../engine/css.css?v=1" />
+
+		<!-- Game Engine -->
+		<script src='../../engine/scr_core.js'></script>
+		<!-- My Scripts/Objects -->
+		<script src='_objects/obj_bird.js'></script>
+	</head> 
+	<body>
+		<!--Game Area-->
+		<div id="view"></div>
+		<script>
+			//Initialize the view
+			cs.init('view');
+
+			//Load Sprites
+			cs.sprite.load('_sprites/bird');
+			cs.sprite.load('_sprites/pipe_down');
+			cs.sprite.load('_sprites/pipe_up');
+
+			//Create Objects
+			cs.obj.create('obj_bird', 50, 50);
+		</script>
+	</body>
+</html>
