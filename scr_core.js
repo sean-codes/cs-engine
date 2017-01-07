@@ -131,16 +131,22 @@ cs.obj = {
 //---------------------------------------------------------------------------------------------//
 cs.sprite = {
     list : {},
-    add : function(sprInfo, sprSource){
-        //spr_block-1-16-16-0-0 
-        sprInfo = sprInfo.split("-");
-        cs.sprite.list[sprInfo[0]] = new Image();
-        cs.sprite.list[sprInfo[0]].src = sprSource;
-        cs.sprite.list[sprInfo[0]].frames = sprInfo[1];
-        cs.sprite.list[sprInfo[0]].width = sprInfo[2];
-        cs.sprite.list[sprInfo[0]].height = sprInfo[3];
-        cs.sprite.list[sprInfo[0]].x_off = sprInfo[4];
-        cs.sprite.list[sprInfo[0]].y_off = sprInfo[5];
+    load: function(sprPath, sprInfo = {}){
+        console.log(sprInfo);
+        var sprName = sprPath.split('/').pop();
+        console.log(sprName);
+        cs.sprite.list[sprName] = new Image();
+        cs.sprite.list[sprName].src = sprPath + '.png';
+        cs.sprite.list[sprName].frames = sprInfo.frames || 1;
+        cs.sprite.list[sprName].fwidth = sprInfo.width || cs.sprite.list[sprName].width;
+        cs.sprite.list[sprName].fheight = sprInfo.height || cs.sprite.list[sprName].height;
+        cs.sprite.list[sprName].x_off = sprInfo.xoff == undefined ? 0 : sprInfo.xoff;
+        cs.sprite.list[sprName].y_off = sprInfo.yoff == undefined ? 0 : sprInfo.yoff;
+
+        cs.sprite.list[sprName].onload = function(){
+            console.log(cs.sprite.list[sprName]);
+        }
+
     }
 }
 //---------------------------------------------------------------------------------------------//
@@ -244,12 +250,12 @@ cs.draw = {
         if(!this.raw){
             x = Math.floor(x - cs.camera.x);
             y = Math.floor(y - cs.camera.y);
-            if(x > (cs.camera.x + cs.camera.width) && x < cs.camera.x-sprite.width)
+            if(x > (cs.camera.x + cs.camera.width) && x < cs.camera.x-sprite.fwidth)
                 return;   
         }
         if(frame == -1) frame = (frames % sprite.frames);//Dear lord help me
-        this.ctx.drawImage(sprite, (frame*sprite.width), 0, sprite.width,
-          sprite.height, x, y, sprite.width, sprite.height);
+        this.ctx.drawImage(sprite, (frame*sprite.fwidth), 0, sprite.fwidth,
+          sprite.fheight, x, y, sprite.fwidth, sprite.fheight);
 
         cs.draw.reset();
     },
