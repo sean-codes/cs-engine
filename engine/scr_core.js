@@ -975,13 +975,7 @@ cs.network = {
         }
         cs.network.ws.send(data);
     },
-    onconnect : function(){
-        console.log('You have no event override for onconnect');
-    },
-    onmessage: function(message){
-        console.log('You have no event override for onmessage');
-    },
-    ondisconnect: function(){
-        console.log('You have no event override for ondisconnect');
-    }
+    onconnect : function(){},
+    ondisconnect: function(){},
+    onmessage: function(message){}
 }
