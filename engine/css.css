@@ -1,0 +1,53 @@
+html{
+	background-color:#242424
+}
+body{
+	overflow:hidden;
+	margin:0px;
+	padding:0px;
+}
+#view {
+	outline: none;
+}
+canvas {
+	image-rendering:optimizeSpeed;             /* Legal fallback */
+	image-rendering:-moz-crisp-edges;          /* Firefox        */
+	image-rendering:-o-crisp-edges;            /* Opera          */
+	image-rendering:-webkit-optimize-contrast; /* Safari         */
+	image-rendering:optimize-contrast;         /* CSS3 Proposed  */
+	image-rendering:crisp-edges;               /* CSS4 Proposed  */
+	image-rendering:pixelated;                 /* CSS4 Proposed  */
+	-ms-interpolation-mode:nearest-neighbor;   /* IE8+           */
+}  
+
+#textInputForm{
+	position:fixed;
+	display:none;
+	bottom:0px;
+	box-sizing:border-box;
+}
+#textInputForm input{
+	display:inline-block;
+	box-sizing:border-box;
+	vertical-align:top;
+	padding-left:10px;
+	font-size: 16px;
+	border-radius:0;
+	background:#353535;
+	color:white;
+	outline: none;
+}
+
+#textInputForm button{
+	display:inline-block;
+	box-sizing:border-box;
+	vertical-align:top;
+	text-align:center;
+	background:#353535;
+	font-size: 14px;
+	color:white;
+}
+
+#textInputForm button:hover{
+	background:grey;
+}
