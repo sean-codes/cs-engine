@@ -51,6 +51,6 @@ cs.obj.load('obj_otherplayer', {
 		}
 		this.y += this.vspeed;
 
-		cs.draw.sprite('spr_player', this.dir, this.x, this.y);
+		cs.draw.sprite('spr_player', this.x, this.y, this.dir);
 	}
 });

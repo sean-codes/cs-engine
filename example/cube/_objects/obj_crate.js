@@ -21,6 +21,6 @@ cs.obj.load('obj_crate', {
 			}
 			this.y += this.vspeed;
 		}
-		cs.draw.sprite('spr_crate', 0, this.x, this.y);
+		cs.draw.sprite('spr_crate', this.x, this.y);
 	}
 });

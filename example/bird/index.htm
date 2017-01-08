@@ -10,6 +10,7 @@
 		<script src='../../engine/scr_core.js'></script>
 		<!-- My Scripts/Objects -->
 		<script src='_objects/obj_bird.js'></script>
+		<script src='_objects/obj_pipe.js'></script>
 	</head> 
 	<body>
 		<!--Game Area-->
@@ -29,7 +30,9 @@
 			cs.room.setup(500, 256);
 
 			//Create Objects
-			cs.obj.create('obj_bird', (cs.room.width/2)-8, 40);
+			cs.obj.create('obj_bird', (cs.room.width/2)-8, cs.room.height/2);
+
+			cs.obj.create('obj_pipe', (cs.room.width/2)-8, cs.room.height/2);
 		</script>
 	</body>
 </html>

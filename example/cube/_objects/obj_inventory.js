@@ -89,7 +89,7 @@ cs.obj.load('obj_inventory', {
 			if(this.slots[slot].length){
 				img = 'spr_item_' + this.slots[slot];
 			}
-			cs.draw.sprite(img, 0, cx, cy);
+			cs.draw.sprite(img, cx, cy);
 			//blah blah blah
 			if(this.slotDown == -1){
 				if(this.touch.down && this.touch.inside(cx, cy, this.width, this.height)){
@@ -137,7 +137,7 @@ cs.obj.load('obj_inventory', {
 		
 		//Draw slot held
 		if(this.slotDown >= 0 && himg !== ''){
-			cs.draw.sprite(himg, 0, hx, hy);
+			cs.draw.sprite(himg, hx, hy);
 			cs.draw.setColor('#6695e2');
 			cs.draw.rect(hx, hy, this.width, this.height, false);
 		}
