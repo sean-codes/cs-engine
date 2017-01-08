@@ -131,20 +131,19 @@ cs.obj = {
 //---------------------------------------------------------------------------------------------//
 cs.sprite = {
     list : {},
-    load: function(sprPath, sprInfo = {}){
-        console.log(sprInfo);
+    load: function(sprPath, sprInfo = {}){;
         var sprName = sprPath.split('/').pop();
-        console.log(sprName);
         cs.sprite.list[sprName] = new Image();
         cs.sprite.list[sprName].src = sprPath + '.png';
         cs.sprite.list[sprName].frames = sprInfo.frames || 1;
-        cs.sprite.list[sprName].fwidth = sprInfo.width || cs.sprite.list[sprName].width;
-        cs.sprite.list[sprName].fheight = sprInfo.height || cs.sprite.list[sprName].height;
+        cs.sprite.list[sprName].fwidth = sprInfo.width || 0;
+        cs.sprite.list[sprName].fheight = sprInfo.height || 0;
         cs.sprite.list[sprName].x_off = sprInfo.xoff == undefined ? 0 : sprInfo.xoff;
         cs.sprite.list[sprName].y_off = sprInfo.yoff == undefined ? 0 : sprInfo.yoff;
 
         cs.sprite.list[sprName].onload = function(){
-            console.log(cs.sprite.list[sprName]);
+            if(this.fwidth == 0)
+                this.fwidth = this.width; this.fheight = this.height;
         }
 
     }
@@ -539,12 +538,19 @@ cs.camera = {
     y : 0,
     width : 500, maxWidth : 500,
     height : 200, maxHeight : 400,
+    setup: function(width, height, maxWidth = undefined, maxHeight = undefined){
+        this.width = width;
+        this.height = height;
+        this.maxWidth = maxWidth || width;
+        this.maxHeight = maxHeight || height;
+        cs.draw.resize();
+    },
     follow : function(obj){
         var width = this.width * this.scale/1;
         var height = this.height * this.scale/1;
 
-        this.x = obj.x-width/2;
-        this.y = obj.y-height/2;
+        this.x = (obj.x+obj.width/2)-width/2;
+        this.y = (obj.y+obj.height/2)-height/2;
 
         //Check if camera over left
         if(this.x < 0){ this.x = 0;}
@@ -621,6 +627,9 @@ cs.pos = {
 cs.room = {
     width : 1000,
     height:400,
+    setup: function(width, height){
+        this.width = width; this.height = height;
+    },
     load : function(room){
         var load = JSON.parse(testmap);
         for(var i = 0; i < load.objects.length; i++){
