@@ -112,7 +112,7 @@ cs.obj = {
         var create = cs.obj.types[type].create;
         create.call(this.list[obj_id]);
         this.list[obj_id].touch = cs.touch.create(this.list[obj_id].draw == 'gui');
-        return obj_id;
+        return this.list[obj_id];
     },
     load : function(name, options){
         var cnt = this.types.length;
@@ -598,7 +598,7 @@ cs.camera = {
 //---------------------------------| Physics Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.pos = {
-    meet : function(objtype, x1, y1, x2, y2){
+    meet : function(objtype, x, y, width, height){
         var i = cs.obj.list.length-1; while(i--){
             if (i !== this.id && cs.obj.list[i].type == objtype){
                 var obj2 = cs.obj.list[i];
@@ -607,10 +607,10 @@ cs.pos = {
                 var obj2left = obj2.x;
                 var obj2right = obj2.x + obj2.width;
 
-                var obj1top = y1;
-                var obj1bottum = y2;
-                var obj1left = x1;
-                var obj1right = x2;
+                var obj1top = y;
+                var obj1bottum = y+height;
+                var obj1left = x;
+                var obj1right = x+width;
 
                 if (obj1bottum > obj2top && obj1top < obj2bottum && 
                     obj1left < obj2right && obj1right > obj2left){
