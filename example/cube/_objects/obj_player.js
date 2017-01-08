@@ -40,7 +40,7 @@ cs.obj.load('obj_player', {
 				this.hspeed -= sign/4;
 			}
 		}
-		this.h_col = cs.pos.meet('obj_block', this.x+this.hspeed, this.y, this.x+this.width+this.hspeed, this.y+this.height);
+		this.h_col = cs.pos.meet('obj_block', this.x+this.hspeed, this.y, this.width, this.height);
 		if(this.h_col > 0 || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width){
 			this.hspeed = 0;
 		}
@@ -50,7 +50,7 @@ cs.obj.load('obj_player', {
 		if(this.vspeed < this.gravity){
 			this.vspeed += 1;
 		}
-		this.v_col = cs.pos.meet('obj_block', this.x, this.y+this.vspeed, this.x+this.width, this.y+this.height+this.vspeed);
+		this.v_col = cs.pos.meet('obj_block', this.x, this.y+this.vspeed, this.width, this.height);
 		if(this.v_col > 0){
 			this.vspeed = 0;
 			if(keys.up && cs.obj.list[this.v_col].y > this.y){
