@@ -4,6 +4,9 @@ cs.obj.load('obj_bird', {
 		this.height = 14;
 	},
 	step: function(){
-		cs.draw.sprite('bird', this.x, this.y);
+		cs.draw.sprite('bird', 0, this.x, this.y);
+
+		
+		cs.camera.follow(this);
 	}
 })
