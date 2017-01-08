@@ -244,7 +244,7 @@ cs.draw = {
             this.view.ctx.drawImage(this.gui[i].canvas, 0, 0);
         }
     },
-    sprite : function(sprite, frame, x, y){
+    sprite : function(sprite, x, y, frame=0){
         sprite = cs.sprite.list[sprite];
         if(!this.raw){
             x = Math.floor(x - cs.camera.x);

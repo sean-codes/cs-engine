@@ -31,7 +31,7 @@ This will be loaded:
 
 This image will now be usable: 
 
-     cs.draw.sprite('spr', frame, x, y);
+     cs.draw.sprite('spr', x, y, frame);
 
 Use -1 as the frame argument to animate the sprite.
 
@@ -54,7 +54,7 @@ Copy this into your new js file and change the 'obj_name' string to the name of 
             this.height = 16;
         }, 
         step: function(){
-    	   cs.draw.sprite('spr', 0, this.x, this.y);
+    	   cs.draw.sprite('spr', this.x, this.y);
        }
     });
 
@@ -72,8 +72,8 @@ CS Engine has functions for drawing sprites and shapes. You can change settings 
 Sprites:
 
 
-    cs.draw.sprite(sprite, frame, x, y);
-    cs.draw.spriteExt(img, frame, x, y, angle);
+    cs.draw.sprite(sprite, x, y, frame);
+    cs.draw.spriteExt(img, x, y, angle, frame);
 
 Text:
 
