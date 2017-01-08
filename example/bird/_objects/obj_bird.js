@@ -32,9 +32,10 @@ cs.obj.load('obj_bird', {
 			var down = cs.obj.create('obj_pipe', cs.room.width, randomY-space);
 			down.y -= down.height; down.pipe = 'down';
 			var up = cs.obj.create('obj_pipe', cs.room.width, randomY+space);
+			cs.obj.create('obj_score', cs.room.width, randomY - space/2);
 		}
-
-		var collisionPipe = cs.pos.meet('obj_pipe', this.x, this.y, this.width, this.height);
+		var collisionScore = this.meet('obj_score');
+		var collisionPipe = this.meet('obj_pipe', this.x, this.y, this.width, this.height);
 		if(collisionPipe !== -1){
 			console.log('die');
 		}

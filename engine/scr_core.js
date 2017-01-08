@@ -26,6 +26,8 @@ cs.fps = {
 //----------------------------------| Global Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.init = function(canvasId){
+    //Listen for Errors
+    window.onerror = function(errorMsg, url, lineNumber){ cs.loop.run = false }
     //Find/Set Up Canvas
     var view = document.getElementById(canvasId);
     view.tabIndex = 1000;
@@ -58,8 +60,10 @@ cs.init = function(canvasId){
     cs.loop.step();
 }
 cs.loop = {
+    run : true,
     step : function(){
-        window.requestAnimFrame(cs.loop.step);
+        if(cs.loop.run)
+            window.requestAnimFrame(cs.loop.step);
         cs.fps.update();
         
         cs.draw.clear();
@@ -113,6 +117,8 @@ cs.obj = {
         create.call(this.list[obj_id]);
         this.list[obj_id].touch = cs.touch.create(this.list[obj_id].draw == 'gui');
         return this.list[obj_id];
+
+        this.meet = cs.pos.meet;
     },
     load : function(name, options){
         var cnt = this.types.length;
@@ -598,7 +604,12 @@ cs.camera = {
 //---------------------------------| Physics Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.pos = {
-    meet : function(objtype, x, y, width, height){
+    meet : function(objtype, x=undefined, y=undefined, width=undefined, height=undefined){
+        var obj1top = y || this.y;
+        var obj1bottum = obj1top + (width || this.width);
+        var obj1left = x || this.x;
+        var obj1right = obj1left+(width || this.width);
+
         var i = cs.obj.list.length-1; while(i--){
             if (i !== this.id && cs.obj.list[i].type == objtype){
                 var obj2 = cs.obj.list[i];
@@ -607,18 +618,12 @@ cs.pos = {
                 var obj2left = obj2.x;
                 var obj2right = obj2.x + obj2.width;
 
-                var obj1top = y;
-                var obj1bottum = y+height;
-                var obj1left = x;
-                var obj1right = x+width;
-
                 if (obj1bottum > obj2top && obj1top < obj2bottum && 
                     obj1left < obj2right && obj1right > obj2left){
                     return i;
                 }       
             }
         }
-        return -1;
     }
 }
 //---------------------------------------------------------------------------------------------//

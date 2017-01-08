@@ -13,7 +13,6 @@ cs.obj.load('obj_pipe', {
 		if(this.life == 0)
 			cs.obj.destroy(this.id);
 			
-		
 		cs.draw.sprite('pipe_'+this.pipe, this.x, this.y);
 	}
 })
