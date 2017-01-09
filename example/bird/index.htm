@@ -11,6 +11,8 @@
 		<!-- My Scripts/Objects -->
 		<script src='_objects/obj_bird.js'></script>
 		<script src='_objects/obj_pipe.js'></script>
+		<script src='_objects/obj_score.js'></script>
+		<script src='_objects/obj_interface.js'></script>
 	</head> 
 	<body>
 		<!--Game Area-->
@@ -20,7 +22,7 @@
 			cs.init('view');
 
 			//Load Sprites
-			cs.sprite.load('_sprites/bird');
+			cs.sprite.load('_sprites/bird', {xoff:8, yoff:7});
 			cs.sprite.load('_sprites/pipe_down');
 			cs.sprite.load('_sprites/pipe_up');
 
@@ -28,8 +30,15 @@
 			cs.camera.setup(144, 256);
 			cs.room.setup(500, 256);
 
-			//Create Objects
-			cs.obj.create('obj_bird', (cs.room.width/2)-8, cs.room.height/2);
+			//Globals
+			cs.global.live = true;
+			cs.global.score = 0;
+
+			//Start game
+			cs.room.start = function(){
+				cs.obj.create('obj_bird', (cs.room.width/2), cs.room.height/2);
+				cs.obj.create('obj_interface', cs.camera.width-50, 0);
+			}
 		</script>
 	</body>
 </html>

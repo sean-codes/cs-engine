@@ -1,14 +1,21 @@
 cs.obj.load('obj_bird', {
 	create: function(){
-		this.width = 16;
-		this.height = 14;
+		this.setSprite('bird');
 		this.hspeed = 0;
-		this.timer = 120;
+		this.timer = 60;
 	},
 	step: function(){
-		if(this.hspeed < 4){
-			this.hspeed += 0.25;
+		var angle = -30 * (this.hspeed/-5);
+		if(this.hspeed > 0){
+			angle = 75 * (this.hspeed/4);
 		}
+		cs.draw.spriteExt('bird', this.x, this.y, angle);
+		cs.camera.follow(this);
+		if(cs.global.live == false) return;
+
+		if(this.hspeed < 4)
+			this.hspeed += 0.25;
+		
 		if(this.y + this.height + this.hspeed < cs.room.height)
 			this.y += this.hspeed;
 
@@ -18,9 +25,6 @@ cs.obj.load('obj_bird', {
 		if(this.touch.down){
 			this.hspeed = -5;
 		}
-
-		cs.draw.sprite('bird', this.x, this.y);
-		cs.camera.follow(this);
 
 		//Building more pipes
 		this.timer -= 1;
@@ -35,9 +39,13 @@ cs.obj.load('obj_bird', {
 			cs.obj.create('obj_score', cs.room.width, randomY - space/2);
 		}
 		var collisionScore = this.meet('obj_score');
-		var collisionPipe = this.meet('obj_pipe', this.x, this.y, this.width, this.height);
-		if(collisionPipe !== -1){
-			console.log('die');
+		var collisionPipe = this.meet('obj_pipe');
+		if(collisionPipe){
+			cs.global.live = false;
+		}
+		if(collisionScore){
+			cs.obj.destroy(collisionScore);
+			cs.global.score += 1;
 		}
 	}
 })
