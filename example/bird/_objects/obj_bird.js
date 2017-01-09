@@ -3,6 +3,7 @@ cs.obj.load('obj_bird', {
 		this.setSprite('bird');
 		this.hspeed = 0;
 		this.timer = 60;
+		this.direction = .1;
 	},
 	step: function(){
 		var angle = -30 * (this.hspeed/-5);
@@ -17,9 +18,20 @@ cs.obj.load('obj_bird', {
 		cs.camera.follow(this);
 		if(cs.global.live == false) return;
 
-		if(this.hspeed < 4)
-			this.hspeed += 0.25;
 		
+		
+
+		if(cs.global.start == false){
+			this.hspeed += this.direction;
+			if(Math.abs(this.hspeed) > 3){
+				this.direction = this.direction * -1;
+				this.hspeed += this.direction*2;
+				console.log(this.hspeed, this.direction);
+			}
+		} else {
+			if(this.hspeed < 4)
+				this.hspeed += 0.25;
+		}
 		this.y += this.hspeed;
 
 
@@ -27,19 +39,22 @@ cs.obj.load('obj_bird', {
 		this.touch.check(0, 0, cs.room.width, cs.room.height);
 		if(this.touch.down){
 			this.hspeed = -5;
+			cs.global.start = true;
 		}
 
 		//Building more pipes
-		this.timer -= 1;
-		if(this.timer == 0){
-			this.timer = 120;
-			var space = 40;
-			var roomCenterVertical = cs.room.height/2;
-			var randomY = roomCenterVertical - cs.math.iRandomRange(-80, 80);
-			var down = cs.obj.create('obj_pipe', cs.room.width, randomY-space);
-			down.y -= down.height; down.pipe = 'down';
-			var up = cs.obj.create('obj_pipe', cs.room.width, randomY+space);
-			cs.obj.create('obj_score', cs.room.width, randomY - space/2);
+		if(cs.global.start){
+			this.timer -= 1;
+			if(this.timer == 0){
+				this.timer = 120;
+				var space = 40;
+				var roomCenterVertical = cs.room.height/2;
+				var randomY = roomCenterVertical - cs.math.iRandomRange(-80, 80);
+				var down = cs.obj.create('obj_pipe', cs.room.width, randomY-space);
+				down.y -= down.height; down.pipe = 'down';
+				var up = cs.obj.create('obj_pipe', cs.room.width, randomY+space);
+				cs.obj.create('obj_score', cs.room.width, randomY - space/2);
+			}
 		}
 		var collisionScore = this.meet('obj_score');
 		var collisionPipe = this.meet('obj_pipe');
