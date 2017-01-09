@@ -11,13 +11,21 @@ cs.obj.load('obj_interface', {
 
  		if(cs.global.live === false){
  			var bw = 100; var bh = 50;
+ 			var bx = cs.camera.width/2 - bw/2;
+ 			var by = cs.camera.height/2 - bh/2;
  			cs.draw.setAlpha(0.6);
- 			cs.draw.rect(cs.camera.width/2 - bw/2, cs.camera.height/2 - bh/2, bw, bh, true);
+ 			cs.draw.rect(bx, by, bw, bh, true);
  			cs.draw.setColor('#FFFFFF');
- 			cs.draw.rect(cs.camera.width/2 - bw/2, cs.camera.height/2 - bh/2, bw, bh, false);
+ 			cs.draw.rect(bx, by, bw, bh, false);
  			cs.draw.setColor('#FFFFFF');
  			cs.draw.setTextCenter();
  			cs.draw.text(cs.camera.width/2, cs.camera.height/2, 'Replay!');
+
+ 			this.touch.check(bx, by, bw, bh);
+			if(this.touch.down){
+				cs.room.restart();
+				console.log('clicked restart');
+			}
  		}
 	}
 })

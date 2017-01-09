@@ -92,6 +92,9 @@ cs.loop = {
         }
         
         cs.draw.display(); 
+        if(cs.room.restarting === true){
+            cs.room.reset();
+        }
     }
 }
 //---------------------------------------------------------------------------------------------//
@@ -644,7 +647,10 @@ cs.camera = {
 cs.room = {
     width : 1000,
     height:400,
+    restarting: false,
     start: function(){console.log('No cs.room.start event!')},
+    restart: function(){this.restarting = true;},
+    reset: function(){cs.obj.list = []; cs.global = {}; cs.room.start(); this.restarting = false},
     setup: function(width, height){
         this.width = width; this.height = height;
     },
@@ -909,7 +915,6 @@ cs.touch = {
                 return (cx > x && cx < x+width && cy > y && cy < y+height); 
             },
             check : function(x, y, width, height){
-                
                 if(this.id !== -1){
                     var touch = cs.touch.list[this.id];
                     this.x = touch.x;

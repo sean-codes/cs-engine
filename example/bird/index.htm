@@ -30,12 +30,14 @@
 			cs.camera.setup(144, 256);
 			cs.room.setup(500, 256);
 
-			//Globals
-			cs.global.live = true;
-			cs.global.score = 0;
+			
 
 			//Start game
 			cs.room.start = function(){
+				//Globals
+				cs.global.live = true;
+				cs.global.score = 0;
+
 				cs.obj.create('obj_bird', (cs.room.width/2), cs.room.height/2);
 				cs.obj.create('obj_interface', cs.camera.width-50, 0);
 			}

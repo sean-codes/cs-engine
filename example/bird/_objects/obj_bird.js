@@ -16,8 +16,7 @@ cs.obj.load('obj_bird', {
 		if(this.hspeed < 4)
 			this.hspeed += 0.25;
 		
-		if(this.y + this.height + this.hspeed < cs.room.height)
-			this.y += this.hspeed;
+		this.y += this.hspeed;
 
 
 		//Check for touch
@@ -40,7 +39,7 @@ cs.obj.load('obj_bird', {
 		}
 		var collisionScore = this.meet('obj_score');
 		var collisionPipe = this.meet('obj_pipe');
-		if(collisionPipe){
+		if(collisionPipe || this.y > cs.room.height+50 || this.y < -50){
 			cs.global.live = false;
 		}
 		if(collisionScore){
