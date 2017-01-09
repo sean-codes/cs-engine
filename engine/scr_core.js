@@ -3,8 +3,7 @@ var cs = {};
 //---------------------------------------------------------------------------------------------//
 //-----------------------------| Global Variables and Scripts |--------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.global = {}
-cs.script = {}
+cs.global = {}; cs.script = {};
 //---------------------------------------------------------------------------------------------//
 //--------------------------------| Performance Monitoring |-----------------------------------//
 //---------------------------------------------------------------------------------------------//
@@ -72,6 +71,7 @@ cs.loop = {
             if(cs.obj.list[i].live){
                 var obj = cs.obj.list[i];
                 cs.draw.setLayer(obj.draw, obj.layer);
+
                 cs.particle.settings = obj.particle.settings;
                 cs.particle.obj = obj;
                 var step = cs.obj.types[obj.type].step;
@@ -102,8 +102,8 @@ cs.obj = {
     types : [],
     create : function(type, x, y){
         var obj_id = this.list.length;
-    
         this.list[obj_id] = {};
+        for(var func in this.functions){ this.list[obj_id][func] = this.functions[func] }
         this.list[obj_id].live = true;
         this.list[obj_id].type = type;
         this.list[obj_id].id = obj_id;
@@ -111,14 +111,12 @@ cs.obj = {
         this.list[obj_id].draw = 'game';
         this.list[obj_id].layer = 0;
         this.list[obj_id].particle = { list : [], settings : {} };
-        this.list[obj_id].x = x;
-        this.list[obj_id].y = y; 
+        this.list[obj_id].x = x; this.list[obj_id].xoff = 0;
+        this.list[obj_id].y = y; this.list[obj_id].yoff = 0;
         var create = cs.obj.types[type].create;
         create.call(this.list[obj_id]);
         this.list[obj_id].touch = cs.touch.create(this.list[obj_id].draw == 'gui');
         return this.list[obj_id];
-
-        this.meet = cs.pos.meet;
     },
     load : function(name, options){
         var cnt = this.types.length;
@@ -128,28 +126,64 @@ cs.obj = {
             step : options.step
         }
     },
-    destroy : function(id){
-        this.list[id].live = false;
+    destroy : function(obj){
+        obj.live = false;
+    },
+    functions : {
+        meet: function(objtype, options={}){
+            var obj1top = (options.y || this.y) - (options.yoff || this.yoff);
+            var obj1bottom = obj1top + (options.height || this.height);
+            var obj1left = (options.x || this.x) - (options.xoff || this.xoff);
+            var obj1right = obj1left + (options.width || this.width);
+            var i = cs.obj.list.length-1; while(i--){
+                var obj2 = cs.obj.list[i];
+                if (obj2.live === true && i !== this.id && obj2.type == objtype){
+                    var obj2top = obj2.y;
+                    var obj2bottum = obj2.y + obj2.height;
+                    var obj2left = obj2.x;
+                    var obj2right = obj2.x + obj2.width;
+
+                    if (obj1bottom > obj2top && obj1top < obj2bottum && 
+                        obj1left < obj2right && obj1right > obj2left){
+                        return obj2;
+                    }       
+                }
+            }
+            return undefined;
+        },
+        setSprite: function(spriteName){
+            this.width = cs.sprite.list[spriteName].width;
+            this.height = cs.sprite.list[spriteName].height;
+            this.xoff = cs.sprite.list[spriteName].xoff;
+            this.yoff = cs.sprite.list[spriteName].yoff;
+        }
     }
 }
 //---------------------------------------------------------------------------------------------//
 //-----------------------------------| Sprite Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.sprite = {
-    list : {},
-    load: function(sprPath, sprInfo = {}){;
+    list: {},
+    loading : 0,
+    load: function(sprPath, sprInfo = {}){
+        this.loading += 1;
         var sprName = sprPath.split('/').pop();
         cs.sprite.list[sprName] = new Image();
         cs.sprite.list[sprName].src = sprPath + '.png';
         cs.sprite.list[sprName].frames = sprInfo.frames || 1;
         cs.sprite.list[sprName].fwidth = sprInfo.width || 0;
         cs.sprite.list[sprName].fheight = sprInfo.height || 0;
-        cs.sprite.list[sprName].x_off = sprInfo.xoff == undefined ? 0 : sprInfo.xoff;
-        cs.sprite.list[sprName].y_off = sprInfo.yoff == undefined ? 0 : sprInfo.yoff;
+        cs.sprite.list[sprName].xoff = sprInfo.xoff == undefined ? 0 : sprInfo.xoff;
+        cs.sprite.list[sprName].yoff = sprInfo.yoff == undefined ? 0 : sprInfo.yoff;
 
         cs.sprite.list[sprName].onload = function(){
-            if(this.fwidth == 0)
+            cs.sprite.loading -= 1;
+            if(cs.sprite.loading == 0){
+                cs.room.start();
+            }
+            if(this.fwidth == 0){
                 this.fwidth = this.width; this.fheight = this.height;
+            }
         }
 
     }
@@ -260,18 +294,19 @@ cs.draw = {
         }
         if(frame == -1) frame = (frames % sprite.frames);//Dear lord help me
         this.ctx.drawImage(sprite, (frame*sprite.fwidth), 0, sprite.fwidth,
-          sprite.fheight, x, y, sprite.fwidth, sprite.fheight);
+          sprite.fheight, x-sprite.xoff, y+-sprite.yoff, sprite.fwidth, sprite.fheight);
 
         cs.draw.reset();
     },
-    spriteExt : function(img, frame, x, y, angle){ 
+    spriteExt : function(spriteName, x, y, angle, frame=0){ 
+        sprite = cs.sprite.list[spriteName];
         if(!this.raw){
             x = Math.floor(x - cs.camera.x);
             y = Math.floor(y - cs.camera.y);
         }
         
         //Draw the xoff/yoff
-        this.ctx.setLineDash([2, 2]);  
+        /*this.ctx.setLineDash([2, 2]);  
 
         this.ctx.beginPath();
         this.ctx.moveTo(x-40,y);
@@ -281,13 +316,13 @@ cs.draw = {
         this.ctx.beginPath();
         this.ctx.moveTo(x,y-40);
         this.ctx.lineTo(x,y+40);
-        this.ctx.stroke();
+        this.ctx.stroke();*/
 
         this.ctx.save(); 
 
         this.ctx.translate(x, y);
         this.ctx.rotate(angle * Math.PI/180);
-        this.ctx.drawImage(img, -(img.x_off), -(img.y_off));
+        this.ctx.drawImage(sprite, -(sprite.xoff), -(sprite.yoff));
 
         this.ctx.restore(); 
         cs.draw.reset();
@@ -299,6 +334,9 @@ cs.draw = {
         }
         this.ctx.fillText(str, x, y);
         cs.draw.reset();
+    },
+    textSize(str){
+        return this.ctx.measureText(str);
     },
     line : function(x1, y1, x2, y2){
         var cx = 0.5; var cy = 0.5;
@@ -555,8 +593,8 @@ cs.camera = {
         var width = this.width * this.scale/1;
         var height = this.height * this.scale/1;
 
-        this.x = (obj.x+obj.width/2)-width/2;
-        this.y = (obj.y+obj.height/2)-height/2;
+        this.x = (obj.x+obj.width/2)-width/2-obj.xoff;
+        this.y = (obj.y+obj.height/2)-height/2-obj.yoff;
 
         //Check if camera over left
         if(this.x < 0){ this.x = 0;}
@@ -601,37 +639,12 @@ cs.camera = {
     }
 }
 //---------------------------------------------------------------------------------------------//
-//---------------------------------| Physics Functions |---------------------------------------//
-//---------------------------------------------------------------------------------------------//
-cs.pos = {
-    meet : function(objtype, x=undefined, y=undefined, width=undefined, height=undefined){
-        var obj1top = y || this.y;
-        var obj1bottum = obj1top + (width || this.width);
-        var obj1left = x || this.x;
-        var obj1right = obj1left+(width || this.width);
-
-        var i = cs.obj.list.length-1; while(i--){
-            if (i !== this.id && cs.obj.list[i].type == objtype){
-                var obj2 = cs.obj.list[i];
-                var obj2top = obj2.y;
-                var obj2bottum = obj2.y + obj2.height;
-                var obj2left = obj2.x;
-                var obj2right = obj2.x + obj2.width;
-
-                if (obj1bottum > obj2top && obj1top < obj2bottum && 
-                    obj1left < obj2right && obj1right > obj2left){
-                    return i;
-                }       
-            }
-        }
-    }
-}
-//---------------------------------------------------------------------------------------------//
 //-----------------------------------| Room Functions |----------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.room = {
     width : 1000,
     height:400,
+    start: function(){console.log('No cs.room.start event!')},
     setup: function(width, height){
         this.width = width; this.height = height;
     },
