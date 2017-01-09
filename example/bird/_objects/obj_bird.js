@@ -9,7 +9,11 @@ cs.obj.load('obj_bird', {
 		if(this.hspeed > 0){
 			angle = 75 * (this.hspeed/4);
 		}
-		cs.draw.spriteExt('bird', this.x, this.y, angle);
+		if(this.hspeed > 0)
+			cs.draw.spriteExt('bird2', this.x, this.y, angle);
+		else
+			cs.draw.spriteExt('bird', this.x, this.y, angle);
+
 		cs.camera.follow(this);
 		if(cs.global.live == false) return;
 
