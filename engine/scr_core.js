@@ -585,11 +585,13 @@ cs.camera = {
     y : 0,
     width : 500, maxWidth : 500,
     height : 200, maxHeight : 400,
-    setup: function(width, height, maxWidth = undefined, maxHeight = undefined){
-        this.width = width;
-        this.height = height;
-        this.maxWidth = maxWidth || width;
-        this.maxHeight = maxHeight || height;
+    lock : false,
+    setup: function(options){
+        this.width = options.width;
+        this.height = options.height;
+        this.maxWidth = options.maxWidth || this.width;
+        this.maxHeight = options.maxHeight || this.height;
+        this.lock = options.lock || this.lock;
         cs.draw.resize();
     },
     follow : function(obj){

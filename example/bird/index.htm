@@ -27,7 +27,13 @@
 			cs.sprite.load('_sprites/pipe_up');
 
 			//Room Setup
-			cs.camera.setup(144, 256);
+			cs.camera.setup({
+				width:144,
+				height:256,
+				maxWidth:300,
+				maxHeight:300,
+				lock: true
+			});
 			cs.room.setup(500, 256);
 
 			
