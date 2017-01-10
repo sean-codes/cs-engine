@@ -211,7 +211,7 @@ cs.sound = {
     load: function(soundPath, soundInfo = {}){
         cs.sprite.loading += 1;
         var soundName = soundPath.split('/').pop();
-        this.list[soundName] = new Audio(soundPath + '.wav');
+        this.list[soundName] = new Audio(soundPath + '.ogg');
 
         this.list[soundName].oncanplaythrough  = function(){
             cs.sprite.loading -= 1;
