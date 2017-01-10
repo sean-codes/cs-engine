@@ -13,7 +13,7 @@ cs.obj.load('obj_background', {
 
 cs.obj.load('obj_bgPart', {
 	create: function(){
-		this.hspeed = cs.global.speed;
+		
 		this.timer = 600;
 		this.bgType = cs.math.choose(['mountain', 'cloud']);
 
@@ -22,12 +22,17 @@ cs.obj.load('obj_bgPart', {
 			'cloud2',
 			'cloud3'
 		]));
+
+		//Cloud
 		this.y = cs.math.iRandomRange(0, cs.room.height-this.height*2);
+		this.hspeed = cs.global.speed+cs.math.choose([0, 1]);
+		//Mountain
 		if(this.bgType == 'mountain'){
 			this.setSprite(cs.math.choose([
 				'mountain1',
 				'mountain2'
 			]));
+			this.hspeed = cs.global.speed;
 			this.y = cs.room.height-this.height;
 		}
 	},
