@@ -209,17 +209,8 @@ cs.sprite = {
 cs.sound = {
     list: {},
     load: function(soundPath, soundInfo = {}){
-        cs.sprite.loading += 1;
         var soundName = soundPath.split('/').pop();
         this.list[soundName] = new Audio(soundPath + '.ogg');
-
-        this.list[soundName].oncanplaythrough  = function(){
-            cs.sprite.loading -= 1;
-            if(cs.sprite.loading == 0){
-                cs.room.start();
-            }
-        }
-
     },
     play: function(sound, soundInfo = {}){
         this.list[sound].loop = soundInfo.loop || false;
