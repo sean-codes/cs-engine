@@ -10,6 +10,18 @@ cs.obj.load('obj_interface', {
 		cs.draw.setColor('#FFFFFF');
  		cs.draw.text(cs.camera.width - tw-10, this.y+5, 'Score: ' + cs.global.score);
 
+ 		//Handling touch
+ 		this.touch.check(0, 0, cs.room.width, cs.room.height);
+		if(this.touch.down){
+			cs.global.flap = true;
+			if(cs.global.live === false){
+				cs.room.restart();
+			} 
+			if(cs.global.live === true){
+				cs.global.start = true;
+			}
+		}
+
  		if(cs.global.start == false || cs.global.live == false){
  			var bw = 100; var bh = 50;
  			var bx = cs.camera.width/2 - bw/2;
@@ -22,15 +34,6 @@ cs.obj.load('obj_interface', {
  			cs.draw.setTextCenter();
  			var text = !cs.global.start ? 'Tap to Flap!' : 'Replay!';
  			cs.draw.text(cs.camera.width/2, cs.camera.height/2, text);
-
- 			this.touch.check(bx, by, bw, bh);
-			if(this.touch.down){
-				if(cs.global.live === false){
-					cs.room.restart();
-				} else {
-					cs.global.start = true;
-				}
-			}
  		}
 	}
 })

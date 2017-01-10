@@ -36,10 +36,10 @@ cs.obj.load('obj_bird', {
 
 
 		//Check for touch
-		this.touch.check(0, 0, cs.room.width, cs.room.height);
-		if(this.touch.down){
+		if(cs.global.flap){
 			this.vspeed = -5;
 			cs.global.start = true;
+			cs.global.flap = false;
 		}
 
 		//Building more pipes
