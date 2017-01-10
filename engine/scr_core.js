@@ -222,10 +222,16 @@ cs.sound = {
 
     },
     play: function(sound, soundInfo = {}){
-        this.list[sound].loop = soundInfo.loop || false;
-        this.list[sound].currentTime = '0';
-        this.list[sound].play();
+        //this.list[sound].loop = soundInfo.loop || false;
+        //this.list[sound].currentTime = '0';
+        //this.list[sound].play();
+        document.getElementById('wtf').click();
     }
+}
+function unlockSounds(sound, soundInfo = {}){
+        //this.list[sound].loop = soundInfo.loop || false;
+        //this.list[sound].currentTime = '0';
+        cs.sound.list['flap'].play();
 }
 //---------------------------------------------------------------------------------------------//
 //----------------------------------| Drawing Functions |--------------------------------------//
