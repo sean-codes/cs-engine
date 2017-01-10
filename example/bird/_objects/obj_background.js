@@ -1,9 +1,15 @@
 cs.obj.load('obj_background', {
 	create: function(){
-		this.timer = 1;
+		this.timer = 0;
 	},
 	step: function(){
 		this.timer -= 1;
+		if(this.timer == -1){
+			for(var i = 0; i < 10; i++){
+				cs.obj.create('obj_bgPart', cs.math.iRandomRange(0, cs.room.width), 0);
+			}
+			this.timer = 0;
+		}
 		if(this.timer == 0){
 			cs.obj.create('obj_bgPart', cs.room.width, 0);
 			this.timer = cs.math.iRandomRange(40, 120);
@@ -13,7 +19,6 @@ cs.obj.load('obj_background', {
 
 cs.obj.load('obj_bgPart', {
 	create: function(){
-		
 		this.timer = 600;
 		this.bgType = cs.math.choose(['mountain', 'cloud']);
 

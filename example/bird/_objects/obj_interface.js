@@ -3,6 +3,7 @@ cs.obj.load('obj_interface', {
 		this.draw = 'gui';
 		this.width = 30;
 	    this.height = 30;
+	    cs.sound.play('background', {loop: true});
 	},
 	step: function(){
 		var text = 'Score: ' + cs.global.score;
@@ -11,7 +12,7 @@ cs.obj.load('obj_interface', {
  		cs.draw.text(cs.camera.width - tw-10, this.y+5, 'Score: ' + cs.global.score);
 
  		//Handling touch
- 		this.touch.check(0, 0, cs.room.width, cs.room.height);
+ 		this.touch.check(0, 0, cs.camera.width, cs.camera.height);
 		if(this.touch.down){
 			cs.global.flap = true;
 			if(cs.global.live === false){

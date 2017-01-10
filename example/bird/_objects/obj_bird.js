@@ -38,6 +38,7 @@ cs.obj.load('obj_bird', {
 		//Check for touch
 		if(cs.global.flap){
 			this.vspeed = -5;
+			cs.sound.play('flap');
 			cs.global.start = true;
 			cs.global.flap = false;
 		}
