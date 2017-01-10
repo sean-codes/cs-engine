@@ -1,16 +1,17 @@
 cs.obj.load('obj_bird', {
+	depth: -5,
 	create: function(){
 		this.setSprite('bird');
-		this.hspeed = 0;
 		this.timer = 60;
 		this.direction = .1;
+		this.vspeed = 0;
 	},
 	step: function(){
-		var angle = -30 * (this.hspeed/-5);
-		if(this.hspeed > 0){
-			angle = 75 * (this.hspeed/4);
+		var angle = -30 * (this.vspeed/-5);
+		if(this.vspeed > 0){
+			angle = 75 * (this.vspeed/4);
 		}
-		if(this.hspeed > 0)
+		if(this.vspeed > 0)
 			cs.draw.spriteExt('bird2', this.x, this.y, angle);
 		else
 			cs.draw.spriteExt('bird', this.x, this.y, angle);
@@ -22,23 +23,22 @@ cs.obj.load('obj_bird', {
 		
 
 		if(cs.global.start == false){
-			this.hspeed += this.direction;
-			if(Math.abs(this.hspeed) > 3){
+			this.vspeed += this.direction;
+			if(Math.abs(this.vspeed) > 3){
 				this.direction = this.direction * -1;
-				this.hspeed += this.direction*2;
-				console.log(this.hspeed, this.direction);
+				this.vspeed += this.direction*2;
 			}
 		} else {
-			if(this.hspeed < 4)
-				this.hspeed += 0.25;
+			if(this.vspeed < 4)
+				this.vspeed += 0.25;
 		}
-		this.y += this.hspeed;
+		this.y += this.vspeed;
 
 
 		//Check for touch
 		this.touch.check(0, 0, cs.room.width, cs.room.height);
 		if(this.touch.down){
-			this.hspeed = -5;
+			this.vspeed = -5;
 			cs.global.start = true;
 		}
 

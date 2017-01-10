@@ -67,7 +67,7 @@ cs.loop = {
         
         cs.draw.clear();
         cs.key.execute();
-        for(var i = 0; i <cs.obj.list.length; i++){
+        for(var i = 0; i < cs.obj.list.length; i++){
             if(cs.obj.list[i].live){
                 var obj = cs.obj.list[i];
                 cs.draw.setLayer(obj.draw, obj.layer);
@@ -102,11 +102,14 @@ cs.loop = {
 //---------------------------------------------------------------------------------------------//
 cs.obj = { 
     list : [],
-    types : [],
+    types : {},
     create : function(type, x, y){
-        var obj_id = this.list.length;
-        this.list[obj_id] = {};
+        var depth = cs.obj.types[type].depth;
+        var obj_id = this.findPosition(cs.obj.types[type].depth);
+        console.log('Depth: ' + depth + 'Type: ' + type + ' objid: ' + obj_id);
+        this.list.splice(obj_id, 0, {});
         for(var func in this.functions){ this.list[obj_id][func] = this.functions[func] }
+        this.list[obj_id].depth = depth;
         this.list[obj_id].live = true;
         this.list[obj_id].type = type;
         this.list[obj_id].id = obj_id;
@@ -125,12 +128,21 @@ cs.obj = {
         var cnt = this.types.length;
         this.types[name] = {
             name : name,
-            create : options.create,
-            step : options.step
+            create : options.create || {},
+            step : options.step || {},
+            depth : options.depth || 0
         }
     },
     destroy : function(obj){
         obj.live = false;
+    },
+    findPosition : function(depth){
+        for(var i = 0; i < this.list.length; i++){
+            if(depth >= this.list[i].depth){
+                return i;
+            }
+        }
+        return i;
     },
     functions : {
         meet: function(objtype, options={}){
@@ -155,8 +167,9 @@ cs.obj = {
             return undefined;
         },
         setSprite: function(spriteName){
-            this.width = cs.sprite.list[spriteName].width;
-            this.height = cs.sprite.list[spriteName].height;
+            this.sprite = spriteName;
+            this.width = cs.sprite.list[spriteName].fwidth;
+            this.height = cs.sprite.list[spriteName].fheight;
             this.xoff = cs.sprite.list[spriteName].xoff;
             this.yoff = cs.sprite.list[spriteName].yoff;
         }
@@ -983,6 +996,9 @@ cs.math = {
     },
     iRandomRange : function(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
+    },
+    choose: function(array){
+        return array[this.iRandomRange(0, array.length-1)];
     }
 }
 //---------------------------------------------------------------------------------------------//

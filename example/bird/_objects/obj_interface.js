@@ -20,7 +20,7 @@ cs.obj.load('obj_interface', {
  			cs.draw.rect(bx, by, bw, bh, false);
  			cs.draw.setColor('#FFFFFF');
  			cs.draw.setTextCenter();
- 			var text = !cs.global.start ? 'Tap to Fly!' : 'Replay!';
+ 			var text = !cs.global.start ? 'Tap to Flap!' : 'Replay!';
  			cs.draw.text(cs.camera.width/2, cs.camera.height/2, text);
 
  			this.touch.check(bx, by, bw, bh);
