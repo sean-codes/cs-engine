@@ -3,7 +3,7 @@ var cs = {};
 //---------------------------------------------------------------------------------------------//
 //-----------------------------| Global Variables and Scripts |--------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.global = {}; cs.script = {};
+cs.global = {}; cs.script = {}; cs.save = {};
 //---------------------------------------------------------------------------------------------//
 //--------------------------------| Performance Monitoring |-----------------------------------//
 //---------------------------------------------------------------------------------------------//
@@ -209,29 +209,15 @@ cs.sprite = {
 cs.sound = {
     list: {},
     load: function(soundPath, soundInfo = {}){
-        //cs.sprite.loading += 1;
         var soundName = soundPath.split('/').pop();
         this.list[soundName] = new Audio(soundPath + '.webm');
         this.list[soundName].load();
-        //this.list[soundName].oncanplaythrough  = function(){
-            //cs.sprite.loading -= 1;
-            //if(cs.sprite.loading == 0){
-                //cs.room.start();
-            //}
-        //}
-
     },
     play: function(sound, soundInfo = {}){
-        //this.list[sound].loop = soundInfo.loop || false;
-        //this.list[sound].currentTime = '0';
-        //this.list[sound].play();
-        document.getElementById('wtf').click();
+        this.list[sound].loop = soundInfo.loop || false;
+        this.list[sound].currentTime = '0';
+        this.list[sound].play();
     }
-}
-function unlockSounds(sound, soundInfo = {}){
-        //this.list[sound].loop = soundInfo.loop || false;
-        //this.list[sound].currentTime = '0';
-        cs.sound.list['flap'].play();
 }
 //---------------------------------------------------------------------------------------------//
 //----------------------------------| Drawing Functions |--------------------------------------//
