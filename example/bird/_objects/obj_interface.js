@@ -24,7 +24,8 @@ cs.obj.load('obj_interface', {
 		}
 
  		if(cs.global.start == false || cs.global.live == false){
- 			var bw = 100; var bh = 50;
+ 			//Replay
+ 			var bw = 125; var bh = 50;
  			var bx = cs.camera.width/2 - bw/2;
  			var by = cs.camera.height/2 - bh/2;
  			cs.draw.setAlpha(0.6);
@@ -35,6 +36,19 @@ cs.obj.load('obj_interface', {
  			cs.draw.setTextCenter();
  			var text = !cs.global.start ? 'Tap to Flap!' : 'Replay!';
  			cs.draw.text(cs.camera.width/2, cs.camera.height/2, text);
+ 			
+
+ 			//Best Score
+ 			by += 60;
+ 			cs.draw.setAlpha(0.6);
+ 			cs.draw.rect(bx, by, bw, bh, true);
+ 			cs.draw.setColor('#FFFFFF');
+ 			cs.draw.rect(bx, by, bw, bh, false);
+ 			cs.draw.setColor('#FFFFFF');
+ 			cs.draw.setTextCenter();
+ 			var text = 'Your Best Score: ' + cs.save.topScore;
+ 			cs.draw.text(cs.camera.width/2, by+bh/2, text);
+
  		}
 	}
 })

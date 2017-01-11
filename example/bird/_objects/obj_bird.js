@@ -5,12 +5,35 @@ cs.obj.load('obj_bird', {
 		this.timer = 60;
 		this.direction = .1;
 		this.vspeed = 0;
+		this.diving = 0;
+		this.soaring = 0;
+		this.particle.settings = JSON.parse(`{
+				"shape": "square",
+				"colorStart": "#ffffff",
+				"colorEnd": "#ffffff",
+				"size": 4,
+				"grow": -4,
+				"alpha": 20,
+				"fade": 10,
+				"speedMin": 25,
+				"speedMax": 40,
+				"dirMin": 120,
+				"dirMax": 120,
+				"wobbleX": 0,
+				"wobbleY": 0,
+				"lifeMin": 5,
+				"lifeMax": 15,
+				"accel": 0,
+				"gravity": 0,
+				"particlesPerStep": 15
+		}`);
 	},
 	step: function(){
 		var angle = -30 * (this.vspeed/-5);
 		if(this.vspeed > 0){
 			angle = 75 * (this.vspeed/4);
 		}
+		cs.particle.step();
 		if(this.vspeed > 0)
 			cs.draw.spriteExt('bird2', this.x, this.y, angle);
 		else
@@ -41,6 +64,17 @@ cs.obj.load('obj_bird', {
 			cs.sound.play('flap');
 			cs.global.start = true;
 			cs.global.flap = false;
+			if(this.diving > 24){
+				cs.global.score += 1;
+				cs.obj.create('obj_score_text', this.x, this.y);
+				cs.particle.burst(this.x, this.y, this.width, 0, 10);
+				cs.sound.play('score');
+			}
+			this.diving = 0;
+		}
+		if(this.vspeed > 3){
+			console.log('diving!!!');
+			this.diving += 1;
 		}
 
 		//Building more pipes
@@ -54,7 +88,7 @@ cs.obj.load('obj_bird', {
 				var down = cs.obj.create('obj_pipe', cs.room.width, randomY-space);
 				down.y -= down.height; down.pipe = 'down';
 				var up = cs.obj.create('obj_pipe', cs.room.width, randomY+space);
-				cs.obj.create('obj_score', cs.room.width, randomY - space/2);
+				cs.obj.create('obj_score', cs.room.width+down.width, randomY - space/2);
 			}
 		}
 		var collisionScore = this.meet('obj_score');
@@ -65,6 +99,7 @@ cs.obj.load('obj_bird', {
 		if(collisionScore){
 			cs.obj.destroy(collisionScore);
 			cs.global.score += 1;
+			cs.sound.play('score');
 		}
 	}
 })

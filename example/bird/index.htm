@@ -18,7 +18,6 @@
 	<body>
 		<!--Game Area-->
 		<div id="view"></div>
-		<button id='wtf' onclick="cs.sound.list['flap'].play()"></button>
 		<script>
 			//Initialize the view
 			cs.init('view');
@@ -38,6 +37,7 @@
 			//Load Sounds
 			cs.sound.load('_sounds/flap');
 			cs.sound.load('_sounds/background');
+			cs.sound.load('_sounds/score');
 
 			//Room Setup
 			cs.camera.setup({
@@ -52,6 +52,7 @@
 			
 
 			//Start game
+			cs.save.topScore = 0;
 			cs.room.start = function(){
 				//Globals
 				cs.global.live = true;
