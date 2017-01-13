@@ -898,6 +898,7 @@ cs.touch = {
         }
     },  
     down : function(e){
+        cs.sound.play('flap');
         cs.touch.add(e.changedTouches[0].identifier);
         cs.touch.move(e);
         
