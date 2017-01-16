@@ -3,9 +3,12 @@ cs.obj.load('obj_interface', {
 		this.draw = 'gui';
 		this.width = 30;
 	    this.height = 30;
-	    cs.sound.play('background', {loop: true});
+	    this.backgroundPlaying = undefined;
 	},
 	step: function(){
+        if(!this.backgroundPlaying)
+            this.backgroundPlaying = cs.sound.play('background');
+            
 		var text = 'Score: ' + cs.global.score;
 		var tw = cs.draw.textSize(text).width;
 		cs.draw.setColor('#FFFFFF');
@@ -17,7 +20,7 @@ cs.obj.load('obj_interface', {
 			cs.global.flap = true;
 			if(cs.global.live === false){
 				cs.room.restart();
-			} 
+			}
 			if(cs.global.live === true){
 				cs.global.start = true;
 			}
@@ -36,7 +39,7 @@ cs.obj.load('obj_interface', {
  			cs.draw.setTextCenter();
  			var text = !cs.global.start ? 'Tap to Flap!' : 'Replay!';
  			cs.draw.text(cs.camera.width/2, cs.camera.height/2, text);
- 			
+
 
  			//Best Score
  			by += 60;

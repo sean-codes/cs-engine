@@ -9,13 +9,13 @@ cs.global = {}; cs.script = {}; cs.save = {};
 //---------------------------------------------------------------------------------------------//
 cs.fps = {
     rate : 0,
-    frame : 0, 
+    frame : 0,
     check : Date.now(),
     update : function(){
         if(Date.now() - this.check > 1000){
             this.check = Date.now();
             this.rate = this.frame;
-            this.frame = 0; 
+            this.frame = 0;
         } else {
             this.frame += 1;
         }
@@ -37,7 +37,7 @@ cs.init = function(canvasId){
     cs.draw.createLayer('gui');
     cs.draw.createLayer('game');
     cs.draw.ctx = cs.draw.game[0].ctx;
-    
+
     //Initiate Inputs
     view.addEventListener('keydown', cs.key.updateDown);
     view.addEventListener('keyup', cs.key.updateUp);
@@ -52,8 +52,10 @@ cs.init = function(canvasId){
     //Camera/View Size
     cs.draw.resize();
     cs.input.resize();
+    //Sound
+    cs.sound.init();
     //Animation and Step Start
-    window.requestAnimFrame = window.requestAnimationFrame || 
+    window.requestAnimFrame = window.requestAnimationFrame ||
                               window.webkitRequestAnimationFrame ||
                               window.mozRequestAnimationFrame;
     cs.loop.step();
@@ -64,7 +66,7 @@ cs.loop = {
         if(cs.loop.run)
             window.requestAnimFrame(cs.loop.step);
         cs.fps.update();
-        
+
         cs.draw.clear();
         cs.key.execute();
         for(var i = 0; i < cs.obj.list.length; i++){
@@ -78,9 +80,9 @@ cs.loop = {
                 step.call(obj);
             }
         }
-        cs.key.reset();   
+        cs.key.reset();
         cs.touch.reset();
-        
+
         //Resize Canvas
         var w = window.innerWidth; var h = window.innerHeight; var o = screen.orientation;
         if(w !== cs.draw.w || h !== cs.draw.h || o !== cs.draw.o){
@@ -90,8 +92,8 @@ cs.loop = {
             cs.input.resize();
             cs.draw.resize();
         }
-        
-        cs.draw.display(); 
+
+        cs.draw.display();
         if(cs.room.restarting === true){
             cs.room.reset();
         }
@@ -100,7 +102,7 @@ cs.loop = {
 //---------------------------------------------------------------------------------------------//
 //-----------------------------------| Object Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.obj = { 
+cs.obj = {
     list : [],
     types : {},
     create : function(type, x, y){
@@ -112,7 +114,7 @@ cs.obj = {
         this.list[obj_id].live = true;
         this.list[obj_id].type = type;
         this.list[obj_id].id = obj_id;
-        this.list[obj_id].core = false; 
+        this.list[obj_id].core = false;
         this.list[obj_id].draw = 'game';
         this.list[obj_id].layer = 0;
         this.list[obj_id].particle = { list : [], settings : {} };
@@ -157,10 +159,10 @@ cs.obj = {
                     var obj2left = obj2.x;
                     var obj2right = obj2.x + obj2.width;
 
-                    if (obj1bottom > obj2top && obj1top < obj2bottum && 
+                    if (obj1bottom > obj2top && obj1top < obj2bottum &&
                         obj1left < obj2right && obj1right > obj2left){
                         return obj2;
-                    }       
+                    }
                 }
             }
             return undefined;
@@ -208,15 +210,72 @@ cs.sprite = {
 //---------------------------------------------------------------------------------------------//
 cs.sound = {
     list: {},
-    load: function(soundPath, soundInfo = {}){
-        var soundName = soundPath.split('/').pop();
-        this.list[soundName] = new Audio(soundPath + '.webm');
-        this.list[soundName].load();
+    playList: [],
+    context: null,
+    canPlayAudio: false,
+    init: function(){
+    	this.list = {};
+    	try {
+    		window.AudioContext =
+    			window.AudioContext || window.webkitAudioContext;
+    		this.canPlayAudio = true;
+    		this.context = new AudioContext();
+    	} catch (e) {
+    		this.canPlayAudio = false;
+    		this.context = undefined;
+    		alert('Web Audio API is not supported in this browser');
+    	}
     },
-    play: function(sound, soundInfo = {}){
-        this.list[sound].loop = soundInfo.loop || false;
-        this.list[sound].currentTime = '0';
-        this.list[sound].play();
+    load: function(options){
+    	var pathSplit = options.path.split('/');
+    	var name = pathSplit.pop();
+    	var path = pathSplit.toString('/');
+    	var types = (options.extension ? options.extension : 'wav').split(',');
+
+    	this.list[name] = {};
+    	for(var i in types){
+    		var type = types[i].trim();
+    		this.list[name][type] = {
+                loaded: false,
+    			path : path
+    				+ '/' + name
+    				+ '.' + type,
+    			buffer: null,
+    			request: new XMLHttpRequest()
+    		}
+
+    		this.list[name][type].request.csData = { name: name, type: type }
+    		this.list[name][type].request.open('GET', this.list[name][type].path, true);
+    		this.list[name][type].request.responseType = 'arraybuffer';
+
+    		this.list[name][type].request.onload = function(){
+    			var name = this.csData.name;
+    			var type = this.csData.type;
+    			cs.sound.context.decodeAudioData(this.response, function(buffer){
+    				cs.sound.list[name][type].buffer = buffer;
+    				cs.sound.list[name][type].loaded = true;
+    			});
+    		}
+    		cs.sound.list[name][type].request.send();
+    	}
+    },
+    play: functionplay = function(audioName, options){
+        if(this.list[audioName]['wav'].loaded === true){
+            var csAudioObj = this.context.createBufferSource();
+        	csAudioObj.buffer = this.list[audioName]['wav'].buffer;
+            for(var opt in options){ csAudioObj[opt] = options[opt] }
+        	csAudioObj.connect(this.context.destination);
+            csAudioObj.start(0);
+            this.playList.push(csAudioObj);
+            return csAudioObj;
+        }
+        return undefined;
+    },
+    reset: function(){
+        for(var sound in this.playList){
+            this.playList[sound].stop();
+            this.playList[sound].disconnect();
+        }
     }
 }
 //---------------------------------------------------------------------------------------------//
@@ -240,7 +299,7 @@ cs.draw = {
         var num = cs.draw[type].length;
         var newLayer = document.createElement("canvas");
         newLayer.style.display = "none";
-        
+
         cs.draw[type][num] = {};
         cs.draw[type][num].canvas = newLayer;
         cs.draw[type][num].ctx = newLayer.getContext('2d');
@@ -256,13 +315,13 @@ cs.draw = {
               cs.camera.height + (cs.camera.height*cs.camera.scale));
         }
         for(i = 0; i < this.gui.length; i++){
-            this.gui[i].ctx.clearRect(0, 0, 
+            this.gui[i].ctx.clearRect(0, 0,
               cs.camera.width,
               cs.camera.height);
         }
-        this.view.ctx.clearRect(0, 0, 
-            this.view.canvas.width, 
-            this.view.canvas.height); 
+        this.view.ctx.clearRect(0, 0,
+            this.view.canvas.width,
+            this.view.canvas.height);
     },
     resize : function(){
         var w = window.innerWidth;
@@ -276,21 +335,21 @@ cs.draw = {
             nh = cs.camera.maxHeight - (cs.camera.maxHeight%ratioHeight);
             nw = nh * ratioHeight;
         }
-        
+
         cs.draw.view.canvas.style.width = w + 'px';
         cs.draw.view.canvas.style.height = h + 'px';
-        
+
         cs.draw.view.canvas.width = nw;
         cs.draw.view.canvas.height = nh;
         cs.draw.view.ctx.imageSmoothingEnabled = false;
         cs.draw.view.ctx.webkitImageSmoothingEnabled = false;
         cs.draw.view.ctx.mozImageSmoothingEnabled = false;
-        
+
         cs.camera.width = Math.ceil(nw);
         cs.camera.height = Math.ceil(nh);
         for(var i = 0; i < cs.draw.game.length; i++){
             cs.draw.game[i].canvas.width = nw;
-            cs.draw.game[i].canvas.height = nh;   
+            cs.draw.game[i].canvas.height = nh;
             cs.draw.game[i].canvas.width = cs.draw.game[i].canvas.width;
             cs.draw.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
             cs.draw.game[i].ctx.imageSmoothingEnabled = false;
@@ -303,7 +362,7 @@ cs.draw = {
             cs.draw.gui[i].ctx.imageSmoothingEnabled = false;
             cs.draw.gui[i].ctx.webkitImageSmoothingEnabled = false;
             cs.draw.gui[i].ctx.mozImageSmoothingEnabled = false;
-        }   
+        }
     },
     display : function(){
         for(var i = 0; i < this.game.length; i++){
@@ -321,7 +380,7 @@ cs.draw = {
             x = Math.floor(x - cs.camera.x);
             y = Math.floor(y - cs.camera.y);
             if(x > (cs.camera.x + cs.camera.width) && x < cs.camera.x-sprite.fwidth)
-                return;   
+                return;
         }
         if(frame == -1) frame = (frames % sprite.frames);//Dear lord help me
         this.ctx.drawImage(sprite, (frame*sprite.fwidth), 0, sprite.fwidth,
@@ -329,15 +388,15 @@ cs.draw = {
 
         cs.draw.reset();
     },
-    spriteExt : function(spriteName, x, y, angle, frame=0){ 
+    spriteExt : function(spriteName, x, y, angle, frame=0){
         sprite = cs.sprite.list[spriteName];
         if(!this.raw){
             x = Math.floor(x - cs.camera.x);
             y = Math.floor(y - cs.camera.y);
         }
-        
+
         //Draw the xoff/yoff
-        /*this.ctx.setLineDash([2, 2]);  
+        /*this.ctx.setLineDash([2, 2]);
 
         this.ctx.beginPath();
         this.ctx.moveTo(x-40,y);
@@ -349,13 +408,13 @@ cs.draw = {
         this.ctx.lineTo(x,y+40);
         this.ctx.stroke();*/
 
-        this.ctx.save(); 
+        this.ctx.save();
 
         this.ctx.translate(x, y);
         this.ctx.rotate(angle * Math.PI/180);
         this.ctx.drawImage(sprite, -(sprite.xoff), -(sprite.yoff));
 
-        this.ctx.restore(); 
+        this.ctx.restore();
         cs.draw.reset();
     },
     text : function(x, y, str){
@@ -385,10 +444,10 @@ cs.draw = {
         x = Math.floor(x); y = Math.floor(y);
         w = Math.floor(w); h = Math.floor(h);
         if(!this.raw){
-            x =  Math.floor(x-cs.camera.x); 
+            x =  Math.floor(x-cs.camera.x);
             y =  Math.floor(y-cs.camera.y);
         }
-        if(fill === true){ 
+        if(fill === true){
             this.ctx.fillRect(x,y,w,h);
         } else {
             x+=0.50;
@@ -401,44 +460,44 @@ cs.draw = {
     },
     circle : function(x, y, rad){
         if(!this.raw){
-            x =  x-cs.camera.x; 
+            x =  x-cs.camera.x;
             y =  y-cs.camera.y;
         }
         cs.draw.ctx.beginPath();
-        cs.draw.ctx.arc(x, y, rad, 0, Math.PI*2, true); 
-        cs.draw.ctx.closePath(); 
+        cs.draw.ctx.arc(x, y, rad, 0, Math.PI*2, true);
+        cs.draw.ctx.closePath();
         cs.draw.ctx.fill();
         cs.draw.reset();
     },
     circleGradient : function(x, y, radius){
         if(!this.raw){
-            x =  x-cs.camera.x; 
+            x =  x-cs.camera.x;
             y =  y-cs.camera.y;
         }
         //Draw a circle
         var g = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
-        g.addColorStop(1, 'transparent'); 
-        g.addColorStop(0, 'black'); 
+        g.addColorStop(1, 'transparent');
+        g.addColorStop(0, 'black');
         this.ctx.fillStyle = g;
         this.ctx.beginPath();
-        this.ctx.arc(x, y, radius, 0, Math.PI*2, true); 
-        this.ctx.closePath(); 
+        this.ctx.arc(x, y, radius, 0, Math.PI*2, true);
+        this.ctx.closePath();
         //Fill
         this.ctx.fill();
         cs.draw.reset();
     },
     setColor: function(color){
-      this.ctx.fillStyle = color;  
-      this.ctx.strokeStyle = color;  
+      this.ctx.fillStyle = color;
+      this.ctx.strokeStyle = color;
     },
     setAlpha : function(alpha){
         this.ctx.globalAlpha = alpha;
     },
     setWidth : function(width){
-        this.ctx.lineWidth = width;  
+        this.ctx.lineWidth = width;
     },
     setFont : function(font){
-        this.ctx.font = font;  
+        this.ctx.font = font;
     },
     setTextAlign : function(alignment){
         this.ctx.textAlign = alignment;
@@ -463,7 +522,7 @@ cs.draw = {
         if(target == 'gui') { this.raw = true; }
     },
     setLayerAlpha : function(alpha){
-        this.target.alpha = alpha;  
+        this.target.alpha = alpha;
     },
     reset : function(){
         cs.draw.target.alpha = 1;
@@ -486,11 +545,11 @@ cs.particle = {
         var num = qty;
         if(num === 0){
             num = this.settings.particlesPerStep;
-        } 
+        }
         if(num < 0){
             num = (Math.floor(Math.random() * Math.abs(num)) === 1)
         }
-        for(var i = 0; i < num; i++){       
+        for(var i = 0; i < num; i++){
             var c1 = cs.particle.rgbFromHex(this.settings.colorEnd);
             var c2 = cs.particle.rgbFromHex(this.settings.colorStart);
             var life = cs.math.iRandomRange(this.settings.lifeMin, this.settings.lifeMax);
@@ -541,7 +600,7 @@ cs.particle = {
                 //Accelleration
                 particle.accel += particle.accelRate;
                 particle.gravity -= particle.gravityRate;
-                
+
                 //Wobble
                 if(particle.wobbleSetX !== 0){
                     if(particle.wobbleX > 0){
@@ -561,7 +620,7 @@ cs.particle = {
                         if(particle.wobbleY === 0){particle.wobbleY = particle.wobbleSetY;}
                     }
                 }
-                
+
                 //Position Particle?
                 var speed = particle.speed + particle.accel
                 particle.x += particle.speedX*speed;
@@ -578,29 +637,29 @@ cs.particle = {
                 if(particle.shape == "square"){
                     cx = cx - (particle.size/2);
                     cy = cy - (particle.size/2);
-                    
-                    cs.draw.rect(cx, cy, particle.size, particle.size, true);  
+
+                    cs.draw.rect(cx, cy, particle.size, particle.size, true);
                 } else {
                     cs.draw.circle(cx, cy, particle.size);
                 }
                 tempParticles[tempParticles.length] = particle;
-            }  
+            }
         }
         //Reset Particles with only live parts
         this.obj.particle.list = tempParticles;
     },
     rgbFromHex : function(hex){
-        return { 
+        return {
            r : parseInt('0x' + hex.slice(1,3)),
            g : parseInt('0x' + hex.slice(3,5)),
-           b : parseInt('0x' + hex.slice(5,7)) 
+           b : parseInt('0x' + hex.slice(5,7))
         }
     },
     hexFromRgb : function(r, g, b){
         r = r.toString(16); g = g.toString(16); b = b.toString(16);
-        return '#' + 
-            (r.length == 1 ? '0' + r : r) + 
-            (g.length == 1 ? '0' + g : g) + 
+        return '#' +
+            (r.length == 1 ? '0' + r : r) +
+            (g.length == 1 ? '0' + g : g) +
             (b.length == 1 ? '0' + b : b);
     }
 }
@@ -653,7 +712,7 @@ cs.camera = {
             cs.draw.game[i].ctx.imageSmoothingEnabled = false;
             cs.draw.game[i].ctx.mozImageSmoothingEnabled = false;
         }
-    }, 
+    },
     zoomIn : function(){
         for(var i = 0; i < cs.draw.game.length; i++){
             cs.draw.game[i].canvas.width = cs.draw.game[i].canvas.width;
@@ -680,7 +739,13 @@ cs.room = {
     restarting: false,
     start: function(){console.log('No cs.room.start event!')},
     restart: function(){this.restarting = true;},
-    reset: function(){cs.obj.list = []; cs.global = {}; cs.room.start(); this.restarting = false},
+    reset: function(){
+        cs.obj.list = [];
+        cs.global = {};
+        cs.room.start();
+        cs.sound.reset();
+        this.restarting = false
+    },
     setup: function(width, height){
         this.width = width; this.height = height;
     },
@@ -725,15 +790,15 @@ cs.input = {
         input.id = 'textInputText';
         input.setAttribute('autocomplete', 'off');
         input.type = 'text';
-        
+
         var button = document.createElement('button');
         button.type = 'submit';
         button.innerHTML = 'Enter';
-        
+
         form.appendChild(input);
         form.appendChild(button);
         document.body.appendChild(form);
-        
+
         this.form = form;
         this.input = input;
         this.button = button;
@@ -749,7 +814,7 @@ cs.input = {
     close : function(){
         if(this.form.style.display == 'block'){
             this.form.style.display = 'none';
-            this.text = this.input.value; 
+            this.text = this.input.value;
             document.getElementById('view').click();
             document.getElementById('view').focus();
             this.input.value = '';
@@ -757,7 +822,7 @@ cs.input = {
         return false;
     },
     return : function(id){
-        var text = this.text; 
+        var text = this.text;
         if(this.openBy == id && text !== ''){
             this.text = '';
             return text;
@@ -787,7 +852,7 @@ cs.input = {
         button.style.lineHeight = (h-border*2) + 'px';
 
         button.style.border = border + 'px solid black';
-        input.style.border = border + 'px solid black'; 
+        input.style.border = border + 'px solid black';
     }
 }
 //---------------------------------------------------------------------------------------------//
@@ -804,14 +869,14 @@ cs.key = {
             event : eventType,
             key : keyCode
         }
-        
+
     },
     execute : function(){
         for(var i = 0; i < cs.key.events.length; i++){
             var event = cs.key.events[i].event;
             var key = cs.key.events[i].key;
             cs.key.processEvent(key, event);
-        }     
+        }
         cs.key.events = [];
     },
     processEvent : function(keyCode, type){
@@ -836,11 +901,11 @@ cs.key = {
     virtualDown : function(keyCode){
         cs.key.addEvent(keyCode, 'down');
     },
-    virtualUp : function(keyCode){ 
+    virtualUp : function(keyCode){
         cs.key.addEvent(keyCode, 'up');
     },
     virtualPress : function(key){
-        this.virtualDown(key); 
+        this.virtualDown(key);
         this.virtualUp(key);
     },
     reset : function(){
@@ -860,7 +925,7 @@ cs.mouse = {
     move : function(e){
         cs.mouse.x = e.clientX;
         cs.mouse.y = e.clientY;
-        
+
         cs.touch.updatePos(-1, e.clientX, e.clientY);
     },
     down : function(e){
@@ -880,14 +945,14 @@ cs.touch = {
         for(var i = 0; i < cs.touch.list.length; i++){
             if(cs.touch.list[i].used === false) break;
         }
-        
+
         cs.touch.list[i] = {};
         cs.touch.list[i].used = false;
         cs.touch.list[i].down = true;
         cs.touch.list[i].up = false;
         cs.touch.list[i].x = 0;
         cs.touch.list[i].y = 0;
-        cs.touch.list[i].id = id;  
+        cs.touch.list[i].id = id;
     },
     remove : function(id){
         for(var i = 0; i < cs.touch.list.length; i++){
@@ -896,12 +961,12 @@ cs.touch = {
                 cs.touch.list[i].up = true;
             }
         }
-    },  
+    },
     down : function(e){
         cs.sound.play('flap');
         cs.touch.add(e.changedTouches[0].identifier);
         cs.touch.move(e);
-        
+
     },
     up : function(e){
         var id = e.changedTouches[0].identifier;
@@ -915,7 +980,7 @@ cs.touch = {
                 var rect = canvas.getBoundingClientRect();
 
                 var physicalViewWidth = (rect.right-rect.left);
-                var physicalViewHeight = (rect.bottom-rect.top);   
+                var physicalViewHeight = (rect.bottom-rect.top);
                 var hortPercent = (x - rect.left)/physicalViewWidth;
                 var vertPercent = (y - rect.top)/physicalViewHeight;
 
@@ -925,7 +990,7 @@ cs.touch = {
         }
     },
     move: function(e){
-        e.preventDefault();     
+        e.preventDefault();
         for(var i = 0; i < e.changedTouches.length; i++){
             var etouch = e.changedTouches[i];
             cs.touch.updatePos(etouch.identifier, etouch.clientX, etouch.clientY);
@@ -943,7 +1008,7 @@ cs.touch = {
             inside : function(x, y, width, height){
                 var cx = this.x;
                 var cy = this.y;
-                return (cx > x && cx < x+width && cy > y && cy < y+height); 
+                return (cx > x && cx < x+width && cy > y && cy < y+height);
             },
             check : function(x, y, width, height){
                 if(this.id !== -1){
@@ -951,9 +1016,9 @@ cs.touch = {
                     this.x = touch.x;
                     this.y = touch.y;
                     if(!this.raw){
-                        this.x = (touch.x * cs.camera.scale) + cs.camera.x;         
-                        this.y = (touch.y * cs.camera.scale) + cs.camera.y;   
-                    } 
+                        this.x = (touch.x * cs.camera.scale) + cs.camera.x;
+                        this.y = (touch.y * cs.camera.scale) + cs.camera.y;
+                    }
                     this.down = touch.down;
                     this.held = touch.held;
                     this.up = touch.up;
@@ -966,14 +1031,14 @@ cs.touch = {
                     this.up = false;
                     for(var i = 0; i < cs.touch.list.length; i++){
                         var ctouch = cs.touch.list[i];
-                        
+
                         var cx = ctouch.x;
                         var cy = ctouch.y;
                         if(!this.raw){
-                            cx = (ctouch.x * cs.camera.scale) + cs.camera.x;         
-                            cy = (ctouch.y * cs.camera.scale) + cs.camera.y; 
-                        } 
-                        
+                            cx = (ctouch.x * cs.camera.scale) + cs.camera.x;
+                            cy = (ctouch.y * cs.camera.scale) + cs.camera.y;
+                        }
+
                         if(ctouch.down === true && ctouch.used === false){
                             if(cx > x && cx < x+width && cy > y && cy < y+height){
                                 //Being Touched
@@ -983,11 +1048,11 @@ cs.touch = {
 
                                 this.x = cx;
                                 this.y = cy;
-                                
+
                                 this.off_x = cx-x;
                                 this.off_y = cy-y;
                             }
-                        } 
+                        }
                     }
                 }
             }
@@ -1029,7 +1094,7 @@ cs.network = {
         } else {
             var url = "wss://"+host+":"+options.port;
         }
-        var ws = new WebSocket(url); 
+        var ws = new WebSocket(url);
         ws.onopen = function(){ cs.network.onconnect() }
         ws.onclose = function(){ cs.network.ondisconnect() }
         ws.onmessage =  function(event){ cs.network.onmessage(event.data) }
