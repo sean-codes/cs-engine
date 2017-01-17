@@ -7,8 +7,8 @@ cs.obj.load('obj_interface', {
 	},
 	step: function(){
         if(!this.backgroundPlaying)
-            this.backgroundPlaying = cs.sound.play('background');
-            
+            this.backgroundPlaying = cs.sound.play('background', { loop: true });
+
 		var text = 'Score: ' + cs.global.score;
 		var tw = cs.draw.textSize(text).width;
 		cs.draw.setColor('#FFFFFF');
