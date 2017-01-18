@@ -213,7 +213,7 @@ cs.sound = {
     context: null,
     canPlayAudio: false,
     enable: function(){
-        if(canPlayAudio) return;
+        if(this.canPlayAudio) return;
         var source = this.context.createBufferSource();
         source.buffer = this.context.createBuffer(1, 1, 22050);
         source.connect(this.context.destination);
