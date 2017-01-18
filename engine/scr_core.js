@@ -202,7 +202,6 @@ cs.sprite = {
                 this.fwidth = this.width; this.fheight = this.height;
             }
         }
-
     }
 }
 //---------------------------------------------------------------------------------------------//
@@ -213,6 +212,14 @@ cs.sound = {
     playList: [],
     context: null,
     canPlayAudio: false,
+    enable: function(){
+        if(canPlayAudio) return;
+        var source = this.context.createBufferSource();
+        source.buffer = this.context.createBuffer(1, 1, 22050);
+        source.connect(this.context.destination);
+        source.noteOn(0);
+        this.canPlayAudio = true;
+    },
     init: function(){
     	this.list = {};
     	try {
@@ -395,7 +402,7 @@ cs.draw = {
             y = Math.floor(y - cs.camera.y);
         }
 
-        //Draw the xoff/yoff
+        //DETAIL Remove this when done testing
         /*this.ctx.setLineDash([2, 2]);
 
         this.ctx.beginPath();
@@ -963,10 +970,11 @@ cs.touch = {
         }
     },
     down : function(e){
-        cs.sound.play('flap');
+        //Enable Sound
+        cs.sound.enable();
+
         cs.touch.add(e.changedTouches[0].identifier);
         cs.touch.move(e);
-
     },
     up : function(e){
         var id = e.changedTouches[0].identifier;
