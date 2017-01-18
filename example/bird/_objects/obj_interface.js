@@ -4,54 +4,60 @@ cs.obj.load('obj_interface', {
 		this.width = 30;
 	    this.height = 30;
 	    this.backgroundPlaying = undefined;
+        this.drawButton = function(by, text){
+            var bw = 135;
+            var bh = 60;
+            var bx = cs.camera.width/2 - bw/2;
+
+            cs.draw.setAlpha(0.6);
+            cs.draw.rect(bx, by, bw, bh, true);
+
+            cs.draw.setColor('#FFFFFF');
+            cs.draw.rect(bx, by, bw, bh, false);
+
+            cs.draw.setColor('#FFFFFF');
+            cs.draw.setTextCenter();
+            cs.draw.text(cs.camera.width/2, by+bh/2, text);
+        }
 	},
 	step: function(){
-        if(!this.backgroundPlaying)
-            this.backgroundPlaying = cs.sound.play('background', { loop: true });
+        //Handling Touch
+        this.touch.check(0, 0, cs.camera.width, cs.camera.height);
+        switch(cs.save.state){
+            case 'START':
+                this.drawButton(cs.camera.height/2-45, 'Please tap to start');
+                if(this.touch.down)
+                    cs.save.state = 'TAPTOFLAP';
+                break;
 
-		var text = 'Score: ' + cs.global.score;
-		var tw = cs.draw.textSize(text).width;
-		cs.draw.setColor('#FFFFFF');
- 		cs.draw.text(cs.camera.width - tw-10, this.y+5, 'Score: ' + cs.global.score);
+            case 'TAPTOFLAP':
+                if(!this.backgroundPlaying)
+                    this.backgroundPlaying = cs.sound.play('background', { loop: true });
+                this.drawButton(cs.camera.height/2-70, 'Tap to flap!');
+                this.drawButton(cs.camera.height/2, 'Your Best Score: ' + cs.save.topScore);
+                if(this.touch.down){
+                    cs.save.state = 'PLAYING';
+                    cs.global.flap = true;
+                }
+                break;
 
- 		//Handling touch
- 		this.touch.check(0, 0, cs.camera.width, cs.camera.height);
-		if(this.touch.down){
-			cs.global.flap = true;
-			if(cs.global.live === false){
-				cs.room.restart();
-			}
-			if(cs.global.live === true){
-				cs.global.start = true;
-			}
-		}
+            case 'PLAYING':
+                var text = 'Score: ' + cs.global.score;
+                var tw = cs.draw.textSize(text).width;
+                cs.draw.setColor('#FFFFFF');
+                cs.draw.text(cs.camera.width - tw-10, this.y+5, 'Score: ' + cs.global.score);
+                if(this.touch.down)
+                    cs.global.flap = true;
+                break;
 
- 		if(cs.global.start == false || cs.global.live == false){
- 			//Replay
- 			var bw = 125; var bh = 50;
- 			var bx = cs.camera.width/2 - bw/2;
- 			var by = cs.camera.height/2 - bh/2;
- 			cs.draw.setAlpha(0.6);
- 			cs.draw.rect(bx, by, bw, bh, true);
- 			cs.draw.setColor('#FFFFFF');
- 			cs.draw.rect(bx, by, bw, bh, false);
- 			cs.draw.setColor('#FFFFFF');
- 			cs.draw.setTextCenter();
- 			var text = !cs.global.start ? 'Tap to Flap!' : 'Replay!';
- 			cs.draw.text(cs.camera.width/2, cs.camera.height/2, text);
-
-
- 			//Best Score
- 			by += 60;
- 			cs.draw.setAlpha(0.6);
- 			cs.draw.rect(bx, by, bw, bh, true);
- 			cs.draw.setColor('#FFFFFF');
- 			cs.draw.rect(bx, by, bw, bh, false);
- 			cs.draw.setColor('#FFFFFF');
- 			cs.draw.setTextCenter();
- 			var text = 'Your Best Score: ' + cs.save.topScore;
- 			cs.draw.text(cs.camera.width/2, by+bh/2, text);
-
- 		}
-	}
-})
+            case 'WRECKED':
+                this.drawButton(cs.camera.height/2-70, 'Replay!');
+                this.drawButton(cs.camera.height/2, 'Your Best Score: ' + cs.save.topScore);
+                if(this.touch.down){
+                    cs.save.state = 'TAPTOFLAP';
+                    cs.room.restart();
+                }
+                break;
+        }
+    }
+});

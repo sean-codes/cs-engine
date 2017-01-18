@@ -8,7 +8,7 @@ cs.obj.load('obj_pipe', {
 	},
 	step: function(){
 		cs.draw.sprite('pipe_'+this.pipe, this.x, this.y);
-		if(cs.global.live == false) return;
+		if(cs.save.state == 'WRECKED') return;
 
 		this.x -= this.hspeed;
 

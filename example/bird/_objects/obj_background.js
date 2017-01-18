@@ -42,7 +42,7 @@ cs.obj.load('obj_bgPart', {
 		}
 	},
 	step: function(){
-		if(cs.global.live === true || this.bgType == 'cloud')
+		if(cs.save.state !== 'WRECKED' || this.bgType == 'cloud')
 			this.x -= this.hspeed;
 
 		if(this.x < -this.width){

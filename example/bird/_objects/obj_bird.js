@@ -40,29 +40,27 @@ cs.obj.load('obj_bird', {
 			cs.draw.spriteExt('bird', this.x, this.y, angle);
 
 		cs.camera.follow(this);
-		if(cs.global.live == false) return;
-
-		
-		
-
-		if(cs.global.start == false){
-			this.vspeed += this.direction;
+        if(cs.save.state == 'PLAYING'){
+			if(this.vspeed < 4)
+				this.vspeed += 0.25;
+		} else {
+            this.vspeed += this.direction;
 			if(Math.abs(this.vspeed) > 3){
 				this.direction = this.direction * -1;
 				this.vspeed += this.direction*2;
 			}
-		} else {
-			if(this.vspeed < 4)
-				this.vspeed += 0.25;
-		}
+        }
 		this.y += this.vspeed;
 
-
+        if(cs.save.state == 'WRECKED'){
+            cs.global.flap = false;
+            this.vspeed = 1.5;
+            return;
+        }
 		//Check for touch
 		if(cs.global.flap){
 			this.vspeed = -5;
 			cs.sound.play('flap');
-			cs.global.start = true;
 			cs.global.flap = false;
 			if(this.diving > 24){
 				cs.global.score += 1;
@@ -78,7 +76,7 @@ cs.obj.load('obj_bird', {
 		}
 
 		//Building more pipes
-		if(cs.global.start){
+		if(cs.save.state == 'PLAYING'){
 			this.timer -= 1;
 			if(this.timer == 0){
 				this.timer = 120;
@@ -91,10 +89,13 @@ cs.obj.load('obj_bird', {
 				cs.obj.create('obj_score', cs.room.width+down.width, randomY - space/2);
 			}
 		}
+
+        //Colliding With Pipes
+        if(cs.save.state == 'TAPTOFLAP') return;
 		var collisionScore = this.meet('obj_score');
 		var collisionPipe = this.meet('obj_pipe');
 		if(collisionPipe || this.y > cs.room.height+50 || this.y < -50){
-			cs.global.live = false;
+			cs.save.state = 'WRECKED';
 		}
 		if(collisionScore){
 			cs.obj.destroy(collisionScore);

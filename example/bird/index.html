@@ -52,14 +52,16 @@
 
 
 			//Start game
-			cs.save.topScore = 0;
+            cs.save = { topScore: 0, state: 'START' }
 			cs.room.start = function(){
 				//Globals
-				cs.global.live = true;
-				cs.global.score = 0;
-				cs.global.start = false;
-				cs.global.speed = 1;
-				cs.global.flap = false;
+                cs.global = {
+                    live: true,
+                    score: 0,
+                    flap: false,
+                    start: false,
+                    speed: 1
+                }
 
 				cs.obj.create('obj_bird', (cs.room.width/2), cs.room.height/2);
 				cs.obj.create('obj_interface', cs.camera.width-50, 0);

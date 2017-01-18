@@ -18,7 +18,8 @@
       "IDEA",
       "NOTE",
       "REVIEW",
-      "DETAIL"
+      "DETAIL",
+      "DOEN"
     ]
   },
   "lists": [
@@ -28,10 +29,6 @@
     },
     {
       "name": "DETAIL",
-      "hidden": false
-    },
-    {
-      "name": "DONE",
       "hidden": false
     }
   ],
