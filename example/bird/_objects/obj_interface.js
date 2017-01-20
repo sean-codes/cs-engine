@@ -11,8 +11,6 @@ cs.obj.load('obj_interface', {
 
             cs.draw.setAlpha(0.6);
             cs.draw.rect(bx, by, bw, bh, true);
-
-            cs.draw.setColor('#FFFFFF');
             cs.draw.rect(bx, by, bw, bh, false);
 
             cs.draw.setColor('#FFFFFF');
@@ -23,11 +21,6 @@ cs.obj.load('obj_interface', {
 	step: function(){
         //Handling Touch
         this.touch.check(0, 0, cs.camera.width, cs.camera.height);
-        text = 'Sound Disabled';
-        if(cs.sound.canPlayAudio){
-            text = 'Sound Enabled';
-        }
-        cs.draw.text(10, 10, text);
         switch(cs.save.state){
             case 'START':
                 this.drawButton(cs.camera.height/2-45, 'Please tap to start');
@@ -49,8 +42,13 @@ cs.obj.load('obj_interface', {
             case 'PLAYING':
                 var text = 'Score: ' + cs.global.score;
                 var tw = cs.draw.textSize(text).width;
+                cs.draw.setAlpha(0.5);
+                cs.draw.rect(cs.camera.width-65, 0, 64, 40, true);
+                cs.draw.rect(cs.camera.width-65, 0, 64, 40);
                 cs.draw.setColor('#FFFFFF');
                 cs.draw.text(cs.camera.width - tw-10, this.y+5, 'Score: ' + cs.global.score);
+                cs.draw.setColor('#FFFFFF');
+                cs.draw.text(cs.camera.width - tw-10, this.y+20, 'Best: ' + cs.save.topScore);
                 if(this.touch.down)
                     cs.global.flap = true;
                 break;
@@ -58,6 +56,9 @@ cs.obj.load('obj_interface', {
             case 'WRECKED':
                 this.drawButton(cs.camera.height/2-70, 'Replay!');
                 this.drawButton(cs.camera.height/2, 'Your Best Score: ' + cs.save.topScore);
+                if(cs.global.score > cs.save.topScore)
+        			cs.save.topScore = cs.global.score;
+
                 if(this.touch.down){
                     cs.save.state = 'TAPTOFLAP';
                     cs.room.restart();

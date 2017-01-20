@@ -70,10 +70,8 @@ cs.obj.load('obj_bird', {
 			}
 			this.diving = 0;
 		}
-		if(this.vspeed > 3){
-			console.log('diving!!!');
+		if(this.vspeed > 3)
 			this.diving += 1;
-		}
 
 		//Building more pipes
 		if(cs.save.state == 'PLAYING'){

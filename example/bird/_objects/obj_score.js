@@ -13,10 +13,10 @@ cs.obj.load('obj_score_text', {
 	depth: -10,
 	create: function(){
 		this.text = cs.math.choose([
-			'Nice dive!',
-			'Daredevil!',
-			'Dangerous!',
-			'Holy Smokes!'
+			'+1 Nice dive!',
+			'+1 Daredevil!',
+			'+1 Dangerous!',
+			'+1 Holy Smokes!'
 		]);
 		this.timer = 60;
 	},
@@ -28,12 +28,9 @@ cs.obj.load('obj_score_text', {
 		cs.draw.setTextCenter();
 		cs.draw.setColor('#FFFFFF');
 		cs.draw.text(this.x, this.y, this.text);
-		
+
 		if(this.timer == 0){
 			cs.obj.destroy(this);
-		}
-		if(cs.global.score > cs.save.topScore){
-			cs.save.topScore = cs.global.score;
 		}
 	}
 })
