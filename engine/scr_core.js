@@ -65,10 +65,11 @@ cs.loop = {
     step : function(){
         if(cs.loop.run)
             window.requestAnimFrame(cs.loop.step);
-        cs.fps.update();
 
+        cs.fps.update();
         cs.draw.clear();
         cs.key.execute();
+
         for(var i = 0; i < cs.obj.list.length; i++){
             if(cs.obj.list[i].live){
                 var obj = cs.obj.list[i];
@@ -94,9 +95,8 @@ cs.loop = {
         }
 
         cs.draw.display();
-        if(cs.room.restarting === true){
+        if(cs.room.restarting === true)
             cs.room.reset();
-        }
     }
 }
 //---------------------------------------------------------------------------------------------//
@@ -213,14 +213,12 @@ cs.sound = {
     context: null,
     canPlayAudio: false,
     enable: function(){
-        console.log('trying to enable audio');
         if(this.canPlayAudio === true) return;
         var source = this.context.createBufferSource();
         source.buffer = this.context.createBuffer(1, 1, 22050);
         source.connect(this.context.destination);
         source.start(0);
         this.canPlayAudio = true;
-        console.log('enabling audio');
     },
     init: function(){
     	this.list = {};
