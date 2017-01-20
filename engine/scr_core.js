@@ -213,12 +213,14 @@ cs.sound = {
     context: null,
     canPlayAudio: false,
     enable: function(){
-        if(this.canPlayAudio) return;
+        console.log('trying to enable audio');
+        if(this.canPlayAudio === true) return;
         var source = this.context.createBufferSource();
         source.buffer = this.context.createBuffer(1, 1, 22050);
         source.connect(this.context.destination);
-        source.noteOn(0);
+        source.start(0);
         this.canPlayAudio = true;
+        console.log('enabling audio');
     },
     init: function(){
     	this.list = {};
@@ -947,6 +949,7 @@ cs.mouse = {
 cs.touch = {
     list : [],
     add : function(id){
+        cs.sound.enable();
         for(var i = 0; i < cs.touch.list.length; i++){
             if(cs.touch.list[i].used === false) break;
         }
@@ -968,9 +971,6 @@ cs.touch = {
         }
     },
     down : function(e){
-        //Enable Sound
-        cs.sound.enable();
-
         cs.touch.add(e.changedTouches[0].identifier);
         cs.touch.move(e);
     },
