@@ -225,10 +225,8 @@ cs.sound = {
     	try {
     		window.AudioContext =
     			window.AudioContext || window.webkitAudioContext;
-    		this.canPlayAudio = true;
     		this.context = new AudioContext();
     	} catch (e) {
-    		this.canPlayAudio = false;
     		this.context = undefined;
     		alert('Web Audio API is not supported in this browser');
     	}

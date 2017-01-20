@@ -23,6 +23,11 @@ cs.obj.load('obj_interface', {
 	step: function(){
         //Handling Touch
         this.touch.check(0, 0, cs.camera.width, cs.camera.height);
+        text = 'Sound Disabled';
+        if(cs.sound.canPlayAudio){
+            text = 'Sound Enabled';
+        }
+        cs.draw.text(10, 10, text);
         switch(cs.save.state){
             case 'START':
                 this.drawButton(cs.camera.height/2-45, 'Please tap to start');
