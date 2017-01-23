@@ -147,9 +147,9 @@ cs.obj = {
     },
     functions : {
         meet: function(objtype, options={}){
-            var obj1top = (options.y || this.y) - (options.yoff || this.yoff);
+            var obj1top = (options.y || this.y) - this.yoff + (this.vspeed || options.hspeed || 0);
             var obj1bottom = obj1top + (options.height || this.height);
-            var obj1left = (options.x || this.x) - (options.xoff || this.xoff);
+            var obj1left = (options.x || this.x) - this.xoff + (this.hspeed || options.hspeed || 0);
             var obj1right = obj1left + (options.width || this.width);
             var i = cs.obj.list.length-1; while(i--){
                 var obj2 = cs.obj.list[i];
@@ -951,7 +951,10 @@ cs.touch = {
     add : function(id){
         cs.sound.enable();
         for(var i = 0; i < cs.touch.list.length; i++){
-            if(cs.touch.list[i].used === false) break;
+            if(cs.touch.list[i].used === false) {
+                console.log('used');
+                break;
+            }
         }
 
         cs.touch.list[i] = {};
@@ -1093,6 +1096,7 @@ cs.math = {
 //---------------------------------------------------------------------------------------------//
 cs.network = {
     ws : {},
+    status: false,
     connect : function(options){
         var host = (options.ip == undefined) ? window.location.host : options.hostname;
         if(options.ssl == undefined || options.ssl == false){
@@ -1101,7 +1105,7 @@ cs.network = {
             var url = "wss://"+host+":"+options.port;
         }
         var ws = new WebSocket(url);
-        ws.onopen = function(){ cs.network.onconnect() }
+        ws.onopen = function(){ cs.network.onconnect(); cs.network.status = true; }
         ws.onclose = function(){ cs.network.ondisconnect() }
         ws.onmessage =  function(event){ cs.network.onmessage(event.data) }
         cs.network.ws = ws;
