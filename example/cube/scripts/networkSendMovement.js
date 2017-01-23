@@ -1,4 +1,6 @@
 cs.script.networkSendMovement = function(obj){
+    if(!cs.network.status) return;
+    
 	cs.network.send({
 		type: 'movement',
 		keys: obj.old_keys,

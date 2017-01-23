@@ -26,13 +26,13 @@
 		<script src='scripts/lightAdd.js'></script>
 		<script src='scripts/networkRecievedMessage.js'></script>
 		<script src='scripts/networkSendMovement.js'></script>
-	</head> 
+	</head>
 	<body>
 		<!--Game Area-->
 		<div id="view"></div>
 		<script>
 			cs.init('view');
-
+            
 			//Load Sprites
 			cs.sprite.load('sprites/spr_block');
 			cs.sprite.load('sprites/spr_crate');
@@ -47,13 +47,13 @@
 			cs.obj.create('obj_buttons', 100, 100);
 			cs.obj.create('obj_crate', 300, 336);
 			cs.obj.create('obj_player', 40, 40);
-			
+
 			var tx = 0;
 			while(tx < cs.room.width){
 				cs.obj.create('obj_block', tx, cs.room.height-16);
 				tx += 16;
 			}
-			
+
 			cs.obj.create('obj_joystick', 100, 100);
 			cs.obj.create('obj_inventory', 100, 100);
 			cs.obj.create('obj_fire', 150, 375);

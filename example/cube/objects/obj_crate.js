@@ -4,7 +4,7 @@ cs.obj.load('obj_crate', {
 	    this.height = 48;
 		this.vspeed = 0;
 		this.gravity = 8;
-	}, 
+	},
 	step: function(){
 	    this.touch.check(this.x, this.y, this.width, this.height);
 	    if(this.touch.held){
@@ -16,7 +16,7 @@ cs.obj.load('obj_crate', {
 				this.vspeed += 1;
 			}
 			this.v_col = this.meet('obj_block');
-			if(this.v_col > 0){
+			if(this.v_col){
 				this.vspeed = 0;
 			}
 			this.y += this.vspeed;
