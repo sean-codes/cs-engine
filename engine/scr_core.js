@@ -952,7 +952,6 @@ cs.touch = {
         cs.sound.enable();
         for(var i = 0; i < cs.touch.list.length; i++){
             if(cs.touch.list[i].used === false) {
-                console.log('used');
                 break;
             }
         }
