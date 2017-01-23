@@ -278,6 +278,7 @@ cs.sound = {
     },
     reset: function(){
         for(var sound in this.playList){
+            //TODO there is an error here take a look in a second I got to go wash my cloths~!!!
             this.playList[sound].stop();
             this.playList[sound].disconnect();
         }

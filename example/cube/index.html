@@ -11,21 +11,21 @@
 		<!-- Events -->
 		<script src='_events/network.js'></script>
 		<!-- Objects -->
-		<script src='_objects/obj_block.js'></script>
-		<script src='_objects/obj_build.js'></script>
-		<script src='_objects/obj_buttons.js'></script>
-		<script src='_objects/obj_crate.js'></script>
-		<script src='_objects/obj_fire.js'></script>
-		<script src='_objects/obj_inventory.js'></script>
-		<script src='_objects/obj_joystick.js'></script>
-		<script src='_objects/obj_light.js'></script>
-		<script src='_objects/obj_otherplayer.js'></script>
-		<script src='_objects/obj_player.js'></script>
+		<script src='objects/obj_build.js'></script>
+		<script src='objects/obj_block.js'></script>
+		<script src='objects/obj_buttons.js'></script>
+		<script src='objects/obj_crate.js'></script>
+		<script src='objects/obj_fire.js'></script>
+		<script src='objects/obj_inventory.js'></script>
+		<script src='objects/obj_joystick.js'></script>
+		<script src='objects/obj_light.js'></script>
+		<script src='objects/obj_otherplayer.js'></script>
+		<script src='objects/obj_player.js'></script>
 		<!-- Scripts -->
-		<script src='_scripts/compareObj.js'></script>
-		<script src='_scripts/lightAdd.js'></script>
-		<script src='_scripts/networkRecievedMessage.js'></script>
-		<script src='_scripts/networkSendMovement.js'></script>
+		<script src='scripts/compareObj.js'></script>
+		<script src='scripts/lightAdd.js'></script>
+		<script src='scripts/networkRecievedMessage.js'></script>
+		<script src='scripts/networkSendMovement.js'></script>
 	</head> 
 	<body>
 		<!--Game Area-->
@@ -34,11 +34,11 @@
 			cs.init('view');
 
 			//Load Sprites
-			cs.sprite.load('_sprites/spr_block');
-			cs.sprite.load('_sprites/spr_crate');
-			cs.sprite.load('_sprites/spr_inventory');
-			cs.sprite.load('_sprites/spr_item_rupee');
-			cs.sprite.load('_sprites/spr_player', {frames: 2, width:16, height:16});
+			cs.sprite.load('sprites/spr_block');
+			cs.sprite.load('sprites/spr_crate');
+			cs.sprite.load('sprites/spr_inventory');
+			cs.sprite.load('sprites/spr_item_rupee');
+			cs.sprite.load('sprites/spr_player', {frames: 2, width:16, height:16});
 
 			cs.global.networkControl = { id: -1, list: {} }
 			cs.network.connect({ port:9999, ssl: false });

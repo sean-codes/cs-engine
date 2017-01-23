@@ -9,11 +9,11 @@
 		<!-- Game Engine -->
 		<script src='../../engine/scr_core.js'></script>
 		<!-- My Scripts/Objects -->
-		<script src='_objects/obj_bird.js'></script>
-		<script src='_objects/obj_pipe.js'></script>
-		<script src='_objects/obj_score.js'></script>
-		<script src='_objects/obj_interface.js'></script>
-		<script src='_objects/obj_background.js'></script>
+		<script src='objects/obj_bird.js'></script>
+		<script src='objects/obj_pipe.js'></script>
+		<script src='objects/obj_score.js'></script>
+		<script src='objects/obj_interface.js'></script>
+		<script src='objects/obj_background.js'></script>
 	</head>
 	<body>
 		<!--Game Area-->
@@ -23,21 +23,21 @@
 			cs.init('view');
 
 			//Load Sprites
-			cs.sprite.load('_sprites/bird', {xoff:8, yoff:7});
-			cs.sprite.load('_sprites/bird2', {xoff:8, yoff:7});
-			cs.sprite.load('_sprites/pipe_down');
-			cs.sprite.load('_sprites/pipe_up');
-			cs.sprite.load('_sprites/pipe_up');
-			cs.sprite.load('_sprites/cloud1');
-			cs.sprite.load('_sprites/cloud2');
-			cs.sprite.load('_sprites/cloud3');
-			cs.sprite.load('_sprites/mountain1');
-			cs.sprite.load('_sprites/mountain2');
+			cs.sprite.load('sprites/bird', {xoff:8, yoff:7});
+			cs.sprite.load('sprites/bird2', {xoff:8, yoff:7});
+			cs.sprite.load('sprites/pipe_down');
+			cs.sprite.load('sprites/pipe_up');
+			cs.sprite.load('sprites/pipe_up');
+			cs.sprite.load('sprites/cloud1');
+			cs.sprite.load('sprites/cloud2');
+			cs.sprite.load('sprites/cloud3');
+			cs.sprite.load('sprites/mountain1');
+			cs.sprite.load('sprites/mountain2');
 
 			//Load Sounds
-			cs.sound.load({path:'_sounds/flap'});
-			cs.sound.load({path:'_sounds/background'});
-			cs.sound.load({path:'_sounds/score'});
+			cs.sound.load({path:'sounds/flap'});
+			cs.sound.load({path:'sounds/background'});
+			cs.sound.load({path:'sounds/score'});
 
 			//Room Setup
 			cs.camera.setup({
