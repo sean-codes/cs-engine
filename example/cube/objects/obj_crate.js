@@ -15,7 +15,7 @@ cs.obj.load('obj_crate', {
 			if(this.vspeed < this.gravity){
 				this.vspeed += 1;
 			}
-			this.v_col = cs.pos.meet('obj_block', this.x, this.y+this.vspeed, this.x+this.width, this.y+this.height+this.vspeed);
+			this.v_col = this.meet('obj_block');
 			if(this.v_col > 0){
 				this.vspeed = 0;
 			}
