@@ -54,6 +54,9 @@ cs.init = function(canvasId){
     cs.input.resize();
     //Sound
     cs.sound.init();
+    cs.sound.active = true;
+    window.onfocus = function(){ cs.sound.toggleActive(true) }
+    window.onblur = function(){ cs.sound.toggleActive(false) }
     //Animation and Step Start
     window.requestAnimFrame = window.requestAnimationFrame ||
                               window.webkitRequestAnimationFrame ||
@@ -212,6 +215,9 @@ cs.sound = {
     playList: [],
     context: null,
     canPlayAudio: false,
+    mute: false,
+    active: true,
+    volume : undefined,
     enable: function(){
         if(this.canPlayAudio === true) return;
         var source = this.context.createBufferSource();
@@ -269,7 +275,10 @@ cs.sound = {
             var csAudioObj = this.context.createBufferSource();
         	csAudioObj.buffer = this.list[audioName]['wav'].buffer;
             for(var opt in options){ csAudioObj[opt] = options[opt] }
-        	csAudioObj.connect(this.context.destination);
+            csAudioObj.gainNode = this.context.createGain();
+        	csAudioObj.connect(csAudioObj.gainNode);
+        	csAudioObj.gainNode.connect(this.context.destination);
+            csAudioObj.gainNode.gain.value = cs.sound.mute ? 0 : 1;
             csAudioObj.start(0);
             this.playList.push(csAudioObj);
             return csAudioObj;
@@ -283,6 +292,26 @@ cs.sound = {
             this.playList[sound].stop();
             this.playList[sound].disconnect();
         }
+    },
+    toggleMute: function(bool){
+        this.mute = bool;
+        if(bool)
+            this.setGain(0);
+        else
+            this.setGain(1);
+    },
+    setGain: function(gainValue){
+        console.log('GainValue: ' + gainValue);
+        for(var audioObj in this.playList){
+            console.log('Muting...', audioObj);
+            this.playList[audioObj].gainNode.gain.value = gainValue;
+        }
+    },
+    toggleActive: function(bool){
+        if(bool)
+            this.context.resume();
+        else
+            this.context.suspend();
     }
 }
 //---------------------------------------------------------------------------------------------//
@@ -1097,7 +1126,7 @@ cs.network = {
     ws : {},
     status: false,
     connect : function(options){
-        var host = (options.ip == undefined) ? window.location.host : options.hostname;
+        var host = options.host || window.location.host;
         if(options.ssl == undefined || options.ssl == false){
             var url = "ws://"+host+":"+options.port;
         } else {
