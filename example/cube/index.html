@@ -32,7 +32,7 @@
 		<div id="view"></div>
 		<script>
 			cs.init('view');
-            
+
 			//Load Sprites
 			cs.sprite.load('sprites/spr_block');
 			cs.sprite.load('sprites/spr_crate');
@@ -41,7 +41,7 @@
 			cs.sprite.load('sprites/spr_player', {frames: 2, width:16, height:16});
 
 			cs.global.networkControl = { id: -1, list: {} }
-			cs.network.connect({ port:9999, ssl: false });
+			cs.network.connect({ host:'cube-script.net', port:9999, ssl: false });
 
 			cs.obj.create('obj_light', 0, 0);
 			cs.obj.create('obj_buttons', 100, 100);

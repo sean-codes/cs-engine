@@ -13,23 +13,23 @@ cs.script.networkReceivedMessage = function(message){
 			console.log(message);
 			message.list.forEach(function(player){
 				var newPlayer = cs.obj.create('obj_otherplayer', player.x, player.y);
-				network.list[player.id] = {
+				cs.global.networkControl.list[player.id] = {
 					id: player.id,
-					obj: cs.obj.list[newPlayer]
+					obj: newPlayer
 				};
 			});
 			break;
 
 		case 'endPlayers':
 			message.list.forEach(function(player){
-				cs.obj.destroy(network.list[player.id].obj.id);
+				cs.obj.destroy(cs.global.networkControl.list[player.id].obj.id);
 			});
 			break;
 
 		case 'movement':
-			var obj = network.list[message.id].obj;
+			var obj = cs.global.networkControl.list[message.id].obj;
 			obj.keys = message.keys;
-			obj.x = message.x; 
+			obj.x = message.x;
 			obj.y = message.y;
 			obj.hspeed = message.hspeed;
 			obj.vspeed = message.vspeed;

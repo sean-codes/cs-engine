@@ -21,6 +21,19 @@ cs.obj.load('obj_interface', {
 	step: function(){
         //Handling Touch
         this.touch.check(0, 0, cs.camera.width, cs.camera.height);
+        //Sound
+        if(this.touch.down && this.touch.x > 0 && this.touch.x < 14 && this.touch.y > 0 && this.touch.y < 14){
+            console.log('Toggline Mute from obj_interface');
+            if(cs.sound.mute === false)
+                cs.sound.toggleMute(true);
+            else
+                cs.sound.toggleMute(false);
+            return;
+        }
+        var soundSprite = 'sound_on';
+        if(cs.sound.mute)
+            soundSprite = 'sound_off';
+        cs.draw.sprite(soundSprite, 0, 0);
         switch(cs.save.state){
             case 'START':
                 this.drawButton(cs.camera.height/2-45, 'Please tap to start');
