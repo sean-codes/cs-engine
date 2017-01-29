@@ -40,7 +40,7 @@ cs.obj.load('obj_player', {
 				this.hspeed -= sign/4;
 			}
 		}
-		this.h_col = this.meet('obj_block');
+		this.h_col = this.meet('obj_block', {vspeed:0});
 		if(this.h_col || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width){
 			this.hspeed = 0;
 		}

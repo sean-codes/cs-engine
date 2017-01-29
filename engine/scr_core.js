@@ -150,9 +150,12 @@ cs.obj = {
     },
     functions : {
         meet: function(objtype, options={}){
-            var obj1top = (options.y || this.y) - this.yoff + (this.vspeed || options.hspeed || 0);
+            var vspeed = this.vspeed || 0; var hspeed = this.hspeed;
+            vspeed = (options.vspeed !== undefined) ? options.vspeed : vspeed;
+            hspeed = (options.hspeed !== undefined) ? options.hspeed : hspeed;
+            var obj1top = (options.y || this.y) - this.yoff + vspeed;
             var obj1bottom = obj1top + (options.height || this.height);
-            var obj1left = (options.x || this.x) - this.xoff + (this.hspeed || options.hspeed || 0);
+            var obj1left = (options.x || this.x) - this.xoff + hspeed;
             var obj1right = obj1left + (options.width || this.width);
             var i = cs.obj.list.length-1; while(i--){
                 var obj2 = cs.obj.list[i];
