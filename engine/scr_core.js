@@ -57,6 +57,7 @@ cs.init = function(canvasId){
     cs.sound.active = true;
     window.onfocus = function(){ cs.sound.toggleActive(true) }
     window.onblur = function(){ cs.sound.toggleActive(false) }
+    document.body.visibilitychange= function(){console.log('test')};
     //Animation and Step Start
     window.requestAnimFrame = window.requestAnimationFrame ||
                               window.webkitRequestAnimationFrame ||
@@ -275,7 +276,13 @@ cs.sound = {
     },
     play: functionplay = function(audioName, options){
         if(this.list[audioName]['wav'].loaded === true){
+            this.playList.forEach(function(audioObj){
+                if(audioObj.name == audioName){
+                    console.log('Reuse this sound');
+                }
+            })
             var csAudioObj = this.context.createBufferSource();
+            csAudioObj.name = audioName;
         	csAudioObj.buffer = this.list[audioName]['wav'].buffer;
             for(var opt in options){ csAudioObj[opt] = options[opt] }
             csAudioObj.gainNode = this.context.createGain();
