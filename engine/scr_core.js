@@ -434,7 +434,7 @@ cs.draw = {
 
         cs.draw.reset();
     },
-    spriteExt : function(spriteName, x, y, angle, frame=0){
+    spriteExt : function(spriteName, x, y, angle, scaleX=1, scaleY=1, frame=0){
         sprite = cs.sprite.list[spriteName];
         if(!this.raw){
             x = Math.floor(x - cs.camera.x);
@@ -458,6 +458,7 @@ cs.draw = {
 
         this.ctx.translate(x, y);
         this.ctx.rotate(angle * Math.PI/180);
+        this.ctx.scale(scaleX, scaleY);
         this.ctx.drawImage(sprite, -(sprite.xoff), -(sprite.yoff));
 
         this.ctx.restore();

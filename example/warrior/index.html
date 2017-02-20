@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>cs-engine</title>
+		<!-- View Setup -->
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+		<link rel="stylesheet" type="text/css" href="../../engine/css.css?v=1" />
+
+		<!-- Game Engine -->
+		<script src='../../engine/scr_core.js'></script>
+		<!-- My Scripts/Objects -->
+		<script src='objects/obj_player.js'></script>
+		<script src='objects/obj_block.js'></script>
+	</head>
+	<body>
+		<!--Game Area-->
+		<div id="view"></div>
+		<script>
+			//Initialize the view
+			cs.init('view');
+
+			//Load Sprites
+			cs.sprite.load('sprites/block');
+			cs.sprite.load('sprites/head');
+			cs.sprite.load('sprites/body');
+			cs.sprite.load('sprites/hand');
+			cs.sprite.load('sprites/foot');
+			cs.sprite.load('sprites/sword', {xoff: 4, yoff: 18});
+			cs.sprite.load('sprites/shield');
+
+
+			cs.camera.setup({
+				width:144,
+				height:256,
+				maxWidth:300,
+				maxHeight:200,
+				lock: true
+			});
+			cs.room.setup(800, 256);
+
+			//Create Objects
+			cs.obj.create('obj_player', 50, 50);
+			for(var i = 0; i < 100; i++){
+				cs.obj.create('obj_block', i*16, cs.room.height-17);
+			}
+		</script>
+	</body>
+</html>
