@@ -112,7 +112,6 @@ cs.obj = {
     create : function(type, x, y){
         var depth = cs.obj.types[type].depth;
         var obj_id = this.list.length;
-        console.log('objlist length: ' + obj_id);
         var pos = this.findPosition(cs.obj.types[type].depth);
         this.list.splice(pos, 0, {});
         for(var func in this.functions){ this.list[pos][func] = this.functions[func] }
