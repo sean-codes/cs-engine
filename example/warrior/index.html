@@ -12,6 +12,7 @@
 		<script src='objects/obj_player.js'></script>
 		<script src='objects/obj_blob.js'></script>
 		<script src='objects/obj_block.js'></script>
+		<script src='objects/obj_interface.js'></script>
 	</head>
 	<body>
 		<!--Game Area-->
@@ -43,6 +44,7 @@
 			//Create Objects
 			cs.obj.create('obj_player', 50, 50);
 			cs.obj.create('obj_blob', 50, 1);
+			cs.obj.create('obj_interface', 50, 1);
 			for(var i = 0; i < 100; i++){
 				cs.obj.create('obj_block', i*16, cs.room.height-17);
 			}
