@@ -111,22 +111,24 @@ cs.obj = {
     types : {},
     create : function(type, x, y){
         var depth = cs.obj.types[type].depth;
-        var obj_id = this.findPosition(cs.obj.types[type].depth);
-        this.list.splice(obj_id, 0, {});
-        for(var func in this.functions){ this.list[obj_id][func] = this.functions[func] }
-        this.list[obj_id].depth = depth;
-        this.list[obj_id].live = true;
-        this.list[obj_id].type = type;
-        this.list[obj_id].id = obj_id;
-        this.list[obj_id].core = false;
-        this.list[obj_id].draw = 'game';
-        this.list[obj_id].layer = 0;
-        this.list[obj_id].particle = { list : [], settings : {} };
-        this.list[obj_id].x = x; this.list[obj_id].xoff = 0;
-        this.list[obj_id].y = y; this.list[obj_id].yoff = 0;
+        var obj_id = this.list.length;
+        console.log('objlist length: ' + obj_id);
+        var pos = this.findPosition(cs.obj.types[type].depth);
+        this.list.splice(pos, 0, {});
+        for(var func in this.functions){ this.list[pos][func] = this.functions[func] }
+        this.list[pos].depth = depth;
+        this.list[pos].live = true;
+        this.list[pos].type = type;
+        this.list[pos].id = obj_id;
+        this.list[pos].core = false;
+        this.list[pos].draw = 'game';
+        this.list[pos].layer = 0;
+        this.list[pos].particle = { list : [], settings : {} };
+        this.list[pos].x = x; this.list[pos].xoff = 0;
+        this.list[pos].y = y; this.list[pos].yoff = 0;
         var create = cs.obj.types[type].create;
-        create.call(this.list[obj_id]);
-        this.list[obj_id].touch = cs.touch.create(this.list[obj_id].draw == 'gui');
+        create.call(this.list[pos]);
+        this.list[pos].touch = cs.touch.create(this.list[pos].draw == 'gui');
         return this.list[obj_id];
     },
     load : function(name, options){
@@ -158,7 +160,7 @@ cs.obj = {
             var obj1bottom = obj1top + (options.height || this.height);
             var obj1left = (options.x || this.x) - this.xoff + hspeed;
             var obj1right = obj1left + (options.width || this.width);
-            var i = cs.obj.list.length-1; while(i--){
+            var i = cs.obj.list.length; while(i--){
                 var obj2 = cs.obj.list[i];
                 if (obj2.live === true && i !== this.id && obj2.type == objtype){
                     var obj2top = obj2.y;

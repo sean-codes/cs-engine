@@ -5,7 +5,7 @@ cs.obj.load('obj_player',{
         this.dir = -1;
         this.speed = 2;
         this.gravity = 2;
-        this.width = 32;
+        this.width = 8;
         this.height = 15;
         this.jump = 8;
 
