@@ -1,4 +1,4 @@
-cs.obj.load('obj_player',{
+cs.objects['obj_player'] = {
     create: function(){
         this.hspeed = 0;
         this.vspeed = 0;
@@ -11,7 +11,6 @@ cs.obj.load('obj_player',{
 
         this.bounce = 0;
         this.bounceTimer = 20;
-
 
         this.attacking = 0;
         this.attackTimer = {
@@ -89,11 +88,12 @@ cs.obj.load('obj_player',{
         var attackAngle = 0;
         var attackX = 0;
         var attackY = 0;
+        var state = '';
         if(this.attacking > 0){
             this.attacking -= 1;
             var curAttack = this.attackTotal - this.attacking;
             var add = 0;
-            for(var state in this.attackTimer){
+            for(state in this.attackTimer){
                 if(curAttack >= add  && curAttack < add+this.attackTimer[state]){
                     var percent = (curAttack - add) / this.attackTimer[state];
                     switch(state){
@@ -123,28 +123,32 @@ cs.obj.load('obj_player',{
                 add += this.attackTimer[state];
             }
         }
-        //Get sword angle
+
+        //Weapon Hit
+        if(state == 'swing'){
+           cs.script.player.attack()
+        }
 
         //Going Left
         if(this.dir == -1){
-            cs.draw.spriteExt('sword', this.x-1-this.bounce+attackX, this.y+10, attackAngle);
-            cs.draw.sprite('head', this.x, this.y);
-            cs.draw.sprite('foot', this.x+1, this.y+13+this.bounce);
-            cs.draw.sprite('foot', this.x+6, this.y+13-this.bounce);
-            cs.draw.sprite('hand', this.x-1-this.bounce+attackX, this.y+9);
-            cs.draw.sprite('hand', this.x+7-this.bounce, this.y+9);
-            cs.draw.sprite('body', this.x+1, this.y+7);
-            cs.draw.sprite('shield', this.x+4+this.bounce, this.y+8);
+            cs.draw.spriteExt('spr_sword', this.x-1-this.bounce+attackX, this.y+10, attackAngle);
+            cs.draw.sprite('spr_head', this.x, this.y);
+            cs.draw.sprite('spr_foot', this.x+1, this.y+13+this.bounce);
+            cs.draw.sprite('spr_foot', this.x+6, this.y+13-this.bounce);
+            cs.draw.sprite('spr_hand', this.x-1-this.bounce+attackX, this.y+9);
+            cs.draw.sprite('spr_hand', this.x+7-this.bounce, this.y+9);
+            cs.draw.sprite('spr_body', this.x+1, this.y+7);
+            cs.draw.sprite('spr_shield', this.x+4+this.bounce, this.y+8);
         } else {
             //Going Right
-            cs.draw.spriteExt('sword', this.x+9+this.bounce-attackX, this.y+10, -attackAngle);
-            cs.draw.spriteExt('head', this.x+9, this.y, 0, -1, 1);
-            cs.draw.sprite('foot', this.x+1, this.y+13+this.bounce);
-            cs.draw.sprite('foot', this.x+6, this.y+13-this.bounce);
-            cs.draw.sprite('hand', this.x-1, this.y+9);
-            cs.draw.sprite('hand', this.x+7+this.bounce-attackX, this.y+9);
-            cs.draw.sprite('body', this.x+1, this.y+7);
-            cs.draw.sprite('shield', this.x-4-this.bounce, this.y+8);
+            cs.draw.spriteExt('spr_sword', this.x+9+this.bounce-attackX, this.y+10, -attackAngle);
+            cs.draw.spriteExt('spr_head', this.x+9, this.y, 0, -1, 1);
+            cs.draw.sprite('spr_foot', this.x+1, this.y+13+this.bounce);
+            cs.draw.sprite('spr_foot', this.x+6, this.y+13-this.bounce);
+            cs.draw.sprite('spr_hand', this.x-1, this.y+9);
+            cs.draw.sprite('spr_hand', this.x+7+this.bounce-attackX, this.y+9);
+            cs.draw.sprite('spr_body', this.x+1, this.y+7);
+            cs.draw.sprite('spr_shield', this.x-4-this.bounce, this.y+8);
         }
 
 
@@ -154,4 +158,4 @@ cs.obj.load('obj_player',{
         if(cs.key.down[33]){ cs.camera.zoomIn(); }
         if(cs.key.down[34]){ cs.camera.zoomOut(); }
     }
-})
+}

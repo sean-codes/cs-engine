@@ -1,4 +1,4 @@
-cs.obj.load('obj_interface', {
+cs.objects['obj_interface'] = {
     create: function(){
         cs.obj.create('obj_joystick', 0, 0);
         cs.obj.create('obj_buttons', 0, 0);
@@ -6,9 +6,9 @@ cs.obj.load('obj_interface', {
     step: function(){
 
     }
-});
+}
 
-cs.obj.load('obj_buttons', {
+cs.objects['obj_buttons'] = {
 	create: function(){
 		this.width = 30;
 	    this.height = 30;
@@ -37,32 +37,32 @@ cs.obj.load('obj_buttons', {
 		cs.draw.setColor("white");
 		cs.draw.rect(this.cx, this.cy, this.width, this.height, false);
 	}
-});
+}
 
-cs.obj.load('obj_joystick', {
-    create: function(){
-        this.width = 64;
-        this.height = 64;
-        this.draw = 'gui';
-    	this.tx = 0;
-    	this.ty = 0;
-    	this.jw = this.width/2;
-    	this.jh = this.height/2;
-    	cs.global.showJoyStick = true;
+cs.objects['obj_joystick'] = {
+   create: function(){
+      this.width = 64;
+      this.height = 64;
+      this.draw = 'gui';
+      this.tx = 0;
+      this.ty = 0;
+      this.jw = this.width/2;
+      this.jh = this.height/2;
+      cs.global.showJoyStick = true;
     },
     step: function(){
-    	if(!cs.global.showJoyStick)
-            return
+    	 if(!cs.global.showJoyStick)
+          return
 
-        this.x = 10; this.y = cs.draw.height - this.height - 10;
+          this.x = 10; this.y = cs.draw.height - this.height - 10;
 
-        this.touch.check(this.x, this.y, this.width, this.height);
+          this.touch.check(this.x, this.y, this.width, this.height);
 
-        this.tx = this.x + (this.width/2) - (this.jw/2);
-        this.ty = this.y + (this.width/2) - (this.jh/2);
-        if(this.touch.held){
-            this.tx = this.touch.x-(this.jw/2);
-            if(this.tx < this.x){
+          this.tx = this.x + (this.width/2) - (this.jw/2);
+          this.ty = this.y + (this.width/2) - (this.jh/2);
+          if(this.touch.held){
+             this.tx = this.touch.x-(this.jw/2);
+             if(this.tx < this.x){
                 this.tx = this.x;
                 //left key
                 cs.key.virtualDown(37);
@@ -103,4 +103,4 @@ cs.obj.load('obj_joystick', {
     	cs.draw.text(1, 0, 'FPS Step: ' + cs.fps.rate);
     	cs.draw.text(1, 30, 'Scale: ' + cs.camera.scale);
     }
-});
+}

@@ -1,4 +1,4 @@
-cs.obj.load('obj_blob',{
+cs.objects['obj_blob'] = {
     create: function(){
         this.hspeed = 0;
         this.vspeed = 0;
@@ -50,6 +50,6 @@ cs.obj.load('obj_blob',{
         }
 
         //cs.draw.sprite('blob', this.x, this.y, 0);
-        cs.draw.spriteExt('blob', this.x+((this.dir < 0) ? this.width : 0), this.y, 0, this.dir);
+        cs.draw.spriteExt('spr_blob', this.x+((this.dir < 0) ? this.width : 0), this.y, 0, this.dir);
     }
-})
+}

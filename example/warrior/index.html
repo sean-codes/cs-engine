@@ -8,11 +8,14 @@
 
 		<!-- Game Engine -->
 		<script src='../../engine/scr_core.js?v=12'></script>
-		<!-- My Scripts/Objects -->
+		<!-- Objects -->
 		<script src='objects/obj_player.js'></script>
 		<script src='objects/obj_blob.js'></script>
 		<script src='objects/obj_block.js'></script>
 		<script src='objects/obj_interface.js'></script>
+
+		<!-- Scripts -->
+		<script src='scripts/scr_player.js'></script>
 	</head>
 	<body>
 		<!--Game Area-->
@@ -22,14 +25,14 @@
 			cs.init('view');
 
 			//Load Sprites
-			cs.sprite.load('sprites/block');
-			cs.sprite.load('sprites/head');
-			cs.sprite.load('sprites/body');
-			cs.sprite.load('sprites/hand');
-			cs.sprite.load('sprites/foot');
-			cs.sprite.load('sprites/sword', {xoff: 4, yoff: 18});
-			cs.sprite.load('sprites/shield');
-			cs.sprite.load('sprites/blob');
+			cs.sprite.load('sprites/spr_block');
+			cs.sprite.load('sprites/spr_head');
+			cs.sprite.load('sprites/spr_body');
+			cs.sprite.load('sprites/spr_hand');
+			cs.sprite.load('sprites/spr_foot');
+			cs.sprite.load('sprites/spr_sword', {xoff: 4, yoff: 18});
+			cs.sprite.load('sprites/spr_shield');
+			cs.sprite.load('sprites/spr_blob');
 
 
 			cs.camera.setup({

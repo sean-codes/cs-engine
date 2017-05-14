@@ -3,7 +3,7 @@ var cs = {};
 //---------------------------------------------------------------------------------------------//
 //-----------------------------| Global Variables and Scripts |--------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.global = {}; cs.script = {}; cs.save = {};
+cs.global = {}; cs.script = {}; cs.save = {}; cs.objects = {};
 //---------------------------------------------------------------------------------------------//
 //--------------------------------| Performance Monitoring |-----------------------------------//
 //---------------------------------------------------------------------------------------------//
@@ -81,7 +81,7 @@ cs.loop = {
 
                 cs.particle.settings = obj.particle.settings;
                 cs.particle.obj = obj;
-                var step = cs.obj.types[obj.type].step;
+                var step = cs.objects[obj.type].step;
                 step.call(obj);
             }
         }
@@ -110,9 +110,9 @@ cs.obj = {
     list : [],
     types : {},
     create : function(type, x, y){
-        var depth = cs.obj.types[type].depth;
+        var depth = cs.objects[type].depth || 0;
         var obj_id = this.list.length;
-        var pos = this.findPosition(cs.obj.types[type].depth);
+        var pos = this.findPosition(depth);
         this.list.splice(pos, 0, {});
         for(var func in this.functions){ this.list[pos][func] = this.functions[func] }
         this.list[pos].depth = depth;
@@ -125,19 +125,10 @@ cs.obj = {
         this.list[pos].particle = { list : [], settings : {} };
         this.list[pos].x = x; this.list[pos].xoff = 0;
         this.list[pos].y = y; this.list[pos].yoff = 0;
-        var create = cs.obj.types[type].create;
+        var create = cs.objects[type].create;
         create.call(this.list[pos]);
         this.list[pos].touch = cs.touch.create(this.list[pos].draw == 'gui');
         return this.list[obj_id];
-    },
-    load : function(name, options){
-        var cnt = this.types.length;
-        this.types[name] = {
-            name : name,
-            create : options.create || {},
-            step : options.step || {},
-            depth : options.depth || 0
-        }
     },
     destroy : function(obj){
         obj.live = false;
