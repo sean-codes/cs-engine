@@ -1,10 +1,10 @@
 cs.script.lightAdd = function(objID, color, radius, xoff, yoff){
     var len = cs.global.lightList.length;
     cs.global.lightList[len] = {
-        id    : objID,
+        obj    : objID,
         color : color,
         size  : radius,
-        xoff  : xoff, 
+        xoff  : xoff,
         yoff  : yoff
     }
 }

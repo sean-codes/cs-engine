@@ -9,14 +9,14 @@ cs.objects['obj_light'] = {
 
         //Create Global Variable
         cs.global.lightList = [];
+
     },
     step: function(){
         cs.draw.rect(0, 0, cs.room.width, cs.room.height, true);
-
         for(var i = 0; i < cs.global.lightList.length; i++){
             var light = cs.global.lightList[i];
-            var obj = cs.obj.list[light.id];
 
+            var obj = light.obj;
             cs.draw.setOperation('xor');
 
             cs.draw.circleGradient(obj.x+light.xoff, obj.y+light.yoff, light.size);
