@@ -144,8 +144,8 @@ cs.obj = {
     functions : {
         meet: function(objtype, options={}){
             var vspeed = this.vspeed || 0; var hspeed = this.hspeed;
-            vspeed = (options.vspeed !== undefined) ? options.vspeed : vspeed;
-            hspeed = (options.hspeed !== undefined) ? options.hspeed : hspeed;
+            vspeed = (options.vspeed !== undefined) ? options.vspeed : vspeed || 0;
+            hspeed = (options.hspeed !== undefined) ? options.hspeed : hspeed || 0;
             var obj1top = (options.y || this.y) - this.yoff + vspeed;
             var obj1bottom = obj1top + (options.height || this.height);
             var obj1left = (options.x || this.x) - this.xoff + hspeed;
