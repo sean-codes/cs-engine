@@ -29,7 +29,7 @@ This will be loaded:
 
      cs.sprite.add('spr-1-32-48-0-0','path/spre-1-32-48-0-0.png')
 
-This image will now be usable: 
+This image will now be usable:
 
      cs.draw.sprite('spr', x, y, frame);
 
@@ -47,16 +47,15 @@ Inside the new js file you will need to create the object by using:
 
 Copy this into your new js file and change the 'obj_name' string to the name of your object.
 
-
-    cs.obj.load('obj_name', {
+    cs.objects['obj_name'] = {
         create: function(){
             this.width = 16;
             this.height = 16;
-        }, 
+        },
         step: function(){
     	   cs.draw.sprite('spr', this.x, this.y);
        }
-    });
+    }
 
 To create the object add after the init() function to cs.obj.create('obj_name', x, y);
 
@@ -93,26 +92,26 @@ Set Functions:
 
     //Color
     cs.draw.setColor("hexvalue");
-    
+
     //Alpha
     cs.draw.setAlpha(0-1);
-    
+
     //Line Thickness
     cs.draw.setWidth(decimal);
-    
+
     //Font
     cs.draw.setFont('Times New Roman 12px');
-    
+
     //Text Align Horizontal
     cs.draw.setTextHort('center, left, right');
-    
+
     //Text Align Vertical
     cs.draw.setTextVert('top, bottom, baseline, middle');
-    
+
     //Text Center vertically and hortizontally
     cs.draw.setTextCenter();
 
-Note: The set function are reset after any drawing event! They are layer specific and the layer resets after each draw event. You should use these right before your drawing event 
+Note: The set function are reset after any drawing event! They are layer specific and the layer resets after each draw event. You should use these right before your drawing event
 
     //Draw a white filled square
     cs.draw.setColor("#FFFFFF");
@@ -132,4 +131,3 @@ The scale variables allows scaling the camera. It is not very reliable because i
 
     //Scale the camera 2 times the size
     cs.camera.scale = 2;
-
