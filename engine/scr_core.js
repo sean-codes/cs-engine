@@ -113,7 +113,6 @@ cs.obj = {
         var depth = cs.objects[type].depth || 0;
         var pos = this.findPosition(depth);
         this.list.splice(pos, 0, {});
-        for(var func in this.functions){ this.list[pos][func] = this.functions[func] }
         this.list[pos].depth = depth;
         this.list[pos].live = true;
         this.list[pos].type = type;
@@ -139,15 +138,6 @@ cs.obj = {
             }
         }
         return i;
-    },
-    functions : {
-        setSprite: function(spriteName){
-            this.sprite = spriteName;
-            this.width = cs.sprite.list[spriteName].fwidth;
-            this.height = cs.sprite.list[spriteName].fheight;
-            this.xoff = cs.sprite.list[spriteName].xoff;
-            this.yoff = cs.sprite.list[spriteName].yoff;
-        }
     }
 }
 //---------------------------------------------------------------------------------------------//
