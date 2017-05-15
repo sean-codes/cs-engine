@@ -1,7 +1,7 @@
 cs.objects['obj_bird'] = {
 	depth: -5,
 	create: function(){
-		this.setSprite('bird');
+		cs.script.setSprite(this, 'bird');
 		this.timer = 60;
 		this.direction = .1;
 		this.vspeed = 0;
@@ -88,10 +88,10 @@ cs.objects['obj_bird'] = {
 			}
 		}
 
-        //Colliding With Pipes
-        if(cs.save.state == 'TAPTOFLAP') return;
-		var collisionScore = this.meet('obj_score');
-		var collisionPipe = this.meet('obj_pipe');
+     //Colliding With Pipes
+     if(cs.save.state == 'TAPTOFLAP') return;
+		var collisionScore = cs.script.collide(this, 'obj_score');
+		var collisionPipe = cs.script.collide(this, 'obj_pipe');
 		if(collisionPipe || this.y > cs.room.height+50 || this.y < -50){
 			cs.save.state = 'WRECKED';
 		}

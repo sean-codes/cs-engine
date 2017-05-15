@@ -8,12 +8,16 @@
 
 		<!-- Game Engine -->
 		<script src='../../engine/scr_core.js'></script>
-		<!-- My Scripts/Objects -->
+		<!-- My Objects -->
 		<script src='objects/obj_bird.js'></script>
 		<script src='objects/obj_pipe.js'></script>
 		<script src='objects/obj_score.js'></script>
 		<script src='objects/obj_interface.js'></script>
 		<script src='objects/obj_background.js'></script>
+
+		<!-- My Scripts -->
+		<script src='scripts/scr_collide.js'></script>
+		<script src='scripts/scr_sprite.js'></script>
 	</head>
 	<body>
 		<!--Game Area-->
@@ -50,7 +54,7 @@
 				lock: true
 			});
 			cs.room.setup(800, 256);
-            
+
 			//Start game
             cs.save = { topScore: 0, state: 'START' }
 			cs.room.start = function(){

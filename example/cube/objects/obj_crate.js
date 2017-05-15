@@ -16,8 +16,9 @@ cs.objects['obj_crate'] = {
 			if(this.vspeed < this.gravity){
 				this.vspeed += 1;
 			}
-			this.v_col = this.meet('obj_block');
-			console.log(this.v_col)
+
+			this.v_col = cs.script.collide(this, 'obj_block')
+
 			if(this.v_col){
 				this.vspeed = 0;
 			}

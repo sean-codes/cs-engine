@@ -40,7 +40,8 @@ cs.objects['obj_player'] = {
 				this.hspeed -= sign/4;
 			}
 		}
-		this.h_col = this.meet('obj_block', {vspeed:0});
+
+		this.h_col = cs.script.collide(this, 'obj_block', {vspeed:0})
 		if(this.h_col || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width){
 			this.hspeed = 0;
 		}
@@ -50,7 +51,7 @@ cs.objects['obj_player'] = {
 		if(this.vspeed < this.gravity){
 			this.vspeed += 1;
 		}
-		this.v_col = this.meet('obj_block');
+		this.v_col = cs.script.collide(this, 'obj_block')
 		if(this.v_col){
 			this.vspeed = 0;
 			if(keys.up && this.v_col.y > this.y){

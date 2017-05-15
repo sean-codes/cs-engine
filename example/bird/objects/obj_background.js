@@ -22,7 +22,7 @@ cs.objects['obj_bgPart'] = {
 		this.timer = 600;
 		this.bgType = cs.math.choose(['mountain', 'cloud']);
 
-		this.setSprite(cs.math.choose([
+		cs.script.setSprite(this, cs.math.choose([
 			'cloud1',
 			'cloud2',
 			'cloud3'
@@ -33,7 +33,7 @@ cs.objects['obj_bgPart'] = {
 		this.hspeed = cs.global.speed+cs.math.choose([0, 1]);
 		//Mountain
 		if(this.bgType == 'mountain'){
-			this.setSprite(cs.math.choose([
+			cs.script.setSprite(this,cs.math.choose([
 				'mountain1',
 				'mountain2'
 			]));
