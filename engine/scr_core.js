@@ -111,14 +111,13 @@ cs.obj = {
     types : {},
     create : function(type, x, y){
         var depth = cs.objects[type].depth || 0;
-        var obj_id = this.list.length;
         var pos = this.findPosition(depth);
         this.list.splice(pos, 0, {});
         for(var func in this.functions){ this.list[pos][func] = this.functions[func] }
         this.list[pos].depth = depth;
         this.list[pos].live = true;
         this.list[pos].type = type;
-        this.list[pos].id = obj_id;
+        this.list[pos].id = pos;
         this.list[pos].core = false;
         this.list[pos].draw = 'game';
         this.list[pos].layer = 0;
@@ -128,7 +127,7 @@ cs.obj = {
         var create = cs.objects[type].create;
         create.call(this.list[pos]);
         this.list[pos].touch = cs.touch.create(this.list[pos].draw == 'gui');
-        return this.list[obj_id];
+        return this.list[pos];
     },
     destroy : function(obj){
         obj.live = false;
@@ -142,30 +141,6 @@ cs.obj = {
         return i;
     },
     functions : {
-        meet: function(objtype, options={}){
-            var vspeed = this.vspeed || 0; var hspeed = this.hspeed;
-            vspeed = (options.vspeed !== undefined) ? options.vspeed : vspeed || 0;
-            hspeed = (options.hspeed !== undefined) ? options.hspeed : hspeed || 0;
-            var obj1top = (options.y || this.y) - this.yoff + vspeed;
-            var obj1bottom = obj1top + (options.height || this.height);
-            var obj1left = (options.x || this.x) - this.xoff + hspeed;
-            var obj1right = obj1left + (options.width || this.width);
-            var i = cs.obj.list.length; while(i--){
-                var obj2 = cs.obj.list[i];
-                if (obj2.live === true && i !== this.id && obj2.type == objtype){
-                    var obj2top = obj2.y;
-                    var obj2bottum = obj2.y + obj2.height;
-                    var obj2left = obj2.x;
-                    var obj2right = obj2.x + obj2.width;
-
-                    if (obj1bottom > obj2top && obj1top < obj2bottum &&
-                        obj1left < obj2right && obj1right > obj2left){
-                        return obj2;
-                    }
-                }
-            }
-            return undefined;
-        },
         setSprite: function(spriteName){
             this.sprite = spriteName;
             this.width = cs.sprite.list[spriteName].fwidth;
@@ -207,33 +182,33 @@ cs.sprite = {
 //-----------------------------------| Sound Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.sound = {
-    list: {},
-    playList: [],
-    context: null,
-    canPlayAudio: false,
-    mute: false,
-    active: true,
-    volume : undefined,
-    enable: function(){
-        if(this.canPlayAudio === true) return;
-        var source = this.context.createBufferSource();
-        source.buffer = this.context.createBuffer(1, 1, 22050);
-        source.connect(this.context.destination);
-        source.start(0);
-        this.canPlayAudio = true;
-    },
-    init: function(){
-    	this.list = {};
-    	try {
-    		window.AudioContext =
-    			window.AudioContext || window.webkitAudioContext;
-    		this.context = new AudioContext();
-    	} catch (e) {
-    		this.context = undefined;
-    		alert('Web Audio API is not supported in this browser');
-    	}
-    },
-    load: function(options){
+   list: {},
+   playList: [],
+   context: null,
+   canPlayAudio: false,
+   mute: false,
+   active: true,
+   volume : undefined,
+   enable: function(){
+      if(this.canPlayAudio === true) return;
+      var source = this.context.createBufferSource();
+      source.buffer = this.context.createBuffer(1, 1, 22050);
+      source.connect(this.context.destination);
+      source.start(0);
+      this.canPlayAudio = true;
+   },
+   init: function(){
+      this.list = {};
+      try {
+   	   window.AudioContext =
+   		   window.AudioContext || window.webkitAudioContext;
+   	   this.context = new AudioContext();
+      } catch (e) {
+   	   this.context = undefined;
+   	   alert('Web Audio API is not supported in this browser');
+      }
+   },
+   load: function(options){
     	var pathSplit = options.path.split('/');
     	var name = pathSplit.pop();
     	var path = pathSplit.toString('/');
@@ -266,34 +241,34 @@ cs.sound = {
     		cs.sound.list[name][type].request.send();
     	}
     },
-    play: functionplay = function(audioName, options){
-        if(this.list[audioName]['wav'].loaded === true){
-            this.playList.forEach(function(audioObj){
-                if(audioObj.name == audioName){
-                    console.log('Reuse this sound');
-                }
-            })
-            var csAudioObj = this.context.createBufferSource();
-            csAudioObj.name = audioName;
-        	csAudioObj.buffer = this.list[audioName]['wav'].buffer;
-            for(var opt in options){ csAudioObj[opt] = options[opt] }
-            csAudioObj.gainNode = this.context.createGain();
-        	csAudioObj.connect(csAudioObj.gainNode);
-        	csAudioObj.gainNode.connect(this.context.destination);
-            csAudioObj.gainNode.gain.value = cs.sound.mute ? 0 : 1;
-            csAudioObj.start(0);
-            this.playList.push(csAudioObj);
-            return csAudioObj;
-        }
-        return undefined;
-    },
-    reset: function(){
-        for(var sound in this.playList){
-            //TODO there is an error here take a look in a second I got to go wash my cloths~!!!
-            if(!this.playList) return;
-            this.playList[sound].stop();
-            this.playList[sound].disconnect();
-        }
+   play: functionplay = function(audioName, options){
+      if(this.list[audioName]['wav'].loaded === true){
+         this.playList.forEach(function(audioObj){
+            if(audioObj.name == audioName){
+               console.log('Reuse this sound');
+            }
+         })
+         var csAudioObj = this.context.createBufferSource();
+         csAudioObj.name = audioName;
+         csAudioObj.buffer = this.list[audioName]['wav'].buffer;
+         for(var opt in options){ csAudioObj[opt] = options[opt] }
+         csAudioObj.gainNode = this.context.createGain();
+         csAudioObj.connect(csAudioObj.gainNode);
+         csAudioObj.gainNode.connect(this.context.destination);
+         csAudioObj.gainNode.gain.value = cs.sound.mute ? 0 : 1;
+         csAudioObj.start(0);
+         this.playList.push(csAudioObj);
+         return csAudioObj;
+      }
+      return undefined;
+   },
+   reset: function(){
+      for(var sound in this.playList){
+         //TODO there is an error here take a look in a second I got to go wash my cloths~!!!
+         if(!this.playList) return;
+         this.playList[sound].stop();
+         this.playList[sound].disconnect();
+       }
     },
     toggleMute: function(bool){
         this.mute = bool;
