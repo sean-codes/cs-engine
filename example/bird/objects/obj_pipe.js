@@ -1,4 +1,4 @@
-cs.obj.load('obj_pipe', {
+cs.objects['obj_pipe'] = {
 	depth: -1,
 	create: function(){
 		this.width = 24;
@@ -16,4 +16,4 @@ cs.obj.load('obj_pipe', {
 			cs.obj.destroy(this);
 		}
 	}
-})
+}

@@ -1,4 +1,4 @@
-cs.obj.load('obj_background', {
+cs.objects['obj_background'] = {
 	create: function(){
 		this.timer = 0;
 	},
@@ -15,9 +15,9 @@ cs.obj.load('obj_background', {
 			this.timer = cs.math.iRandomRange(40, 120);
 		}
 	}
-});
+}
 
-cs.obj.load('obj_bgPart', {
+cs.objects['obj_bgPart'] = {
 	create: function(){
 		this.timer = 600;
 		this.bgType = cs.math.choose(['mountain', 'cloud']);
@@ -51,4 +51,4 @@ cs.obj.load('obj_bgPart', {
 
 		cs.draw.sprite(this.sprite, this.x, this.y);
 	}
-});
+}

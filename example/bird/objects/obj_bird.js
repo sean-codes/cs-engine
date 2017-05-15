@@ -1,4 +1,4 @@
-cs.obj.load('obj_bird', {
+cs.objects['obj_bird'] = {
 	depth: -5,
 	create: function(){
 		this.setSprite('bird');
@@ -101,4 +101,4 @@ cs.obj.load('obj_bird', {
 			cs.sound.play('score');
 		}
 	}
-})
+}

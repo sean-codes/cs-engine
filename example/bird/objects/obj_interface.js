@@ -1,4 +1,4 @@
-cs.obj.load('obj_interface', {
+cs.objects['obj_interface'] = {
 	create: function(){
 		this.draw = 'gui';
 		this.width = 30;
@@ -79,4 +79,4 @@ cs.obj.load('obj_interface', {
                 break;
         }
     }
-});
+}

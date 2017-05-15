@@ -1,4 +1,4 @@
-cs.obj.load('obj_score', {
+cs.objects['obj_score'] = {
 	create: function(){
 		this.height = 40;
 		this.width = 2;
@@ -7,9 +7,9 @@ cs.obj.load('obj_score', {
 	step: function(){
 		this.x -= this.hspeed;
 	}
-})
+}
 
-cs.obj.load('obj_score_text', {
+cs.objects['obj_score_text'] = {
 	depth: -10,
 	create: function(){
 		this.text = cs.math.choose([
@@ -33,4 +33,4 @@ cs.obj.load('obj_score_text', {
 			cs.obj.destroy(this);
 		}
 	}
-})
+}
