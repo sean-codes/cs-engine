@@ -1,4 +1,4 @@
-cs.obj.load('obj_inventory', {
+cs.objects['obj_inventory'] = {
 	create: function(){1
 	    this.width = 32;
 	    this.height = 32;
@@ -160,4 +160,4 @@ cs.obj.load('obj_inventory', {
     		cs.draw.text(closeX+(closeSize/2), closeY+(closeSize/2), 'X');
         }
 	}
-});
+}

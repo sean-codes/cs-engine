@@ -1,4 +1,4 @@
-cs.obj.load('obj_otherplayer', {
+cs.objects['obj_otherplayer'] = {
 	create: function(){
 	    this.core = true;
 		this.width = 16;
@@ -53,4 +53,4 @@ cs.obj.load('obj_otherplayer', {
 
 		cs.draw.sprite('spr_player', this.x, this.y, this.dir);
 	}
-});
+}

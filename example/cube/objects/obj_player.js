@@ -1,4 +1,4 @@
-cs.obj.load('obj_player', {
+cs.objects['obj_player'] = {
 	create: function(){
 	    this.core = true;
 		this.width = 16;
@@ -73,4 +73,4 @@ cs.obj.load('obj_player', {
 			cs.script.networkSendMovement(this);
 		}
 	}
-});
+}

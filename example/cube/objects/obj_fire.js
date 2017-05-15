@@ -1,4 +1,4 @@
-cs.obj.load('obj_fire', {
+cs.objects['obj_fire'] = {
 	create: function(){
 	    this.width = 32;
 	    this.height = 48;
@@ -30,4 +30,4 @@ cs.obj.load('obj_fire', {
 	    cs.particle.burst(this.x, this.y, 16, 16, -5);
 	    cs.particle.step();
 	}
-});
+}

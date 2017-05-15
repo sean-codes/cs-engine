@@ -1,4 +1,4 @@
-cs.obj.load('obj_crate', {
+cs.objects['obj_crate'] = {
 	create: function(){
 	    this.width = 32;
 	    this.height = 48;
@@ -23,4 +23,4 @@ cs.obj.load('obj_crate', {
 		}
 		cs.draw.sprite('spr_crate', this.x, this.y);
 	}
-});
+}

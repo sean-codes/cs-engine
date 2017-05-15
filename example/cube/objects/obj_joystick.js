@@ -1,4 +1,4 @@
-cs.obj.load('obj_joystick', {
+cs.objects['obj_joystick'] = {
     create: function(){
         this.width = 64;
         this.height = 64;
@@ -8,15 +8,15 @@ cs.obj.load('obj_joystick', {
     	this.jw = this.width/2;
     	this.jh = this.height/2;
     	cs.global.showJoyStick = true;
-    }, 
+    },
     step: function(){
-    	if(!cs.global.showJoyStick) 
+    	if(!cs.global.showJoyStick)
             return
-        
+
         this.x = 10; this.y = cs.draw.height - this.height - 10;
-        
+
         this.touch.check(this.x, this.y, this.width, this.height);
-        
+
         this.tx = this.x + (this.width/2) - (this.jw/2);
         this.ty = this.y + (this.width/2) - (this.jh/2);
         if(this.touch.held){
@@ -58,8 +58,8 @@ cs.obj.load('obj_joystick', {
         cs.draw.rect(this.x, this.y, this.width, this.height, true);
         cs.draw.setColor('#fff');
         cs.draw.rect(this.tx, this.ty, this.jw, this.jh, false);
-    	
+
     	cs.draw.text(1, 0, 'FPS Step: ' + cs.fps.rate);
     	cs.draw.text(1, 30, 'Scale: ' + cs.camera.scale);
     }
-});
+}
