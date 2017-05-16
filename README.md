@@ -1,24 +1,58 @@
-#CS-Engine
+# CS-Engine
 An engine for building 2D games
 
-#Setup
+# Setup
 The engine is three main parts. The Style Sheet, the loader/compiler PHP script, and the JavaScript init function.
 
-    <html>
-       <head>
-           <link rel="stylesheet" type="text/css" href="css.css">
-       </head>
-       <body>
-           <div id='view'></div>
+      <!DOCTYPE html>
+      <html>
+        <head>
+           <title>cs-engine</title>
+           <!-- View Setup -->
+           <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+           <link rel="stylesheet" type="text/css" href="/engine/css.css" />
+
+           <!-- Game Engine -->
+           <script src='/engine/scr_core.js'></script>
+
+           <!-- Objects -->
+           <script src='objects/obj_player.js'></script>
+
+           <!-- Scripts -->
+           <script src='scripts/scr_player.js'></script>
+        </head>
+        <body>
+           <!--Game Area-->
+           <div id="view"></div>
            <script>
-               cs.init();
+              //Initialize the view
+              cs.init('view');
+
+              //Load Sprites
+              cs.sprite.load('sprites/spr_player')
+
+             //Camera Settings
+              cs.camera.setup({
+                 width:144,
+                 height:256,
+                 maxWidth:300,
+                 maxHeight:200,
+                 lock: true
+              })
+
+              //Room Setup
+              cs.room.setup(800, 256);
+
+              //Create Objects
+              cs.obj.create('obj_player', 50, 50);
            </script>
-       </body>
-    <html>
+        </body>
+      </html>
+
 
 After the init function is where we will create objects or load maps.
 
-#Loading Sprites
+# Loading Sprites
 Sprites are stored in the _sprites folder and automatically loaded by the load.php.
 
 The file name is used to define properties of the sprite
