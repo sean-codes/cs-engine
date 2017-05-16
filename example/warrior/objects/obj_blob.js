@@ -16,12 +16,12 @@ cs.objects['obj_blob'] = {
         if(this.h_col || pcol || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width){
             this.hspeed = 0;
         }
-        this.x += this.hspeed;
+        this.x += this.hspeed
 
         //Vertical Movement
-        if(this.vspeed < this.gravity){
-            this.vspeed += 1;
-        }
+        if(this.vspeed < this.gravity)
+            this.vspeed += 1
+
         this.v_col = cs.script.collide(this, 'obj_block');
         if(this.v_col){
             this.vspeed = 0;
@@ -49,7 +49,16 @@ cs.objects['obj_blob'] = {
             this.hspeed = 0;
         }
 
-        //cs.draw.sprite('blob', this.x, this.y, 0);
         cs.draw.spriteExt('spr_blob', this.x+((this.dir < 0) ? this.width : 0), this.y, 0, this.dir);
+
+        //draw healthbar
+        cs.script.fillBar({
+           x: this.x + this.width/2 - 16,
+           y: this.y - 10,
+           color: '#465',
+           width:32,
+           height: 6,
+           percent: 0.6
+        })
     }
 }
