@@ -50,33 +50,37 @@ The engine only requires the CSS and Javascript file. This is an example index.h
       </html>
 
 # Loading Sprites
-Sprites are stored in the _sprites folder and automatically loaded by the load.php.
+Create a folder to hold your sprites or load them from the root directory!
 
-The file name is used to define properties of the sprite
+      cs.sprite.load('sprites/spr_player', options)
+      //Example options none are required!
+      options = {
+         frames: [how many frame sin sprite],
+         width: [frame width],
+         height: [frame height],
+         xoff: [drawing xoffset],
+         yoff: [drawing yoffset]
+      }
 
-    [spr_name]-[frames]-[width]-[height]-[x-origin]-[y-origin].png
+Now you can call the draw function!
 
-This will be loaded:
-
-     cs.sprite.add('spr-1-32-48-0-0','path/spre-1-32-48-0-0.png')
-
-This image will now be usable:
-
-     cs.draw.sprite('spr', x, y, frame);
-
-Use -1 as the frame argument to animate the sprite.
+     cs.draw.sprite('spr', x, y, [Current Frame or -1 to loop frames]);
 
 # Objects
-Objects are stored in the _objects folder. To create a new object create a new js file in the _objects folder. The files in this folders will be loaded by the load.php at runtime.
+Objects can be stored in an objects folder. To create a new object create a new js file and include in your index.html
 
     <script src="cscript/_objects/obj_something.js?"></script>
 
 Inside the new js file you will need to create the object by using:
 
+    cs.objects['theobjname'] = {
+       create: function(){},
+       step: function(){
+          //Do something maybe draw sprite!
+       }
+    }
 
-    cs.obj.create(name, createFunction, stepFunction)
-
-Copy this into your new js file and change the 'obj_name' string to the name of your object.
+More Help: Copy this into your new js file and change the 'obj_name' string to the name of your object.
 
     cs.objects['obj_name'] = {
         create: function(){
@@ -84,8 +88,8 @@ Copy this into your new js file and change the 'obj_name' string to the name of 
             this.height = 16;
         },
         step: function(){
-    	   cs.draw.sprite('spr', this.x, this.y);
-       }
+    	     cs.draw.sprite('spr', this.x, this.y);
+        }
     }
 
 To create the object add after the init() function to cs.obj.create('obj_name', x, y);
