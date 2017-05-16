@@ -23,3 +23,17 @@ cs.script.collide = function(that, objtype, options){
    }
    return undefined;
 }
+
+cs.script.collideRect = function(objtype, options){
+   console.log(options)
+   var i = cs.obj.list.length; while(i--){
+      var obj = cs.obj.list[i];
+      //Damn this is kind of creepy looking :]
+      if(obj.live === true && obj.type == objtype){
+         if(options.x + options.width > obj.x && options.x < obj.x + obj.width
+            && options.y + options.height > obj.y && options.y < obj.y + obj.height)
+               return obj;
+      }
+   }
+   return undefined;
+}

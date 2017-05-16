@@ -11,8 +11,8 @@ cs.objects['obj_blob'] = {
 
     },
     step: function(){
-        this.h_col = this.meet('obj_block', {vspeed:0});
-        pcol =  this.meet('obj_player', {hspeed: 0});
+        this.h_col = cs.script.collide(this, 'obj_block', {vspeed:0});
+        pcol =  cs.script.collide(this, 'obj_player', {hspeed: 0});
         if(this.h_col || pcol || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width){
             this.hspeed = 0;
         }
@@ -22,7 +22,7 @@ cs.objects['obj_blob'] = {
         if(this.vspeed < this.gravity){
             this.vspeed += 1;
         }
-        this.v_col = this.meet('obj_block');
+        this.v_col = cs.script.collide(this, 'obj_block');
         if(this.v_col){
             this.vspeed = 0;
             if(this.jump && this.v_col.y > this.y){
@@ -31,7 +31,7 @@ cs.objects['obj_blob'] = {
         }
         this.y += this.vspeed;
 
-        pcol = this.meet('obj_player',{
+        pcol = cs.script.collide(this, 'obj_player',{
             x: this.x-50,
             y: this.y-100,
             width: this.width+100,

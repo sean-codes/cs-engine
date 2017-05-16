@@ -152,6 +152,7 @@ cs.sprite = {
         cs.sprite.list[sprName] = new Image();
         cs.sprite.list[sprName].src = sprPath + '.png';
         cs.sprite.list[sprName].frames = sprInfo.frames || 1;
+        //Frame Width/Height
         cs.sprite.list[sprName].fwidth = sprInfo.width || 0;
         cs.sprite.list[sprName].fheight = sprInfo.height || 0;
         cs.sprite.list[sprName].xoff = sprInfo.xoff == undefined ? 0 : sprInfo.xoff;

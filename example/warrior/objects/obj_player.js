@@ -57,7 +57,7 @@ cs.objects['obj_player'] = {
         if(this.vspeed < this.gravity){
             this.vspeed += 1;
         }
-        this.v_col = this.meet('obj_block');
+        this.v_col = cs.script.collide(this, 'obj_block');
         if(this.v_col){
             this.vspeed = 0;
             if(keys.up && this.v_col.y > this.y){
@@ -127,7 +127,7 @@ cs.objects['obj_player'] = {
 
         //Weapon Hit
         if(state == 'swing'){
-           cs.script.player.attack()
+           cs.script.player.attack(this)
         }
 
         //Going Left
