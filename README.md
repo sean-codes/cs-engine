@@ -2,55 +2,52 @@
 An engine for building 2D games
 
 # Setup
-The engine is three main parts. The Style Sheet, the loader/compiler PHP script, and the JavaScript init function.
+The engine only requires the CSS and Javascript file. This is an example index.html on how I like to start.
 
       <!DOCTYPE html>
       <html>
-        <head>
-           <title>cs-engine</title>
-           <!-- View Setup -->
-           <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-           <link rel="stylesheet" type="text/css" href="/engine/css.css" />
+         <head>
+            <!-- Title/View Setup -->
+            <title>cs-engine</title>
+            <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 
-           <!-- Game Engine -->
-           <script src='/engine/scr_core.js'></script>
+            <!-- Game Engine -->
+            <link rel="stylesheet" type="text/css" href="/engine/css.css" />
+            <script src='/engine/scr_core.js'></script>
 
-           <!-- Objects -->
-           <script src='objects/obj_player.js'></script>
+            <!-- Objects -->
+            <script src='objects/obj_player.js'></script>
 
-           <!-- Scripts -->
-           <script src='scripts/scr_player.js'></script>
-        </head>
-        <body>
-           <!--Game Area-->
-           <div id="view"></div>
-           <script>
-              //Initialize the view
-              cs.init('view');
+            <!-- Scripts -->
+            <script src='scripts/scr_player.js'></script>
+         </head>
+         <body>
+            <!--Game Area-->
+            <div id="view"></div>
+            <script>
+               //Initialize the view
+               cs.init('view');
 
-              //Load Sprites
-              cs.sprite.load('sprites/spr_player')
+               //Load Sprites
+               cs.sprite.load('sprites/spr_player')
 
-             //Camera Settings
-              cs.camera.setup({
-                 width:144,
-                 height:256,
-                 maxWidth:300,
-                 maxHeight:200,
-                 lock: true
-              })
+               //Camera Settings
+               cs.camera.setup({
+                  width:144,
+                  height:256,
+                  maxWidth:300,
+                  maxHeight:200,
+                  lock: true
+               })
 
-              //Room Setup
-              cs.room.setup(800, 256);
+               //Room Setup
+               cs.room.setup(800, 256);
 
-              //Create Objects
-              cs.obj.create('obj_player', 50, 50);
-           </script>
-        </body>
+               //Create Objects
+               cs.obj.create('obj_player', 50, 50);
+            </script>
+         </body>
       </html>
-
-
-After the init function is where we will create objects or load maps.
 
 # Loading Sprites
 Sprites are stored in the _sprites folder and automatically loaded by the load.php.
@@ -69,7 +66,7 @@ This image will now be usable:
 
 Use -1 as the frame argument to animate the sprite.
 
-#Objects
+# Objects
 Objects are stored in the _objects folder. To create a new object create a new js file in the _objects folder. The files in this folders will be loaded by the load.php at runtime.
 
     <script src="cscript/_objects/obj_something.js?"></script>
@@ -99,7 +96,7 @@ To create the object add after the init() function to cs.obj.create('obj_name', 
         cs.obj.create('obj_name', 0, 0);
     </script>
 
-#Drawing Functions
+# Drawing Functions
 CS Engine has functions for drawing sprites and shapes. You can change settings of the current layer using the set functions.
 
 Sprites:
