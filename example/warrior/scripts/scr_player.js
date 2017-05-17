@@ -17,13 +17,13 @@ cs.script.player = {
          height: player.height
       })
 
-      if(hitEnemy){
+      if(hitEnemy && !hitEnemy.hit.toggle){
          hitEnemy.hit = {
             toggle: true,
             timer: 0,
             timerLength: 60
          }
-         hitEnemy.hspeed = Math.sign((hitEnemy.x + hitEnemy.width/2) - (player.x+player.width/2))*25
+         hitEnemy.hspeed = Math.sign((hitEnemy.x + hitEnemy.width/2) - (player.x+player.width/2))*10
          hitEnemy.vspeed = -4
       }
    }

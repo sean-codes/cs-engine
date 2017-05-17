@@ -126,7 +126,7 @@ cs.objects['obj_player'] = {
         }
 
         //Weapon Hit
-        if(state == 'swing'){
+        if(state == 'swingHold'){
            cs.script.player.attack(this)
         }
 
