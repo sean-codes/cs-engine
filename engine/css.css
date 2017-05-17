@@ -17,8 +17,8 @@ canvas {
 	image-rendering:optimize-contrast;         /* CSS3 Proposed  */
 	image-rendering:crisp-edges;               /* CSS4 Proposed  */
 	image-rendering:pixelated;                 /* CSS4 Proposed  */
-	-ms-interpolation-mode:nearest-neighbor;   /* IE8+           */
-}  
+	-ms-interpolation-mode:nearest-neighbor;   /* IE8+           */ 
+}
 
 #textInputForm{
 	position:fixed;
