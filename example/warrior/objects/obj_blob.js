@@ -6,6 +6,7 @@ cs.objects['obj_blob'] = {
       this.gravity = 2;
       this.width = 16;
       this.height = 16;
+      this.dir = 1;
       this.jump = false;
       this.hit = {
          trigger: false,
@@ -14,6 +15,7 @@ cs.objects['obj_blob'] = {
       }
    },
    step: function(){
+      //Horizontal Movement
       pcol = cs.script.collide(this, 'obj_player',{
          x: this.x-50,
          y: this.y-100,
@@ -21,21 +23,26 @@ cs.objects['obj_blob'] = {
          height: this.height+100
       })
 
-      this.h_col = cs.script.collide(this, 'obj_block', {vspeed:0})
-      if(this.h_col || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width){
-         this.hspeed = 0;
-      }
-      this.x += this.hspeed
-
-      //Player collision move in that direction
-      //going to trade this for some math. Old gen sean don't be mad
-      if(pcol){
-         if(Math.abs(this.hspeed) < 1)
-            this.hspeed += Math.sign(pcol.x - this.x) * 0.1
+      //This is going to be a little weird but trust me! :]
+      if(pcol && (pcol.x > this.x+this.width || pcol.x + pcol.width < this.x)){
+         if(pcol.x > this.x){
+            if(this.hspeed < 1)
+               this.hspeed += 0.1
+            this.dir = 1
+         } else {
+            if(this.hspeed > -1){ this.hspeed -= 0.1 }
+            this.dir = -1
+         }
       } else {
-         this.hspeed = 0;
+         //Slowing down
+         this.hspeed -= (this.hspeed*0.5)
       }
 
+      this.h_col = cs.script.collide(this, 'obj_block', {vspeed:0})
+      if(this.h_col || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width)
+         this.hspeed = 0;
+
+      this.x += this.hspeed
 
       //Vertical Movement
       if(this.vspeed < this.gravity)
@@ -49,26 +56,25 @@ cs.objects['obj_blob'] = {
       }
       this.y += this.vspeed;
 
-
-
-
-
       //Draw the Sprite draw less opacity is just took damage
       if(this.hit.toggle){
          this.hit.timer += 1
          this.hit.toggle = this.hit.timer !== this.hit.timerLength
-         cs.draw.setAlpha(this.hit.timer / this.hit.timerLength)
+         cs.draw.setAlpha(0.25 + this.hit.timer / this.hit.timerLength)
       }
-      cs.draw.spriteExt('spr_blob', this.x+((this.hspeed >= 0) ? this.width : 0), this.y, 0, Math.sign(this.hspeed)*-1);
+      cs.draw.spriteExt('spr_blob', this.x+((this.dir < 0) ? this.width : 0), this.y, 0, this.dir);
 
-      //draw healthbar
-      cs.script.fillBar({
-         x: this.x + this.width/2 - 16,
-         y: this.y - 10,
-         color: '#465',
-         width:32,
-         height: 6,
-         percent: 0.6
-      })
+      //Draw healthbar
+      if(this.hit.toggle){
+         cs.script.fillBar({
+            x: this.x + this.width/2 - 16,
+            y: this.y - 10,
+            color: '#465',
+            alpha: 1 - this.hit.timer / this.hit.timerLength,
+            width:32,
+            height: 6,
+            percent: 0.6,
+         })
+      }
    }
 }

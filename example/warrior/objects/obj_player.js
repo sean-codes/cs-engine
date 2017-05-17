@@ -143,7 +143,7 @@ cs.objects['obj_player'] = {
         } else {
             //Going Left
             cs.draw.spriteExt('spr_sword', this.x-1-this.bounce+attackX, this.y+10, attackAngle);
-            cs.draw.spriteExt('spr_head', this.x, this.y, 0, -1, 0);
+            cs.draw.spriteExt('spr_head', this.x+9, this.y, 0, -1, 1);
             cs.draw.sprite('spr_foot', this.x+1, this.y+13+this.bounce);
             cs.draw.sprite('spr_foot', this.x+6, this.y+13-this.bounce);
             cs.draw.sprite('spr_hand', this.x-1-this.bounce+attackX, this.y+9);

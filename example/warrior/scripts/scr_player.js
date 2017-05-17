@@ -11,7 +11,7 @@ cs.script.player = {
 
       //Check if hit enemy
       var hitEnemy = cs.script.collideRect('obj_blob', {
-         x: player.x,
+         x: (player.dir == 1) ? player.x + player.width : player.x - weaponRange,
          y: player.y,
          width: weaponRange,
          height: player.height
@@ -23,7 +23,7 @@ cs.script.player = {
             timer: 0,
             timerLength: 60
          }
-         hitEnemy.hspeed = -25
+         hitEnemy.hspeed = Math.sign((hitEnemy.x + hitEnemy.width/2) - (player.x+player.width/2))*25
          hitEnemy.vspeed = -4
       }
    }
