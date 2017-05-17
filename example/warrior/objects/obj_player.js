@@ -130,29 +130,27 @@ cs.objects['obj_player'] = {
            cs.script.player.attack(this)
         }
 
-        //Going Left
-        if(this.dir == -1){
+        if(this.dir > 0){
+           //Going Right
+           cs.draw.spriteExt('spr_sword', this.x+9+this.bounce-attackX, this.y+10, -attackAngle);
+           cs.draw.sprite('spr_head', this.x, this.y);
+           cs.draw.sprite('spr_foot', this.x+1, this.y+13+this.bounce);
+           cs.draw.sprite('spr_foot', this.x+6, this.y+13-this.bounce);
+           cs.draw.sprite('spr_hand', this.x-1, this.y+9);
+           cs.draw.sprite('spr_hand', this.x+7+this.bounce-attackX, this.y+9);
+           cs.draw.sprite('spr_body', this.x+1, this.y+7);
+           cs.draw.sprite('spr_shield', this.x-4-this.bounce, this.y+8);
+        } else {
+            //Going Left
             cs.draw.spriteExt('spr_sword', this.x-1-this.bounce+attackX, this.y+10, attackAngle);
-            cs.draw.sprite('spr_head', this.x, this.y);
+            cs.draw.spriteExt('spr_head', this.x, this.y, 0, -1, 0);
             cs.draw.sprite('spr_foot', this.x+1, this.y+13+this.bounce);
             cs.draw.sprite('spr_foot', this.x+6, this.y+13-this.bounce);
             cs.draw.sprite('spr_hand', this.x-1-this.bounce+attackX, this.y+9);
             cs.draw.sprite('spr_hand', this.x+7-this.bounce, this.y+9);
             cs.draw.sprite('spr_body', this.x+1, this.y+7);
             cs.draw.sprite('spr_shield', this.x+4+this.bounce, this.y+8);
-        } else {
-            //Going Right
-            cs.draw.spriteExt('spr_sword', this.x+9+this.bounce-attackX, this.y+10, -attackAngle);
-            cs.draw.spriteExt('spr_head', this.x+9, this.y, 0, -1, 1);
-            cs.draw.sprite('spr_foot', this.x+1, this.y+13+this.bounce);
-            cs.draw.sprite('spr_foot', this.x+6, this.y+13-this.bounce);
-            cs.draw.sprite('spr_hand', this.x-1, this.y+9);
-            cs.draw.sprite('spr_hand', this.x+7+this.bounce-attackX, this.y+9);
-            cs.draw.sprite('spr_body', this.x+1, this.y+7);
-            cs.draw.sprite('spr_shield', this.x-4-this.bounce, this.y+8);
         }
-
-
 
         //Camera
         cs.camera.follow(this);

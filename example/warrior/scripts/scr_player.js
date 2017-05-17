@@ -17,7 +17,14 @@ cs.script.player = {
          height: player.height
       })
 
-      if(hitEnemy)
-         console.log('yay you hit something!')
+      if(hitEnemy){
+         hitEnemy.hit = {
+            toggle: true,
+            timer: 0,
+            timerLength: 60
+         }
+         hitEnemy.hspeed = -25
+         hitEnemy.vspeed = -4
+      }
    }
 }
