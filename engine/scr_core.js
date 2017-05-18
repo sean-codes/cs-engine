@@ -463,21 +463,24 @@ cs.draw = {
         }
         cs.draw.reset();
     },
-    circle : function(x, y, rad){
+    circle : function(x, y, rad, fill=true){
         if(!this.raw){
-            x =  x-cs.camera.x;
-            y =  y-cs.camera.y;
+           x =  Math.floor(x-cs.camera.x);
+           y =  Math.floor(y-cs.camera.y);
         }
         cs.draw.ctx.beginPath();
         cs.draw.ctx.arc(x, y, rad, 0, Math.PI*2, true);
         cs.draw.ctx.closePath();
-        cs.draw.ctx.fill();
+        if(fill)
+           cs.draw.ctx.fill();
+        else
+           cs.draw.ctx.stroke();
         cs.draw.reset();
     },
     circleGradient : function(x, y, radius){
         if(!this.raw){
-            x =  x-cs.camera.x;
-            y =  y-cs.camera.y;
+           x =  Math.floor(x-cs.camera.x);
+           y =  Math.floor(y-cs.camera.y);
         }
         //Draw a circle
         var g = this.ctx.createRadialGradient(x, y, 0, x, y, radius);

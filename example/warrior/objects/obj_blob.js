@@ -77,8 +77,12 @@ cs.objects['obj_blob'] = {
             percent: this.health.value/this.health.max,
          })
          this.hit.timer -= 1
-         if(this.hit.timer == 0 && this.health.value <= 0)
-            cs.obj.destroy(this)
+      }
+      if(this.health.value <= 0){
+         for(var i = 0; i < 4; i++){
+            cs.obj.create('obj_point', this.x+this.width/2, this.y+this.height/2)
+         }
+         cs.obj.destroy(this)
       }
    }
 }
