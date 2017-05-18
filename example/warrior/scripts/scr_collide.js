@@ -25,7 +25,6 @@ cs.script.collide = function(that, objtype, options){
 }
 
 cs.script.collideRect = function(objtype, options){
-   console.log(options)
    var i = cs.obj.list.length; while(i--){
       var obj = cs.obj.list[i];
       //Damn this is kind of creepy looking :]

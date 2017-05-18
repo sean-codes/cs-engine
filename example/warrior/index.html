@@ -13,6 +13,7 @@
 		<script src='objects/obj_blob.js'></script>
 		<script src='objects/obj_block.js'></script>
 		<script src='objects/obj_interface.js'></script>
+		<script src='objects/obj_text.js'></script>
 
 		<!-- Scripts -->
 		<script src='scripts/scr_player.js'></script>
@@ -47,8 +48,8 @@
 			cs.room.setup(800, 256);
 
 			//Create Objects
-			cs.obj.create('obj_player', 50, cs.room.height - 50);
-			cs.obj.create('obj_blob', 50, cs.room.height - 50);
+			cs.obj.create('obj_player', 180, cs.room.height - 50);
+			cs.obj.create('obj_blob', 150, cs.room.height - 50);
 			cs.obj.create('obj_interface', 50, 1);
 			for(var i = 0; i < 100; i++){
 				cs.obj.create('obj_block', i*16, cs.room.height-17);

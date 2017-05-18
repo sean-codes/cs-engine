@@ -3,6 +3,7 @@ cs.script.player = {
 
       var weapon = 'sword'
       var weaponSprite = cs.sprite.list['spr_' + weapon]
+      var weaponDamage = 4
 
       //If sprite is wider use the width as range
       var weaponRange = (weaponSprite.fwidth > weaponSprite.fheight)
@@ -17,14 +18,17 @@ cs.script.player = {
          height: player.height
       })
 
-      if(hitEnemy && !hitEnemy.hit.toggle){
+      if(hitEnemy && hitEnemy.hit.timer == 0){
          hitEnemy.hit = {
-            toggle: true,
-            timer: 0,
+            timer: 60,
             timerLength: 60
          }
+         hitEnemy.health.value -= weaponDamage
          hitEnemy.hspeed = Math.sign((hitEnemy.x + hitEnemy.width/2) - (player.x+player.width/2))*10
          hitEnemy.vspeed = -4
+
+         var dmgObject = cs.obj.create('obj_text', hitEnemy.x+hitEnemy.width/2, hitEnemy.y)
+         dmgObject.text = weaponDamage
       }
    }
 }

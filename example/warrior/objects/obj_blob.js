@@ -8,8 +8,11 @@ cs.objects['obj_blob'] = {
       this.height = 16;
       this.dir = 1;
       this.jump = false;
+      this.health = {
+         value: 10,
+         max: 10
+      }
       this.hit = {
-         trigger: false,
          timer: 0,
          timerLength: 0
       }
@@ -57,24 +60,25 @@ cs.objects['obj_blob'] = {
       this.y += this.vspeed;
 
       //Draw the Sprite draw less opacity is just took damage
-      if(this.hit.toggle){
-         this.hit.timer += 1
-         this.hit.toggle = this.hit.timer !== this.hit.timerLength
-         cs.draw.setAlpha(0.25 + this.hit.timer / this.hit.timerLength)
+      if(this.hit.timer > 0){
+         cs.draw.setAlpha(0.25 + (1 - this.hit.timer / this.hit.timerLength))
       }
       cs.draw.spriteExt('spr_blob', this.x+((this.dir < 0) ? this.width : 0), this.y, 0, this.dir);
 
       //Draw healthbar
-      if(this.hit.toggle){
+      if(this.hit.timer > 0){
          cs.script.fillBar({
             x: this.x + this.width/2 - 16,
             y: this.y - 10,
             color: '#465',
-            alpha: 1 - this.hit.timer / this.hit.timerLength,
-            width:32,
+            alpha: 1,
+            width: 32,
             height: 6,
-            percent: 0.6,
+            percent: this.health.value/this.health.max,
          })
+         this.hit.timer -= 1
+         if(this.hit.timer == 0 && this.health.value <= 0)
+            cs.obj.destroy(this)
       }
    }
 }
