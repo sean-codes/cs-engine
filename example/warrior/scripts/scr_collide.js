@@ -1,6 +1,5 @@
 cs.script.collide = function(that, objtype, options){
    if(options == undefined) options = {}
-   var vspeed = that.vspeed || 0; var hspeed = that.hspeed;
    vspeed = (options.vspeed !== undefined) ? options.vspeed : that.vspeed || 0;
    hspeed = (options.hspeed !== undefined) ? options.hspeed : that.hspeed || 0;
    var obj1top = (options.y || that.y) - that.yoff + vspeed;
