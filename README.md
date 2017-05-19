@@ -152,7 +152,7 @@ Note: The set function are reset after any drawing event! They are layer specifi
     cs.draw.setColor("#FFFFFF");
     cs.draw.rect(0, 0, 40, 40, true);
 
-#The Game Camera
+# The Game Camera
 The game camera is the area the game and GUI is drawn to. The GUI and Game are drawn to hidden canvases separately then drawn to the view/camera canvas. There are a couple settings that can be tweeked to change the view.
 
 The maxWidth and maxHeight set the maximum literal pixel size of the canvas. The engine will then try to get the closest aspect ratio to the size you set. Then it will be stretched with CSS to make fill the entire screen.
