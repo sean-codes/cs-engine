@@ -37,6 +37,7 @@
 			cs.sprite.load('sprites/spr_sword', {xoff: 4, yoff: 18});
 			cs.sprite.load('sprites/spr_shield');
 			cs.sprite.load('sprites/spr_blob');
+			cs.sprite.load('sprites/spr_toggleControls');
 
 
 			cs.camera.setup({
@@ -48,6 +49,10 @@
 			});
 			cs.room.setup(800, 256);
 
+			//Global data
+			cs.global = {
+				interface: false
+			}
 			//Create Objects
 			cs.obj.create('obj_player', 180, cs.room.height - 50);
 			cs.obj.create('obj_blob', 150, cs.room.height - 50);
