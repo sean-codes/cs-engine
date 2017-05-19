@@ -79,8 +79,10 @@ cs.objects['obj_blob'] = {
          this.hit.timer -= 1
       }
       if(this.health.value <= 0){
-         for(var i = 0; i < 4; i++){
-            cs.obj.create('obj_point', this.x+this.width/2, this.y+this.height/2)
+         for(var i = 0; i < 10; i++){
+            var point = cs.obj.create('obj_point', this.x+this.width/2, this.y+this.height/2)
+            point.hspeed = cs.math.iRandomRange(-3, 3)
+            point.vspeed = cs.math.iRandomRange(-1, -10)
          }
          cs.obj.destroy(this)
       }
