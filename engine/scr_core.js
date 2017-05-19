@@ -477,15 +477,15 @@ cs.draw = {
            cs.draw.ctx.stroke();
         cs.draw.reset();
     },
-    circleGradient : function(x, y, radius){
+    circleGradient : function(x, y, radius, c1, c2){
         if(!this.raw){
            x =  Math.floor(x-cs.camera.x);
            y =  Math.floor(y-cs.camera.y);
         }
         //Draw a circle
         var g = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
-        g.addColorStop(1, 'transparent');
-        g.addColorStop(0, 'black');
+        g.addColorStop(1, c2);
+        g.addColorStop(0, c1);
         this.ctx.fillStyle = g;
         this.ctx.beginPath();
         this.ctx.arc(x, y, radius, 0, Math.PI*2, true);
