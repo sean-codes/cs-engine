@@ -12,7 +12,7 @@ cs.objects['obj_point'] = {
       	"colorEnd": "#0099ff",
       	"size": 4,
       	"grow": -5,
-      	"alpha": 90,
+      	"alpha": 50,
       	"fade": 10,
       	"speedMin": 35,
       	"speedMax": 15,
