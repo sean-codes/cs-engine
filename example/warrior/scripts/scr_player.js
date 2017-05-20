@@ -20,8 +20,8 @@ cs.script.player = {
 
       if(hitEnemy && hitEnemy.hit.timer == 0){
          hitEnemy.hit = {
-            timer: 60,
-            timerLength: 60
+            timer: 30,
+            timerLength: 30
          }
          hitEnemy.health.value -= weaponDamage
          hitEnemy.hspeed = Math.sign((hitEnemy.x + hitEnemy.width/2) - (player.x+player.width/2))*10

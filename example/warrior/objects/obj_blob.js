@@ -60,9 +60,9 @@ cs.objects['obj_blob'] = {
       this.y += this.vspeed;
 
       //Draw the Sprite draw less opacity is just took damage
-      if(this.hit.timer > 0){
+      if(this.hit.timer > 0)
          cs.draw.setAlpha(0.25 + (1 - this.hit.timer / this.hit.timerLength))
-      }
+
       cs.draw.spriteExt('spr_blob', this.x+((this.dir < 0) ? this.width : 0), this.y, 0, this.dir);
 
       //Draw healthbar

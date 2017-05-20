@@ -11,10 +11,11 @@ cs.objects['obj_interface'] = {
 cs.objects['obj_toggleButtons'] = {
    create: function(){
       this.draw = 'gui'
-      this.x = cs.draw.gui[0].canvas.width-20
-      this.y = 4
    },
    step: function(){
+      this.x = cs.draw.gui[0].canvas.width-20
+      this.y = 4
+      
       this.touch.check(this.x, this.y, 16, 16)
       if(this.touch.held){
          cs.draw.setColor('rgba(0, 0, 0, 0.25)')
