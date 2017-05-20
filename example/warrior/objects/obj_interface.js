@@ -15,15 +15,15 @@ cs.objects['obj_toggleButtons'] = {
    step: function(){
       this.x = cs.draw.gui[0].canvas.width-20
       this.y = 4
-      
+
       this.touch.check(this.x, this.y, 16, 16)
       if(this.touch.held){
          cs.draw.setColor('rgba(0, 0, 0, 0.25)')
          cs.draw.rect(this.x, this.y, 16, 16, true)
       }
-      if(this.touch.down){
+      if(this.touch.down)
          cs.global.interface = cs.global.interface ? false : true
-      }
+
       cs.draw.sprite('spr_toggleControls', this.x, this.y)
    }
 }
