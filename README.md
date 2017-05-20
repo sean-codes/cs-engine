@@ -69,7 +69,7 @@ Now you can call the draw function!
 # Objects
 Objects can be stored in an objects folder. To create a new object create a new js file and include in your index.html
 
-    <script src="cscript/_objects/obj_something.js?"></script>
+    <script src="cscript/_objects/obj_something.js"></script>
 
 Inside the new js file you will need to create the object by using:
 
@@ -107,7 +107,7 @@ Sprites:
 
 
     cs.draw.sprite(sprite, x, y, frame);
-    cs.draw.spriteExt(img, x, y, angle, frame);
+    cs.draw.spriteExt(spriteName, x, y, angle, scaleX=1, scaleY=1, frame=0)
 
 Text:
 
