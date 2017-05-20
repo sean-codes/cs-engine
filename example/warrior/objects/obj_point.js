@@ -12,12 +12,12 @@ cs.objects['obj_point'] = {
       	"colorEnd": "#0099ff",
       	"size": 4,
       	"grow": -5,
-      	"alpha": 100,
+      	"alpha": 90,
       	"fade": 10,
       	"speedMin": 35,
       	"speedMax": 15,
-      	"dirMin": 231,
-      	"dirMax": 296,
+      	"dirMin": 270,
+      	"dirMax": 270,
       	"wobbleX": 0,
       	"wobbleY": 0,
       	"lifeMin": 10,
@@ -45,7 +45,7 @@ cs.objects['obj_point'] = {
 
          var pcol = cs.script.collide(this, 'obj_player', {hspeed: 0})
          if(pcol){
-             cs.particle.burst(this.x, this.y, 16, 16, 10);
+            cs.particle.burst(this.x, this.y, 16, 16, 10);
              this.timer -= 1
           }
       } else {
