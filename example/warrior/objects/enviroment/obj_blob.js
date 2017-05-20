@@ -1,11 +1,12 @@
 cs.objects['obj_blob'] = {
+   sprite: 'spr_blob',
+   width: 16,
+   height: 16,
    create: function(){
       this.hspeed = 0;
       this.vspeed = 0;
       this.speed = 2;
       this.gravity = 2;
-      this.width = 16;
-      this.height = 16;
       this.dir = 1;
       this.jump = false;
       this.health = {
