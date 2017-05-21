@@ -1,73 +1,74 @@
 cs.objects['obj_player'] = {
-    create: function(){
-        this.hspeed = 0;
-        this.vspeed = 0;
-        this.dir = -1;
-        this.speed = 2;
-        this.gravity = 5;
-        this.width = 8;
-        this.height = 15;
-        this.jump = 8;
+   create: function(){
+      this.hspeed = 0;
+      this.vspeed = 0;
+      this.dir = -1;
+      this.speed = 2;
+      this.gravity = 5;
+      this.width = 8;
+      this.height = 15;
+      this.jump = 8;
 
-        this.bounce = 0;
-        this.bounceTimer = 20;
+      this.bounce = 0;
+      this.bounceTimer = 20;
 
-        this.attacking = 0;
-        this.attackTimer = {
-            load: 5,
-            loadHold: 1,
-            swing: 10,
-            swingHold: 10,
-            reload: 5
-        }
-        this.attackTotal = 0;
-        for(var i in this.attackTimer){
-            this.attackTotal += this.attackTimer[i];
-        }
+      this.attacking = 0;
+      this.attackTimer = {
+         load: 5,
+         loadHold: 1,
+         swing: 10,
+         swingHold: 10,
+         reload: 5
+      }
+      this.attackTotal = 0;
+      for(var i in this.attackTimer)
+         this.attackTotal += this.attackTimer[i]
     },
     step: function(){
-        //Vertical Collisions
-        var keys = {
-            left: cs.key.held[37] || false,
-            right: cs.key.held[39] || false,
-            up: cs.key.held[38] || false,
-            down: cs.key.held[40] || false,
-            space: cs.key.held[32] || false
-        }
+       //Vertical Collisions
+       var keys = {
+          left: cs.key.held[37] || false,
+          right: cs.key.held[39] || false,
+          up: cs.key.held[38] || false,
+          down: cs.key.held[40] || false,
+          space: cs.key.held[32] || false
+       }
 
-        //Horizontal Movement
-        if (keys.left){
-            if(this.hspeed > -this.speed){this.dir = -1; this.hspeed -= 0.25}
-        } else if (keys.right){
-            if(this.hspeed < this.speed){this.dir = 1; this.hspeed += 0.25}
-        } else {
-            if(this.hspeed !== 0){
-                var sign = cs.math.sign(this.hspeed);
-                this.hspeed -= sign/4;
-            }
-        }
-        //this.h_col = this.meet('obj_block', {vspeed:0});
-        this.h_col = cs.script.collide(this, 'obj_block', {vspeed: 0})
-        if(this.h_col || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width){
-            this.hspeed = 0;
-        }
-        this.x += this.hspeed;
+       //Horizontal Movement
+       if (keys.left){
+          if(this.hspeed > -this.speed){this.dir = -1; this.hspeed -= 0.25}
+       } else if (keys.right){
+          if(this.hspeed < this.speed){this.dir = 1; this.hspeed += 0.25}
+       } else {
+          if(this.hspeed !== 0){
+             var sign = cs.math.sign(this.hspeed);
+             this.hspeed -= sign/4;
+          }
+       }
+       //this.h_col = this.meet('obj_block', {vspeed:0});
+       this.h_col = cs.script.collide(this, 'obj_block', {vspeed: 0})
+       if(this.h_col || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width){
+          this.hspeed = 0;
+       }
+       this.x += this.hspeed;
 
         //Vertical Movement
         if(this.vspeed < this.gravity){
             this.vspeed += 1;
         }
-        this.v_col = cs.script.collide(this, 'obj_block');
-        if(this.v_col){
-            this.vspeed = 0;
-            if(keys.up && this.v_col.y > this.y){
-                this.vspeed = -this.jump;
-            }
-        }
-        this.y += this.vspeed;
+        this.v_col = cs.script.collide(this, 'obj_block', {hspeed: 0})
+
+        if(this.v_col)
+           this.vspeed = 0;
+        else
+           this.y += this.vspeed;
+
+
+        if(keys.up && this.v_col && this.v_col.y > this.y)
+            //Check if jumping
+           this.vspeed = -this.jump
 
         //Drawing
-        //Handle Legs
         this.bounceTimer -= 1;
         if(this.bounceTimer == 0){
             this.bounceTimer = 20;
@@ -82,9 +83,8 @@ cs.objects['obj_player'] = {
         }
 
         //Attacking
-        if(keys.space && this.attacking == 0){
-            this.attacking = this.attackTotal;
-        }
+        if(keys.space && this.attacking == 0)
+            this.attacking = this.attackTotal
 
         var attackAngle = 0;
         var attackX = 0;
