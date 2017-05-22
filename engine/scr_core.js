@@ -111,7 +111,7 @@ cs.obj = {
    list : [],
    types : {},
    count: 0,
-   create : function(type, x, y){
+   create : function(type, x, y, options){
       this.count += 1
       var depth = cs.objects[type].depth || 0;
       var pos = this.findPosition(depth);

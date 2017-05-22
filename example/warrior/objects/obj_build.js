@@ -31,7 +31,8 @@ cs.objects['obj_build'] = {
       //On click create an object
       this.touch.check(0, 0, cs.room.width, cs.room.height)
       if(this.touch.up && mx){
-         cs.obj.create(cs.global.build.obj, mx, my)
+         //cs.obj.create(cs.global.build.obj, mx, my)
+         cs.script.build.obj.add(cs.global.build.obj, mx, my)
       }
    }
 }
