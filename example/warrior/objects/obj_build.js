@@ -18,14 +18,17 @@ cs.objects['obj_build'] = {
       //Draw lines
       var verticalLineCount = cs.room.width/16
       for(var i = 0 ; i < verticalLineCount; i++){
+         cs.draw.setColor('rgba(0, 0, 0, 0.25)')
          cs.draw.line(i*16, 0, i*16, cs.room.height)
       }
 
       var horizontalLineCount = cs.room.height/16
       for(var i = 0 ; i < verticalLineCount; i++){
+         cs.draw.setColor('rgba(0, 0, 0, 0.25)')
          cs.draw.line(0, i*16, cs.room.width, i*16)
       }
 
+      //On click create an object
       this.touch.check(0, 0, cs.room.width, cs.room.height)
       if(this.touch.up && mx){
          cs.obj.create(cs.global.build.obj, mx, my)
