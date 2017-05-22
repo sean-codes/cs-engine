@@ -22,6 +22,7 @@
 		<script src='scripts/scr_player.js'></script>
 		<script src='scripts/scr_collide.js'></script>
 		<script src='scripts/scr_fillBar.js'></script>
+		<script src='scripts/scr_build.js'></script>
 	</head>
 	<body>
 		<!--Game Area-->
@@ -57,17 +58,70 @@
 				interface: false,
 				build: {
 					on: true,
-					obj: 'obj_building'
+					obj: 'obj_block',
+					currentMap: 'demo',
+					maps: [
+						{
+							name: 'demo',
+					      width: 800,
+					      height: 256,
+					      objects: [
+								{
+					            type: 'obj_block',
+					            pos: { x: 0, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 16, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 32, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 48, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 64, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 80, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 96, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 112, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 128, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 144, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 160, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 176, y: 240 }
+					         },{
+					            type: 'obj_block',
+					            pos: { x: 192, y: 240 }
+					         }
+					      ]
+						}
+					]
 				}
 			}
 			//Create Objects
 			cs.obj.create('obj_player', 180, cs.room.height - 50)
 			cs.obj.create('obj_build', 0, 0)
-			cs.obj.create('obj_blob', 150, cs.room.height - 50)
-			cs.obj.create('obj_interface', 50, 1)
-			for(var i = 0; i < 100; i++){
-				cs.obj.create('obj_block', i*16, cs.room.height-17)
-			}
+
+			//Load map
+			cs.script.build.map.load(cs.global.build.currentMap)
+			//cs.obj.create('obj_blob', 150, cs.room.height - 50)
+			//cs.obj.create('obj_interface', 50, 1)
+			// for(var i = 0; i < 100; i++){
+			// 	cs.obj.create('obj_block', i*16, cs.room.height-17)
+			// }
 		</script>
 	</body>
 </html>
