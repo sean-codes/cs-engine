@@ -74,8 +74,8 @@ cs.loop = {
         cs.draw.clear();
         cs.key.execute();
 
-        for(var i = 0; i < cs.obj.list.length; i++){
         //var i = cs.obj.list.length; while(i--){
+        for(var i = 0; i < cs.obj.list.length; i++){
             if(cs.obj.list[i].live){
                 var obj = cs.obj.list[i];
                 cs.draw.setLayer(obj.draw, obj.layer);
@@ -108,41 +108,43 @@ cs.loop = {
 //-----------------------------------| Object Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.obj = {
-    list : [],
-    types : {},
-    create : function(type, x, y){
-        var depth = cs.objects[type].depth || 0;
-        var pos = this.findPosition(depth);
-        this.list.splice(pos, 0, {});
-        this.list[pos].depth = depth;
-        this.list[pos].live = true;
-        this.list[pos].type = type;
-        this.list[pos].id = pos;
-        this.list[pos].core = false;
-        this.list[pos].draw = 'game';
-        this.list[pos].layer = 0;
-        this.list[pos].particle = { list : [], settings : {} };
-        this.list[pos].x = x; this.list[pos].xoff = 0;
-        this.list[pos].y = y; this.list[pos].yoff = 0;
-        this.list[pos].width = cs.objects[type].width;
-        this.list[pos].height = cs.objects[type].height;
-        this.list[pos].sprite = cs.objects[type].sprite;
-        var create = cs.objects[type].create;
-        create.call(this.list[pos]);
-        this.list[pos].touch = cs.touch.create(this.list[pos].draw == 'gui');
-        return this.list[pos];
-    },
-    destroy : function(obj){
-        obj.live = false;
-    },
-    findPosition : function(depth){
-        for(var i = 0; i < this.list.length; i++){
-            if(depth <= this.list[i].depth){
-                return i;
-            }
-        }
-        return i;
-    }
+   list : [],
+   types : {},
+   count: 0,
+   create : function(type, x, y){
+      this.count += 1
+      var depth = cs.objects[type].depth || 0;
+      var pos = this.findPosition(depth);
+      this.list.splice(pos, 0, {});
+      this.list[pos].depth = depth;
+      this.list[pos].live = true;
+      this.list[pos].type = type;
+      this.list[pos].id = this.count;
+      this.list[pos].core = false;
+      this.list[pos].draw = 'game';
+      this.list[pos].layer = 0;
+      this.list[pos].particle = { list : [], settings : {} };
+      this.list[pos].x = x; this.list[pos].xoff = 0;
+      this.list[pos].y = y; this.list[pos].yoff = 0;
+      this.list[pos].width = cs.objects[type].width;
+      this.list[pos].height = cs.objects[type].height;
+      this.list[pos].sprite = cs.objects[type].sprite;
+      var create = cs.objects[type].create;
+      create.call(this.list[pos]);
+      this.list[pos].touch = cs.touch.create(this.list[pos].draw == 'gui');
+      return this.list[pos];
+   },
+   destroy : function(obj){
+      obj.live = false;
+   },
+   findPosition : function(depth){
+      for(var i = 0; i < this.list.length; i++){
+         if(depth <= this.list[i].depth){
+            return i;
+         }
+      }
+      return i;
+   }
 }
 //---------------------------------------------------------------------------------------------//
 //-----------------------------------| Sprite Functions |--------------------------------------//
@@ -710,7 +712,7 @@ cs.camera = {
         //Check is camera under or over
         if(this.y < 0){ this.y = 0; }
         if(this.y + height > cs.room.height){
-            this.y = cs.room.height - height;
+            this.y = cs.room.height - height + 1;
         }
     },
     zoomOut : function(){
