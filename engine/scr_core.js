@@ -620,19 +620,19 @@ cs.particle = {
                 if(particle.wobbleSetX !== 0){
                     if(particle.wobbleX > 0){
                         particle.wobbleX -= 1; particle.x -= 1;
-                        if(particle.wobbleX === 0){particle.wobbleX = -particle.wobbleSetX;}
+                        if(particle.wobbleX === 0) particle.wobbleX = -particle.wobbleSetX
                     } else {
                         particle.wobbleX += 1; particle.x += 1;
-                        if(particle.wobbleX === 0){particle.wobbleX = particle.wobbleSetX;}
+                        if(particle.wobbleX === 0) particle.wobbleX = particle.wobbleSetX
                     }
                 }
                 if(particle.wobbleSetY !== 0){
                     if(particle.wobbleY > 0){
                         particle.wobbleY -= 1; particle.y -= 4;
-                        if(particle.wobbleY === 0){particle.wobbleY = -particle.wobbleSetY;}
+                        if(particle.wobbleY === 0) particle.wobbleY = -particle.wobbleSetY
                     } else {
                         particle.wobbleY += 1; particle.y += 4;
-                        if(particle.wobbleY === 0){particle.wobbleY = particle.wobbleSetY;}
+                        if(particle.wobbleY === 0) particle.wobbleY = particle.wobbleSetY
                     }
                 }
 
