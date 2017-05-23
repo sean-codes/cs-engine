@@ -59,7 +59,8 @@
 				build: {
 					on: true,
 					obj: 'obj_block',
-					currentMap: 'demo',
+					loaded:undefined,
+					map: 'demo',
 					maps: [
 						{
 							name: 'demo',
@@ -89,12 +90,9 @@
 			cs.obj.create('obj_build', 0, 0)
 
 			//Load map
-			cs.script.build.map.load(cs.global.build.currentMap)
+			cs.global.build.loaded = cs.script.build.map.load(cs.global.build.map)
 			//cs.obj.create('obj_blob', 150, cs.room.height - 50)
 			//cs.obj.create('obj_interface', 50, 1)
-			// for(var i = 0; i < 100; i++){
-			// 	cs.obj.create('obj_block', i*16, cs.room.height-17)
-			// }
 		</script>
 	</body>
 </html>
