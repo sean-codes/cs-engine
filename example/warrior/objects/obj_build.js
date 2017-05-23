@@ -13,6 +13,10 @@ cs.objects['obj_build'] = {
 
       var obj = cs.objects[cs.global.build.obj]
       cs.draw.setColor('rgba(100, 190, 120, 0.5)')
+      var delObj = cs.script.collideRect('', { x: mx, y: my, width:obj.width, height:obj.height})
+      if(delObj) cs.draw.setColor('rgba(255, 100, 100, 0.5)')
+
+
       cs.draw.rect(mx, my, obj.width, obj.height, true)
 
       //Draw lines
@@ -32,7 +36,11 @@ cs.objects['obj_build'] = {
       this.touch.check(0, 0, cs.room.width, cs.room.height)
       if(this.touch.up && mx){
          //cs.obj.create(cs.global.build.obj, mx, my)
-         cs.script.build.obj.add(cs.global.build.obj, mx, my)
+         if(delObj)
+            cs.script.build.obj.delete(delObj, mx, my)
+         else
+            cs.script.build.obj.add(cs.global.build.obj, mx, my)
       }
+
    }
 }
