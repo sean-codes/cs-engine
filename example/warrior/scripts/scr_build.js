@@ -46,7 +46,7 @@ cs.script.build = {
       load: function(name){
          this.clear()
          for(var obj of this.getMap(name).objects)
-            cs.script.build.obj.load(obj)
+            obj.obj = cs.script.build.obj.load(obj)
       },
       save: function(){
 
@@ -66,16 +66,22 @@ cs.script.build = {
    obj: {
       add: function(type, x, y, options){
          //cs.global.maps.current
-         cs.obj.create(type, x, y, options)
-         this.getMap(cs.global.build.map.currentMap).objects.push({
-            type: type, x: x, y: y, options: options
+         obj = cs.obj.create(type, x, y, options)
+         cs.script.build.map.getMap(cs.global.build.map).objects.push({
+            type: type, x: x, y: y, options: options, obj: obj
          })
       },
-      delete: function(){
-
+      delete: function(delObj){
+         var map = cs.script.build.map.getMap(cs.global.build.map)
+         map.objects.forEach(function(obj, i){
+            if(obj.obj.id == delObj.id){
+               cs.obj.destroy(obj.obj)
+               map.objects.splice(i, 1)
+            }
+         })
       },
       load: function(obj){
-         cs.obj.create(obj.type, obj.x, obj.y)
+         return cs.obj.create(obj.type, obj.x, obj.y)
       }
    }
 }
