@@ -48,8 +48,8 @@ cs.script.build = {
          for(var obj of this.getMap(name).objects)
             obj.obj = cs.script.build.obj.load(obj)
       },
-      save: function(){
-
+      export: function(){
+         return JSON.stringify(this.getMap(cs.global.build.map))
       },
       clear: function(){
          //Remove current objects from the room
