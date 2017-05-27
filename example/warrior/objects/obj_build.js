@@ -4,14 +4,14 @@ cs.objects['obj_build'] = {
 
    },
    step: function(){
-      if(!cs.global.build.on) return
+      if(!cs.script.build.building) return
 
       //Draw Target
-      var mx = cs.mouse.x + cs.camera.x;
-      var my = cs.mouse.y + cs.camera.y;
+      var mx = cs.mouse.x + cs.camera.x
+      var my = cs.mouse.y + cs.camera.y
       mx -= mx % 16; my -= my % 16
 
-      var obj = cs.objects[cs.global.build.obj]
+      var obj = cs.objects[cs.script.build.buildObject]
       cs.draw.setColor('rgba(100, 190, 120, 0.5)')
       var delObj = cs.script.collideRect('', { x: mx, y: my, width:obj.width, height:obj.height})
       if(delObj) cs.draw.setColor('rgba(255, 100, 100, 0.5)')
@@ -37,9 +37,9 @@ cs.objects['obj_build'] = {
       if(this.touch.up && mx){
          //cs.obj.create(cs.global.build.obj, mx, my)
          if(delObj)
-            cs.script.build.obj.delete(delObj, mx, my)
+            cs.script.build.objDelete(delObj, mx, my)
          else
-            cs.script.build.obj.add(cs.global.build.obj, mx, my)
+            cs.script.build.objAdd(cs.script.build.buildObject, mx, my)
       }
 
    }
