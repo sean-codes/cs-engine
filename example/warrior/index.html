@@ -55,42 +55,16 @@
 
 			//Global data
 			cs.global = {
-				interface: false,
-				build: {
-					on: true,
-					obj: 'obj_block',
-					loaded:undefined,
-					map: 'demo',
-					maps: [
-						{
-							name: 'demo',
-					      width: 800,
-					      height: 256,
-					      objects: [
-								{ type: 'obj_block', x: 0, y: 240 },
-								{ type: 'obj_block', x: 16, y: 240 },
-								{ type: 'obj_block', x: 32, y: 240 },
-								{ type: 'obj_block', x: 48, y: 240 },
-								{ type: 'obj_block', x: 64, y: 240 },
-								{ type: 'obj_block', x: 80, y: 240 },
-								{ type: 'obj_block', x: 96, y: 240 },
-								{ type: 'obj_block', x: 112, y: 240 },
-								{ type: 'obj_block', x: 128, y: 240 },
-								{ type: 'obj_block', x: 144, y: 240 },
-								{ type: 'obj_block', x: 160, y: 240 },
-								{ type: 'obj_block', x: 176, y: 240 },
-								{ type: 'obj_block', x: 192, y: 240 }
-					      ]
-						}
-					]
-				}
+				interface: false
 			}
+
 			//Create Objects
 			cs.obj.create('obj_player', 180, cs.room.height - 50)
 			cs.obj.create('obj_build', 0, 0)
 
 			//Load map
-			cs.global.build.loaded = cs.script.build.map.load(cs.global.build.map)
+			cs.script.build.mapLoad('demo')
+
 			//cs.obj.create('obj_blob', 150, cs.room.height - 50)
 			//cs.obj.create('obj_interface', 50, 1)
 		</script>
