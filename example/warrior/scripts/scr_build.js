@@ -28,60 +28,69 @@ var maps = [
    }
 ]
 /******************************************************************************/
-
 cs.script.build = {
-   map: {
-      create: function(options){
-         cs.global.build.maps.push({
-            name: options.name,
-            width: options.width,
-            height: options.height,
-            settings: options.settings,
-            objects: []
-         })
-      },
-      remove: function(name){
-         cs.global.build.maps.splice(this.getID(name), 1)
-      },
-      load: function(name){
-         this.clear()
-         for(var obj of this.getMap(name).objects)
-            obj.obj = cs.script.build.obj.load(obj)
-      },
-      export: function(){
-         return JSON.stringify(this.getMap(cs.global.build.map))
-      },
-      clear: function(){
-         //Remove current objects from the room
-      },
-      getMap: function(name){
-         return cs.global.build.maps[this.getID(name)]
-      },
-      getID: function(name){
-         var i = cs.global.build.maps.length;
-         while(i--)
-            if(cs.global.build.maps[i].name == name) return i
-      }
+   building: true,
+   buildObject: 'obj_block',
+   mapName: 'demo',
+   map: undefined,
+   loadedObjects: [],
+   mapCreate: function(options){
+      cs.global.build.maps.push({
+         name: options.name,
+         width: options.width,
+         height: options.height,
+         settings: options.settings,
+         objects: []
+      })
    },
-   obj: {
-      add: function(type, x, y, options){
-         //cs.global.maps.current
-         obj = cs.obj.create(type, x, y, options)
-         cs.script.build.map.getMap(cs.global.build.map).objects.push({
-            type: type, x: x, y: y, options: options, obj: obj
-         })
-      },
-      delete: function(delObj){
-         var map = cs.script.build.map.getMap(cs.global.build.map)
-         map.objects.forEach(function(obj, i){
-            if(obj.obj.id == delObj.id){
-               cs.obj.destroy(obj.obj)
-               map.objects.splice(i, 1)
-            }
-         })
-      },
-      load: function(obj){
-         return cs.obj.create(obj.type, obj.x, obj.y)
+   mapRemove: function(name){
+      //For another time
+   },
+   mapExport: function(){
+      console.log(JSON.stringify(this.map))
+   },
+   mapLoad: function(name){
+      //Grab map. Maybe we should add an ajax object later
+      var that = this
+      var ajax = new XMLHttpRequest();
+      ajax.onreadystatechange = function() {
+         if(this.readyState == 4){
+            that.map = JSON.parse(this.responseText)
+            that.mapClear()
+            that.mapLoadOptions()
+            that.mapLoadObjects()
+         }
       }
+      ajax.open("POST", `./maps/${name}.json`, true)
+      ajax.send()
+   },
+   mapLoadOptions: function(){
+      //Load options
+      cs.room.setup(this.map.width, this.map.height)
+   },
+   mapLoadObjects: function(){
+      for(var obj of this.map.objects)
+         this.objLoad(obj)
+   },
+   mapClear: function(){
+      //Remove current objects from the room
+   },
+   objAdd: function(type, x, y, options){
+      var newObj = { type: type, x: x, y: y, options: options }
+      this.map.objects.push(newObj)
+      this.objLoad(newObj)
+   },
+   objDelete: function(delObj){
+      var that = this
+      this.loadedObjects.forEach(function(obj, i){
+         if(obj.id == delObj.id){
+            cs.obj.destroy(obj)
+            that.loadedObjects.splice(i, 1)
+            that.map.objects.splice(i, 1)
+         }
+      })
+   },
+   objLoad: function(obj){
+      this.loadedObjects.push(cs.obj.create(obj.type, obj.x, obj.y))
    }
 }
