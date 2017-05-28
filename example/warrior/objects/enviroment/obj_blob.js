@@ -65,27 +65,5 @@ cs.objects['obj_blob'] = {
          cs.draw.setAlpha(0.25 + (1 - this.hit.timer / this.hit.timerLength))
 
       cs.draw.spriteExt('spr_blob', this.x+((this.dir < 0) ? this.width : 0), this.y, 0, this.dir);
-
-      //Draw healthbar
-      if(this.hit.timer > 0){
-         cs.script.fillBar({
-            x: this.x + this.width/2 - 16,
-            y: this.y - 10,
-            color: '#465',
-            alpha: 1,
-            width: 32,
-            height: 6,
-            percent: this.health.value/this.health.max,
-         })
-         this.hit.timer -= 1
-      }
-      if(this.health.value <= 0){
-         for(var i = 0; i < 10; i++){
-            var point = cs.obj.create('obj_point', this.x+this.width/2, this.y+this.height/2)
-            point.hspeed = cs.math.iRandomRange(-3, 3)
-            point.vspeed = cs.math.iRandomRange(-1, -10)
-         }
-         cs.obj.destroy(this)
-      }
    }
 }

@@ -2,31 +2,12 @@ cs.objects['obj_interface'] = {
     create: function(){
         cs.obj.create('obj_joystick', 0, 0);
         cs.obj.create('obj_buttons', 0, 0);
-        cs.obj.create('obj_toggleButtons', 0, 0);
     },
     step: function(){
 
     }
 }
-cs.objects['obj_toggleButtons'] = {
-   create: function(){
-      this.draw = 'gui'
-   },
-   step: function(){
-      this.x = cs.draw.gui[0].canvas.width-20
-      this.y = 4
 
-      this.touch.check(this.x, this.y, 16, 16)
-      if(this.touch.held){
-         cs.draw.setColor('rgba(0, 0, 0, 0.25)')
-         cs.draw.rect(this.x, this.y, 16, 16, true)
-      }
-      if(this.touch.down)
-         cs.global.interface = cs.global.interface ? false : true
-
-      cs.draw.sprite('spr_toggleControls', this.x, this.y)
-   }
-}
 cs.objects['obj_buttons'] = {
 	create: function(){
 		this.width = 30;
@@ -36,8 +17,6 @@ cs.objects['obj_buttons'] = {
 		this.cy = 0;
 	},
 	step: function(){
-      if(!cs.global.interface) return
-
 		this.cx = cs.draw.gui[0].canvas.width - 50;
 		this.cy = cs.draw.gui[0].canvas.height - 50;
 		this.touch.check(this.cx, this.cy, this.width, this.height);
@@ -69,11 +48,8 @@ cs.objects['obj_joystick'] = {
       this.ty = 0;
       this.jw = this.width/2;
       this.jh = this.height/2;
-      cs.global.showJoyStick = true;
     },
     step: function(){
-       if(!cs.global.interface) return
-
        this.x = 10; this.y = cs.draw.height - this.height - 10;
 
        this.touch.check(this.x, this.y, this.width, this.height);

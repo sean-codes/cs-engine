@@ -13,16 +13,11 @@
 		<script src='objects/obj_player.js'></script>
 		<script src='objects/enviroment/obj_blob.js'></script>
 		<script src='objects/enviroment/obj_block.js'></script>
-		<script src='objects/enviroment/obj_building.js'></script>
 		<script src='objects/obj_interface.js'></script>
 		<script src='objects/obj_text.js'></script>
-		<script src='objects/obj_point.js'></script>
 
 		<!-- Scripts -->
-		<script src='scripts/scr_player.js'></script>
 		<script src='scripts/scr_collide.js'></script>
-		<script src='scripts/scr_fillBar.js'></script>
-		<script src='scripts/scr_build.js'></script>
 	</head>
 	<body>
 		<!--Game Area-->
@@ -40,9 +35,6 @@
 			cs.sprite.load('sprites/spr_sword', {xoff: 4, yoff: 18})
 			cs.sprite.load('sprites/spr_shield')
 			cs.sprite.load('sprites/spr_blob')
-			cs.sprite.load('sprites/spr_toggleControls')
-			cs.sprite.load('sprites/spr_building')
-
 
 			cs.camera.setup({
 				width:144,
@@ -53,20 +45,14 @@
 			})
 			cs.room.setup(800, 256)
 
-			//Global data
-			cs.global = {
-				interface: false
-			}
 
 			//Create Objects
-			cs.obj.create('obj_player', 180, cs.room.height - 50)
-			cs.obj.create('obj_build', 0, 0)
-
-			//Load map
-			cs.script.build.mapLoad('demo')
-
-			//cs.obj.create('obj_blob', 150, cs.room.height - 50)
-			//cs.obj.create('obj_interface', 50, 1)
+			cs.obj.create('obj_player', 50, 50);
+			cs.obj.create('obj_blob', 50, 1);
+			cs.obj.create('obj_interface', 50, 1);
+			for(var i = 0; i < 100; i++){
+				cs.obj.create('obj_block', i*16, cs.room.height-17);
+			}
 		</script>
 	</body>
 </html>

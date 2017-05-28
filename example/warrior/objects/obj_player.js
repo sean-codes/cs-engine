@@ -64,8 +64,8 @@ cs.objects['obj_player'] = {
            this.y += this.vspeed;
 
 
+        //Check if jumping
         if(keys.up && this.v_col && this.v_col.y > this.y)
-            //Check if jumping
            this.vspeed = -this.jump
 
         //Drawing
@@ -124,10 +124,6 @@ cs.objects['obj_player'] = {
                 add += this.attackTimer[state];
             }
         }
-
-        //Weapon Hit
-        if(state == 'swingHold')
-           cs.script.player.attack(this)
 
         if(this.dir > 0){
            //Going Right
