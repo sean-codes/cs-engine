@@ -17,8 +17,8 @@ cs.objects['obj_buttons'] = {
 		this.cy = 0;
 	},
 	step: function(){
-		this.cx = cs.draw.gui[0].canvas.width - 50;
-		this.cy = cs.draw.gui[0].canvas.height - 50;
+		this.cx = cs.draw.canvas.width - 50;
+		this.cy = cs.draw.canvas.height - 50;
 		this.touch.check(this.cx, this.cy, this.width, this.height);
 		if(this.touch.down){
 			//console.log('open');
