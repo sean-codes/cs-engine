@@ -3,7 +3,7 @@ var cs = {};
 //---------------------------------------------------------------------------------------------//
 //-----------------------------| Global Variables and Scripts |--------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.global = {}; cs.script = {}; cs.save = {}; cs.objects = {};
+cs.global = {}; cs.script = {}; cs.save = {}; cs.objects = {}; cs.sprites = {};
 //---------------------------------------------------------------------------------------------//
 //--------------------------------| Performance Monitoring |-----------------------------------//
 //---------------------------------------------------------------------------------------------//
@@ -62,6 +62,8 @@ cs.init = function(canvasId){
     window.requestAnimFrame = window.requestAnimationFrame ||
                               window.webkitRequestAnimationFrame ||
                               window.mozRequestAnimationFrame;
+
+    //Start your engines!
     cs.loop.step();
 }
 cs.loop = {
@@ -113,8 +115,8 @@ cs.obj = {
    count: 0,
    create : function(type, x, y, options){
       this.count += 1
-      var depth = cs.objects[type].depth || 0;
-      var pos = this.findPosition(depth);
+      var depth = cs.objects[type].depth || 0
+      var pos = this.findPosition(depth)
       this.list.splice(pos, 0, {});
       this.list[pos].depth = depth;
       this.list[pos].live = true;
