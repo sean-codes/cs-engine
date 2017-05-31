@@ -977,6 +977,7 @@ cs.mouse = {
    x: undefined, y: undefined,
    move : function(e){
       var pos = cs.touch.updatePos(-1, e.clientX, e.clientY)
+      console.log(pos)
       if(pos){
          cs.mouse.x = (pos) ? pos.x : 0
          cs.mouse.y = (pos) ? pos.y : 0
