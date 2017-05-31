@@ -152,43 +152,44 @@ cs.obj = {
 //-----------------------------------| Sprite Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.sprite = {
-    list: {},
-    loading : 0,
-    load: function(sprPath, sprInfo = {}){
-        this.loading += 1;
-        var sprName = sprPath.split('/').pop();
-        cs.sprite.list[sprName] = new Image();
-        cs.sprite.list[sprName].src = sprPath + '.png';
-        cs.sprite.list[sprName].frames = sprInfo.frames || 1;
-        //Frame Width/Height
-        cs.sprite.list[sprName].fwidth = sprInfo.width || 0;
-        cs.sprite.list[sprName].fheight = sprInfo.height || 0;
-        cs.sprite.list[sprName].xoff = sprInfo.xoff == undefined ? 0 : sprInfo.xoff;
-        cs.sprite.list[sprName].yoff = sprInfo.yoff == undefined ? 0 : sprInfo.yoff;
+   list: {},
+   loading : 0,
+   load: function(sprPath, sprInfo = {}){
+      this.loading += 1;
+      var sprName = sprPath.split('/').pop();
+      cs.sprite.list[sprName] = new Image();
+      cs.sprite.list[sprName].src = sprPath + '.png';
+      cs.sprite.list[sprName].frames = sprInfo.frames || 1;
+      //Frame Width/Height
+      cs.sprite.list[sprName].fwidth = sprInfo.width || 0;
+      cs.sprite.list[sprName].fheight = sprInfo.height || 0;
+      cs.sprite.list[sprName].xoff = sprInfo.xoff == undefined ? 0 : sprInfo.xoff;
+      cs.sprite.list[sprName].yoff = sprInfo.yoff == undefined ? 0 : sprInfo.yoff;
 
-        cs.sprite.list[sprName].onload = function(){
-            cs.sprite.loading -= 1;
-            if(cs.sprite.loading == 0){
-                cs.room.start();
-            }
-            if(this.fwidth == 0){
-                this.fwidth = this.width; this.fheight = this.height;
-            }
-        }
-    },
-    createBackground: function(name, sprite, width, height){
+      cs.sprite.list[sprName].onload = function(){
+         cs.sprite.loading -= 1;
+         if(cs.sprite.loading == 0){
+             cs.room.start();
+         }
+         if(this.fwidth == 0){
+             this.fwidth = this.width; this.fheight = this.height;
+         }
+      }
+   },
+   createBackground: function(name, sprite, width, height){
       var bg = document.createElement('canvas')
-      bg.width = width; bg.height = height;
       var ctx = bg.getContext('2d')
+      bg.width = width; bg.height = height
       var x = 0
       while(x < width){
          var y = 0
          while(y < height){
-            ctx.drawImage(cs.sprite.list[sprite], x, y)
-            y += cs.sprite.list[sprite].height
+            ctx.drawImage(img, x, y)
+            y += img.height
          }
-         x += cs.sprite.list[sprite].width
+         x+= img.width
       }
+      return bg
    }
 }
 //---------------------------------------------------------------------------------------------//
