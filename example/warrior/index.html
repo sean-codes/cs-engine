@@ -43,7 +43,7 @@
 				maxHeight:200,
 				lock: true
 			})
-			cs.room.setup(800, 256)
+			cs.room.setup(400, 192)
 
 
 			//Create Objects
@@ -51,7 +51,7 @@
 			cs.obj.create('obj_blob', 50, 1);
 			cs.obj.create('obj_interface', 50, 1);
 			for(var i = 0; i < 100; i++){
-				cs.obj.create('obj_block', i*16, cs.room.height-17);
+				cs.obj.create('obj_block', i*16, cs.room.height-16);
 			}
 		</script>
 	</body>

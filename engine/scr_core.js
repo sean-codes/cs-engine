@@ -276,10 +276,10 @@ cs.draw = {
     sprite : function(sprite, x, y, frame=0){
         sprite = cs.sprite.list[sprite];
         if(!this.raw){
+           if(x >= cs.room.width || x+sprite.fwidth <= 0 || x >= cs.camera.x + cs.camera.width || x <= cs.camera.x-sprite.fwidth)
+             return;
             x = Math.floor(x - cs.camera.x);
             y = Math.floor(y - cs.camera.y);
-            if(x > (cs.camera.x + cs.camera.width) && x < cs.camera.x-sprite.fwidth)
-                return;
         }
         if(frame == -1) frame = (frames % sprite.frames);//Dear lord help me
         this.ctx.drawImage(sprite, (frame*sprite.fwidth), 0, sprite.fwidth,
@@ -708,7 +708,7 @@ cs.camera = {
         //Check if camera over left
         if(this.x < 0){ this.x = 0;}
         if(this.x+width > cs.room.width){
-            this.x = cs.room.width - width;
+            this.x = (cs.room.width - width)/2;
         }
 
         //Check is camera under or over
