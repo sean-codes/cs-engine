@@ -175,7 +175,21 @@ cs.sprite = {
                 this.fwidth = this.width; this.fheight = this.height;
             }
         }
-    }
+    },
+    createBackground: function(name, sprite, width, height){
+      var bg = document.createElement('canvas')
+      bg.width = width; bg.height = height;
+      var ctx = bg.getContext('2d')
+      var x = 0
+      while(x < width){
+         var y = 0
+         while(y < height){
+            ctx.drawImage(cs.sprite.list[sprite], x, y)
+            y += cs.sprite.list[sprite].height
+         }
+         x += cs.sprite.list[sprite].width
+      }
+   }
 }
 //---------------------------------------------------------------------------------------------//
 //----------------------------------| Drawing Functions |--------------------------------------//
