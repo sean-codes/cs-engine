@@ -34,9 +34,9 @@ cs.init = function(canvasId){
     view.appendChild(viewCanvas);
     cs.draw.view.canvas = viewCanvas;
     cs.draw.view.ctx = viewCanvas.getContext('2d');
-    cs.draw.createLayer('gui');
-    cs.draw.createLayer('game');
-    cs.draw.ctx = cs.draw.game[0].ctx;
+    cs.draw.createSurface('gui');
+    cs.draw.createSurface('game');
+    cs.draw.ctx = cs.draw.surfaces.game[0].ctx;
 
     //Initiate Inputs
     view.addEventListener('keydown', cs.key.updateDown);
@@ -73,7 +73,7 @@ cs.loop = {
             window.requestAnimFrame(cs.loop.step);
 
         cs.fps.update();
-        cs.draw.clear();
+        cs.draw.clearSurfaces();
         cs.key.execute();
 
         //var i = cs.obj.list.length; while(i--){
@@ -181,263 +181,263 @@ cs.sprite = {
 //----------------------------------| Drawing Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.draw = {
-    view : { ctx: undefined, canvas : undefined },
-    game : [],//Game Canvases
-    gui : [],//GUI Canvases
-    ctx : undefined,
-    canvas : undefined,
-    alpha : 1,
-    raw : false,
-    height : 0,
-    width : 0,
-    fontSize : 12,
-    w : 0,
-    h : 0,
-    o : 0,
-    createLayer : function(type){
-        var num = cs.draw[type].length;
-        var newLayer = document.createElement("canvas");
-        newLayer.style.display = "none";
+   view : { ctx: undefined, canvas : undefined },
+   surfaces: {
+      game : [],//Game Canvases
+      gui : []//GUI Canvases
+   },
+   ctx : undefined,
+   canvas : undefined,
+   alpha : 1,
+   raw : false,
+   height : 0,
+   width : 0,
+   fontSize : 12,
+   w : 0,
+   h : 0,
+   o : 0,
+   createSurface : function(type){
+      var num = cs.draw.surfaces[type].length;
+      var newLayer = document.createElement("canvas");
+      newLayer.style.display = "none";
 
-        cs.draw[type][num] = {};
-        cs.draw[type][num].canvas = newLayer;
-        cs.draw[type][num].ctx = newLayer.getContext('2d');
-        cs.draw[type][num].alpha = 1;
-        document.body.appendChild(newLayer);
-        cs.draw.resize();
-        return num;
-    },
-    clear : function(){
-        for(var i = 0; i < this.game.length; i++){
-            this.game[i].ctx.clearRect(0, 0,
-              cs.camera.width + (cs.camera.width*cs.camera.scale),
-              cs.camera.height + (cs.camera.height*cs.camera.scale));
-        }
-        for(i = 0; i < this.gui.length; i++){
-            this.gui[i].ctx.clearRect(0, 0,
-              cs.camera.width,
-              cs.camera.height);
-        }
-        this.view.ctx.clearRect(0, 0,
-            this.view.canvas.width,
-            this.view.canvas.height);
-    },
-    resize : function(){
-        var w = window.innerWidth;
-        var h = window.innerHeight;
-        var ratioHeight = w/h; //How many h = w
-        var ratioWidth = h/w;//how man w = a h
+      this.surfaces[type][num] = {};
+      this.surfaces[type][num].canvas = newLayer;
+      this.surfaces[type][num].ctx = newLayer.getContext('2d');
+      this.surfaces[type][num].alpha = 1;
+      document.body.appendChild(newLayer);
+      cs.draw.resize();
+      return num;
+   },
+   clearSurfaces : function(){
+      for(var i = 0; i < this.surfaces.game.length; i++){
+         this.surfaces.game[i].ctx.clearRect(0, 0,
+         cs.camera.width + (cs.camera.width*cs.camera.scale),
+         cs.camera.height + (cs.camera.height*cs.camera.scale));
+      }
+      for(i = 0; i < this.surfaces.gui.length; i++){
+         this.surfaces.gui[i].ctx.clearRect(0, 0,
+         cs.camera.width,
+         cs.camera.height);
+      }
+      this.view.ctx.clearRect(0, 0,
+         this.view.canvas.width,
+         this.view.canvas.height);
+   },
+   resize : function(){
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      var ratioHeight = w/h; //How many h = w
+      var ratioWidth = h/w;//how man w = a h
 
-        var nw = cs.camera.maxWidth - (cs.camera.maxWidth%ratioWidth);
-        var nh = nw * ratioWidth;
-        if(nh > cs.camera.maxHeight){
-            nh = cs.camera.maxHeight - (cs.camera.maxHeight%ratioHeight);
-            nw = nh * ratioHeight;
-        }
+      var nw = cs.camera.maxWidth - (cs.camera.maxWidth%ratioWidth);
+      var nh = nw * ratioWidth;
+      if(nh > cs.camera.maxHeight){
+         nh = cs.camera.maxHeight - (cs.camera.maxHeight%ratioHeight);
+         nw = nh * ratioHeight;
+      }
 
-        cs.draw.view.canvas.style.width = w + 'px';
-        cs.draw.view.canvas.style.height = h + 'px';
+      cs.draw.view.canvas.style.width = w + 'px';
+      cs.draw.view.canvas.style.height = h + 'px';
 
-        cs.draw.view.canvas.width = nw;
-        cs.draw.view.canvas.height = nh;
-        cs.draw.view.ctx.imageSmoothingEnabled = false;
-        cs.draw.view.ctx.webkitImageSmoothingEnabled = false;
-        cs.draw.view.ctx.mozImageSmoothingEnabled = false;
+      cs.draw.view.canvas.width = nw;
+      cs.draw.view.canvas.height = nh;
+      cs.draw.view.ctx.imageSmoothingEnabled = false;
+      cs.draw.view.ctx.webkitImageSmoothingEnabled = false;
+      cs.draw.view.ctx.mozImageSmoothingEnabled = false;
 
-        cs.camera.width = Math.ceil(nw);
-        cs.camera.height = Math.ceil(nh);
-        for(var i = 0; i < cs.draw.game.length; i++){
-            cs.draw.game[i].canvas.width = nw;
-            cs.draw.game[i].canvas.height = nh;
-            cs.draw.game[i].canvas.width = cs.draw.game[i].canvas.width;
-            cs.draw.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
-            cs.draw.game[i].ctx.imageSmoothingEnabled = false;
-            cs.draw.game[i].ctx.webkitImageSmoothingEnabled = false;
-            cs.draw.game[i].ctx.mozImageSmoothingEnabled = false;
-        }
-        for(i = 0; i < cs.draw.gui.length; i++){
-            cs.draw.gui[i].canvas.width = nw;
-            cs.draw.gui[i].canvas.height = nh;
-            cs.draw.gui[i].ctx.imageSmoothingEnabled = false;
-            cs.draw.gui[i].ctx.webkitImageSmoothingEnabled = false;
-            cs.draw.gui[i].ctx.mozImageSmoothingEnabled = false;
-        }
-    },
-    display : function(){
-        for(var i = 0; i < this.game.length; i++){
-            this.view.ctx.globalAlpha = this.game[i].alpha;
-            this.view.ctx.drawImage(this.game[i].canvas, 0, 0);
-        }
-        for( i = 0; i < this.gui.length; i++){
-            this.view.ctx.globalAlpha = this.gui[i].alpha;
-            this.view.ctx.drawImage(this.gui[i].canvas, 0, 0);
-        }
-    },
-    sprite : function(sprite, x, y, frame=0){
-        sprite = cs.sprite.list[sprite];
-        if(!this.raw){
-           if(x >= cs.room.width || x+sprite.fwidth <= 0 || x >= cs.camera.x + cs.camera.width || x <= cs.camera.x-sprite.fwidth)
-             return;
-            x = Math.floor(x - cs.camera.x);
-            y = Math.floor(y - cs.camera.y);
-        }
-        if(frame == -1) frame = (frames % sprite.frames);//Dear lord help me
-        this.ctx.drawImage(sprite, (frame*sprite.fwidth), 0, sprite.fwidth,
-          sprite.fheight, x-sprite.xoff, y+-sprite.yoff, sprite.fwidth, sprite.fheight);
+      cs.camera.width = Math.ceil(nw);
+      cs.camera.height = Math.ceil(nh);
+      for(var i = 0; i < this.surfaces.game.length; i++){
+         cs.draw.surfaces.game[i].canvas.width = nw;
+         cs.draw.surfaces.game[i].canvas.height = nh;
+         cs.draw.surfaces.game[i].canvas.width = cs.draw.surfaces.game[i].canvas.width;
+         cs.draw.surfaces.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
+         cs.draw.surfaces.game[i].ctx.imageSmoothingEnabled = false;
+         cs.draw.surfaces.game[i].ctx.webkitImageSmoothingEnabled = false;
+         cs.draw.surfaces.game[i].ctx.mozImageSmoothingEnabled = false;
+      }
+      for(i = 0; i < cs.draw.surfaces.gui.length; i++){
+         cs.draw.surfaces.gui[i].canvas.width = nw;
+         cs.draw.surfaces.gui[i].canvas.height = nh;
+         cs.draw.surfaces.gui[i].ctx.imageSmoothingEnabled = false;
+         cs.draw.surfaces.gui[i].ctx.webkitImageSmoothingEnabled = false;
+         cs.draw.surfaces.gui[i].ctx.mozImageSmoothingEnabled = false;
+      }
+   },
+   display : function(){
+      for(var i = 0; i < this.surfaces.game.length; i++){
+         this.view.ctx.globalAlpha = this.surfaces.game[i].alpha;
+         this.view.ctx.drawImage(this.surfaces.game[i].canvas, 0, 0);
+      }
+      for( i = 0; i < this.surfaces.gui.length; i++){
+         this.view.ctx.globalAlpha = this.surfaces.gui[i].alpha;
+         this.view.ctx.drawImage(this.surfaces.gui[i].canvas, 0, 0);
+      }
+   },
+   sprite : function(sprite, x, y, frame=0){
+      sprite = cs.sprite.list[sprite];
+      if(!this.raw){
+         if(x >= cs.room.width || x+sprite.fwidth <= 0 || x >= cs.camera.x + cs.camera.width || x <= cs.camera.x-sprite.fwidth)
+            return;
+         x = Math.floor(x - cs.camera.x);
+         y = Math.floor(y - cs.camera.y);
+     }
+     if(frame == -1) frame = (frames % sprite.frames);//Dear lord help me
+     this.ctx.drawImage(sprite, (frame*sprite.fwidth), 0, sprite.fwidth,
+       sprite.fheight, x-sprite.xoff, y+-sprite.yoff, sprite.fwidth, sprite.fheight);
 
-        cs.draw.reset();
-    },
-    spriteExt : function(spriteName, x, y, angle, scaleX=1, scaleY=1, frame=0){
-        sprite = cs.sprite.list[spriteName];
-        if(!this.raw){
-            x = Math.floor(x - cs.camera.x);
-            y = Math.floor(y - cs.camera.y);
-        }
+     cs.draw.reset();
+   },
+   spriteExt : function(spriteName, x, y, angle, scaleX=1, scaleY=1, frame=0){
+      sprite = cs.sprite.list[spriteName];
+      if(!this.raw){
+         x = Math.floor(x - cs.camera.x);
+         y = Math.floor(y - cs.camera.y);
+      }
 
-        //DETAIL Remove this when done testing
-        /*this.ctx.setLineDash([2, 2]);
+      //DETAIL Remove this when done testing
+      /*this.ctx.setLineDash([2, 2]);
 
-        this.ctx.beginPath();
-        this.ctx.moveTo(x-40,y);
-        this.ctx.lineTo(x+40,y);
-        this.ctx.stroke();
+      this.ctx.beginPath();
+      this.ctx.moveTo(x-40,y);
+      this.ctx.lineTo(x+40,y);
+      this.ctx.stroke();
 
-        this.ctx.beginPath();
-        this.ctx.moveTo(x,y-40);
-        this.ctx.lineTo(x,y+40);
-        this.ctx.stroke();*/
+      this.ctx.beginPath();
+      this.ctx.moveTo(x,y-40);
+      this.ctx.lineTo(x,y+40);
+      this.ctx.stroke();*/
 
-        this.ctx.save();
+      this.ctx.save();
 
-        this.ctx.translate(x, y);
-        this.ctx.rotate(angle * Math.PI/180);
-        this.ctx.scale(scaleX, scaleY);
-        this.ctx.drawImage(sprite, -(sprite.xoff), -(sprite.yoff));
+      this.ctx.translate(x, y);
+      this.ctx.rotate(angle * Math.PI/180);
+      this.ctx.scale(scaleX, scaleY);
+      this.ctx.drawImage(sprite, -(sprite.xoff), -(sprite.yoff));
 
-        this.ctx.restore();
-        cs.draw.reset();
-    },
-    text : function(x, y, str){
-        if(!this.raw){
-            x = Math.floor(x - cs.camera.x);
-            y = Math.floor(y - cs.camera.y);
-        }
-        this.ctx.fillText(str, x, y);
-        cs.draw.reset();
-    },
-    textSize(str){
-        return this.ctx.measureText(str);
-    },
-    line : function(x1, y1, x2, y2){
-        var cx = 0, cy = 0
-        if(!this.raw){
-            cx =  Math.floor(cs.camera.x)
-            cy =  Math.floor(cs.camera.y)
-        }
+      this.ctx.restore();
+      cs.draw.reset();
+   },
+   text: function(x, y, str){
+      if(!this.raw){
+         x = Math.floor(x - cs.camera.x);
+         y = Math.floor(y - cs.camera.y);
+      }
+      this.ctx.fillText(str, x, y);
+      cs.draw.reset();
+   },
+   textSize: function(str){
+      return this.ctx.measureText(str);
+   },
+   line: function(x1, y1, x2, y2){
+      var cx = 0, cy = 0
+      if(!this.raw){
+         cx =  Math.floor(cs.camera.x)
+         cy =  Math.floor(cs.camera.y)
+      }
 
-        this.ctx.beginPath();
-        this.ctx.moveTo(x1-cx-0.5, y1-cy-0.5);
-        this.ctx.lineTo(x2-cx-0.5, y2-cy-0.5);
-        this.ctx.stroke();
-        cs.draw.reset();
-    },
-    rect : function(x, y, w, h, fill){
-        x = Math.floor(x); y = Math.floor(y);
-        w = Math.floor(w); h = Math.floor(h);
-        if(!this.raw){
-            x =  Math.floor(x-cs.camera.x);
-            y =  Math.floor(y-cs.camera.y);
-        }
-        if(fill === true){
-            this.ctx.fillRect(x,y,w,h);
-        } else {
-            x+=0.50;
-            y+=0.50;
-            w-=this.ctx.lineWidth;
-            h-=this.ctx.lineWidth;
-            this.ctx.strokeRect(x,y,w,h);
-        }
-        cs.draw.reset();
-    },
-    circle : function(x, y, rad, fill=true){
-        if(!this.raw){
-           x =  Math.floor(x-cs.camera.x);
-           y =  Math.floor(y-cs.camera.y);
-        }
-        cs.draw.ctx.beginPath();
-        cs.draw.ctx.arc(x, y, rad, 0, Math.PI*2, true);
-        cs.draw.ctx.closePath();
-        if(fill)
-           cs.draw.ctx.fill();
-        else
-           cs.draw.ctx.stroke();
-        cs.draw.reset();
-    },
-    circleGradient : function(x, y, radius, c1, c2){
-        if(!this.raw){
-           x =  Math.floor(x-cs.camera.x);
-           y =  Math.floor(y-cs.camera.y);
-        }
-        //Draw a circle
-        var g = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
-        g.addColorStop(1, c2);
-        g.addColorStop(0, c1);
-        this.ctx.fillStyle = g;
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, radius, 0, Math.PI*2, true);
-        this.ctx.closePath();
-        //Fill
-        this.ctx.fill();
-        cs.draw.reset();
-    },
-    setColor: function(color){
+      this.ctx.beginPath();
+      this.ctx.moveTo(x1-cx-0.5, y1-cy-0.5);
+      this.ctx.lineTo(x2-cx-0.5, y2-cy-0.5);
+      this.ctx.stroke();
+      cs.draw.reset();
+   },
+   rect: function(x, y, w, h, fill){
+      x = Math.floor(x); y = Math.floor(y);
+      w = Math.floor(w); h = Math.floor(h);
+      if(!this.raw){
+         x =  Math.floor(x-cs.camera.x);
+         y =  Math.floor(y-cs.camera.y);
+      }
+      if(fill === true){
+         this.ctx.fillRect(x,y,w,h);
+      } else {
+         x+=0.50;
+         y+=0.50;
+         w-=this.ctx.lineWidth;
+         h-=this.ctx.lineWidth;
+         this.ctx.strokeRect(x,y,w,h);
+      }
+      cs.draw.reset();
+   },
+   circle : function(x, y, rad, fill=true){
+      if(!this.raw){
+         x =  Math.floor(x-cs.camera.x);
+         y =  Math.floor(y-cs.camera.y);
+      }
+      cs.draw.ctx.beginPath();
+      cs.draw.ctx.arc(x, y, rad, 0, Math.PI*2, true);
+      cs.draw.ctx.closePath();
+      (fill)
+          ? cs.draw.ctx.fill()
+          : cs.draw.ctx.stroke()
+      cs.draw.reset();
+   },
+   circleGradient : function(x, y, radius, c1, c2){
+      if(!this.raw){
+         x =  Math.floor(x-cs.camera.x);
+         y =  Math.floor(y-cs.camera.y);
+      }
+      //Draw a circle
+      var g = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
+      g.addColorStop(1, c2);
+      g.addColorStop(0, c1);
+      this.ctx.fillStyle = g;
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, radius, 0, Math.PI*2, true);
+      this.ctx.closePath();
+      //Fill
+      this.ctx.fill();
+      cs.draw.reset();
+   },
+   setColor: function(color){
       this.ctx.fillStyle = color;
       this.ctx.strokeStyle = color;
-    },
-    setAlpha : function(alpha){
-        this.ctx.globalAlpha = alpha;
-    },
-    setWidth : function(width){
-        this.ctx.lineWidth = width;
-    },
-    setFont : function(font){
-        this.ctx.font = font;
-    },
-    setTextAlign : function(alignment){
-        this.ctx.textAlign = alignment;
-    },
-    setTextBaseline : function(alignment){
-        this.ctx.textBaseline=alignment;
-    },
-    setTextCenter : function(){
-        this.setTextAlign('center');
-        this.setTextBaseline('middle');
-    },
-    setOperation : function(operation){
-        this.ctx.globalCompositeOperation = operation;
-    },
-    setLayer : function(target, num){
-        this.target = this[target][num];
-        this.ctx = this.target.ctx;
-        this.canvas = this.target.canvas;
-        this.width = this.canvas.width;
-        this.height = this.canvas.height;
-        this.raw = false;//Use raw cordinates
-        if(target == 'gui') { this.raw = true; }
-    },
-    setLayerAlpha : function(alpha){
-        this.target.alpha = alpha;
-    },
-    reset : function(){
-        cs.draw.target.alpha = 1;
-        cs.draw.setAlpha(1);
-        cs.draw.setWidth(1);
-        cs.draw.setFont(this.fontSize + "px Trebuchet MS");
-        cs.draw.setTextAlign('start');
-        cs.draw.setTextBaseline('top');
-        cs.draw.setColor("#000");
-        cs.draw.setOperation('source-over');
-    }
+   },
+   setAlpha : function(alpha){
+      this.ctx.globalAlpha = alpha;
+   },
+   setWidth : function(width){
+      this.ctx.lineWidth = width;
+   },
+   setFont : function(font){
+      this.ctx.font = font;
+   },
+   setTextAlign : function(alignment){
+      this.ctx.textAlign = alignment;
+   },
+   setTextBaseline : function(alignment){
+      this.ctx.textBaseline=alignment;
+   },
+   setTextCenter : function(){
+      this.setTextAlign('center');
+      this.setTextBaseline('middle');
+   },
+   setOperation : function(operation){
+      this.ctx.globalCompositeOperation = operation;
+   },
+   setLayer : function(target, num){
+      this.target = this.surfaces[target][num];
+      this.ctx = this.target.ctx;
+      this.canvas = this.target.canvas;
+      this.width = this.canvas.width;
+      this.height = this.canvas.height;
+      this.raw = target == 'gui' ? true : false;//Use raw cordinates
+   },
+   setLayerAlpha : function(alpha){
+      this.target.alpha = alpha;
+   },
+   reset : function(){
+      cs.draw.target.alpha = 1;
+      cs.draw.setAlpha(1);
+      cs.draw.setWidth(1);
+      cs.draw.setFont(this.fontSize + "px Trebuchet MS");
+      cs.draw.setTextAlign('start');
+      cs.draw.setTextBaseline('top');
+      cs.draw.setColor("#000");
+      cs.draw.setOperation('source-over');
+   }
 }
 //---------------------------------------------------------------------------------------------//
 //-----------------------------------| Sound Functions |---------------------------------------//
@@ -708,7 +708,7 @@ cs.camera = {
         //Check if camera over left
         if(this.x < 0){ this.x = 0;}
         if(this.x+width > cs.room.width){
-            this.x = (cs.room.width - width)/2;
+            this.x = (cs.room.width - width) / ((cs.room.width < width) ? 2 : 1);
         }
 
         //Check is camera under or over
@@ -718,21 +718,21 @@ cs.camera = {
         }
     },
     zoomOut : function(){
-        for(var i = 0; i < cs.draw.game.length; i++){
-            cs.draw.game[i].canvas.width = cs.draw.game[i].canvas.width;
+        for(var i = 0; i < cs.draw.surfaces.game.length; i++){
+            cs.draw.surfaces.game[i].canvas.width = cs.draw.surfaces.game[i].canvas.width;
             if(cs.camera.scale < 1){
                 cs.camera.scale += 0.25;
             } else {
                 cs.camera.scale += 1;
             }
-            cs.draw.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
-            cs.draw.game[i].ctx.imageSmoothingEnabled = false;
-            cs.draw.game[i].ctx.mozImageSmoothingEnabled = false;
+            cs.draw.surfaces.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
+            cs.draw.surfaces.game[i].ctx.imageSmoothingEnabled = false;
+            cs.draw.surfaces.game[i].ctx.mozImageSmoothingEnabled = false;
         }
     },
     zoomIn : function(){
-        for(var i = 0; i < cs.draw.game.length; i++){
-            cs.draw.game[i].canvas.width = cs.draw.game[i].canvas.width;
+        for(var i = 0; i < cs.draw.surfaces.game.length; i++){
+            cs.draw.surfaces.game[i].canvas.width = cs.draw.surfaces.game[i].canvas.width;
             if(cs.camera.scale <= 1){
                 cs.camera.scale -= 0.25;
                 if(cs.camera.scale <= 0.25){
@@ -741,9 +741,9 @@ cs.camera = {
             } else {
                 cs.camera.scale -= 1;
             }
-            cs.draw.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
-            cs.draw.game[i].ctx.imageSmoothingEnabled = false;
-            cs.draw.game[i].ctx.mozImageSmoothingEnabled = false;
+            cs.draw.surfaces.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
+            cs.draw.surfaces.game[i].ctx.imageSmoothingEnabled = false;
+            cs.draw.surfaces.game[i].ctx.mozImageSmoothingEnabled = false;
         }
     }
 }
