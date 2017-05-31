@@ -34,6 +34,9 @@ cs.init = function(canvasId){
     view.appendChild(viewCanvas);
     cs.draw.view.canvas = viewCanvas;
     cs.draw.view.ctx = viewCanvas.getContext('2d');
+    cs.draw.view.ctx.webkitImageSmoothingEnabled = false
+    cs.draw.view.ctx.mozImageSmoothingEnabled = false
+    cs.draw.view.ctx.imageSmoothingEnabled = false
     cs.draw.createSurface('gui');
     cs.draw.createSurface('game');
     cs.draw.ctx = cs.draw.surfaces.game[0].ctx;
@@ -232,6 +235,10 @@ cs.draw = {
       this.surfaces[type][num] = {};
       this.surfaces[type][num].canvas = newLayer;
       this.surfaces[type][num].ctx = newLayer.getContext('2d');
+      this.surfaces[type][num].ctx.webkitImageSmoothingEnabled = false
+      this.surfaces[type][num].ctx.mozImageSmoothingEnabled = false
+      this.surfaces[type][num].ctx.imageSmoothingEnabled = false
+
       this.surfaces[type][num].alpha = 1;
       document.body.appendChild(newLayer);
       cs.draw.resize();
@@ -268,8 +275,8 @@ cs.draw = {
       cs.draw.view.canvas.style.width = w + 'px';
       cs.draw.view.canvas.style.height = h + 'px';
 
-      cs.draw.view.canvas.width = nw;
-      cs.draw.view.canvas.height = nh;
+      cs.draw.view.canvas.width = w;
+      cs.draw.view.canvas.height = h;
       cs.draw.view.ctx.imageSmoothingEnabled = false;
       cs.draw.view.ctx.webkitImageSmoothingEnabled = false;
       cs.draw.view.ctx.mozImageSmoothingEnabled = false;
@@ -296,11 +303,11 @@ cs.draw = {
    display : function(){
       for(var i = 0; i < this.surfaces.game.length; i++){
          this.view.ctx.globalAlpha = this.surfaces.game[i].alpha;
-         this.view.ctx.drawImage(this.surfaces.game[i].canvas, 0, 0);
+         this.view.ctx.drawImage(this.surfaces.game[i].canvas, 0, 0, this.view.canvas.width, this.view.canvas.height);
       }
       for( i = 0; i < this.surfaces.gui.length; i++){
          this.view.ctx.globalAlpha = this.surfaces.gui[i].alpha;
-         this.view.ctx.drawImage(this.surfaces.gui[i].canvas, 0, 0);
+         this.view.ctx.drawImage(this.surfaces.gui[i].canvas, 0, 0, this.view.canvas.width, this.view.canvas.height);
       }
    },
    sprite : function(sprite, x, y, frame=0){
