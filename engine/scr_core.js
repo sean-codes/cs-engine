@@ -157,39 +157,52 @@ cs.sprite = {
    load: function(sprPath, sprInfo = {}){
       this.loading += 1;
       var sprName = sprPath.split('/').pop();
+
+      //Set up
       cs.sprite.list[sprName] = new Image();
       cs.sprite.list[sprName].src = sprPath + '.png';
-      cs.sprite.list[sprName].frames = sprInfo.frames || 1;
-      //Frame Width/Height
-      cs.sprite.list[sprName].fwidth = sprInfo.width || 0;
-      cs.sprite.list[sprName].fheight = sprInfo.height || 0;
-      cs.sprite.list[sprName].xoff = sprInfo.xoff == undefined ? 0 : sprInfo.xoff;
-      cs.sprite.list[sprName].yoff = sprInfo.yoff == undefined ? 0 : sprInfo.yoff;
+      cs.sprite.list[sprName].canvas = document.createElement('canvas')
+      cs.sprite.list[sprName].ctx = cs.sprite.list[sprName].canvas.getContext('2d')
 
+      //Frame Width/Height/Tile
+      cs.sprite.list[sprName].texture = sprInfo.texture
+      cs.sprite.list[sprName].frames = sprInfo.frames || 1
+      cs.sprite.list[sprName].fwidth = sprInfo.fwidth || 0
+      cs.sprite.list[sprName].fheight = sprInfo.fheight || 0
+      cs.sprite.list[sprName].xoff = sprInfo.xoff || 0
+      cs.sprite.list[sprName].yoff = sprInfo.yoff || 0
+
+      var that = this
       cs.sprite.list[sprName].onload = function(){
-         cs.sprite.loading -= 1;
-         if(cs.sprite.loading == 0){
-             cs.room.start();
+         //Set up
+         if(this.fwidth == 0)
+            this.fwidth = this.width
+         if(this.fheight == 0)
+            this.fheight = this.height
+
+         //Draw to canvas
+         this.canvas.width = this.fwidth
+         this.canvas.height = this.fheight
+
+         if(this.texture){
+            var x = 0
+            while(x < this.canvas.width){
+               var y = 0
+               while(y < this.canvas.height){
+                  this.ctx.drawImage(this, x, y)
+                  y += this.height
+               }
+               x+= this.width
+            }
+         } else {
+            this.ctx.drawImage(this, 0, 0)
          }
-         if(this.fwidth == 0){
-             this.fwidth = this.width; this.fheight = this.height;
-         }
+
+         //Sprites Loaded Start Engine
+         cs.sprite.loading -= 1
+         if(cs.sprite.loading == 0)
+            cs.room.start()
       }
-   },
-   createBackground: function(name, sprite, width, height){
-      var bg = document.createElement('canvas')
-      var ctx = bg.getContext('2d')
-      bg.width = width; bg.height = height
-      var x = 0
-      while(x < width){
-         var y = 0
-         while(y < height){
-            ctx.drawImage(img, x, y)
-            y += img.height
-         }
-         x+= img.width
-      }
-      return bg
    }
 }
 //---------------------------------------------------------------------------------------------//
@@ -299,7 +312,7 @@ cs.draw = {
          y = Math.floor(y - cs.camera.y);
      }
      if(frame == -1) frame = (frames % sprite.frames);//Dear lord help me
-     this.ctx.drawImage(sprite, (frame*sprite.fwidth), 0, sprite.fwidth,
+     this.ctx.drawImage(sprite.canvas, (frame*sprite.fwidth), 0, sprite.fwidth,
        sprite.fheight, x-sprite.xoff, y+-sprite.yoff, sprite.fwidth, sprite.fheight);
 
      cs.draw.reset();
@@ -329,7 +342,7 @@ cs.draw = {
       this.ctx.translate(x, y);
       this.ctx.rotate(angle * Math.PI/180);
       this.ctx.scale(scaleX, scaleY);
-      this.ctx.drawImage(sprite, -(sprite.xoff), -(sprite.yoff));
+      this.ctx.drawImage(sprite.canvas, -(sprite.xoff), -(sprite.yoff));
 
       this.ctx.restore();
       cs.draw.reset();
