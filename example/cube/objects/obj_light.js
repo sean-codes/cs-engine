@@ -4,7 +4,7 @@ cs.objects['obj_light'] = {
         this.height = 30;
 
         //Create New Layer
-        var newLayer = cs.draw.createLayer('game');
+        var newLayer = cs.draw.createSurface('game');
         this.layer = newLayer;
 
         //Create Global Variable
