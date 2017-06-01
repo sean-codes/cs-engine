@@ -57,8 +57,8 @@ cs.init = function(canvasId){
     cs.draw.resize();
     cs.input.resize();
     //Sound
-    cs.sound.init();
-    cs.sound.active = true;
+    cs.sound.active = cs.sound.init();
+
     window.onfocus = function(){ cs.sound.toggleActive(true) }
     window.onblur = function(){ cs.sound.toggleActive(false) }
     document.body.visibilitychange= function(){console.log('test')};
@@ -407,7 +407,8 @@ cs.draw = {
       }
       cs.draw.reset();
    },
-   circle : function(x, y, rad, fill=true){
+   circle : function(x, y, rad, fill){
+      if(typeof fill == 'undefined') fill = true
       if(!this.raw){
          x =  Math.floor(x-cs.camera.x);
          y =  Math.floor(y-cs.camera.y);
@@ -497,7 +498,8 @@ cs.sound = {
    active: true,
    volume : undefined,
    enable: function(){
-      if(this.canPlayAudio === true) return;
+      if(this.canPlayAudio === true || !this.context) return;
+
       var source = this.context.createBufferSource();
       source.buffer = this.context.createBuffer(1, 1, 22050);
       source.connect(this.context.destination);
@@ -512,6 +514,7 @@ cs.sound = {
          this.context = new AudioContext();
       } catch (e) {
          this.context = undefined;
+         this.canPlayAudio = false;
          alert('Web Audio API is not supported in this browser');
       }
    },
@@ -579,10 +582,7 @@ cs.sound = {
    },
    toggleMute: function(bool){
       this.mute = bool;
-      if(bool)
-      this.setGain(0);
-      else
-      this.setGain(1);
+      (bool) ? this.setGain(0) : this.setGain(1);
    },
    setGain: function(gainValue){
       console.log('GainValue: ' + gainValue);
@@ -592,10 +592,8 @@ cs.sound = {
       }
    },
    toggleActive: function(bool){
-      if(bool)
-      this.context.resume();
-      else
-      this.context.suspend();
+      if(this.context !== undefined)
+         (bool) ? this.context.resume() : this.context.suspend();
    }
 }
 //---------------------------------------------------------------------------------------------//
