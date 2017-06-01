@@ -158,7 +158,8 @@ cs.obj = {
 cs.sprite = {
    list: {},
    loading : 0,
-   load: function(sprPath, sprInfo = {}){
+   load: function(sprPath, sprInfo){
+      if(sprInfo == undefined) sprInfo = {}
       this.loading += 1;
       var sprName = sprPath.split('/').pop();
 
