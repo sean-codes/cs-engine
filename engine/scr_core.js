@@ -184,10 +184,10 @@ cs.sprite = {
             this.fheight = this.height
 
          //Draw to canvas
-         this.canvas.width = this.fwidth
-         this.canvas.height = this.fheight
 
          if(this.texture){
+            this.canvas.width = this.fwidth
+            this.canvas.height = this.fheight
             var x = 0
             while(x < this.canvas.width){
                var y = 0
@@ -198,6 +198,8 @@ cs.sprite = {
                x+= this.width
             }
          } else {
+            this.canvas.width = this.width
+            this.canvas.height = this.height
             this.ctx.drawImage(this, 0, 0)
          }
 
@@ -977,7 +979,7 @@ cs.mouse = {
    x: undefined, y: undefined,
    move : function(e){
       var pos = cs.touch.updatePos(-1, e.clientX, e.clientY)
-      
+
       if(pos){
          cs.mouse.x = (pos) ? pos.x : 0
          cs.mouse.y = (pos) ? pos.y : 0
