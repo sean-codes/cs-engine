@@ -36,6 +36,7 @@ cs.init = function(canvasId){
     cs.draw.view.ctx = viewCanvas.getContext('2d');
     cs.draw.view.ctx.webkitImageSmoothingEnabled = false
     cs.draw.view.ctx.mozImageSmoothingEnabled = false
+    cs.draw.view.ctx.msImageSmoothingEnabled = false
     cs.draw.view.ctx.imageSmoothingEnabled = false
     cs.draw.createSurface('gui');
     cs.draw.createSurface('game');
@@ -282,6 +283,7 @@ cs.draw = {
       cs.draw.view.ctx.imageSmoothingEnabled = false;
       cs.draw.view.ctx.webkitImageSmoothingEnabled = false;
       cs.draw.view.ctx.mozImageSmoothingEnabled = false;
+      cs.draw.view.ctx.msImageSmoothingEnabled = false;
 
       cs.camera.width = Math.ceil(nw);
       cs.camera.height = Math.ceil(nh);
