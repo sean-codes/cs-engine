@@ -977,7 +977,7 @@ cs.mouse = {
    x: undefined, y: undefined,
    move : function(e){
       var pos = cs.touch.updatePos(-1, e.clientX, e.clientY)
-      console.log(pos)
+      
       if(pos){
          cs.mouse.x = (pos) ? pos.x : 0
          cs.mouse.y = (pos) ? pos.y : 0
@@ -1033,6 +1033,7 @@ cs.touch = {
             var touch = cs.touch.list[i];
             if(touch.id == id){
                 var canvas = cs.draw.view.canvas;
+                var gameCanvas = cs.draw.surfaces.game[0].canvas;
                 var rect = canvas.getBoundingClientRect();
 
                 var physicalViewWidth = (rect.right-rect.left);
@@ -1040,8 +1041,8 @@ cs.touch = {
                 var hortPercent = (x - rect.left)/physicalViewWidth;
                 var vertPercent = (y - rect.top)/physicalViewHeight;
 
-                touch.x = Math.round(hortPercent*canvas.width);
-                touch.y = Math.round(vertPercent*canvas.height);
+                touch.x = Math.round(hortPercent*gameCanvas.width);
+                touch.y = Math.round(vertPercent*gameCanvas.height);
 
                 return { x: touch.x, y: touch.y}
             }
