@@ -92,6 +92,7 @@ cs.loop = {
                 step.call(obj);
             }
         }
+        cs.camera.update()
         cs.key.reset();
         cs.touch.reset();
 
@@ -724,68 +725,78 @@ cs.particle = {
 //----------------------------------| Camera Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.camera = {
-    scale : 1,
-    x : 0,
-    y : 0,
-    width : 500, maxWidth : 500,
-    height : 200, maxHeight : 400,
-    lock : false,
-    setup: function(options){
-        this.width = options.width;
-        this.height = options.height;
-        this.maxWidth = options.maxWidth || this.width;
-        this.maxHeight = options.maxHeight || this.height;
-        this.lock = options.lock || this.lock;
-        cs.draw.resize();
-    },
-    follow : function(obj){
-        var width = this.width * this.scale/1;
-        var height = this.height * this.scale/1;
+   scale : 1,
+   x : 0,
+   y : 0,
+   ux: 0,
+   uy: 0,
+   width : 500, maxWidth : 500,
+   height : 200, maxHeight : 400,
+   lock : false,
+   setup: function(options){
+      this.width = options.width;
+      this.height = options.height;
+      this.maxWidth = options.maxWidth || this.width;
+      this.maxHeight = options.maxHeight || this.height;
+      this.lock = options.lock || this.lock;
+      cs.draw.resize();
+   },
+   follow : function(obj){
+      this.ux = obj.x
+      this.uy = obj.y
+      this.uwidth = obj.width
+      this.uheight = obj.height
+      this.uxoff = obj.xoff
+      this.uyoff = obj.yoff
+   },
+   update: function(){
+      var width = this.width * this.scale/1;
+      var height = this.height * this.scale/1;
 
-        this.x = (obj.x+obj.width/2)-width/2-obj.xoff;
-        this.y = (obj.y+obj.height/2)-height/2-obj.yoff;
+      this.x = (this.ux+this.uwidth/2)-width/2-this.uxoff;
+      this.y = (this.uy+this.uheight/2)-height/2-this.uyoff;
 
-        //Check if camera over left
-        if(this.x < 0){ this.x = 0;}
-        if(this.x+width > cs.room.width){
-            this.x = (cs.room.width - width) / ((cs.room.width < width) ? 2 : 1);
-        }
+      //Check if camera over left
+      if(this.x < 0){ this.x = 0;}
+      if(this.x+width > cs.room.width){
+         this.x = (cs.room.width - width) / ((cs.room.width < width) ? 2 : 1);
+      }
 
-        //Check is camera under or over
-        if(this.y < 0){ this.y = 0; }
-        if(this.y + height > cs.room.height){
-            this.y = cs.room.height - height + 1;
-        }
-    },
-    zoomOut : function(){
-        for(var i = 0; i < cs.draw.surfaces.game.length; i++){
-            cs.draw.surfaces.game[i].canvas.width = cs.draw.surfaces.game[i].canvas.width;
-            if(cs.camera.scale < 1){
-                cs.camera.scale += 0.25;
-            } else {
-                cs.camera.scale += 1;
+      //Check is camera under or over
+      if(this.y < 0){ this.y = 0; }
+      if(this.y + height > cs.room.height){
+         this.y = cs.room.height - height + 1;
+      }
+   },
+   zoomOut : function(){
+      for(var i = 0; i < cs.draw.surfaces.game.length; i++){
+         cs.draw.surfaces.game[i].canvas.width = cs.draw.surfaces.game[i].canvas.width;
+         if(cs.camera.scale < 1){
+            cs.camera.scale += 0.25;
+         } else {
+            cs.camera.scale += 1;
+         }
+         cs.draw.surfaces.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
+         cs.draw.surfaces.game[i].ctx.imageSmoothingEnabled = false;
+         cs.draw.surfaces.game[i].ctx.mozImageSmoothingEnabled = false;
+      }
+   },
+   zoomIn : function(){
+      for(var i = 0; i < cs.draw.surfaces.game.length; i++){
+         cs.draw.surfaces.game[i].canvas.width = cs.draw.surfaces.game[i].canvas.width;
+         if(cs.camera.scale <= 1){
+            cs.camera.scale -= 0.25;
+            if(cs.camera.scale <= 0.25){
+               cs.camera.scale = 0.25;
             }
-            cs.draw.surfaces.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
-            cs.draw.surfaces.game[i].ctx.imageSmoothingEnabled = false;
-            cs.draw.surfaces.game[i].ctx.mozImageSmoothingEnabled = false;
-        }
-    },
-    zoomIn : function(){
-        for(var i = 0; i < cs.draw.surfaces.game.length; i++){
-            cs.draw.surfaces.game[i].canvas.width = cs.draw.surfaces.game[i].canvas.width;
-            if(cs.camera.scale <= 1){
-                cs.camera.scale -= 0.25;
-                if(cs.camera.scale <= 0.25){
-                    cs.camera.scale = 0.25;
-                }
-            } else {
-                cs.camera.scale -= 1;
-            }
-            cs.draw.surfaces.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
-            cs.draw.surfaces.game[i].ctx.imageSmoothingEnabled = false;
-            cs.draw.surfaces.game[i].ctx.mozImageSmoothingEnabled = false;
-        }
-    }
+         } else {
+            cs.camera.scale -= 1;
+         }
+         cs.draw.surfaces.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
+         cs.draw.surfaces.game[i].ctx.imageSmoothingEnabled = false;
+         cs.draw.surfaces.game[i].ctx.mozImageSmoothingEnabled = false;
+      }
+   }
 }
 //---------------------------------------------------------------------------------------------//
 //-----------------------------------| Room Functions |----------------------------------------//
