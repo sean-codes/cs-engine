@@ -187,29 +187,32 @@ cs.sprite = {
             this.fheight = this.height
 
          //Draw to canvas
+         this.canvas.width = this.width
+         this.canvas.height = this.height
+         this.ctx.drawImage(this, 0, 0)
 
-         if(this.texture){
-            this.canvas.width = this.fwidth
-            this.canvas.height = this.fheight
-            var x = 0
-            while(x < this.canvas.width){
-               var y = 0
-               while(y < this.canvas.height){
-                  this.ctx.drawImage(this, x, y)
-                  y += this.height
-               }
-               x+= this.width
-            }
-         } else {
-            this.canvas.width = this.width
-            this.canvas.height = this.height
-            this.ctx.drawImage(this, 0, 0)
-         }
 
          //Sprites Loaded Start Engine
          cs.sprite.loading -= 1
          if(cs.sprite.loading == 0)
             cs.room.start()
+      }
+   },
+   texture: function(spriteName, width, height){
+      var sprite = cs.sprite.list[spriteName]
+      sprite.canvas.width = width
+      sprite.canvas.height = height
+      sprite.fwidth = width
+      sprite.fheight = height
+      sprite.ctx.clearRect(0, 0, width, height)
+      var x = 0
+      while(x < sprite.canvas.width){
+         var y = 0
+         while(y < sprite.canvas.height){
+            sprite.ctx.drawImage(sprite, x, y)
+            y += sprite.height
+         }
+         x+= sprite.width
       }
    }
 }
@@ -229,6 +232,7 @@ cs.draw = {
    height : 0,
    width : 0,
    fontSize : 12,
+   background: '#465',
    w : 0,
    h : 0,
    o : 0,
@@ -260,7 +264,8 @@ cs.draw = {
          cs.camera.width,
          cs.camera.height);
       }
-      this.view.ctx.clearRect(0, 0,
+      this.view.ctx.fillStyle = this.background
+      this.view.ctx.fillRect(0, 0,
          this.view.canvas.width,
          this.view.canvas.height);
    },
@@ -814,8 +819,9 @@ cs.room = {
         cs.sound.reset();
         this.restarting = false
     },
-    setup: function(width, height){
+    setup: function(width, height, background){
         this.width = width; this.height = height;
+        cs.draw.background = background || '#000'
     },
     load : function(room){
         var load = JSON.parse(testmap);
