@@ -57,8 +57,8 @@ cs.init = function(canvasId){
     cs.draw.resize();
     cs.input.resize();
     //Sound
-    cs.sound.init();
-    cs.sound.active = true;
+    cs.sound.active = cs.sound.init();
+
     window.onfocus = function(){ cs.sound.toggleActive(true) }
     window.onblur = function(){ cs.sound.toggleActive(false) }
     document.body.visibilitychange= function(){console.log('test')};
@@ -321,7 +321,9 @@ cs.draw = {
          this.view.ctx.drawImage(this.surfaces.gui[i].canvas, 0, 0, this.view.canvas.width, this.view.canvas.height);
       }
    },
-   sprite : function(sprite, x, y, frame=0){
+   sprite : function(sprite, x, y, frame){
+      if(typeof frame == 'undefined') frame = 0
+
       sprite = cs.sprite.list[sprite];
       if(!this.raw){
          if(x >= cs.room.width || x+sprite.fwidth <= 0 || x >= cs.camera.x + cs.camera.width || x <= cs.camera.x-sprite.fwidth)
@@ -335,7 +337,11 @@ cs.draw = {
 
      cs.draw.reset();
    },
-   spriteExt : function(spriteName, x, y, angle, scaleX=1, scaleY=1, frame=0){
+   spriteExt : function(spriteName, x, y, angle, scaleX, scaleY, frame){
+      if(typeof scaleX == 'undefined') scaleX = 1
+      if(typeof scaleY == 'undefined') scaleY = 1
+      if(typeof frame == 'undefined') frame = 0
+
       sprite = cs.sprite.list[spriteName];
       if(!this.raw){
          x = Math.floor(x - cs.camera.x);
@@ -407,7 +413,8 @@ cs.draw = {
       }
       cs.draw.reset();
    },
-   circle : function(x, y, rad, fill=true){
+   circle : function(x, y, rad, fill){
+      if(typeof fill == 'undefined') fill = true
       if(!this.raw){
          x =  Math.floor(x-cs.camera.x);
          y =  Math.floor(y-cs.camera.y);
@@ -497,7 +504,8 @@ cs.sound = {
    active: true,
    volume : undefined,
    enable: function(){
-      if(this.canPlayAudio === true) return;
+      if(this.canPlayAudio === true || !this.context) return;
+
       var source = this.context.createBufferSource();
       source.buffer = this.context.createBuffer(1, 1, 22050);
       source.connect(this.context.destination);
@@ -512,6 +520,7 @@ cs.sound = {
          this.context = new AudioContext();
       } catch (e) {
          this.context = undefined;
+         this.canPlayAudio = false;
          alert('Web Audio API is not supported in this browser');
       }
    },
@@ -579,10 +588,7 @@ cs.sound = {
    },
    toggleMute: function(bool){
       this.mute = bool;
-      if(bool)
-      this.setGain(0);
-      else
-      this.setGain(1);
+      (bool) ? this.setGain(0) : this.setGain(1);
    },
    setGain: function(gainValue){
       console.log('GainValue: ' + gainValue);
@@ -592,10 +598,8 @@ cs.sound = {
       }
    },
    toggleActive: function(bool){
-      if(bool)
-      this.context.resume();
-      else
-      this.context.suspend();
+      if(this.context !== undefined)
+         (bool) ? this.context.resume() : this.context.suspend();
    }
 }
 //---------------------------------------------------------------------------------------------//
@@ -604,7 +608,8 @@ cs.sound = {
 cs.particle = {
     settings : {},
     obj : {},
-    burst : function(x, y, w, h, qty=0){
+    burst : function(x, y, w, h, qty){
+       if(typeof qty == 'undefined') qty = 0
         var num = qty;
         if(num === 0){
             num = this.settings.particlesPerStep;
