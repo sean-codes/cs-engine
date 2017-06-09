@@ -814,7 +814,7 @@ cs.camera = {
 cs.room = {
     width : 1000,
     height:400,
-    restarting: false,
+    transition: false,
     start: function(){console.log('No cs.room.start event!')},
     restart: function(){this.restarting = true;},
     reset: function(){
