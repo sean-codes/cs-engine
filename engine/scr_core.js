@@ -127,7 +127,6 @@ cs.obj = {
       this.list[pos].live = true;
       this.list[pos].type = type;
       this.list[pos].id = this.count;
-      this.list[pos].core = false;
       this.list[pos].draw = 'game';
       this.list[pos].layer = 0;
       this.list[pos].particle = { list : [], settings : {} };
@@ -141,8 +140,13 @@ cs.obj = {
       this.list[pos].touch = cs.touch.create(this.list[pos].draw == 'gui');
       return this.list[pos];
    },
-   destroy : function(obj){
-      obj.live = false;
+   destroy : function(destroyObj){
+      if(typeof destroyObj === 'object')
+         destroyObj.live = false
+      else
+         for(var obj of cs.obj.list)
+            if(obj.id === destroyObj)
+               obj.live = false
    },
    findPosition : function(depth){
       for(var i = 0; i < this.list.length; i++){
