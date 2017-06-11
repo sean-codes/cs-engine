@@ -127,6 +127,7 @@ cs.obj = {
       this.list[pos].live = true;
       this.list[pos].type = type;
       this.list[pos].id = this.count;
+      this.list[pos].core = cs.objects[type].core || false
       this.list[pos].draw = 'game';
       this.list[pos].layer = 0;
       this.list[pos].particle = { list : [], settings : {} };
