@@ -434,8 +434,8 @@ cs.draw = {
    },
    circleGradient : function(x, y, radius, c1, c2){
       if(!this.raw){
-         x =  Math.floor(x-cs.camera.x);
-         y =  Math.floor(y-cs.camera.y);
+         x =  Math.floor(x-cs.camera.x || 0);
+         y =  Math.floor(y-cs.camera.y || 0);
       }
       //Draw a circle
       var g = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
