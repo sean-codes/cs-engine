@@ -172,8 +172,7 @@ cs.sprite = {
       //Set up
       cs.sprite.list[sprName] = new Image();
       cs.sprite.list[sprName].src = sprPath + '.png';
-      cs.sprite.list[sprName].canvas = document.createElement('canvas')
-      cs.sprite.list[sprName].ctx = cs.sprite.list[sprName].canvas.getContext('2d')
+      cs.sprite.list[sprName].frames = []
 
       //Frame Width/Height/Tile
       cs.sprite.list[sprName].texture = sprInfo.texture
@@ -191,11 +190,23 @@ cs.sprite = {
          if(this.fheight == 0)
             this.fheight = this.height
 
-         //Draw to canvas
-         this.canvas.width = this.width
-         this.canvas.height = this.height
-         this.ctx.drawImage(this, 0, 0)
+         //Create Frames
+         this.frames = []
+         var dx = 0, dy = 0
+         while(dx < this.width && dy < this.height){
+            var frame = {}
+            frame.canvas = document.createElement('canvas')
+            frame.canvas.width = this.fwidth
+            frame.canvas.height = this.fheight
+            frame.canvas.ctx = frame.canvas.getContext('2d')
 
+            frame.canvas.ctx.drawImage(this, dx, dy, this.fwidth, this.fheight,
+               0, 0, this.fwidth, this.fheight)
+            this.frames.push(frame.canvas)
+            dx += this.fwidth
+            if(dx === this.width)
+               dx = 0, dy+= this.fwidth
+         }
 
          //Sprites Loaded Start Engine
          cs.sprite.loading -= 1
@@ -205,16 +216,16 @@ cs.sprite = {
    },
    texture: function(spriteName, width, height){
       var sprite = cs.sprite.list[spriteName]
-      sprite.canvas.width = width
-      sprite.canvas.height = height
+      sprite.frames[0].width = width
+      sprite.frames[0].height = height
       sprite.fwidth = width
       sprite.fheight = height
-      sprite.ctx.clearRect(0, 0, width, height)
+      sprite.frames[0].ctx.clearRect(0, 0, width, height)
       var x = 0
-      while(x < sprite.canvas.width){
+      while(x < width){
          var y = 0
-         while(y < sprite.canvas.height){
-            sprite.ctx.drawImage(sprite, x, y)
+         while(y < height){
+            sprite.frames[0].ctx.drawImage(sprite, x, y)
             y += sprite.height
          }
          x+= sprite.width
@@ -336,9 +347,8 @@ cs.draw = {
          x = Math.floor(x - cs.camera.x);
          y = Math.floor(y - cs.camera.y);
      }
-     if(frame == -1) frame = (frames % sprite.frames);//Dear lord help me
-     this.ctx.drawImage(sprite.canvas, (frame*sprite.fwidth), 0, sprite.fwidth,
-       sprite.fheight, x-sprite.xoff, y+-sprite.yoff, sprite.fwidth, sprite.fheight);
+     if(frame == -1) frame = (cs.fps.frame % sprite.frames.length);
+     this.ctx.drawImage(sprite.frames[frame], x-sprite.xoff, y+-sprite.yoff)
 
      cs.draw.reset();
    },
@@ -371,8 +381,7 @@ cs.draw = {
       this.ctx.translate(x, y);
       this.ctx.rotate(angle * Math.PI/180);
       this.ctx.scale(scaleX, scaleY);
-      this.ctx.drawImage(sprite.canvas, -(sprite.xoff), -(sprite.yoff));
-
+      this.ctx.drawImage(sprite.frames[frame], -sprite.xoff, -sprite.yoff)
       this.ctx.restore();
       cs.draw.reset();
    },
