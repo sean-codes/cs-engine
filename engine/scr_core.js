@@ -108,7 +108,7 @@ cs.loop = {
 
         cs.draw.display();
         if(cs.room.restarting === true)
-            cs.room.reset();
+            cs.room.reset(); 
     }
 }
 //---------------------------------------------------------------------------------------------//
