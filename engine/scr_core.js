@@ -1059,104 +1059,99 @@ cs.touch = {
       }
    },
    down: function(e){
-      cs.touch.add(e.changedTouches[0].identifier);
-      cs.touch.move(e);
+      cs.touch.add(e.changedTouches[0].identifier)
+      cs.touch.move(e)
    },
    up: function(e){
-       var id = e.changedTouches[0].identifier;
-        cs.touch.remove(id);
-    },
-    updatePos : function(id, x, y){
-        for(var i = 0; i < cs.touch.list.length; i++){
-            var touch = cs.touch.list[i];
-            if(touch.id == id){
-                touch.x = x
-                touch.y = y
-                return { x: touch.x, y: touch.y}
+      var id = e.changedTouches[0].identifier;
+      cs.touch.remove(id);
+   },
+   updatePos : function(id, x, y){
+      for(var i = 0; i < cs.touch.list.length; i++){
+         var touch = cs.touch.list[i];
+         if(touch.id == id){
+             touch.x = x
+             touch.y = y
+             return { x: touch.x, y: touch.y}
+         }
+      }
+   },
+   move: function(e){
+      e.preventDefault();
+      for(var i = 0; i < e.changedTouches.length; i++){
+         var etouch = e.changedTouches[i];
+         cs.touch.updatePos(etouch.identifier, etouch.clientX, etouch.clientY);
+      }
+   },
+   create : function(raw){
+      return {
+         down : false,
+         held : false,
+         up : false,
+         raw : raw,
+         x : 0, y : 0,
+         off_x : 0, off_y : 0,
+         id : -1,
+         inside : function(x, y, width, height){
+            return (this.x > x && this.x < x+width && this.y > y && this.y < y+height);
+         },
+         check : function(x, y, width, height){
+            if(this.id !== -1){
+               //We have an id attached up or down
+               var touch = cs.touch.list[this.id];
+               this.x = touch.x;
+               this.y = touch.y;
+               if(!this.raw){
+                  convert = cs.touch.convertToGameCords(this.x, this.y)
+                  this.x = convert.x; this.y = convert.y
+               }
+               this.down = touch.down;
+               this.held = touch.held;
+               this.up = touch.up;
+               if(this.up){
+                  touch.used = false;
+                  this.held = false;
+                  this.id = -1;
+               }
+            } else {
+               this.up = false;
+               for(var i = 0; i < cs.touch.list.length; i++){
+                  var ctouch = cs.touch.list[i];
+
+                  this.x = ctouch.x;
+                  this.y = ctouch.y;
+
+                  if(!this.raw){
+                     convert = cs.touch.convertToGameCords(this.x, this.y)
+                     this.x = convert.x; this.y = convert.y
+                  }
+
+                  if(ctouch.down === true && ctouch.used === false){
+                     if(this.x > x && this.x < x+width && this.y > y && this.y < y+height){
+                        //Being Touched
+                        ctouch.used = true;
+                        this.down = true;
+                        this.id = i;
+
+                        this.off_x = this.x-x;
+                        this.off_y = this.y-y;
+                     }
+                  }
+               }
             }
-        }
-    },
-    move: function(e){
-        e.preventDefault();
-        for(var i = 0; i < e.changedTouches.length; i++){
-            var etouch = e.changedTouches[i];
-            cs.touch.updatePos(etouch.identifier, etouch.clientX, etouch.clientY);
-        }
-    },
-    create : function(raw){
-        return {
-            down : false,
-            held : false,
-            up : false,
-            raw : raw,
-            x : 0, y : 0,
-            off_x : 0, off_y : 0,
-            id : -1,
-            inside : function(x, y, width, height){
-                var cx = this.x;
-                var cy = this.y;
-                return (cx > x && cx < x+width && cy > y && cy < y+height);
-            },
-            check : function(x, y, width, height){
-                if(this.id !== -1){
-                   //We have an id attached up or down
-                    var touch = cs.touch.list[this.id];
-                    this.x = touch.x;
-                    this.y = touch.y;
-                    if(!this.raw){
-                        convert = cs.touch.convertToGameCords(this.x, this.y)
-                        this.x = (convert.x * cs.camera.scale) + cs.camera.x;
-                        this.y = (convert.y * cs.camera.scale) + cs.camera.y;
-                        console.log(convert.x + ' - ' + this.x)
-                    }
-                    this.down = touch.down;
-                    this.held = touch.held;
-                    this.up = touch.up;
-                    if(this.up){
-                        touch.used = false;
-                        this.held = false;
-                        this.id = -1;
-                    }
-                } else {
-                    this.up = false;
-                    for(var i = 0; i < cs.touch.list.length; i++){
-                        var ctouch = cs.touch.list[i];
-
-                        this.x = ctouch.x;
-                        this.y = ctouch.y;
-
-                        if(!this.raw){
-                            convert = cs.touch.convertToGameCords(this.x, this.y)
-                            this.x = (convert.x * cs.camera.scale) + cs.camera.x;
-                            this.y = (convert.y * cs.camera.scale) + cs.camera.y;
-                        }
-
-                        if(ctouch.down === true && ctouch.used === false){
-                            if(this.x > x && this.x < x+width && this.y > y && this.y < y+height){
-                                //Being Touched
-                                ctouch.used = true;
-                                this.down = true;
-                                this.id = i;
-
-                                this.off_x = this.x-x;
-                                this.off_y = this.y-y;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
-    reset : function(){
-        for(var i = 0; i < cs.touch.list.length; i++){
-            if(cs.touch.list[i].down === true){
-                cs.touch.list[i].down = false;
-                cs.touch.list[i].held = true;
-            }
-            cs.touch.list[i].up = false;
-        }
-    },
-    convertToGameCords(x, y){
+         }
+      }
+   },
+   reset : function(){
+      for(var i = 0; i < cs.touch.list.length; i++){
+         if(cs.touch.list[i].down === true){
+            cs.touch.list[i].down = false;
+            cs.touch.list[i].held = true;
+         }
+         cs.touch.list[i].up = false;
+      }
+   },
+   convertToGameCords(x, y){
       var canvas = cs.draw.view.canvas;
       var gameCanvas = cs.draw.surfaces.game[0].canvas;
       var rect = canvas.getBoundingClientRect();
@@ -1167,6 +1162,8 @@ cs.touch = {
       var vertPercent = (y - rect.top)/physicalViewHeight;
       var gamex = Math.round(hortPercent*gameCanvas.width);
       var gamey = Math.round(vertPercent*gameCanvas.height);
+      gamex = (gamex * cs.camera.scale) + cs.camera.x
+      gamey = (gamey * cs.camera.scale) + cs.camera.y
       return { x: gamex, y: gamey }
    }
 }
