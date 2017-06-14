@@ -1036,37 +1036,34 @@ cs.mouse = {
 //-------------------------------| Touch Input Functions |-------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.touch = {
-    list : [],
-    add : function(id){
-        cs.sound.enable();
-        for(var i = 0; i < cs.touch.list.length; i++){
-            if(cs.touch.list[i].used === false) {
-                break;
-            }
-        }
+   list : [],
+   add : function(id){
+      cs.sound.enable();
+      for(var i = 0; i < cs.touch.list.length; i++)
+         if(cs.touch.list[i].used === false) break
 
-        cs.touch.list[i] = {};
-        cs.touch.list[i].used = false;
-        cs.touch.list[i].down = true;
-        cs.touch.list[i].up = false;
-        cs.touch.list[i].x = 0;
-        cs.touch.list[i].y = 0;
-        cs.touch.list[i].id = id;
-    },
-    remove : function(id){
-        for(var i = 0; i < cs.touch.list.length; i++){
-            if(cs.touch.list[i].id == id){
-                cs.touch.list[i].down = false;
-                cs.touch.list[i].up = true;
-            }
-        }
-    },
-    down : function(e){
-        cs.touch.add(e.changedTouches[0].identifier);
-        cs.touch.move(e);
-    },
-    up : function(e){
-        var id = e.changedTouches[0].identifier;
+      cs.touch.list[i] = {}
+      cs.touch.list[i].used = false
+      cs.touch.list[i].down = true
+      cs.touch.list[i].up = false
+      cs.touch.list[i].x = 0
+      cs.touch.list[i].y = 0
+      cs.touch.list[i].id = id
+   },
+   remove : function(id){
+      for(var i = 0; i < cs.touch.list.length; i++){
+         if(cs.touch.list[i].id == id){
+            cs.touch.list[i].down = false
+            cs.touch.list[i].up = true
+         }
+      }
+   },
+   down: function(e){
+      cs.touch.add(e.changedTouches[0].identifier);
+      cs.touch.move(e);
+   },
+   up: function(e){
+       var id = e.changedTouches[0].identifier;
         cs.touch.remove(id);
     },
     updatePos : function(id, x, y){
@@ -1086,12 +1083,12 @@ cs.touch = {
             cs.touch.updatePos(etouch.identifier, etouch.clientX, etouch.clientY);
         }
     },
-    create : function(test){
+    create : function(raw){
         return {
             down : false,
             held : false,
             up : false,
-            raw : test,
+            raw : raw,
             x : 0, y : 0,
             off_x : 0, off_y : 0,
             id : -1,
@@ -1102,6 +1099,7 @@ cs.touch = {
             },
             check : function(x, y, width, height){
                 if(this.id !== -1){
+                   //We have an id attached up or down
                     var touch = cs.touch.list[this.id];
                     this.x = touch.x;
                     this.y = touch.y;
@@ -1109,6 +1107,7 @@ cs.touch = {
                         convert = cs.touch.convertToGameCords(this.x, this.y)
                         this.x = (convert.x * cs.camera.scale) + cs.camera.x;
                         this.y = (convert.y * cs.camera.scale) + cs.camera.y;
+                        console.log(convert.x + ' - ' + this.x)
                     }
                     this.down = touch.down;
                     this.held = touch.held;
@@ -1123,29 +1122,24 @@ cs.touch = {
                     for(var i = 0; i < cs.touch.list.length; i++){
                         var ctouch = cs.touch.list[i];
 
-                        var cx = ctouch.x;
-                        var cy = ctouch.y;
+                        this.x = ctouch.x;
+                        this.y = ctouch.y;
+
                         if(!this.raw){
-                            convert = cs.touch.convertToGameCords(cx, cy)
-                            console.log(cx + '-' + convert.x)
-                            cx = (convert.x * cs.camera.scale) + cs.camera.x;
-                            cy = (convert.y * cs.camera.scale) + cs.camera.y;
-                            ctouch.x = cx
-                            ctouch.y = cy
+                            convert = cs.touch.convertToGameCords(this.x, this.y)
+                            this.x = (convert.x * cs.camera.scale) + cs.camera.x;
+                            this.y = (convert.y * cs.camera.scale) + cs.camera.y;
                         }
 
                         if(ctouch.down === true && ctouch.used === false){
-                            if(cx > x && cx < x+width && cy > y && cy < y+height){
+                            if(this.x > x && this.x < x+width && this.y > y && this.y < y+height){
                                 //Being Touched
                                 ctouch.used = true;
                                 this.down = true;
                                 this.id = i;
 
-                                this.x = cx;
-                                this.y = cy;
-
-                                this.off_x = cx-x;
-                                this.off_y = cy-y;
+                                this.off_x = this.x-x;
+                                this.off_y = this.y-y;
                             }
                         }
                     }
@@ -1173,7 +1167,6 @@ cs.touch = {
       var vertPercent = (y - rect.top)/physicalViewHeight;
       var gamex = Math.round(hortPercent*gameCanvas.width);
       var gamey = Math.round(vertPercent*gameCanvas.height);
-      console.log(gamex)
       return { x: gamex, y: gamey }
    }
 }
