@@ -108,7 +108,7 @@ cs.loop = {
 
         cs.draw.display();
         if(cs.room.restarting === true)
-            cs.room.reset(); 
+            cs.room.reset();
     }
 }
 //---------------------------------------------------------------------------------------------//
@@ -277,8 +277,8 @@ cs.draw = {
       }
       for(i = 0; i < this.surfaces.gui.length; i++){
          this.surfaces.gui[i].ctx.clearRect(0, 0,
-         cs.camera.width,
-         cs.camera.height);
+         this.view.canvas.width,
+         this.view.canvas.height);
       }
       this.view.ctx.fillStyle = this.background
       this.view.ctx.fillRect(0, 0,
@@ -320,8 +320,8 @@ cs.draw = {
          cs.draw.surfaces.game[i].ctx.mozImageSmoothingEnabled = false;
       }
       for(i = 0; i < cs.draw.surfaces.gui.length; i++){
-         cs.draw.surfaces.gui[i].canvas.width = nw;
-         cs.draw.surfaces.gui[i].canvas.height = nh;
+         cs.draw.surfaces.gui[i].canvas.width = w;
+         cs.draw.surfaces.gui[i].canvas.height = h;
          cs.draw.surfaces.gui[i].ctx.imageSmoothingEnabled = false;
          cs.draw.surfaces.gui[i].ctx.webkitImageSmoothingEnabled = false;
          cs.draw.surfaces.gui[i].ctx.mozImageSmoothingEnabled = false;
@@ -334,7 +334,7 @@ cs.draw = {
       }
       for( i = 0; i < this.surfaces.gui.length; i++){
          this.view.ctx.globalAlpha = this.surfaces.gui[i].alpha;
-         this.view.ctx.drawImage(this.surfaces.gui[i].canvas, 0, 0, this.view.canvas.width, this.view.canvas.height);
+         this.view.ctx.drawImage(this.surfaces.gui[i].canvas, 0, 0);
       }
    },
    sprite : function(sprite, x, y, frame){
@@ -1073,18 +1073,8 @@ cs.touch = {
         for(var i = 0; i < cs.touch.list.length; i++){
             var touch = cs.touch.list[i];
             if(touch.id == id){
-                var canvas = cs.draw.view.canvas;
-                var gameCanvas = cs.draw.surfaces.game[0].canvas;
-                var rect = canvas.getBoundingClientRect();
-
-                var physicalViewWidth = (rect.right-rect.left);
-                var physicalViewHeight = (rect.bottom-rect.top);
-                var hortPercent = (x - rect.left)/physicalViewWidth;
-                var vertPercent = (y - rect.top)/physicalViewHeight;
-
-                touch.x = Math.round(hortPercent*gameCanvas.width);
-                touch.y = Math.round(vertPercent*gameCanvas.height);
-
+                touch.x = x
+                touch.y = y
                 return { x: touch.x, y: touch.y}
             }
         }
@@ -1116,8 +1106,9 @@ cs.touch = {
                     this.x = touch.x;
                     this.y = touch.y;
                     if(!this.raw){
-                        this.x = (touch.x * cs.camera.scale) + cs.camera.x;
-                        this.y = (touch.y * cs.camera.scale) + cs.camera.y;
+                        convert = cs.touch.convertToGameCords(this.x, this.y)
+                        this.x = (convert.x * cs.camera.scale) + cs.camera.x;
+                        this.y = (convert.y * cs.camera.scale) + cs.camera.y;
                     }
                     this.down = touch.down;
                     this.held = touch.held;
@@ -1135,8 +1126,12 @@ cs.touch = {
                         var cx = ctouch.x;
                         var cy = ctouch.y;
                         if(!this.raw){
-                            cx = (ctouch.x * cs.camera.scale) + cs.camera.x;
-                            cy = (ctouch.y * cs.camera.scale) + cs.camera.y;
+                            convert = cs.touch.convertToGameCords(cx, cy)
+                            console.log(cx + '-' + convert.x)
+                            cx = (convert.x * cs.camera.scale) + cs.camera.x;
+                            cy = (convert.y * cs.camera.scale) + cs.camera.y;
+                            ctouch.x = cx
+                            ctouch.y = cy
                         }
 
                         if(ctouch.down === true && ctouch.used === false){
@@ -1166,7 +1161,21 @@ cs.touch = {
             }
             cs.touch.list[i].up = false;
         }
-    }
+    },
+    convertToGameCords(x, y){
+      var canvas = cs.draw.view.canvas;
+      var gameCanvas = cs.draw.surfaces.game[0].canvas;
+      var rect = canvas.getBoundingClientRect();
+
+      var physicalViewWidth = (rect.right-rect.left);
+      var physicalViewHeight = (rect.bottom-rect.top);
+      var hortPercent = (x - rect.left)/physicalViewWidth;
+      var vertPercent = (y - rect.top)/physicalViewHeight;
+      var gamex = Math.round(hortPercent*gameCanvas.width);
+      var gamey = Math.round(vertPercent*gameCanvas.height);
+      console.log(gamex)
+      return { x: gamex, y: gamey }
+   }
 }
 //---------------------------------------------------------------------------------------------//
 //------------------------------------| Math Functions |---------------------------------------//
