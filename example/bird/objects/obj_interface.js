@@ -2,20 +2,22 @@ cs.objects['obj_interface'] = {
 	create: function(){
 		this.draw = 'gui';
 		this.width = 30;
-	    this.height = 30;
+	  this.height = 30;
 	    this.backgroundPlaying = undefined;
         this.drawButton = function(by, text){
-            var bw = 135;
-            var bh = 60;
-            var bx = cs.camera.width/2 - bw/2;
+            var bw = 235;
+            var bh = 150;
+            var bx = cs.draw.canvas.width/2 - bw/2;
 
             cs.draw.setAlpha(0.6);
             cs.draw.rect(bx, by, bw, bh, true);
-            cs.draw.rect(bx, by, bw, bh, false);
+				cs.draw.setWidth(3)
+            cs.draw.rect(bx-1, by-1, bw+2, bh+2, false);
 
             cs.draw.setColor('#FFFFFF');
             cs.draw.setTextCenter();
-            cs.draw.text(cs.camera.width/2, by+bh/2, text);
+				cs.draw.setFont('18px Arial')
+            cs.draw.text(cs.draw.canvas.width/2, by+bh/2, text);
         }
 	},
 	step: function(){
@@ -33,10 +35,11 @@ cs.objects['obj_interface'] = {
         var soundSprite = 'sound_on';
         if(cs.sound.mute)
             soundSprite = 'sound_off';
-        cs.draw.sprite(soundSprite, 0, 0);
+        cs.draw.spriteExt(soundSprite, 0, 0, 0, 3, 3);
+		  var btnheight = 200;
         switch(cs.save.state){
             case 'START':
-                this.drawButton(cs.camera.height/2-45, 'Please tap to start');
+                this.drawButton(cs.draw.canvas.height/2-btnheight/2, 'Please tap to start');
                 if(this.touch.down)
                     cs.save.state = 'TAPTOFLAP';
                 break;
@@ -44,8 +47,8 @@ cs.objects['obj_interface'] = {
             case 'TAPTOFLAP':
                 if(!this.backgroundPlaying)
                     this.backgroundPlaying = cs.sound.play('background', { loop: true });
-                this.drawButton(cs.camera.height/2-70, 'Tap to flap!');
-                this.drawButton(cs.camera.height/2, 'Your Best Score: ' + cs.save.topScore);
+                this.drawButton(cs.draw.canvas.height/2-160, 'Tap to flap!');
+                this.drawButton(cs.draw.canvas.height/2, 'Your Best Score: ' + cs.save.topScore);
                 if(this.touch.down){
                     cs.save.state = 'PLAYING';
                     cs.global.flap = true;
@@ -56,19 +59,19 @@ cs.objects['obj_interface'] = {
                 var text = 'Score: ' + cs.global.score;
                 var tw = cs.draw.textSize(text).width;
                 cs.draw.setAlpha(0.5);
-                cs.draw.rect(cs.camera.width-65, 0, 64, 40, true);
-                cs.draw.rect(cs.camera.width-65, 0, 64, 40);
+                cs.draw.rect(cs.draw.canvas.width-65, 0, 64, 40, true);
+                cs.draw.rect(cs.draw.canvas.width-65, 0, 64, 40);
                 cs.draw.setColor('#FFFFFF');
-                cs.draw.text(cs.camera.width - tw-10, this.y+5, 'Score: ' + cs.global.score);
+                cs.draw.text(cs.draw.canvas.width - tw-10, this.y+5, 'Score: ' + cs.global.score);
                 cs.draw.setColor('#FFFFFF');
-                cs.draw.text(cs.camera.width - tw-10, this.y+20, 'Best: ' + cs.save.topScore);
+                cs.draw.text(cs.draw.canvas.width - tw-10, this.y+20, 'Best: ' + cs.save.topScore);
                 if(this.touch.down)
                     cs.global.flap = true;
                 break;
 
             case 'WRECKED':
-                this.drawButton(cs.camera.height/2-70, 'Replay!');
-                this.drawButton(cs.camera.height/2, 'Your Best Score: ' + cs.save.topScore);
+                this.drawButton(cs.draw.canvas.height/2-160, 'Replay!');
+                this.drawButton(cs.draw.canvas.height/2, 'Your Best Score: ' + cs.save.topScore);
                 if(cs.global.score > cs.save.topScore)
         			cs.save.topScore = cs.global.score;
 
