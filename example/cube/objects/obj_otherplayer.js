@@ -53,6 +53,6 @@ cs.objects['obj_otherplayer'] = {
 		}
 		this.y += this.vspeed;
 
-		cs.draw.sprite('spr_player', this.x, this.y, this.dir);
+		cs.draw.sprite({ spr:'spr_player', x:this.x, y:this.y, scaleX:this.dir });
 	}
 }

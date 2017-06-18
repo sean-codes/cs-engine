@@ -64,7 +64,7 @@ cs.objects['obj_player'] = {
 		if(cs.key.down[33]){ cs.camera.zoomIn(); }
 		if(cs.key.down[34]){ cs.camera.zoomOut(); }
 
-		cs.draw.sprite('spr_player', this.x, this.y, this.dir);
+		cs.draw.sprite({ spr:'spr_player', x:this.x, y:this.y, frame:this.dir})
 
 		//Networking!
 		var network = cs.global.networkControl;

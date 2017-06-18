@@ -90,7 +90,7 @@ cs.objects['obj_inventory'] = {
     			if(this.slots[slot].length){
     				img = 'spr_item_' + this.slots[slot];
     			}
-    			cs.draw.sprite(img, cx, cy);
+    			cs.draw.sprite({ spr:img, x:cx, y:cy });
     			//blah blah blah
     			if(this.slotDown == -1){
     				if(this.touch.down && this.touch.inside(cx, cy, this.width, this.height)){
