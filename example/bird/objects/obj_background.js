@@ -49,6 +49,6 @@ cs.objects['obj_bgPart'] = {
 			cs.obj.destroy(this);
 		}
 
-		cs.draw.sprite(this.sprite, this.x, this.y);
+		cs.draw.sprite({spr:this.sprite, x:this.x, y:this.y});
 	}
 }
