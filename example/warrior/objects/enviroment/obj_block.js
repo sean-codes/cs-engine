@@ -6,6 +6,6 @@ cs.objects['obj_block'] = {
 
    },
    step: function(){
-      cs.draw.sprite(this.sprite, this.x, this.y);
+      cs.draw.sprite({ spr:this.sprite, x:this.x, y:this.y })
    }
 }

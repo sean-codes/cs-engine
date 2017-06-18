@@ -127,24 +127,24 @@ cs.objects['obj_player'] = {
 
         if(this.dir > 0){
            //Going Right
-           cs.draw.spriteExt('spr_sword', this.x+9+this.bounce-attackX, this.y+10, -attackAngle);
-           cs.draw.sprite('spr_head', this.x, this.y);
-           cs.draw.sprite('spr_foot', this.x+1, this.y+13+this.bounce);
-           cs.draw.sprite('spr_foot', this.x+6, this.y+13-this.bounce);
-           cs.draw.sprite('spr_hand', this.x-1, this.y+9);
-           cs.draw.sprite('spr_hand', this.x+7+this.bounce-attackX, this.y+9);
-           cs.draw.sprite('spr_body', this.x+1, this.y+7);
-           cs.draw.sprite('spr_shield', this.x-4-this.bounce, this.y+8);
+           cs.draw.sprite({ spr:'spr_sword', x:this.x+9+this.bounce-attackX, y:this.y+10, angle:-attackAngle })
+           cs.draw.sprite({ spr:'spr_head', x:this.x, y:this.y })
+           cs.draw.sprite({ spr:'spr_foot', x:this.x+1, y:this.y+13+this.bounce })
+           cs.draw.sprite({ spr:'spr_foot', x:this.x+6, y:this.y+13-this.bounce })
+           cs.draw.sprite({ spr:'spr_hand', x:this.x-1, y:this.y+9 })
+           cs.draw.sprite({ spr:'spr_hand', x:this.x+7+this.bounce-attackX, y:this.y+9 })
+           cs.draw.sprite({ spr:'spr_body', x:this.x+1, y:this.y+7 })
+           cs.draw.sprite({ spr:'spr_shield', x:this.x-4-this.bounce, y:this.y+8})
         } else {
             //Going Left
-            cs.draw.spriteExt('spr_sword', this.x-1-this.bounce+attackX, this.y+10, attackAngle);
-            cs.draw.spriteExt('spr_head', this.x+9, this.y, 0, -1, 1);
-            cs.draw.sprite('spr_foot', this.x+1, this.y+13+this.bounce);
-            cs.draw.sprite('spr_foot', this.x+6, this.y+13-this.bounce);
-            cs.draw.sprite('spr_hand', this.x-1-this.bounce+attackX, this.y+9);
-            cs.draw.sprite('spr_hand', this.x+7-this.bounce, this.y+9);
-            cs.draw.sprite('spr_body', this.x+1, this.y+7);
-            cs.draw.sprite('spr_shield', this.x+4+this.bounce, this.y+8);
+            cs.draw.sprite({ spr:'spr_sword', x:this.x-1-this.bounce+attackX, y:this.y+10, angle:attackAngle })
+            cs.draw.sprite({ spr:'spr_head', x:this.x+9, y:this.y, scaleX:-1 })
+            cs.draw.sprite({ spr:'spr_foot', x:this.x+1, y:this.y+13+this.bounce })
+            cs.draw.sprite({ spr:'spr_foot', x:this.x+6, y:this.y+13-this.bounce })
+            cs.draw.sprite({ spr:'spr_hand', x:this.x-1-this.bounce+attackX, y:this.y+9 })
+            cs.draw.sprite({ spr:'spr_hand', x:this.x+7-this.bounce, y:this.y+9 })
+            cs.draw.sprite({ spr:'spr_body', x:this.x+1, y:this.y+7 })
+            cs.draw.sprite({ spr:'spr_shield', x:this.x+4+this.bounce, y:this.y+8 })
         }
 
         //Camera
