@@ -8,7 +8,7 @@ The engine only requires the CSS and Javascript file. This is an example index.h
       <html>
          <head>
             <!-- Title/View Setup -->
-            <title>cs-engine</title>
+            <title>cs-engine</title> 
             <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 
             <!-- Game Engine -->
