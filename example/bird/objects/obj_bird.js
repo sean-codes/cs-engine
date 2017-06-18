@@ -34,10 +34,8 @@ cs.objects['obj_bird'] = {
 			angle = 75 * (this.vspeed/4);
 		}
 		cs.particle.step();
-		if(this.vspeed > 0)
-			cs.draw.spriteExt('bird2', this.x, this.y, angle);
-		else
-			cs.draw.spriteExt('bird', this.x, this.y, angle);
+		var spr = (this.vspeed > 0) ? 'bird2' : 'bird2'
+		cs.draw.sprite({ spr:spr, x:this.x, y:this.y, angle:angle})
 
 		cs.camera.follow(this);
         if(cs.save.state == 'PLAYING'){

@@ -4,6 +4,6 @@ cs.objects['obj_block'] = {
     	this.height = 16;
 	},
 	step: function(){
-		cs.draw.sprite('spr_block', this.x, this.y);
+		cs.draw.sprite({ spr:'spr_block', x:this.x, y:this.y });
 	}
 }
