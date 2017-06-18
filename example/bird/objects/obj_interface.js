@@ -4,10 +4,12 @@ cs.objects['obj_interface'] = {
 		this.width = 30;
 	   this.height = 30;
 	   this.backgroundPlaying = undefined;
+		cs.sound.toggleMute(true)
 	},
 	step: function(){
         //Handling Touch
-        this.touch.check(0, 0, cs.camera.width, cs.camera.height);
+        this.touch.check(0, 0, cs.draw.canvas.width, cs.draw.canvas.height);
+
         //Sound
         if(this.touch.down
 			  && this.touch.x > 0 && this.touch.x < 14*3
