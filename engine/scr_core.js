@@ -337,52 +337,31 @@ cs.draw = {
          this.view.ctx.drawImage(this.surfaces.gui[i].canvas, 0, 0);
       }
    },
-   sprite : function(sprite, x, y, frame){
-      if(typeof frame == 'undefined') frame = 0
-
-      sprite = cs.sprite.list[sprite];
+   sprite : function(options){
+      if(typeof options.scaleX == 'undefined') options.scaleX = 1
+      if(typeof options.scaleY == 'undefined') options.scaleY = 1
+      if(typeof options.frame == 'undefined') options.frame = 0
+      if(options.scale){
+         options.scaleX = options.scale
+         options.scaleY = options.scale
+      }
+      
+      sprite = cs.sprite.list[options.spr];
       if(!this.raw){
-         if(x >= cs.room.width || x+sprite.fwidth <= 0 || x >= cs.camera.x + cs.camera.width || x <= cs.camera.x-sprite.fwidth)
+         if(options.x >= cs.room.width || options.x+sprite.fwidth <= 0 ||
+            options.x >= cs.camera.x + cs.camera.width || options.x <= cs.camera.x-sprite.fwidth)
             return;
-         x = Math.floor(x - cs.camera.x);
-         y = Math.floor(y - cs.camera.y);
-     }
-     if(frame == -1) frame = (cs.fps.frame % sprite.frames.length);
-     this.ctx.drawImage(sprite.frames[frame], x-sprite.xoff, y+-sprite.yoff)
-
-     cs.draw.reset();
-   },
-   spriteExt : function(spriteName, x, y, angle, scaleX, scaleY, frame){
-      if(typeof scaleX == 'undefined') scaleX = 1
-      if(typeof scaleY == 'undefined') scaleY = 1
-      if(typeof frame == 'undefined') frame = 0
-
-      sprite = cs.sprite.list[spriteName];
-      if(!this.raw){
-         x = Math.floor(x - cs.camera.x);
-         y = Math.floor(y - cs.camera.y);
+         options.x = Math.floor(options.x - cs.camera.x);
+         options.y = Math.floor(options.y - cs.camera.y);
       }
 
-      //DETAIL Remove this when done testing
-      /*this.ctx.setLineDash([2, 2]);
-
-      this.ctx.beginPath();
-      this.ctx.moveTo(x-40,y);
-      this.ctx.lineTo(x+40,y);
-      this.ctx.stroke();
-
-      this.ctx.beginPath();
-      this.ctx.moveTo(x,y-40);
-      this.ctx.lineTo(x,y+40);
-      this.ctx.stroke();*/
-
       this.ctx.save();
-
-      this.ctx.translate(x, y);
-      this.ctx.rotate(angle * Math.PI/180);
-      this.ctx.scale(scaleX, scaleY);
-      this.ctx.drawImage(sprite.frames[frame], -sprite.xoff, -sprite.yoff)
+      this.ctx.translate(options.x, options.y);
+      this.ctx.rotate(options.angle * Math.PI/180);
+      this.ctx.scale(options.scaleX, options.scaleY);
+      this.ctx.drawImage(sprite.frames[options.frame], -sprite.xoff, -sprite.yoff)
       this.ctx.restore();
+
       cs.draw.reset();
    },
    text: function(x, y, str){
@@ -419,8 +398,8 @@ cs.draw = {
       if(fill === true){
          this.ctx.fillRect(x,y,w,h);
       } else {
-         x+=0.50;
-         y+=0.50;
+         x+=((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)+Math.floor(this.ctx.lineWidth/2);
+         y+=((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)+Math.floor(this.ctx.lineWidth/2);
          w-=this.ctx.lineWidth;
          h-=this.ctx.lineWidth;
          this.ctx.strokeRect(x,y,w,h);
