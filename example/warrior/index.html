@@ -39,22 +39,23 @@
 			cs.sprite.load('sprites/spr_blob')
 			cs.sprite.load('sprites/bg_wall', {fwidth: 192, fheight: 1000, texture: true})
 
-			cs.camera.setup({
-				width:144,
-				height:256,
-				maxWidth:300,
-				maxHeight:200,
-				lock: true
-			})
-			cs.room.setup(192, 192, "#9fd")
+			cs.room.start = function(){
+				console.log('wtf')
+				cs.camera.setup({
+					width:144,
+					height:256,
+					maxWidth:300,
+					maxHeight:200,
+					lock: true
+				})
+				cs.room.setup(192, 192, "#9fd")
 
-
-			//Create Objects
-			cs.obj.create('obj_player', 50, 50);
-			cs.obj.create('obj_blob', 50, 1);
-			cs.obj.create('obj_interface', 50, 1);
-			for(var i = 0; i < 100; i++){
-				cs.obj.create('obj_block', i*16, cs.room.height-16);
+				//Create Objects
+				cs.obj.create('obj_player', 50, 50);
+				cs.obj.create('obj_blob', 50, 1);
+				cs.obj.create('obj_interface', 50, 1);
+				for(var i = 0; i < 100; i++)
+					cs.obj.create('obj_block', i*16, cs.room.height-16);
 			}
 		</script>
 	</body>
