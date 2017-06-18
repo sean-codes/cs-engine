@@ -64,6 +64,10 @@ cs.objects['obj_blob'] = {
       if(this.hit.timer > 0)
          cs.draw.setAlpha(0.25 + (1 - this.hit.timer / this.hit.timerLength))
 
-      cs.draw.spriteExt('spr_blob', this.x+((this.dir < 0) ? this.width : 0), this.y, 0, this.dir);
+      cs.draw.sprite({
+        spr:'spr_blob',
+        x:this.x+((this.dir < 0) ? this.width : 0),
+        y:this.y, scaleX:this.dir
+      })
    }
 }
