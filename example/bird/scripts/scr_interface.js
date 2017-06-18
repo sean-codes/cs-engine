@@ -20,7 +20,6 @@ cs.script.interface.drawButtons = function(btns){
    if(totalButtonHeight > totalHeight)
       totalButtonHeight = totalHeight
 
-   console.log(totalButtonHeight)
    var btnHeight = totalButtonHeight/btns.length
    var dy = cs.draw.canvas.height/2 - (totalButtonHeight)/2
    var dx = cs.draw.canvas.width/2 - btnWidth/2
