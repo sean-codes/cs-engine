@@ -10,7 +10,7 @@ cs.objects['obj_score'] = {
 }
 
 cs.objects['obj_score_text'] = {
-	depth: -10,
+	depth: 10,
 	create: function(){
 		this.text = cs.math.choose([
 			'+1 Nice dive!',
