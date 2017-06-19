@@ -49,14 +49,17 @@ cs.objects['obj_interface'] = {
 
             case 'PLAYING':
 					var text = 'Score: ' + cs.global.score;
+					cs.draw.setFont("20px Arial")
 					var tw = cs.draw.textSize(text).width;
 					cs.draw.setAlpha(0.5);
-					cs.draw.rect(cs.draw.canvas.width-65, 0, 64, 40, true);
-					cs.draw.rect(cs.draw.canvas.width-65, 0, 64, 40);
+					cs.draw.rect(cs.draw.canvas.width-100, 0, 100, 60, true);
+					cs.draw.rect(cs.draw.canvas.width-100, 0, 100, 60);
 					cs.draw.setColor('#FFFFFF');
+					cs.draw.setFont("20px Arial")
 					cs.draw.text(cs.draw.canvas.width - tw-10, this.y+5, 'Score: ' + cs.global.score);
 					cs.draw.setColor('#FFFFFF');
-					cs.draw.text(cs.draw.canvas.width - tw-10, this.y+20, 'Best: ' + cs.save.topScore);
+					cs.draw.setFont("20px Arial")
+					cs.draw.text(cs.draw.canvas.width - tw-10, this.y+30, 'Best: ' + cs.save.topScore);
 					if(this.touch.down)
 					  	cs.global.flap = true;
 					break;
