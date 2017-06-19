@@ -345,7 +345,7 @@ cs.draw = {
          options.scaleX = options.scale
          options.scaleY = options.scale
       }
-      
+
       sprite = cs.sprite.list[options.spr];
       if(!this.raw){
          if(options.x >= cs.room.width || options.x+sprite.fwidth <= 0 ||
@@ -554,7 +554,7 @@ cs.sound = {
       if(this.list[audioName]['wav'].loaded === true){
          this.playList.forEach(function(audioObj){
             if(audioObj.name == audioName){
-               console.log('Reuse this sound');
+               //console.log('Reuse this sound');
             }
          })
          var csAudioObj = this.context.createBufferSource();
@@ -1004,6 +1004,7 @@ cs.mouse = {
       }
    },
    down : function(e){
+      console.log('down')
       cs.touch.add(-1)
       cs.touch.updatePos(-1, e.clientX, e.clientY)
    },
@@ -1021,6 +1022,7 @@ cs.touch = {
       for(var i = 0; i < cs.touch.list.length; i++)
          if(cs.touch.list[i].used === false) break
 
+      console.log(i)
       cs.touch.list[i] = {}
       cs.touch.list[i].used = false
       cs.touch.list[i].down = true
@@ -1032,6 +1034,7 @@ cs.touch = {
    remove : function(id){
       for(var i = 0; i < cs.touch.list.length; i++){
          if(cs.touch.list[i].id == id){
+            cs.touch.list[i].used = false
             cs.touch.list[i].down = false
             cs.touch.list[i].up = true
          }
