@@ -338,6 +338,8 @@ cs.draw = {
       }
    },
    sprite : function(options){
+      sprite = cs.sprite.list[options.spr]
+
       if(typeof options.scaleX == 'undefined') options.scaleX = 1
       if(typeof options.scaleY == 'undefined') options.scaleY = 1
       if(typeof options.frame == 'undefined') options.frame = 0
@@ -345,8 +347,13 @@ cs.draw = {
          options.scaleX = options.scale
          options.scaleY = options.scale
       }
+      //Scaling with width/height
+      if(options.width)
+         options.scaleX = options.width/sprite.width
+      if(options.height)
+         options.scaleY = options.height/sprite.height
 
-      sprite = cs.sprite.list[options.spr];
+
       if(!this.raw){
          if(options.x >= cs.room.width || options.x+sprite.fwidth <= 0 ||
             options.x >= cs.camera.x + cs.camera.width || options.x <= cs.camera.x-sprite.fwidth)
