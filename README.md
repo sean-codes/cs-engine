@@ -4,11 +4,11 @@ An engine for building 2D games
 # Setup
 The engine only requires the CSS and Javascript file. This is an example index.html on how I like to start.
 
-      <!DOCTYPE html>
-      <html>
-         <head>
-            <!-- Title/View Setup -->
-            <title>cs-engine</title> 
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <!-- Title/Meta Setup -->
+            <title>cs-engine</title>
             <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 
             <!-- Game Engine -->
@@ -39,56 +39,60 @@ The engine only requires the CSS and Javascript file. This is an example index.h
                   maxHeight:200,
                   lock: true
                })
-
                //Room Setup
                cs.room.setup(800, 256);
 
-               //Create Objects
-               cs.obj.create('obj_player', 50, 50);
+               cs.room.start = function(){
+                  //Create Objects
+                  cs.obj.create('obj_player', 50, 50);
+               }
             </script>
          </body>
       </html>
 
 # Loading Sprites
-Create a folder to hold your sprites or load them from the root directory!
+Create a folder to hold your sprites or load them from the root directory! These
 
-      cs.sprite.load('sprites/spr_player', options)
+      cs.sprite.load([Object: options])
+
       //Example options none are required!
       options = {
-         frames: [how many frame sin sprite],
-         width: [frame width],
-         height: [frame height],
-         xoff: [drawing xoffset],
-         yoff: [drawing yoffset]
+         path: [Required String: path to file]
+         name: [Optional String (File Name): Override the filename and set sprite name]
+         frames: [Optional Number (1): How many frames in the sprite sheet],
+         width: [Optional Number (IMG Width): The width of a frame],
+         height: [Optional Number (IMG Height): The width of a frame],
+         xoff: [Optional Number (0): The horizontal offset when drawing],
+         yoff: [Optional Number (0): The vertical offset when drawing]
       }
 
 Now you can call the draw function!
 
-     cs.draw.sprite('spr', x, y, [Current Frame or -1 to loop frames]);
+    cs.draw.sprite({
+        spr: [Required String: The name of the sprite],
+        x: [Required Number: The x position],
+        y: [Required Number: the y position],
+        width: [Optional Number (Frame Width): The width to draw the sprite],
+        height: [Optional Number (Frame Height): The height to draw the sprite],
+        scaleX: [Optional Number (1): Horizontal scaling],
+        scaleY: [Optional Number (1): Vertical scaling]
+    })
 
 # Objects
-Objects can be stored in an objects folder. To create a new object create a new js file and include in your index.html
+Objects can be stored in an objects folder. To load a new object create a `.js` file and include it in your index.html
 
     <script src="cscript/_objects/obj_something.js"></script>
 
-Inside the new js file you will need to create the object by using:
-
-    cs.objects['theobjname'] = {
-       create: function(){},
-       step: function(){
-          //Do something maybe draw sprite!
-       }
-    }
-
-More Help: Copy this into your new js file and change the 'obj_name' string to the name of your object.
+Inside the new JS file you can create the object by using:
 
     cs.objects['obj_name'] = {
         create: function(){
-            this.width = 16;
-            this.height = 16;
+            this.spr = 'spr_player'
+            this.width = 16
+            this.height = 16
         },
         step: function(){
-    	     cs.draw.sprite('spr', this.x, this.y);
+    	      cs.draw.sprite('spr', this.x, this.y)
         }
     }
 
