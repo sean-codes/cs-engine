@@ -95,7 +95,7 @@ cs.objects['obj_joystick'] = {
        cs.draw.setColor('#fff');
        cs.draw.rect(this.tx, this.ty, this.jw, this.jh, false);
 
-    	 cs.draw.text(1, 0, 'FPS Step: ' + cs.fps.rate);
-    	 cs.draw.text(1, 30, 'Scale: ' + cs.camera.scale);
+    	 cs.draw.text({ x:1, y:0, text:'FPS Step: ' + cs.fps.rate })
+    	 cs.draw.text({ x:1, y:30, text:'Scale: ' + cs.camera.scale })
     }
 }
