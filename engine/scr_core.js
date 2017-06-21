@@ -371,12 +371,12 @@ cs.draw = {
 
       cs.draw.reset();
    },
-   text: function(x, y, str){
+   text: function(options){
       if(!this.raw){
-         x = Math.floor(x - cs.camera.x);
-         y = Math.floor(y - cs.camera.y);
+         options.x = Math.floor(options.x - cs.camera.x);
+         options.y = Math.floor(options.y - cs.camera.y);
       }
-      this.ctx.fillText(str, x, y);
+      this.ctx.fillText(options.text, options.x, options.y);
       cs.draw.reset();
    },
    textSize: function(str){
