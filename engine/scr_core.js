@@ -1002,6 +1002,12 @@ cs.key = {
 //---------------------------------------------------------------------------------------------//
 cs.mouse = {
    x: undefined, y: undefined,
+   pos : function(){
+      var convert = cs.touch.convertToGameCords(cs.mouse.x, cs.mouse.y)
+      return (cs.draw.raw)
+         ? {x: cs.mouse.x, y: cs.mouse.y}
+         : {x: convert.x, y: convert.y}
+   },
    move : function(e){
       var pos = cs.touch.updatePos(-1, e.clientX, e.clientY)
 
@@ -1061,7 +1067,7 @@ cs.touch = {
          if(touch.id == id){
              touch.x = x
              touch.y = y
-             return { x: touch.x, y: touch.y}
+             return { x: touch.x, y: touch.y }
          }
       }
    },
