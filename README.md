@@ -127,7 +127,7 @@ Draw sprites using `cs.draw.sprite`
       y1: [Required Number: coordinate 1 y position],
       x2: [Required Number: coordinate 2 x position],
       y2: [Required Number: coordinate 2 y position]
-   })
+    })
 
 ### Set Functions:
 
