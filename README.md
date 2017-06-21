@@ -1,8 +1,8 @@
 # CS-Engine
-An engine for building 2D games
+The engine for building 2D games
 
 # Setup
-The engine only requires the CSS and Javascript file. This is an example index.html on how I like to start.
+The engine only requires the CSS and Javascript file. Here is a template for a basic project
 
     <!DOCTYPE html>
     <html>
@@ -166,9 +166,3 @@ The maxWidth and maxHeight set the maximum literal pixel size of the canvas. The
 
     maxWidth : 500
     maxHeight : 400
-
-The scale variables allows scaling the camera. It is not very reliable because it will make drawing blurry. You should rely on the engine automatic scaling. If you would like to make the camera smaller/zoomed in set the maxHeight and maxWidth to lower values.
-
-
-    //Scale the camera 2 times the size
-    cs.camera.scale = 2;
