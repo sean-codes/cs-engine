@@ -51,7 +51,7 @@ The engine only requires the CSS and Javascript file. This is an example index.h
       </html>
 
 # Loading Sprites
-Create a folder to hold your sprites or load them from the root directory! These
+Load a sprite using `cs.sprite.load`
 
       cs.sprite.load([Object: options])
 
@@ -66,7 +66,31 @@ Create a folder to hold your sprites or load them from the root directory! These
          yoff: [Optional Number (0): The vertical offset when drawing]
       }
 
-Now you can call the draw function!
+# Loading Objects
+Use a `.js` file include it in your `index.html`
+
+    <script src="cscript/_objects/obj_something.js"></script>
+
+Inside the new JS file you can create the object by using:
+
+    cs.objects['obj_name'] = {
+        create: [required Function: run this when we create the object]
+        step: [required Function: run this each every frame of the game]
+    }
+
+To create the object use `cs.obj.create()`
+
+    cs.obj.create({
+        type: [required String: object type],
+        x: [optional Number (0): x position to create the object],
+        y: [optional Number (0): y position to create the object]
+    })
+
+# Drawing Functions
+CS Engine has functions for drawing sprites, shapes, and text.
+
+### Sprites:
+Draw sprites using `cs.draw.sprite`
 
     cs.draw.sprite({
         spr: [Required String: The name of the sprite],
@@ -78,56 +102,34 @@ Now you can call the draw function!
         scaleY: [Optional Number (1): Vertical scaling]
     })
 
-# Objects
-Objects can be stored in an objects folder. To load a new object create a `.js` file and include it in your index.html
+### Text:
 
-    <script src="cscript/_objects/obj_something.js"></script>
-
-Inside the new JS file you can create the object by using:
-
-    cs.objects['obj_name'] = {
-        create: function(){
-            this.spr = 'spr_player'
-            this.width = 16
-            this.height = 16
-        },
-        step: function(){
-    	      cs.draw.sprite('spr', this.x, this.y)
-        }
-    }
-
-To create the object add after the init() function to cs.obj.create('obj_name', x, y);
-
-    <script type="text/javascript">
-        cs.init('view');
-        //Game code under here
-        cs.obj.create('obj_name', 0, 0);
-    </script>
-
-# Drawing Functions
-CS Engine has functions for drawing sprites and shapes. You can change settings of the current layer using the set functions.
-
-Sprites:
+    cs.draw.text({
+        x: [Required Number: x position],
+        y: [Required Number: y position],
+        text: [Required String: The text to draw]
+    })
 
 
-    cs.draw.sprite(sprite, x, y, frame);
-    cs.draw.spriteExt(spriteName, x, y, angle, scaleX=1, scaleY=1, frame=0)
-
-Text:
-
-
-    cs.draw.text(x, y, str);
-
-Note: Limit text usage for better performance.
-Shapes:
-
+### Shapes:
 
     //Rectangle
-    cs.draw.rect(x, y, width, height, fill[true/false]);
-    //Line
-    cs.draw.line(x1, y1, x2, y2);
+    cs.draw.rect({
+        x: [Required Number: x position to start drawing],
+        y: [Required Number: y position to start drawing],
+        width: [Required Number: width of the drawing],
+        height: [Required Number: height of the drawing],
+        fill: [Optional Boolean (false): fill the rectangle in solid or outline);
 
-Set Functions:
+    //Line
+    cs.draw.line({
+      x1: [Required Number: coordinate 1 x position],
+      y1: [Required Number: coordinate 1 y position],
+      x2: [Required Number: coordinate 2 x position],
+      y2: [Required Number: coordinate 2 y position]
+   })
+
+### Set Functions:
 
     //Color
     cs.draw.setColor("hexvalue");
