@@ -138,7 +138,7 @@ cs.objects['obj_inventory'] = {
 
     		//Draw slot held
     		if(this.slotDown >= 0 && himg !== ''){
-    			cs.draw.sprite(himg, hx, hy);
+    			cs.draw.sprite({spr:himg, x:hx, y:hy});
     			cs.draw.setColor('#6695e2');
     			cs.draw.rect(hx, hy, this.width, this.height, false);
     		}
