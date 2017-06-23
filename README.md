@@ -1,6 +1,18 @@
 # CS-Engine
 The engine for building 2D games
 
+# What's included
+
+    cs-engine/
+    ├── engine/
+    │   ├── style.css
+    │   ├── script.js
+    │   └── template.html
+    └── example/
+        ├── bird
+        ├── cube
+        └── warrior
+
 # Setup
 The engine only requires the CSS and Javascript file. Here is a template for a basic project
 
