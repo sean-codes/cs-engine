@@ -73,8 +73,9 @@ cs.init = function(canvasId){
 cs.loop = {
     run : true,
     step : function(){
-        if(cs.loop.run)
-            window.requestAnimFrame(cs.loop.step);
+        setTimeout(function(){ cs.loop.step() }, 1000/60)
+      //   if(cs.loop.run)
+      //       window.requestAnimFrame(cs.loop.step);
 
         cs.fps.update();
         cs.draw.clearSurfaces();
