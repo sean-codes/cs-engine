@@ -166,7 +166,7 @@ cs.sprite = {
    loading : 0,
    load: function(sprPath, sprInfo){
       if(sprInfo == undefined) sprInfo = {}
-      this.loading += 1;
+      cs.room.loading += 1;
       var sprName = sprPath.split('/').pop();
 
       //Set up
@@ -209,8 +209,8 @@ cs.sprite = {
          }
 
          //Sprites Loaded Start Engine
-         cs.sprite.loading -= 1
-         if(cs.sprite.loading == 0)
+         cs.room.loading -= 1
+         if(cs.room.loading == 0)
             cs.room.start()
       }
    },
@@ -812,43 +812,41 @@ cs.camera = {
 //-----------------------------------| Room Functions |----------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.room = {
-    width : 1000,
-    height:400,
-    transition: false,
-    start: function(){console.log('No cs.room.start event!')},
-    restart: function(){this.restarting = true;},
-    reset: function(){
-        cs.obj.list = [];
-        cs.global = {};
-        cs.room.start();
-        cs.sound.reset();
-        this.restarting = false
-    },
-    setup: function(width, height, background){
-        this.width = width; this.height = height;
-        cs.draw.background = background || '#000'
-    },
-    load : function(room){
-        var load = JSON.parse(testmap);
-        for(var i = 0; i < load.objects.length; i++){
-            var tmp_cnt = cs.obj.list.length;
-            cs.obj.list[tmp_cnt] = load.objects[i];
-        }
-        cs.room.info = load.room;
-    },
-    save : function(){
-        //Get Object List
-        var save = {};
-        save.room = cs.room.info;
-        save.objects = [];
-        for(var i = 0; i < cs.obj.list.length; i++){
-            if(cs.obj.list[i].core === false){
-                var tmp_cnt = save.objects.length;
-                save.objects[tmp_cnt] = cs.obj.list[i];
-            }
-        }
-        console.log(JSON.stringify(save));
-    }
+   width : 1000,
+   height:400,
+   transition: false,
+   loading: 0,
+   loaded: {},
+   start: function(){console.log('No cs.room.start event!')},
+   restart: function(){this.restarting = true;},
+   reset: function(){
+      cs.obj.list = [];
+      cs.global = {};
+      cs.room.start();
+      cs.sound.reset();
+      this.restarting = false
+   },
+   setup: function(width, height, background){
+      this.width = width; this.height = height;
+      cs.draw.background = background || '#000'
+   },
+   load : function(path){
+      var that = this
+      var name = path.split('/').pop()
+      var ajax = new XMLHttpRequest()
+      cs.room.loading += 1
+      ajax.onreadystatechange = function() {
+         if(this.readyState == 4 && this.status == 200){
+            that.loaded[name] = JSON.parse(this.responseText)
+            cs.room.loading -= 1
+            if(cs.room.loading == 0)
+               cs.room.start()
+         }
+      }
+      ajax.open("POST", `./${path}.json`, true)
+      ajax.send()
+   },
+   save : function(){}
 }
 //---------------------------------------------------------------------------------------------//
 //------------------------------| Text Input Functions |---------------------------------------//
@@ -1168,7 +1166,7 @@ cs.math = {
         return (number >= 0) ? 1 : -1;
     },
     iRandomRange : function(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
+        return Math.floor(Math.random() * (max - min+1)) + min
     },
     choose: function(array){
         return array[this.iRandomRange(0, array.length-1)];
