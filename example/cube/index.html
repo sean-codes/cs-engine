@@ -41,7 +41,7 @@
 			cs.sprite.load('sprites/spr_item_rupee');
 			cs.sprite.load('sprites/spr_player', {frames: 2, fwidth:16, fheight:16});
 
-			cs.room.start = function(){
+			cs.start = function(){
 				cs.global.networkControl = { id: -1, list: {} }
 				cs.network.connect({ host:'cube-script.net', port:9999, ssl: false });
 
