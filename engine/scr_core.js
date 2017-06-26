@@ -231,6 +231,9 @@ cs.sprite = {
          }
          x+= sprite.width
       }
+   },
+   info: function(options){
+      //We need something to return info on sprites based on scale etc
    }
 }
 //---------------------------------------------------------------------------------------------//
