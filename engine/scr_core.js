@@ -3,7 +3,15 @@ var cs = {};
 //---------------------------------------------------------------------------------------------//
 //-----------------------------| Global Variables and Scripts |--------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.global = {}; cs.script = {}; cs.save = {}; cs.objects = {}; cs.sprites = {};
+cs.global = {};
+cs.script = {};
+cs.save = {};
+cs.objects = {};
+cs.sprites = {};
+cs.loading = 0
+cs.start = function(){
+   console.log('No Load Function Defined!')
+}
 //---------------------------------------------------------------------------------------------//
 //--------------------------------| Performance Monitoring |-----------------------------------//
 //---------------------------------------------------------------------------------------------//
@@ -164,10 +172,9 @@ cs.obj = {
 //---------------------------------------------------------------------------------------------//
 cs.sprite = {
    list: {},
-   loading : 0,
    load: function(sprPath, sprInfo){
       if(sprInfo == undefined) sprInfo = {}
-      cs.room.loading += 1;
+      cs.loading += 1;
       var sprName = sprPath.split('/').pop();
 
       //Set up
@@ -210,9 +217,10 @@ cs.sprite = {
          }
 
          //Sprites Loaded Start Engine
-         cs.room.loading -= 1
-         if(cs.room.loading == 0)
-            cs.room.start()
+         cs.loading -= 1
+         console.log(cs.loading)
+         if(cs.loading == 0)
+            cs.start()
       }
    },
    texture: function(spriteName, width, height){
@@ -274,7 +282,7 @@ cs.draw = {
       gui : []//GUI Canvases
    },
    ctx : undefined,
-   canvas : undefined,
+   canvas : {width: 0, height: 0},
    alpha : 1,
    raw : false,
    height : 0,
@@ -780,20 +788,22 @@ cs.camera = {
    update: function(){
       var width = this.width * this.scale/1;
       var height = this.height * this.scale/1;
+      var gameWidth = cs.room.width
+      var gameHeight = cs.room.height
 
       this.x = (this.ux+this.uwidth/2)-width/2-this.uxoff;
       this.y = (this.uy+this.uheight/2)-height/2-this.uyoff;
 
       //Check if camera over left
       if(this.x < 0){ this.x = 0;}
-      if(this.x+width > cs.room.width){
-         this.x = (cs.room.width - width) / ((cs.room.width < width) ? 2 : 1);
+      if(this.x+width > gameWidth){
+         this.x = (gameWidth - width) / ((gameWidth < width) ? 2 : 1);
       }
 
       //Check is camera under or over
       if(this.y < 0){ this.y = 0; }
-      if(this.y + height > cs.room.height){
-         this.y = cs.room.height - height + 1;
+      if(this.y + height > gameHeight){
+         this.y = gameHeight - height + 1;
       }
    },
    zoomOut : function(){
@@ -831,16 +841,13 @@ cs.camera = {
 //---------------------------------------------------------------------------------------------//
 cs.room = {
    width : 1000,
-   height:400,
+   height : 400,
    transition: false,
-   loading: 0,
-   loaded: {},
-   start: function(){console.log('No cs.room.start event!')},
    restart: function(){this.restarting = true;},
    reset: function(){
       cs.obj.list = [];
       cs.global = {};
-      cs.room.start();
+      cs.start();
       cs.sound.reset();
       this.restarting = false
    },
@@ -848,23 +855,6 @@ cs.room = {
       this.width = width; this.height = height;
       cs.draw.background = background || '#000'
    },
-   load : function(path){
-      var that = this
-      var name = path.split('/').pop()
-      var ajax = new XMLHttpRequest()
-      cs.room.loading += 1
-      ajax.onreadystatechange = function() {
-         if(this.readyState == 4 && this.status == 200){
-            that.loaded[name] = JSON.parse(this.responseText)
-            cs.room.loading -= 1
-            if(cs.room.loading == 0)
-               cs.room.start()
-         }
-      }
-      ajax.open("POST", `./${path}.json`, true)
-      ajax.send()
-   },
-   save : function(){}
 }
 //---------------------------------------------------------------------------------------------//
 //------------------------------| Text Input Functions |---------------------------------------//
@@ -1174,6 +1164,31 @@ cs.touch = {
       gamex = (gamex * cs.camera.scale) + cs.camera.x
       gamey = (gamey * cs.camera.scale) + cs.camera.y
       return { x: gamex, y: gamey }
+   }
+}
+//---------------------------------------------------------------------------------------------//
+//----------------------------------| Storage Functions |--------------------------------------//
+//---------------------------------------------------------------------------------------------//
+cs.storage = {
+   load: function(location, path){
+      var that = this
+      var name = path.split('/').pop()
+      var ajax = new XMLHttpRequest()
+      cs.loading += 1
+      ajax.onreadystatechange = function() {
+         if(this.readyState == 4 && this.status == 200){
+            if(!that[location]) that[location] = {}
+            that[location][name] = JSON.parse(this.responseText)
+            cs.loading -= 1
+            if(cs.loading == 0)
+               cs.start()
+         }
+      }
+      ajax.open("POST", `./${path}.json`, true)
+      ajax.send()
+   },
+   cache: function(){
+      //we could cache something to local storage here
    }
 }
 //---------------------------------------------------------------------------------------------//
