@@ -350,9 +350,15 @@ cs.draw = {
       }
       //Scaling with width/height
       if(options.width)
-         options.scaleX = options.width/sprite.width
+         options.scaleX = options.width/sprite.fwidth
       if(options.height)
-         options.scaleY = options.height/sprite.height
+         options.scaleY = options.height/sprite.fheight
+
+      if(options.aspectLock)
+         (options.scaleX > options.scaleY)
+            ? options.scaleY = options.scaleX
+            : options.scaleX = options.scaleY
+
 
 
       if(!this.raw){
