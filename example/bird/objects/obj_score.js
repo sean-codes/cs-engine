@@ -27,7 +27,7 @@ cs.objects['obj_score_text'] = {
 
 		cs.draw.setTextCenter();
 		cs.draw.setColor('#FFFFFF');
-		cs.draw.text(this.x, this.y, this.text);
+		cs.draw.text({ x:this.x, y:this.y, text:this.text })
 
 		if(this.timer == 0){
 			cs.obj.destroy(this);

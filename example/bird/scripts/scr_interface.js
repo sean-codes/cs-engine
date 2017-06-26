@@ -36,7 +36,11 @@ cs.script.interface.drawButtons = function(btns){
       cs.draw.setTextCenter()
       cs.draw.setColor('#FFF')
       cs.draw.setFont('20px Arial')
-      cs.draw.text(dx+btnWidth/2, dy+btnHeight/2, btn)
+      cs.draw.text({
+         x: dx+btnWidth/2,
+         y: dy+btnHeight/2,
+         text: btn
+      })
       dy += btnHeight
    }
 }

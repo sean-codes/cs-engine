@@ -56,10 +56,18 @@ cs.objects['obj_interface'] = {
 					cs.draw.rect(cs.draw.canvas.width-100, 0, 100, 60);
 					cs.draw.setColor('#FFFFFF');
 					cs.draw.setFont("20px Arial")
-					cs.draw.text(cs.draw.canvas.width - tw-10, this.y+5, 'Score: ' + cs.global.score);
+					cs.draw.text({
+						x: cs.draw.canvas.width - tw-10,
+						y: this.y+5,
+						text: 'Score: ' + cs.global.score
+					})
 					cs.draw.setColor('#FFFFFF');
 					cs.draw.setFont("20px Arial")
-					cs.draw.text(cs.draw.canvas.width - tw-10, this.y+30, 'Best: ' + cs.save.topScore);
+					cs.draw.text({
+						x: cs.draw.canvas.width - tw-10,
+						y: this.y+30,
+						text: 'Best: ' + cs.save.topScore
+					})
 					if(this.touch.down)
 					  	cs.global.flap = true;
 					break;
