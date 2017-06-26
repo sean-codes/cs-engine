@@ -74,8 +74,8 @@ cs.loop = {
     run : true,
     step : function(){
         setTimeout(function(){ cs.loop.step() }, 1000/60)
-      //   if(cs.loop.run)
-      //       window.requestAnimFrame(cs.loop.step);
+        //if(cs.loop.run)
+        //window.requestAnimFrame(cs.loop.step);
 
         cs.fps.update();
         cs.draw.clearSurfaces();
@@ -391,8 +391,8 @@ cs.draw = {
       }
 
       this.ctx.beginPath();
-      this.ctx.moveTo(x1-cx-0.5, y1-cy-0.5);
-      this.ctx.lineTo(x2-cx-0.5, y2-cy-0.5);
+      this.ctx.moveTo(x1-cx-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50), y1-cy-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50));
+      this.ctx.lineTo(x2-cx-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50), y2-cy-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50));
       this.ctx.stroke();
       cs.draw.reset();
    },
