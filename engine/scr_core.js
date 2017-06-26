@@ -234,6 +234,34 @@ cs.sprite = {
    },
    info: function(options){
       //We need something to return info on sprites based on scale etc
+      if(typeof options.frame == 'undefined') options.frame = 0
+      if(typeof options.scaleX == 'undefined') options.scaleX = 1
+      if(typeof options.scaleY == 'undefined') options.scaleY = 1
+      var sprite = this.list[options.spr]
+      if(options.scale){
+         options.scaleX = options.scale
+         options.scaleY = options.scale
+      }
+      //Scaling with width/height
+      if(options.width)
+         options.scaleX = options.width/sprite.fwidth
+      if(options.height)
+         options.scaleY = options.height/sprite.fheight
+
+      //Locking aspect ratio
+      if(options.aspectLock)
+         (options.scaleX !== 1)
+            ? options.scaleY = options.scaleX
+            : options.scaleX = options.scaleY
+
+      return {
+         width: sprite.fwidth * options.scaleX,
+         height: sprite.fheight * options.scaleY,
+         scaleX: options.scaleX,
+         scaleY: options.scaleY,
+         frames: sprite.frames,
+         frame: options.frame
+      }
    }
 }
 //---------------------------------------------------------------------------------------------//
@@ -343,28 +371,7 @@ cs.draw = {
    },
    sprite : function(options){
       sprite = cs.sprite.list[options.spr]
-
-      if(typeof options.scaleX == 'undefined') options.scaleX = 1
-      if(typeof options.scaleY == 'undefined') options.scaleY = 1
-      if(typeof options.frame == 'undefined') options.frame = 0
-      if(options.scale){
-         options.scaleX = options.scale
-         options.scaleY = options.scale
-      }
-      //Scaling with width/height
-      if(options.width)
-         options.scaleX = options.width/sprite.fwidth
-      if(options.height)
-         options.scaleY = options.height/sprite.fheight
-
-      //Locking aspect ratio
-      if(options.aspectLock)
-         (options.scaleX !== 1)
-            ? options.scaleY = options.scaleX
-            : options.scaleX = options.scaleY
-
-
-
+      var info = cs.sprite.info(options)
       if(!this.raw){
          if(options.x >= cs.room.width || options.x+sprite.fwidth <= 0 ||
             options.x >= cs.camera.x + cs.camera.width || options.x <= cs.camera.x-sprite.fwidth)
@@ -376,8 +383,8 @@ cs.draw = {
       this.ctx.save();
       this.ctx.translate(options.x, options.y);
       this.ctx.rotate(options.angle * Math.PI/180);
-      this.ctx.scale(options.scaleX, options.scaleY);
-      this.ctx.drawImage(sprite.frames[options.frame], -sprite.xoff, -sprite.yoff)
+      this.ctx.scale(info.scaleX, info.scaleY);
+      this.ctx.drawImage(sprite.frames[info.frame], -sprite.xoff, -sprite.yoff)
       this.ctx.restore();
 
       cs.draw.reset();
