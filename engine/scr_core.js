@@ -354,8 +354,9 @@ cs.draw = {
       if(options.height)
          options.scaleY = options.height/sprite.fheight
 
+      //Locking aspect ratio
       if(options.aspectLock)
-         (options.scaleX > options.scaleY)
+         (options.scaleX !== 1)
             ? options.scaleY = options.scaleX
             : options.scaleX = options.scaleY
 
