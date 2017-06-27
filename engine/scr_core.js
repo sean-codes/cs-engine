@@ -215,7 +215,6 @@ cs.sprite = {
 
          //Sprites Loaded Start Engine
          cs.loading -= 1
-         console.log(cs.loading)
          if(cs.loading == 0)
             cs.start()
       }
@@ -388,7 +387,7 @@ cs.draw = {
       this.ctx.save();
       this.ctx.translate(options.x, options.y);
       this.ctx.rotate(options.angle * Math.PI/180);
-      this.ctx.scale(info.scaleX, info.scaleY);
+      this.ctx.scale(info.scaleX+0.001, info.scaleY+0.001);
       this.ctx.drawImage(sprite.frames[info.frame], -sprite.xoff, -sprite.yoff)
       this.ctx.restore();
 
@@ -423,7 +422,7 @@ cs.draw = {
       if(typeof args.height == 'undefined') args.height = args.size || 0
 
       args = this.fixPosition(args)
-      
+
       this.ctx.fillRect(args.x,args.y,args.width,args.height);
       cs.draw.reset();
    },
