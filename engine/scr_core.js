@@ -423,7 +423,7 @@ cs.draw = {
       if(typeof args.height == 'undefined') args.height = args.size || 0
 
       args = this.fixPosition(args)
-      console.log(args)
+      
       this.ctx.fillRect(args.x,args.y,args.width,args.height);
       cs.draw.reset();
    },
