@@ -12,7 +12,7 @@ cs.objects['obj_light'] = {
 
     },
     step: function(){
-        cs.draw.rect(0, 0, cs.room.width, cs.room.height, true);
+        cs.draw.fillRect({ x:0, y:0, width:cs.room.width, height:cs.room.height });
         for(var i = 0; i < cs.global.lightList.length; i++){
             var light = cs.global.lightList[i];
 

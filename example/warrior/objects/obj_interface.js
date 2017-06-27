@@ -17,9 +17,14 @@ cs.objects['obj_buttons'] = {
 		this.cy = 0;
 	},
 	step: function(){
-		this.cx = cs.draw.canvas.width - 50;
-		this.cy = cs.draw.canvas.height - 50;
-		this.touch.check(this.cx, this.cy, this.width, this.height);
+      var btnRect = {
+		   x: cs.draw.canvas.width - 50,
+		   y: cs.draw.canvas.height - 50,
+         width: this.width,
+         height: this.height
+      }
+
+		this.touch.check(btnRect);
 		if(this.touch.down){
 			//console.log('open');
 			cs.key.virtualPress(32);
@@ -30,12 +35,10 @@ cs.objects['obj_buttons'] = {
 			console.log('Button 1 Says: ' + text);
 		}
 
-		if(this.touch.held){
-			cs.draw.setAlpha(0.5);
-		}
-		cs.draw.rect(this.cx, this.cy, this.width, this.height, true);
+		if(this.touch.held) cs.draw.setAlpha(0.5)
+		cs.draw.fillRect(btnRect);
 		cs.draw.setColor("white");
-		cs.draw.rect(this.cx, this.cy, this.width, this.height, false);
+		cs.draw.strokeRect(btnRect);
 	}
 }
 
@@ -50,12 +53,13 @@ cs.objects['obj_joystick'] = {
       this.jh = this.height/2;
     },
     step: function(){
-       this.x = 10; this.y = cs.draw.height - this.height - 10;
+      this.x = 10; this.y = cs.draw.height - this.height - 10;
 
-       this.touch.check(this.x, this.y, this.width, this.height);
-       this.tx = this.x + (this.width/2) - (this.jw/2);
-       this.ty = this.y + (this.width/2) - (this.jh/2);
-       if(this.touch.held){
+      this.touch.check({ x:this.x, y:this.y, width:this.width, height:this.height });
+
+      this.tx = this.x + (this.width/2) - (this.jw/2);
+      this.ty = this.y + (this.width/2) - (this.jh/2);
+      if(this.touch.held){
           this.tx = this.touch.x-(this.jw/2);
           if(this.tx < this.x){
              this.tx = this.x;
@@ -76,26 +80,26 @@ cs.objects['obj_joystick'] = {
           if(this.ty + this.jw > this.y + this.height){
              this.ty = this.y+this.height-this.jh;
           }
-       } else {
-    	    if(this.touch.up){
-    			 if(cs.key.held[37]){
-    				 cs.key.virtualUp(37);
-    			 }
-    			 if(cs.key.held[38]){
-    				 cs.key.virtualUp(38);
-    			 }
-    			 if(cs.key.held[39]){
-    				 cs.key.virtualUp(39);
-    			 }
-    	    }
+      } else {
+       if(this.touch.up){
+          if(cs.key.held[37]){
+             cs.key.virtualUp(37);
+          }
+          if(cs.key.held[38]){
+             cs.key.virtualUp(38);
+          }
+          if(cs.key.held[39]){
+             cs.key.virtualUp(39);
+          }
        }
+      }
 
-    	 cs.draw.setAlpha(0.25);
-       cs.draw.rect(this.x, this.y, this.width, this.height, true);
-       cs.draw.setColor('#fff');
-       cs.draw.rect(this.tx, this.ty, this.jw, this.jh, false);
+      cs.draw.setAlpha(0.25);
+      cs.draw.fillRect({ x:this.x, y:this.y, width:this.width, height:this.height });
+      cs.draw.setColor('#fff');
+      cs.draw.strokeRect({ x:this.tx, y:this.ty, width:this.jw, height:this.jh });
 
-    	 cs.draw.text({ x:1, y:0, text:'FPS Step: ' + cs.fps.rate })
-    	 cs.draw.text({ x:1, y:30, text:'Scale: ' + cs.camera.scale })
-    }
+      cs.draw.text(1, 0, 'FPS Step: ' + cs.fps.rate);
+      cs.draw.text(1, 30, 'Scale: ' + cs.camera.scale);
+   }
 }

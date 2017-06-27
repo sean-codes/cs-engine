@@ -40,49 +40,61 @@ cs.objects['obj_inventory'] = {
 		if(!this.show){
 			//Draw open button
 			var openSize = 20;
-			var openX = cs.draw.width-10-openSize;
-			var openY = 10;
+			var openRect = {
+				x: cs.draw.width-10-openSize,
+				y: 10,
+				size: openSize
+			}
 
-			cs.draw.rect(openX, openY, openSize, openSize, true);
+			cs.draw.fillRect(openRect);
 			cs.draw.setColor("#FFF");
-			cs.draw.rect(openX, openY, openSize, openSize, false);
+			cs.draw.strokeRect(openRect);
 			cs.draw.setColor("#FFF");
 			cs.draw.setTextCenter();
-			cs.draw.text(openX+(openSize/2), openY+(openSize/2), 'i');
-            this.touch.check(openX, openY, openSize, openSize)
+			cs.draw.text({
+				x: openRect.x+(openRect.size/2),
+				y: openRect.y+(openSize/2),
+				text: 'i'
+			})
+         this.touch.check(openRect)
 			if(this.touch.down){
 				this.show = true;
 				cs.global.showJoyStick = false;
 			}
 		} else {
-            this.touch.check(0, 0, cs.draw.width, cs.draw.height);
+         this.touch.check({ x:0, y:0, width:cs.draw.width, height:cs.draw.height })
 
     		var slotCount = this.slots.length;
     		var colCount = 3;
     		var rowCount = slotCount/colCount;
 
     		var space = 10;//Space between slots and border
-    		var inventWidth = (colCount * this.width) + ((colCount+1)*space);
     		var inventHeight = (rowCount * this.width) + ((rowCount+1)*space);
-    		var topPadding = (cs.draw.height - inventHeight)/2;
-    		var leftPadding = 20;
-
+			var inventRect = {
+				x: 20,
+				y: (cs.draw.height - inventHeight)/2,
+				width: (colCount * this.width) + ((colCount+1)*space),
+				height: (rowCount * this.width) + ((rowCount+1)*space)
+			}
     		//Draw Border
     		cs.draw.setAlpha(0.8);
     		//cs.draw.rect(0, 0, cs.draw.width, cs.draw.height, true);
     		cs.draw.setAlpha(0.5);
     		cs.draw.setColor("#000");
-    		cs.draw.rect(leftPadding, topPadding, inventWidth, inventHeight, true);
-    		cs.draw.setColor("#FFF");
-    		cs.draw.rect(leftPadding, topPadding, inventWidth, inventHeight, false);
-    		var cx = leftPadding + space;
-    		var cy = topPadding + space;
+    		cs.draw.fillRect(inventRect)
+    		cs.draw.setColor("#FFF")
+    		cs.draw.strokeRect(inventRect)
+			slotRect = {
+				x: inventRect.x + space,
+				y: inventRect.y + space,
+				size: 32
+			}
 
-    		var img = ''; var himg = ''; var hx = 0; var hy = 0;
+    		var img = ''; var himg = ''; var hx = 0; var hy = 0
 
 
     		if(this.touch.down){
-    			console.log('why?');
+    			console.log('why? x: ' + this.touch.x + ' y: ' + this.touch.y );
     		}
     		for(var i = 1; i <= slotCount; i++){
     			var slot = i-1;
@@ -90,25 +102,25 @@ cs.objects['obj_inventory'] = {
     			if(this.slots[slot].length){
     				img = 'spr_item_' + this.slots[slot];
     			}
-    			cs.draw.sprite({ spr:img, x:cx, y:cy });
+    			cs.draw.sprite({ spr:img, x:slotRect.x, y:slotRect.y });
     			//blah blah blah
     			if(this.slotDown == -1){
-    				if(this.touch.down && this.touch.inside(cx, cy, this.width, this.height)){
+    				if(this.touch.down && this.touch.within(slotRect)){
     					console.log('Slot Down: ' + slot);
     					if(this.slots[slot] !== ''){
-    						this.touch.off_x = this.touch.off_x-cx;
-    						this.touch.off_y = this.touch.off_y-cy
+    						this.touch.off_x = this.touch.off_x-slotRect.x;
+    						this.touch.off_y = this.touch.off_y-slotRect.y
     						this.slotDown = slot;
     					}
     				}
     			} else {
     				//Check slot over
-    				if(this.touch.x < leftPadding || this.touch.x > leftPadding+inventWidth ||
-    				  	this.touch.y < topPadding || this.touch.y > topPadding+this.inventHeight){
+    				if(this.touch.x < inventRect.x || this.touch.x > inventRect.x+inventRect.width ||
+    				  	this.touch.y < inventRect.y || this.touch.y > inventRect.y+this.inventHeight){
     					this.slotOver = -1;
     				} else {
-    					if(this.touch.x > cx && this.touch.x < cx + this.width &&
-    						this.touch.y > cy && this.touch.y < cy + this.height){
+    					if(this.touch.x > slotRect.x && this.touch.x < slotRect.x + this.width &&
+    						this.touch.y > slotRect.y && this.touch.y < slotRect.y + this.height){
     						this.slotOver = slot;
     					}
     				}
@@ -129,10 +141,10 @@ cs.objects['obj_inventory'] = {
     					himg = img;
     				}
     			}
-    			cy += space + this.height;
+    			slotRect.y += space + this.height;
     			if(i % 4 === 0){
-    				cx += space + this.width;
-    				cy = topPadding + space;
+    				slotRect.x += space + this.width;
+    				slotRect.y = inventRect.y + space;
     			}
     		}
 
@@ -140,24 +152,31 @@ cs.objects['obj_inventory'] = {
     		if(this.slotDown >= 0 && himg !== ''){
     			cs.draw.sprite({spr:himg, x:hx, y:hy});
     			cs.draw.setColor('#6695e2');
-    			cs.draw.rect(hx, hy, this.width, this.height, false);
+    			cs.draw.strokeRect({ x:hx, y:hy, width:this.width, height:this.height });
     		}
 
     		//Draw Close Button
-    		var closeX = leftPadding-space;
-    		var closeY = topPadding-space;
-    		var closeSize = space*2;
+			var closeRect = {
+				x: inventRect.x-space,
+				y: inventRect.y-space,
+				size: space*2
+			}
 
-    		if(this.touch.down && this.touch.inside(closeX, closeY, closeSize, closeSize)){
+    		if(this.touch.down && this.touch.within(closeRect)){
     			this.show = false;
     			cs.global.showJoyStick = true;
     		}
-    		cs.draw.rect(closeX, closeY, closeSize, closeSize, true);
+
+    		cs.draw.fillRect(closeRect);
     		cs.draw.setColor("#FFF");
-    		cs.draw.rect(closeX, closeY, closeSize, closeSize, false);
+    		cs.draw.strokeRect(closeRect);
     		cs.draw.setColor("#FFF");
     		cs.draw.setTextCenter();
-    		cs.draw.text(closeX+(closeSize/2), closeY+(closeSize/2), 'X');
-        }
+    		cs.draw.text({
+				x:closeRect.x+(closeRect.size/2),
+				y:closeRect.y+(closeRect.size/2),
+				text:'X'
+			});
+      }
 	}
 }
