@@ -126,12 +126,19 @@ Draw sprites using `cs.draw.sprite`
 ### Shapes:
 
     //Rectangle
-    cs.draw.rect({
+    cs.draw.fillRect({
         x: [Required Number: x position to start drawing],
         y: [Required Number: y position to start drawing],
         width: [Required Number: width of the drawing],
         height: [Required Number: height of the drawing],
-        fill: [Optional Boolean (false): fill the rectangle in solid or outline);
+    })
+
+    cs.draw.strokeRect({
+        x: [Required Number: x position to start drawing],
+        y: [Required Number: y position to start drawing],
+        width: [Required Number: width of the drawing],
+        height: [Required Number: height of the drawing],
+    })
 
     //Line
     cs.draw.line({
