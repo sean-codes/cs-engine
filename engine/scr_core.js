@@ -8,10 +8,7 @@ cs.script = {};
 cs.save = {};
 cs.objects = {};
 cs.sprites = {};
-cs.loading = 0
-cs.start = function(){
-   console.log('No Load Function Defined!')
-}
+cs.loading = 0;
 //---------------------------------------------------------------------------------------------//
 //--------------------------------| Performance Monitoring |-----------------------------------//
 //---------------------------------------------------------------------------------------------//
@@ -421,22 +418,26 @@ cs.draw = {
       this.ctx.stroke();
       cs.draw.reset();
    },
-   rect: function(x, y, w, h, fill){
-      x = Math.floor(x); y = Math.floor(y);
-      w = Math.floor(w); h = Math.floor(h);
-      if(!this.raw){
-         x =  Math.floor(x-cs.camera.x);
-         y =  Math.floor(y-cs.camera.y);
-      }
-      if(fill === true){
-         this.ctx.fillRect(x,y,w,h);
-      } else {
-         x+=((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)+Math.floor(this.ctx.lineWidth/2);
-         y+=((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)+Math.floor(this.ctx.lineWidth/2);
-         w-=this.ctx.lineWidth;
-         h-=this.ctx.lineWidth;
-         this.ctx.strokeRect(x,y,w,h);
-      }
+   fillRect: function(args){
+      if(typeof args.width == 'undefined') args.width = args.size || 0
+      if(typeof args.height == 'undefined') args.height = args.size || 0
+
+      args = this.fixPosition(args)
+      console.log(args)
+      this.ctx.fillRect(args.x,args.y,args.width,args.height);
+      cs.draw.reset();
+   },
+   strokeRect: function(args){
+      if(typeof args.width == 'undefined') args.width = args.size || 0
+      if(typeof args.height == 'undefined') args.height = args.size || 0
+
+      args = this.fixPosition(args)
+
+      args.x+=((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)+Math.floor(this.ctx.lineWidth/2);
+      args.y+=((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)+Math.floor(this.ctx.lineWidth/2);
+      args.w-=this.ctx.lineWidth;
+      args.h-=this.ctx.lineWidth;
+      this.ctx.strokeRect(args.x,args.y,args.width,args.height);
       cs.draw.reset();
    },
    circle : function(x, y, rad, fill){
@@ -469,6 +470,19 @@ cs.draw = {
       //Fill
       this.ctx.fill();
       cs.draw.reset();
+   },
+   fixPosition: function(args){
+      args.x = Math.floor(args.x); y = Math.floor(args.y);
+      args.width = Math.floor(args.width);
+      args.height = Math.floor(args.height);
+      if(!this.raw){
+         args.x =  Math.floor(args.x-cs.camera.x);
+         args.y =  Math.floor(args.y-cs.camera.y);
+      }
+      return {
+         x:args.x, y:args.y,
+         width:args.width, height:args.height
+      }
    },
    setColor: function(color){
       this.ctx.fillStyle = color;
@@ -732,7 +746,7 @@ cs.particle = {
                     cx = cx - (particle.size/2);
                     cy = cy - (particle.size/2);
 
-                    cs.draw.rect(cx, cy, particle.size, particle.size, true);
+                    cs.draw.fillRect({ x:cx, y:cy, width:particle.size, height:particle.size });
                 } else {
                     cs.draw.circle(cx, cy, particle.size);
                 }
@@ -1091,10 +1105,13 @@ cs.touch = {
          x : 0, y : 0,
          off_x : 0, off_y : 0,
          id : -1,
-         inside : function(x, y, width, height){
-            return (this.x > x && this.x < x+width && this.y > y && this.y < y+height);
+         within : function(arg){
+            if(typeof arg.width == 'undefined') arg.width = arg.size || 0
+            if(typeof arg.height == 'undefined') arg.height = arg.size || 0
+            return (this.x > arg.x && this.x < arg.x+arg.width
+                 && this.y > arg.y && this.y < arg.y+arg.height);
          },
-         check : function(x, y, width, height){
+         check : function(arg){
             if(this.id !== -1){
                //We have an id attached up or down
                var touch = cs.touch.list[this.id];
@@ -1126,14 +1143,15 @@ cs.touch = {
                   }
 
                   if(ctouch.down === true && ctouch.used === false){
-                     if(this.x > x && this.x < x+width && this.y > y && this.y < y+height){
+                     if(this.x > arg.x && this.x < arg.x+arg.width
+                        && this.y > arg.y && this.y < arg.y+arg.height){
                         //Being Touched
                         ctouch.used = true;
                         this.down = true;
                         this.id = i;
 
-                        this.off_x = this.x-x;
-                        this.off_y = this.y-y;
+                        this.off_x = this.x-arg.x;
+                        this.off_y = this.y-arg.y;
                      }
                   }
                }
