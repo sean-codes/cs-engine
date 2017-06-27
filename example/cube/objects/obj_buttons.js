@@ -1,15 +1,20 @@
 cs.objects['obj_buttons'] = {
 	create: function(){
 		this.width = 30;
-	    this.height = 30;
-	    this.draw = 'gui';
+	   this.height = 30;
+	   this.draw = 'gui';
 		this.cx = 0;
 		this.cy = 0;
 	},
 	step: function(){
-		this.cx = cs.draw.canvas.width - 50;
-		this.cy = cs.draw.canvas.height - 50;
-		this.touch.check(this.cx, this.cy, this.width, this.height);
+		var btnRect = {
+			x:cs.draw.canvas.width - 50,
+			y:cs.draw.canvas.height - 50,
+			width:this.width,
+			height:this.height
+		}
+
+		this.touch.check(btnRect);
 		if(this.touch.down){
 			//console.log('open');
 			cs.key.virtualPress(38);
@@ -23,8 +28,8 @@ cs.objects['obj_buttons'] = {
 		if(this.touch.held){
 			cs.draw.setAlpha(0.5);
 		}
-		cs.draw.rect(this.cx, this.cy, this.width, this.height, true);
-		cs.draw.setColor("white");
-		cs.draw.rect(this.cx, this.cy, this.width, this.height, false);
+		cs.draw.fillRect(btnRect)
+		cs.draw.setColor("white")
+		cs.draw.strokeRect(btnRect)
 	}
 }

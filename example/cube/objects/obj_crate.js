@@ -7,7 +7,7 @@ cs.objects['obj_crate'] = {
 		this.gravity = 8;
 	},
 	step: function(){
-	    this.touch.check(this.x, this.y, this.width, this.height);
+	    this.touch.check({ x:this.x, y:this.y, width:this.width, height:this.height });
 	    if(this.touch.held){
 	        this.x = this.touch.x-this.touch.off_x;
 	        this.y = this.touch.y-this.touch.off_y;

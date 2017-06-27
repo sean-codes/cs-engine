@@ -8,12 +8,10 @@ cs.objects['obj_interface'] = {
 	},
 	step: function(){
         //Handling Touch
-        this.touch.check(0, 0, cs.draw.canvas.width, cs.draw.canvas.height);
+        this.touch.check({ x:0, y:0, width:cs.draw.canvas.width, height:cs.draw.canvas.height})
 
         //Sound
-        if(this.touch.down
-			  && this.touch.x > 0 && this.touch.x < 14*3
-			  && this.touch.y > 0 && this.touch.y < 14*3){
+        if(this.touch.down && this.touch.within({ x:0, y:0, width:14*3, height: 14*3})){
             cs.sound.toggleMute(!cs.sound.mute)
             return;
         }
@@ -52,8 +50,9 @@ cs.objects['obj_interface'] = {
 					cs.draw.setFont("20px Arial")
 					var tw = cs.draw.textSize(text).width;
 					cs.draw.setAlpha(0.5);
-					cs.draw.rect(cs.draw.canvas.width-100, 0, 100, 60, true);
-					cs.draw.rect(cs.draw.canvas.width-100, 0, 100, 60);
+					var rect = { x: cs.draw.canvas.width-100, y: 0, width:100, height:60 }
+					cs.draw.fillRect(rect);
+					cs.draw.strokeRect(rect);
 					cs.draw.setColor('#FFFFFF');
 					cs.draw.setFont("20px Arial")
 					cs.draw.text({

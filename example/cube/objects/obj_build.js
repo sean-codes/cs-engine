@@ -21,6 +21,6 @@ cs.objects['obj_build'] = {
         cs.draw.alpha(0.5);
         dx = Math.floor(cs.mouse.x / 16) * 16;
         dy = Math.floor(cs.mouse.y / 16) * 16;
-        cs.draw.rectangle(dx, dy, 16, 16, true);
+        cs.draw.fillRect({ x:dx, y:dy, width:16, height:16 });
     }
 }

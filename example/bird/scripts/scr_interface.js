@@ -25,14 +25,18 @@ cs.script.interface.drawButtons = function(btns){
    var dx = cs.draw.canvas.width/2 - btnWidth/2
    var space = 20
    for(var btn of btns){
-      //cs.draw.setAlpha(0.5)
-      //cs.draw.rect(dx+1, dy+1, btnWidth-2, btnHeight-2, true)
+      var btnRect = {
+         x: dx,
+         y: dy+space/2,
+         width: btnWidth,
+         height: btnHeight-space
+      }
       cs.draw.setColor('#000')
       cs.draw.setAlpha(0.75)
-      cs.draw.rect(dx, dy+space/2, btnWidth, btnHeight-space, true)
+      cs.draw.fillRect(btnRect)
       cs.draw.setColor('#FFF')
       cs.draw.setWidth(3)
-      cs.draw.rect(dx, dy+space/2, btnWidth, btnHeight-space)
+      cs.draw.strokeRect(btnRect)
       cs.draw.setTextCenter()
       cs.draw.setColor('#FFF')
       cs.draw.setFont('20px Arial')
