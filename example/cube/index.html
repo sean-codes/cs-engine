@@ -35,30 +35,30 @@
 			cs.init('view');
 
 			//Load Sprites
-			cs.sprite.load('sprites/spr_block');
-			cs.sprite.load('sprites/spr_crate');
-			cs.sprite.load('sprites/spr_inventory');
-			cs.sprite.load('sprites/spr_item_rupee');
-			cs.sprite.load('sprites/spr_player', {frames: 2, fwidth:16, fheight:16});
+			cs.sprite.load({ path: 'sprites/spr_block' })
+			cs.sprite.load({ path: 'sprites/spr_crate' })
+			cs.sprite.load({ path: 'sprites/spr_inventory' })
+			cs.sprite.load({ path: 'sprites/spr_item_rupee' })
+			cs.sprite.load({ path: 'sprites/spr_player', frames: 2, fwidth:16, fheight:16 })
 
 			cs.start = function(){
 				cs.global.networkControl = { id: -1, list: {} }
 				cs.network.connect({ host:'cube-script.net', port:9999, ssl: false });
 
-				cs.obj.create('obj_light', 0, 0);
-				cs.obj.create('obj_buttons', 100, 100);
-				cs.obj.create('obj_crate', 100, 0);
-				cs.obj.create('obj_player', 40, 40);
+				cs.obj.create({ type: 'obj_light' })
+				cs.obj.create({ type: 'obj_buttons', x:100, y:100 })
+				cs.obj.create({ type: 'obj_crate', x:100, y:0 })
+				cs.obj.create({ type: 'obj_player', x:40, y:40 })
 
 				var tx = 0;
 				while(tx < cs.room.width){
-					cs.obj.create('obj_block', tx, cs.room.height-16);
+					cs.obj.create({ type:'obj_block', x:tx, y:cs.room.height-16 })
 					tx += 16;
 				}
 
-				cs.obj.create('obj_joystick', 100, 100);
-				cs.obj.create('obj_inventory', 100, 100);
-				cs.obj.create('obj_fire', 150, 375);
+				cs.obj.create({ type: 'obj_joystick', x:100, y:100 })
+				cs.obj.create({ type: 'obj_inventory', x:100, y:100 })
+				cs.obj.create({ type: 'obj_fire', x:150, y:375 })
 			}
 		</script>
 	</body>
