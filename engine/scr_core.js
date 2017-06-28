@@ -124,25 +124,25 @@ cs.obj = {
    list : [],
    types : {},
    count: 0,
-   create : function(type, x, y, options){
+   create : function(options){
       this.count += 1
-      var depth = cs.objects[type].depth || 0
+      var depth = cs.objects[options.type].depth || 0
       var pos = this.findPosition(depth)
       this.list.splice(pos, 0, {});
       this.list[pos].depth = depth;
       this.list[pos].live = true;
-      this.list[pos].type = type;
+      this.list[pos].type = options.type;
       this.list[pos].id = this.count;
-      this.list[pos].core = cs.objects[type].core || false
+      this.list[pos].core = cs.objects[options.type].core || false
       this.list[pos].draw = 'game';
       this.list[pos].layer = 0;
       this.list[pos].particle = { list : [], settings : {} };
-      this.list[pos].x = x; this.list[pos].xoff = 0;
-      this.list[pos].y = y; this.list[pos].yoff = 0;
-      this.list[pos].width = cs.objects[type].width;
-      this.list[pos].height = cs.objects[type].height;
-      this.list[pos].sprite = cs.objects[type].sprite;
-      var create = cs.objects[type].create;
+      this.list[pos].x = options.x || 0; this.list[pos].xoff = 0;
+      this.list[pos].y = options.y || 0; this.list[pos].yoff = 0;
+      this.list[pos].width = cs.objects[options.type].width;
+      this.list[pos].height = cs.objects[options.type].height;
+      this.list[pos].sprite = cs.objects[options.type].sprite;
+      var create = cs.objects[options.type].create;
       create.call(this.list[pos]);
       this.list[pos].touch = cs.touch.create(this.list[pos].draw == 'gui');
       return this.list[pos];
@@ -169,23 +169,22 @@ cs.obj = {
 //---------------------------------------------------------------------------------------------//
 cs.sprite = {
    list: {},
-   load: function(sprPath, sprInfo){
-      if(sprInfo == undefined) sprInfo = {}
+   load: function(options){
       cs.loading += 1;
-      var sprName = sprPath.split('/').pop();
+      var sprName = options.path.split('/').pop();
 
       //Set up
       cs.sprite.list[sprName] = new Image();
-      cs.sprite.list[sprName].src = sprPath + '.png';
+      cs.sprite.list[sprName].src = options.path + '.png';
       cs.sprite.list[sprName].frames = []
 
       //Frame Width/Height/Tile
-      cs.sprite.list[sprName].texture = sprInfo.texture
-      cs.sprite.list[sprName].frames = sprInfo.frames || 1
-      cs.sprite.list[sprName].fwidth = sprInfo.fwidth || 0
-      cs.sprite.list[sprName].fheight = sprInfo.fheight || 0
-      cs.sprite.list[sprName].xoff = sprInfo.xoff || 0
-      cs.sprite.list[sprName].yoff = sprInfo.yoff || 0
+      cs.sprite.list[sprName].texture = options.texture
+      cs.sprite.list[sprName].frames = options.frames || 1
+      cs.sprite.list[sprName].fwidth = options.fwidth || 0
+      cs.sprite.list[sprName].fheight = options.fheight || 0
+      cs.sprite.list[sprName].xoff = options.xoff || 0
+      cs.sprite.list[sprName].yoff = options.yoff || 0
 
       var that = this
       cs.sprite.list[sprName].onload = function(){
@@ -418,8 +417,8 @@ cs.draw = {
       cs.draw.reset();
    },
    fillRect: function(args){
-      if(typeof args.width == 'undefined') args.width = args.size || 0
-      if(typeof args.height == 'undefined') args.height = args.size || 0
+      if(typeof args.width == 'undefined') width = args.size || 0
+      if(typeof args.height == 'undefined') height = args.size || 0
 
       args = this.fixPosition(args)
 
@@ -427,16 +426,16 @@ cs.draw = {
       cs.draw.reset();
    },
    strokeRect: function(args){
-      if(typeof args.width == 'undefined') args.width = args.size || 0
-      if(typeof args.height == 'undefined') args.height = args.size || 0
+      if(typeof args.width == 'undefined') var w = args.size || 0
+      if(typeof args.height == 'undefined') var h = args.size || 0
 
       args = this.fixPosition(args)
 
-      args.x+=((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)+Math.floor(this.ctx.lineWidth/2);
-      args.y+=((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)+Math.floor(this.ctx.lineWidth/2);
-      args.w-=this.ctx.lineWidth;
-      args.h-=this.ctx.lineWidth;
-      this.ctx.strokeRect(args.x,args.y,args.width,args.height);
+      x+=((this.ctx.lineWidth % 2 == 0) ? 0 : -0.50)+Math.floor(this.ctx.lineWidth/2);
+      y+=((this.ctx.lineWidth % 2 == 0) ? 0 : -0.50)+Math.floor(this.ctx.lineWidth/2);
+      w-=this.ctx.lineWidth;
+      h-=this.ctx.lineWidth;
+      this.ctx.strokeRect(x,y,width,height);
       cs.draw.reset();
    },
    circle : function(x, y, rad, fill){
@@ -471,16 +470,16 @@ cs.draw = {
       cs.draw.reset();
    },
    fixPosition: function(args){
-      args.x = Math.floor(args.x); y = Math.floor(args.y);
-      args.width = Math.floor(args.width);
-      args.height = Math.floor(args.height);
+      x = Math.floor(args.x); y = Math.floor(args.y);
+      width = Math.floor(args.width);
+      height = Math.floor(args.height);
       if(!this.raw){
-         args.x =  Math.floor(args.x-cs.camera.x);
-         args.y =  Math.floor(args.y-cs.camera.y);
+         x =  Math.floor(x-cs.camera.x);
+         y =  Math.floor(y-cs.camera.y);
       }
       return {
-         x:args.x, y:args.y,
-         width:args.width, height:args.height
+         x:x, y:y,
+         width:width, height:height
       }
    },
    setColor: function(color){
