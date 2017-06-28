@@ -417,8 +417,8 @@ cs.draw = {
       cs.draw.reset();
    },
    fillRect: function(args){
-      if(typeof args.width == 'undefined') width = args.size || 0
-      if(typeof args.height == 'undefined') height = args.size || 0
+      if(typeof args.width == 'undefined') args.width = args.size || 0
+      if(typeof args.height == 'undefined') args.height = args.size || 0
 
       args = this.fixPosition(args)
 
