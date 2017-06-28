@@ -15,12 +15,12 @@
 		<!--Game Area-->
 		<div id="view"></div>
 		<script>
-			cs.init('view');
+			cs.init('view')
 
 			//Load Sprites
-			cs.sprite.load('sprites/spr_block');
+			cs.sprite.load({ path: 'sprites/spr_block' })
 			cs.start = function(){
-				cs.obj.create('obj_block', 10, 10);
+				cs.obj.create({ type:'obj_block', x:10, y:10 })
 			}
 		</script>
 	</body>
