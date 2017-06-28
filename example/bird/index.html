@@ -28,18 +28,18 @@
 			cs.init('view');
 
 			//Load Sprites
-			cs.sprite.load('sprites/bird', {xoff:8, yoff:7});
-			cs.sprite.load('sprites/bird2', {xoff:8, yoff:7});
-			cs.sprite.load('sprites/pipe_down');
-			cs.sprite.load('sprites/pipe_up');
-			cs.sprite.load('sprites/pipe_up');
-			cs.sprite.load('sprites/cloud1');
-			cs.sprite.load('sprites/cloud2');
-			cs.sprite.load('sprites/cloud3');
-			cs.sprite.load('sprites/mountain1');
-			cs.sprite.load('sprites/mountain2');
-			cs.sprite.load('sprites/sound_on');
-			cs.sprite.load('sprites/sound_off');
+			cs.sprite.load({ path:'sprites/bird', xoff:8, yoff:7})
+			cs.sprite.load({ path:'sprites/bird2', xoff:8, yoff:7})
+			cs.sprite.load({ path:'sprites/pipe_down' })
+			cs.sprite.load({ path:'sprites/pipe_up' })
+			cs.sprite.load({ path:'sprites/pipe_up' })
+			cs.sprite.load({ path:'sprites/cloud1' })
+			cs.sprite.load({ path:'sprites/cloud2' })
+			cs.sprite.load({ path:'sprites/cloud3' })
+			cs.sprite.load({ path:'sprites/mountain1' })
+			cs.sprite.load({ path:'sprites/mountain2' })
+			cs.sprite.load({ path:'sprites/sound_on' })
+			cs.sprite.load({ path:'sprites/sound_off' })
 
 			//Load Sounds
 			cs.sound.load({path:'sounds/flap'});
@@ -69,9 +69,9 @@
                speed: 1
             }
 
-				cs.obj.create('obj_bird', (cs.room.width/2), cs.room.height/2);
-				cs.obj.create('obj_interface', cs.camera.width-50, 0);
-				cs.obj.create('obj_background', 0, 0);
+				cs.obj.create({ type:'obj_bird', x:(cs.room.width/2), y:cs.room.height/2 })
+				cs.obj.create({ type:'obj_interface', x:cs.camera.width-50, y:0 })
+				cs.obj.create({ type:'obj_background', x:0, y:0 })
 			}
 		</script>
 	</body>
