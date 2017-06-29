@@ -86,8 +86,7 @@ cs.loop = {
         cs.draw.clearSurfaces();
         cs.key.execute();
 
-        //var i = cs.obj.list.length; while(i--){
-        for(var i = 0; i < cs.obj.list.length; i++){
+        var i = cs.obj.list.length; while(i--){
             if(cs.obj.list[i].live){
                 var obj = cs.obj.list[i];
                 cs.draw.setLayer(obj.draw, obj.layer);
@@ -123,9 +122,11 @@ cs.loop = {
 cs.obj = {
    list : [],
    types : {},
-   count: 0,
+   objCounts: {},
    create : function(options){
-      this.count += 1
+      var count = cs.obj.count(options.type)
+      this.objCounts[options.type] = (count) ? count+1 : 1
+      console.log(this.objCounts[options.type])
       var depth = cs.objects[options.type].depth || 0
       var pos = this.findPosition(depth)
       this.list.splice(pos, 0, {});
@@ -148,6 +149,7 @@ cs.obj = {
       return this.list[pos];
    },
    destroy : function(destroyObj){
+      this.objCounts[destroyObj.type] -= 1
       if(typeof destroyObj === 'object')
          destroyObj.live = false
       else
@@ -162,6 +164,22 @@ cs.obj = {
          }
       }
       return i;
+   },
+   all: function(options){
+      for(obj of this.list)
+         if(obj.type == options.type)
+            options.run.call(obj)
+   },
+   find: function(options){
+      for(obj of this.list){
+         if(obj.type == options.type){
+            options.run.call(obj)
+            return
+         }
+      }
+   },
+   count: function(type){
+      return this.objCounts[type]
    }
 }
 //---------------------------------------------------------------------------------------------//
@@ -374,6 +392,7 @@ cs.draw = {
    },
    sprite : function(options){
       sprite = cs.sprite.list[options.spr]
+      if(!sprite) return
       var info = cs.sprite.info(options)
       if(!this.raw){
          if(options.x >= cs.room.width || options.x+sprite.fwidth <= 0 ||
@@ -867,6 +886,13 @@ cs.room = {
       this.width = width; this.height = height;
       cs.draw.background = background || '#000'
    },
+   outside(rect){
+      if(typeof rect.width == 'undefined') rect.width = 0
+      if(typeof rect.height == 'undefined') rect.height = 0
+
+      return (rect.x < 0 || rect.x + rect.width > this.width
+           || rect.y < 0 || rect.y + rect.height > this.height)
+   }
 }
 //---------------------------------------------------------------------------------------------//
 //------------------------------| Text Input Functions |---------------------------------------//
