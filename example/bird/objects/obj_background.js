@@ -18,6 +18,7 @@ cs.objects['obj_background'] = {
 }
 
 cs.objects['obj_bgPart'] = {
+	depth: 10,
 	create: function(){
 		this.timer = 600;
 		this.bgType = cs.math.choose(['mountain', 'cloud']);
