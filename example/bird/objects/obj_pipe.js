@@ -1,5 +1,5 @@
 cs.objects['obj_pipe'] = {
-	depth: 8,
+	zIndex: 8,
 	create: function(){
 		this.width = 24;
 		this.height = 256;

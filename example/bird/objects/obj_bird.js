@@ -1,5 +1,5 @@
 cs.objects['obj_bird'] = {
-	depth: 5,
+	zIndex: 5,
 	create: function(){
 		cs.script.setSprite(this, 'bird');
 		this.timer = 60;
