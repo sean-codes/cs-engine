@@ -11,7 +11,6 @@
 		<!-- Game Engine -->
 		<script src='../../engine/scr_core.js?v=12'></script>
 		<!-- Objects -->
-		<script src='objects/obj_build.js'></script>
 		<script src='objects/obj_player.js'></script>
 		<script src='objects/enviroment/obj_blob.js'></script>
 		<script src='objects/enviroment/obj_block.js'></script>
@@ -40,7 +39,6 @@
 			cs.sprite.load({ path: 'sprites/bg_wall', fwidth: 192, fheight: 1000, texture: true })
 
 			cs.start = function(){
-				console.log('wtf')
 				cs.camera.setup({
 					width:144,
 					height:256,
@@ -54,7 +52,7 @@
 				cs.obj.create({ type:'obj_player', x:50, y:50 })
 				cs.obj.create({ type:'obj_blob', x:50, y:1 })
 				cs.obj.create({ type:'obj_interface', x:50, y:1 })
-				for(var i = 0; i < 100; i++)
+				for(var i = 0; i < 12; i++)
 					cs.obj.create({ type:'obj_block', x:i*16, y:cs.room.height-16 })
 			}
 		</script>
