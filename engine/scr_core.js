@@ -123,17 +123,19 @@ cs.obj = {
    list : [],
    types : {},
    objCounts: {},
+   unique: 0,
    create : function(options){
+
       var count = cs.obj.count(options.type)
       this.objCounts[options.type] = (count) ? count+1 : 1
-      console.log(this.objCounts[options.type])
+
       var depth = cs.objects[options.type].depth || 0
       var pos = this.findPosition(depth)
       this.list.splice(pos, 0, {});
       this.list[pos].depth = depth;
       this.list[pos].live = true;
       this.list[pos].type = options.type;
-      this.list[pos].id = this.count;
+      this.list[pos].id = this.unique
       this.list[pos].core = cs.objects[options.type].core || false
       this.list[pos].draw = 'game';
       this.list[pos].layer = 0;
@@ -146,6 +148,7 @@ cs.obj = {
       var create = cs.objects[options.type].create;
       create.call(this.list[pos]);
       this.list[pos].touch = cs.touch.create(this.list[pos].draw == 'gui');
+      this.unique += 1
       return this.list[pos];
    },
    destroy : function(destroyObj){
