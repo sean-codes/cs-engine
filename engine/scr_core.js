@@ -129,10 +129,10 @@ cs.obj = {
       var count = cs.obj.count(options.type)
       this.objCounts[options.type] = (count) ? count+1 : 1
 
-      var zIndex = cs.objects[options.type].zIndex || 0
-      var pos = this.findPosition(zIndex)
+      var depth = cs.objects[options.type].depth || 0
+      var pos = this.findPosition(depth)
       this.list.splice(pos, 0, {});
-      this.list[pos].zIndex = zIndex;
+      this.list[pos].depth = depth;
       this.list[pos].live = true;
       this.list[pos].type = options.type;
       this.list[pos].id = this.unique
@@ -160,11 +160,13 @@ cs.obj = {
             if(obj.id === destroyObj)
                obj.live = false
    },
-   findPosition : function(zIndex){
-      for(var i = 0; i < this.list.length; i++)
-         if(zIndex >= this.list[i].zIndex)
-            return i
-      return i
+   findPosition : function(depth){
+      for(var i = 0; i < this.list.length; i++){
+         if(depth <= this.list[i].depth){
+            return i;
+         }
+      }
+      return i;
    },
    all: function(options){
       for(obj of this.list)
@@ -190,11 +192,11 @@ cs.sprite = {
    list: {},
    load: function(options){
       cs.loading += 1;
-      var sprName = options.path.split('/').pop()
+      var sprName = options.path.split('/').pop();
 
       //Set up
-      cs.sprite.list[sprName] = new Image()
-      cs.sprite.list[sprName].src = options.path + '.png'
+      cs.sprite.list[sprName] = new Image();
+      cs.sprite.list[sprName].src = options.path + '.png';
       cs.sprite.list[sprName].frames = []
 
       //Frame Width/Height/Tile
@@ -423,19 +425,16 @@ cs.draw = {
    textSize: function(str){
       return this.ctx.measureText(str);
    },
-   line: function(opt){
+   line: function(x1, y1, x2, y2){
       var cx = 0, cy = 0
       if(!this.raw){
          cx =  Math.floor(cs.camera.x)
          cy =  Math.floor(cs.camera.y)
       }
-      //Fix LineWidth
-      cx -= (this.ctx.lineWidth % 2 == 0) ? 0 : 0.50
-      cy -= (this.ctx.lineWidth % 2 == 0) ? 0 : 0.50
 
-      this.ctx.beginPath()
-      this.ctx.moveTo(opt.x1-cx, opt.y1-cy)
-      this.ctx.lineTo(opt.x2-cx, opt.y2-cy)
+      this.ctx.beginPath();
+      this.ctx.moveTo(x1-cx-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50), y1-cy-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50));
+      this.ctx.lineTo(x2-cx-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50), y2-cy-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50));
       this.ctx.stroke();
       cs.draw.reset();
    },
@@ -889,18 +888,14 @@ cs.room = {
    setup: function(width, height, background){
       this.width = width; this.height = height;
       cs.draw.background = background || '#000'
-      this.rect = {
-         x: 0, y: 0,
-         width: this.width,
-         height: this.height
-      }
+      this.rect = {x: 0, y: 0, width: this.width, height: this.height}
    },
    outside(rect){
       if(typeof rect.width == 'undefined') rect.width = 0
       if(typeof rect.height == 'undefined') rect.height = 0
 
-      return (rect.x < this.rect.x || rect.x + rect.width > this.rect.width
-           || rect.y < this.rect.y || rect.y + rect.height > this.rect.height)
+      return (rect.x < 0 || rect.x + rect.width > this.width
+           || rect.y < 0 || rect.y + rect.height > this.height)
    }
 }
 //---------------------------------------------------------------------------------------------//
@@ -1012,12 +1007,14 @@ cs.key = {
         cs.key.events = [];
     },
     processEvent : function(keyCode, type){
-        if(type == 'up'){
-            cs.key.up[keyCode] = true;
-        } else {
-            cs.key.down[keyCode] = true;
-            cs.key.held[keyCode] = true;
-        }
+       if(type == 'up'){
+          if(!cs.key.up[keyCode])
+            cs.key.up[keyCode] = true
+          return
+       }
+
+      cs.key.down[keyCode] = true;
+      cs.key.held[keyCode] = true;
     },
     updateDown : function(keyEvent){
         keyEvent.preventDefault();
