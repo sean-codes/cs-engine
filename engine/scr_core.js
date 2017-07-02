@@ -326,20 +326,20 @@ cs.draw = {
       return num;
    },
    clearSurfaces : function(){
-      for(var i = 0; i < this.surfaces.game.length; i++){
-         this.surfaces.game[i].ctx.clearRect(0, 0,
-         cs.camera.width + (cs.camera.width*cs.camera.scale),
-         cs.camera.height + (cs.camera.height*cs.camera.scale));
-      }
-      for(i = 0; i < this.surfaces.gui.length; i++){
-         this.surfaces.gui[i].ctx.clearRect(0, 0,
-         this.view.canvas.width,
-         this.view.canvas.height);
-      }
+      for(var i = 0; i < this.surfaces.game.length; i++)
+         this.clearSurface({ type: 'game', id: i })
+
+      for(i = 0; i < this.surfaces.gui.length; i++)
+         this.clearSurface({ type: 'gui', id: i })
+
       this.view.ctx.fillStyle = this.background
       this.view.ctx.fillRect(0, 0,
          this.view.canvas.width,
          this.view.canvas.height);
+   },
+   clearSurface: function(options){
+      var surface = this.surfaces[options.type][options.id]
+      surface.ctx.clearRect(0, 0, surface.canvas.width, surface.canvas.height)
    },
    resize : function(){
       var w = window.innerWidth;
