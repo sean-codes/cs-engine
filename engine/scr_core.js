@@ -398,9 +398,15 @@ cs.draw = {
       if(!sprite) return
       var info = cs.sprite.info(options)
       if(!this.raw){
+         //If outside camera skip
+         if(options.x+sprite.fwidth < cs.camera.x || options.x  > cs.camera.x+cs.camera.width
+         || options.y+sprite.fheight < cs.camera.y || options.y  > cs.camera.y+cs.camera.height )
+            return;
+
          if(options.x >= cs.room.width || options.x+sprite.fwidth <= 0 ||
             options.x >= cs.camera.x + cs.camera.width || options.x <= cs.camera.x-sprite.fwidth)
             return;
+
          options.x = Math.floor(options.x - cs.camera.x);
          options.y = Math.floor(options.y - cs.camera.y);
       }
