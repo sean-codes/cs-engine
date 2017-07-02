@@ -403,10 +403,6 @@ cs.draw = {
          || options.y+sprite.fheight < cs.camera.y || options.y  > cs.camera.y+cs.camera.height )
             return;
 
-         if(options.x >= cs.room.width || options.x+sprite.fwidth <= 0 ||
-            options.x >= cs.camera.x + cs.camera.width || options.x <= cs.camera.x-sprite.fwidth)
-            return;
-
          options.x = Math.floor(options.x - cs.camera.x);
          options.y = Math.floor(options.y - cs.camera.y);
       }
