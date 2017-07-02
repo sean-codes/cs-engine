@@ -85,7 +85,7 @@ cs.loop = {
         cs.fps.update();
         cs.draw.clearSurfaces();
         cs.key.execute();
-
+        cs.draw.debugReset()
         var i = cs.obj.list.length; while(i--){
             if(cs.obj.list[i].live){
                 var obj = cs.obj.list[i];
@@ -162,7 +162,7 @@ cs.obj = {
    },
    findPosition : function(depth){
       for(var i = 0; i < this.list.length; i++){
-         if(depth <= this.list[i].depth){
+         if(depth <= this.list[i].zIndex){
             return i;
          }
       }
@@ -305,9 +305,16 @@ cs.draw = {
    width : 0,
    fontSize : 12,
    background: '#465',
+   debug: {},
    w : 0,
    h : 0,
    o : 0,
+   debugReset: function(){
+      this.debug = {
+         skippedSprites: 0,
+         drawnSprites: 0
+      }
+   },
    createSurface : function(type){
       var num = cs.draw.surfaces[type].length;
       var newLayer = document.createElement("canvas");
@@ -400,9 +407,11 @@ cs.draw = {
       if(!this.raw){
          //If outside camera skip
          if(options.x+sprite.fwidth < cs.camera.x || options.x  > cs.camera.x+cs.camera.width
-         || options.y+sprite.fheight < cs.camera.y || options.y  > cs.camera.y+cs.camera.height )
+         || options.y+sprite.fheight < cs.camera.y || options.y  > cs.camera.y+cs.camera.height ){
+            this.debug.skippedSprites += 1
             return;
-
+         }
+         this.debug.drawnSprites += 1
          options.x = Math.floor(options.x - cs.camera.x);
          options.y = Math.floor(options.y - cs.camera.y);
       }
