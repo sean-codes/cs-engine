@@ -1,5 +1,5 @@
 cs.objects['obj_bird'] = {
-	zIndex: 5,
+	zIndex: 20,
 	create: function(){
 		cs.script.setSprite(this, 'bird');
 		this.timer = 60;
@@ -38,7 +38,7 @@ cs.objects['obj_bird'] = {
 		cs.draw.sprite({ spr:spr, x:this.x, y:this.y, angle:angle})
 
 		cs.camera.follow(this);
-        if(cs.save.state == 'PLAYING'){
+      if(cs.save.state == 'PLAYING'){
 			if(this.vspeed < 4)
 				this.vspeed += 0.25;
 		} else {
