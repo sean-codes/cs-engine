@@ -1,15 +1,15 @@
 cs.objects['obj_interface'] = {
+	zIndex: 30,
 	create: function(){
-		this.draw = 'gui';
 		this.width = 30;
 	   this.height = 30;
 	   this.backgroundPlaying = undefined;
+		this.surface = 'gui'
 		cs.sound.toggleMute(true)
 	},
 	step: function(){
         //Handling Touch
         this.touch.check({ x:0, y:0, width:cs.draw.canvas.width, height:cs.draw.canvas.height})
-
         //Sound
         if(this.touch.down && this.touch.within({ x:0, y:0, width:14*3, height: 14*3})){
             cs.sound.toggleMute(!cs.sound.mute)
