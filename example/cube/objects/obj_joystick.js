@@ -1,8 +1,8 @@
 cs.objects['obj_joystick'] = {
-    create: function(){
-        this.width = 64;
-        this.height = 64;
-        this.draw = 'gui';
+   create: function(){
+      this.width = 64;
+      this.height = 64;
+      this.surface = 'gui';
     	this.tx = 0;
     	this.ty = 0;
     	this.jw = this.width/2;
@@ -13,7 +13,7 @@ cs.objects['obj_joystick'] = {
     	if(!cs.global.showJoyStick)
             return
 
-        this.x = 10; this.y = cs.draw.height - this.height - 10;
+        this.x = 10; this.y = cs.draw.canvas.height - this.height - 10;
 
         this.touch.check({ x:this.x, y:this.y, width:this.width, height:this.height });
 
@@ -55,11 +55,13 @@ cs.objects['obj_joystick'] = {
         }
 
     	cs.draw.setAlpha(0.25);
-        cs.draw.fillRect({ x:this.x, y:this.y, width:this.width, height:this.height });
-        cs.draw.setColor('#fff');
-        cs.draw.strokeRect({ x:this.tx, y:this.ty, width:this.jw, height:this.jh });
+      cs.draw.fillRect({ x:this.x, y:this.y, width:this.width, height:this.height });
+      cs.draw.setColor('#fff');
+      cs.draw.strokeRect({ x:this.tx, y:this.ty, width:this.jw, height:this.jh });
 
+      cs.draw.setColor('#FFF')
     	cs.draw.text(1, 0, 'FPS Step: ' + cs.fps.rate);
+      cs.draw.setColor('#FFF')
     	cs.draw.text(1, 30, 'Scale: ' + cs.camera.scale);
     }
 }
