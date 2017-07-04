@@ -7,7 +7,7 @@ cs.objects['obj_player'] = {
       this.gravity = 5;
       this.width = 8;
       this.height = 15;
-      this.jump = 8;
+      this.jump = 10;
 
       this.bounce = 0;
       this.bounceTimer = 20;
@@ -25,6 +25,7 @@ cs.objects['obj_player'] = {
          this.attackTotal += this.attackTimer[i]
     },
     step: function(){
+      cs.camera.follow(this);
        //Vertical Collisions
        var keys = {
           left: cs.key.held[37] || false,
@@ -62,7 +63,7 @@ cs.objects['obj_player'] = {
            this.vspeed = 0;
         else
            this.y += this.vspeed;
-
+        //console.log(this.v_col)
         //Check if jumping
         if(keys.up && this.v_col && this.v_col.y > this.y)
            this.vspeed = -this.jump
@@ -146,7 +147,7 @@ cs.objects['obj_player'] = {
         }
 
         //Camera
-        cs.camera.follow(this);
+
         if(cs.key.down[33]){ cs.camera.zoomIn(); }
         if(cs.key.down[34]){ cs.camera.zoomOut(); }
     }
