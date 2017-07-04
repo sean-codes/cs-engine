@@ -1,8 +1,8 @@
 cs.objects['obj_inventory'] = {
 	create: function(){1
-	    this.width = 32;
-	    this.height = 32;
-	    this.draw = 'gui';
+	   this.width = 32;
+	   this.height = 32;
+	   this.surface = 'gui';
 		this.slots = [];
 		for(var i = 0; i < 12; i++){
 			this.slots[i] = '';
@@ -41,7 +41,7 @@ cs.objects['obj_inventory'] = {
 			//Draw open button
 			var openSize = 20;
 			var openRect = {
-				x: cs.draw.width-10-openSize,
+				x: cs.draw.canvas.width-10-openSize,
 				y: 10,
 				size: openSize
 			}
@@ -62,7 +62,7 @@ cs.objects['obj_inventory'] = {
 				cs.global.showJoyStick = false;
 			}
 		} else {
-         this.touch.check({ x:0, y:0, width:cs.draw.width, height:cs.draw.height })
+         this.touch.check({ x:0, y:0, width:cs.draw.canvas.width, height:cs.draw.canvas.height })
 
     		var slotCount = this.slots.length;
     		var colCount = 3;
@@ -72,7 +72,7 @@ cs.objects['obj_inventory'] = {
     		var inventHeight = (rowCount * this.width) + ((rowCount+1)*space);
 			var inventRect = {
 				x: 20,
-				y: (cs.draw.height - inventHeight)/2,
+				y: (cs.draw.canvas.height - inventHeight)/2,
 				width: (colCount * this.width) + ((colCount+1)*space),
 				height: (rowCount * this.width) + ((rowCount+1)*space)
 			}
