@@ -30,50 +30,47 @@ cs.fps = {
 //----------------------------------| Global Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.init = function(canvasId){
-    //Listen for Errors
-    window.onerror = function(errorMsg, url, lineNumber){ cs.loop.run = false }
-    //Find/Set Up Canvas
-    var view = document.getElementById(canvasId);
-    view.tabIndex = 1000;
-    var viewCanvas = document.createElement('canvas');
-    view.appendChild(viewCanvas);
-    cs.draw.view.canvas = viewCanvas;
-    cs.draw.view.ctx = viewCanvas.getContext('2d');
-    cs.draw.view.ctx.webkitImageSmoothingEnabled = false
-    cs.draw.view.ctx.mozImageSmoothingEnabled = false
-    cs.draw.view.ctx.msImageSmoothingEnabled = false
-    cs.draw.view.ctx.imageSmoothingEnabled = false
-    cs.draw.createSurface('gui');
-    cs.draw.createSurface('game');
-    cs.draw.ctx = cs.draw.surfaces.game[0].ctx;
+   //Listen for Errors
+   window.onerror = function(errorMsg, url, lineNumber){ cs.loop.run = false }
+   //Find/Set Up Canvas
+   var view = document.getElementById(canvasId);
+   view.tabIndex = 1000;
+   var viewCanvas = document.createElement('canvas');
+   view.appendChild(viewCanvas);
+   cs.draw.view.canvas = viewCanvas;
+   cs.draw.view.ctx = viewCanvas.getContext('2d');
+   cs.draw.view.ctx.webkitImageSmoothingEnabled = false
+   cs.draw.view.ctx.mozImageSmoothingEnabled = false
+   cs.draw.view.ctx.msImageSmoothingEnabled = false
+   cs.draw.view.ctx.imageSmoothingEnabled = false
 
-    //Initiate Inputs
-    view.addEventListener('keydown', cs.key.updateDown);
-    view.addEventListener('keyup', cs.key.updateUp);
-    view.addEventListener('mousemove', cs.mouse.move);
-    view.addEventListener('mousedown', cs.mouse.down);
-    view.addEventListener('mouseup', cs.mouse.up);
-    view.addEventListener("touchstart", cs.touch.down, false);
-    view.addEventListener("touchend", cs.touch.up, false);
-    view.addEventListener("touchcancel", cs.touch.up, false);
-    view.addEventListener("touchmove", cs.touch.move, false);
-    cs.input.create();
-    //Camera/View Size
-    cs.draw.resize();
-    cs.input.resize();
-    //Sound
-    cs.sound.active = cs.sound.init();
+   //Game and GUI surface
+   cs.draw.createSurface({ name: 'gui', raw: true, zIndex: 1000 })
+   cs.draw.createSurface({ name: 'game', raw: false })
 
-    window.onfocus = function(){ cs.sound.toggleActive(true) }
-    window.onblur = function(){ cs.sound.toggleActive(false) }
-    document.body.visibilitychange= function(){console.log('test')};
-    //Animation and Step Start
-    window.requestAnimFrame = window.requestAnimationFrame ||
-                              window.webkitRequestAnimationFrame ||
-                              window.mozRequestAnimationFrame;
+   //Initiate Inputs
+   view.addEventListener('keydown', cs.key.updateDown);
+   view.addEventListener('keyup', cs.key.updateUp);
+   view.addEventListener('mousemove', cs.mouse.move);
+   view.addEventListener('mousedown', cs.mouse.down);
+   view.addEventListener('mouseup', cs.mouse.up);
+   view.addEventListener("touchstart", cs.touch.down, false);
+   view.addEventListener("touchend", cs.touch.up, false);
+   view.addEventListener("touchcancel", cs.touch.up, false);
+   view.addEventListener("touchmove", cs.touch.move, false);
+   cs.input.create();
 
-    //Start your engines!
-    cs.loop.step();
+   //Camera/View Size
+   cs.draw.resize();
+   cs.input.resize();
+
+   //Sound
+   cs.sound.active = cs.sound.init();
+   window.onfocus = function(){ cs.sound.toggleActive(true) }
+   window.onblur = function(){ cs.sound.toggleActive(false) }
+
+   //Start your engines!
+   cs.loop.step();
 }
 cs.loop = {
     run : true,
@@ -82,14 +79,16 @@ cs.loop = {
         //if(cs.loop.run)
         //window.requestAnimFrame(cs.loop.step);
 
-        cs.fps.update();
-        cs.draw.clearSurfaces();
-        cs.key.execute();
+        cs.fps.update()
+        cs.camera.update()
+        cs.draw.clearSurfaces()
+        cs.key.execute()
         cs.draw.debugReset()
+
         var i = cs.obj.list.length; while(i--){
             if(cs.obj.list[i].live){
                 var obj = cs.obj.list[i];
-                cs.draw.setLayer(obj.draw, obj.layer);
+                cs.draw.setSurface(obj.surface);
 
                 cs.particle.settings = obj.particle.settings;
                 cs.particle.obj = obj;
@@ -97,21 +96,12 @@ cs.loop = {
                 step.call(obj);
             }
         }
-        cs.camera.update()
         cs.key.reset();
         cs.touch.reset();
 
         //Resize Canvas
-        var w = window.innerWidth; var h = window.innerHeight; var o = screen.orientation;
-        if(w !== cs.draw.w || h !== cs.draw.h || o !== cs.draw.o){
-            cs.draw.w = w;
-            cs.draw.h = h;
-            cs.draw.o = o;
-            cs.input.resize();
-            cs.draw.resize();
-        }
-
-        cs.draw.display();
+        cs.draw.checkResize()
+        cs.draw.displaySurfaces();
         if(cs.room.restarting === true)
             cs.room.reset();
     }
@@ -125,31 +115,38 @@ cs.obj = {
    objCounts: {},
    unique: 0,
    create : function(options){
-
       var count = cs.obj.count(options.type)
       this.objCounts[options.type] = (count) ? count+1 : 1
 
-      var depth = cs.objects[options.type].depth || 0
-      var pos = this.findPosition(depth)
-      this.list.splice(pos, 0, {});
-      this.list[pos].depth = depth;
-      this.list[pos].live = true;
-      this.list[pos].type = options.type;
-      this.list[pos].id = this.unique
-      this.list[pos].core = cs.objects[options.type].core || false
-      this.list[pos].draw = 'game';
-      this.list[pos].layer = 0;
-      this.list[pos].particle = { list : [], settings : {} };
-      this.list[pos].x = options.x || 0; this.list[pos].xoff = 0;
-      this.list[pos].y = options.y || 0; this.list[pos].yoff = 0;
-      this.list[pos].width = cs.objects[options.type].width;
-      this.list[pos].height = cs.objects[options.type].height;
-      this.list[pos].sprite = cs.objects[options.type].sprite;
+      var object = cs.objects[options.type]
+      var zIndex = cs.objects[options.type].zIndex || 0
+      var pos = this.findPosition(zIndex)
+
+      //Create the object
+      var newObj = {
+         zIndex: zIndex,
+         live: true,
+         type: options.type,
+         id: this.unique,
+         core: object.core || false,
+         surface: 'game',
+         particle: { list : [], settings : {} },
+         touch: cs.touch.create(),
+         x: options.x || 0,
+         y: options.y || 0,
+         width: object.width,
+         height: object.height,
+         sprite: object.sprite,
+      }
+      //Run Create event
+      object.create.call(newObj);
       var create = cs.objects[options.type].create;
-      create.call(this.list[pos]);
-      this.list[pos].touch = cs.touch.create(this.list[pos].draw == 'gui');
+
+      //Add the object to the list
+      this.list.splice(pos, 0, newObj)
       this.unique += 1
-      return this.list[pos];
+
+      return newObj
    },
    destroy : function(destroyObj){
       this.objCounts[destroyObj.type] -= 1
@@ -160,9 +157,9 @@ cs.obj = {
             if(obj.id === destroyObj)
                obj.live = false
    },
-   findPosition : function(depth){
+   findPosition : function(zIndex){
       for(var i = 0; i < this.list.length; i++){
-         if(depth <= this.list[i].zIndex){
+         if(zIndex >= this.list[i].zIndex){
             return i;
          }
       }
@@ -293,10 +290,8 @@ cs.sprite = {
 //---------------------------------------------------------------------------------------------//
 cs.draw = {
    view : { ctx: undefined, canvas : undefined },
-   surfaces: {
-      game : [],//Game Canvases
-      gui : []//GUI Canvases
-   },
+   surfaces: {},
+   surfaceOrder: [],
    ctx : undefined,
    canvas : {width: 0, height: 0},
    alpha : 1,
@@ -315,55 +310,105 @@ cs.draw = {
          drawnSprites: 0
       }
    },
-   createSurface : function(type){
-      var num = cs.draw.surfaces[type].length;
-      var newLayer = document.createElement("canvas");
-      newLayer.style.display = "none";
+   createSurface : function(info){
+      var num = cs.draw.surfaces.length
+      var canvas = document.createElement("canvas")
+      canvas.style.display = "none";
+      var ctx = canvas.getContext('2d')
+      ctx.webkitImageSmoothingEnabled = false
+      ctx.mozImageSmoothingEnabled = false
+      ctx.imageSmoothingEnabled = false
 
-      this.surfaces[type][num] = {};
-      this.surfaces[type][num].canvas = newLayer;
-      this.surfaces[type][num].ctx = newLayer.getContext('2d');
-      this.surfaces[type][num].ctx.webkitImageSmoothingEnabled = false
-      this.surfaces[type][num].ctx.mozImageSmoothingEnabled = false
-      this.surfaces[type][num].ctx.imageSmoothingEnabled = false
-
-      this.surfaces[type][num].alpha = 1;
-      document.body.appendChild(newLayer);
+      this.surfaces[info.name] = {
+         name: info.name,
+         canvas: canvas,
+         ctx: ctx,
+         zIndex: info.zIndex || 0,
+         width: info.width,
+         height: info.height,
+         raw: info.raw || info.raw,
+         draw: true,
+         drawOutside: info.drawOutside || false,
+         autoClear: info.autoClear || true,
+      }
+      this.addSurfaceOrder(this.surfaces[info.name])
       cs.draw.resize();
-      return num;
+   },
+   addSurfaceOrder: function(surface){
+      //Find Place to put it!
+      for(var i = 0; i < this.surfaceOrder.length; i++)
+         if(this.surfaceOrder[i].zIndex >= surface.zIndex)
+            break
+
+      this.surfaceOrder.splice(i, 0, surface)
    },
    clearSurfaces : function(){
-      for(var i = 0; i < this.surfaces.game.length; i++)
-         this.clearSurface({ type: 'game', id: i })
-
-      for(i = 0; i < this.surfaces.gui.length; i++)
-         this.clearSurface({ type: 'gui', id: i })
+      for(var surface of this.surfaceOrder)
+         this.clearSurface(surface.name)
 
       this.view.ctx.fillStyle = this.background
       this.view.ctx.fillRect(0, 0,
          this.view.canvas.width,
          this.view.canvas.height);
    },
-   clearSurface: function(options){
-      var surface = this.surfaces[options.type][options.id]
-      surface.ctx.clearRect(0, 0, surface.canvas.width, surface.canvas.height)
+   clearSurface: function(surfaceName){
+      var surface = this.surfaces[surfaceName]
+      clearRect = {
+         x: surface.raw ? 0 : cs.camera.x,
+         y: surface.raw ? 0 : cs.camera.y,
+         width: surface.raw ? surface.canvas.width : cs.camera.width,
+         height: surface.raw ? surface.canvas.height : cs.camera.height,
+      }
+      surface.ctx.clearRect(clearRect.x, clearRect.y, clearRect.width, clearRect.height)
+   },
+   displaySurfaces : function(){
+      for(var surface of this.surfaceOrder)
+         this.displaySurface(surface.name)
+   },
+   displaySurface: function(surfaceName){
+      var surface = this.surfaces[surfaceName]
+      var image = surface.canvas,
+      sx = surface.raw ? 0 : cs.camera.x,
+      sy = surface.raw ? 0 : cs.camera.y,
+      sWidth = surface.raw ? surface.canvas.width : cs.camera.width,
+      sHeight = surface.raw ? surface.canvas.height : cs.camera.height,
+
+      dx = 0,
+      dy = 0,
+      dWidth = this.view.canvas.width,
+      dHeight = this.view.canvas.height
+
+      this.view.ctx.drawImage(image,
+         sx, sy, sWidth, sHeight,
+         dx, dy, dWidth, dHeight)
+   },
+   checkResize: function(){
+      var rect = this.view.canvas.getBoundingClientRect()
+      var w = rect.width; var h = rect.height; var o = screen.orientation;
+      if(w !== cs.draw.w || h !== cs.draw.h || o !== cs.draw.o){
+          cs.draw.w = w;
+          cs.draw.h = h;
+          cs.draw.o = o;
+          cs.input.resize();
+          this.resize();
+      }
    },
    resize : function(){
-      var w = window.innerWidth;
-      var h = window.innerHeight;
+      var viewSize = cs.draw.view.canvas.getBoundingClientRect()
+      var w = viewSize.width
+      var h = viewSize.height;
       var ratioHeight = w/h; //How many h = w
       var ratioWidth = h/w;//how man w = a h
 
+
       var nw = cs.camera.maxWidth - (cs.camera.maxWidth%ratioWidth);
       var nh = nw * ratioWidth;
-      if(nh > cs.camera.maxHeight){
+      if(nh >= cs.camera.maxHeight){
          nh = cs.camera.maxHeight - (cs.camera.maxHeight%ratioHeight);
          nw = nh * ratioHeight;
       }
-
-      cs.draw.view.canvas.style.width = w + 'px';
-      cs.draw.view.canvas.style.height = h + 'px';
-
+      //console.log(nw, nh)
+      //console.log('CW: ' + nw + ' CH: ' + nh + ' - VH: ' + w + ' Vh: ' + h)
       cs.draw.view.canvas.width = w;
       cs.draw.view.canvas.height = h;
       cs.draw.view.ctx.imageSmoothingEnabled = false;
@@ -371,34 +416,17 @@ cs.draw = {
       cs.draw.view.ctx.mozImageSmoothingEnabled = false;
       cs.draw.view.ctx.msImageSmoothingEnabled = false;
 
-      cs.camera.width = Math.ceil(nw);
-      cs.camera.height = Math.ceil(nh);
-      for(var i = 0; i < this.surfaces.game.length; i++){
-         cs.draw.surfaces.game[i].canvas.width = nw;
-         cs.draw.surfaces.game[i].canvas.height = nh;
-         cs.draw.surfaces.game[i].canvas.width = cs.draw.surfaces.game[i].canvas.width;
-         cs.draw.surfaces.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
-         cs.draw.surfaces.game[i].ctx.imageSmoothingEnabled = false;
-         cs.draw.surfaces.game[i].ctx.webkitImageSmoothingEnabled = false;
-         cs.draw.surfaces.game[i].ctx.mozImageSmoothingEnabled = false;
+      for(var surface of this.surfaceOrder){
+         surface.canvas.width = surface.raw ? w : cs.room.width
+         surface.canvas.height = surface.raw ? h : cs.room.height
+         surface.ctx.imageSmoothingEnabled = false
+         surface.ctx.webkitImageSmoothingEnabled = false
+         surface.ctx.mozImageSmoothingEnabled = false
+         surface.ctx.msImageSmoothingEnabled = false
       }
-      for(i = 0; i < cs.draw.surfaces.gui.length; i++){
-         cs.draw.surfaces.gui[i].canvas.width = w;
-         cs.draw.surfaces.gui[i].canvas.height = h;
-         cs.draw.surfaces.gui[i].ctx.imageSmoothingEnabled = false;
-         cs.draw.surfaces.gui[i].ctx.webkitImageSmoothingEnabled = false;
-         cs.draw.surfaces.gui[i].ctx.mozImageSmoothingEnabled = false;
-      }
-   },
-   display : function(){
-      for(var i = 0; i < this.surfaces.game.length; i++){
-         this.view.ctx.globalAlpha = this.surfaces.game[i].alpha;
-         this.view.ctx.drawImage(this.surfaces.game[i].canvas, 0, 0, this.view.canvas.width, this.view.canvas.height);
-      }
-      for( i = 0; i < this.surfaces.gui.length; i++){
-         this.view.ctx.globalAlpha = this.surfaces.gui[i].alpha;
-         this.view.ctx.drawImage(this.surfaces.gui[i].canvas, 0, 0);
-      }
+
+      cs.camera.width = Math.ceil(nw)
+      cs.camera.height = Math.ceil(nh)
    },
    sprite : function(options){
       sprite = cs.sprite.list[options.spr]
@@ -412,8 +440,6 @@ cs.draw = {
             return;
          }
          this.debug.drawnSprites += 1
-         options.x = Math.floor(options.x - cs.camera.x);
-         options.y = Math.floor(options.y - cs.camera.y);
       }
 
       this.ctx.save();
@@ -426,26 +452,19 @@ cs.draw = {
       cs.draw.reset();
    },
    text: function(options){
-      if(!this.raw){
-         options.x = Math.floor(options.x - cs.camera.x);
-         options.y = Math.floor(options.y - cs.camera.y);
-      }
       this.ctx.fillText(options.text, options.x, options.y);
       cs.draw.reset();
    },
    textSize: function(str){
       return this.ctx.measureText(str);
    },
-   line: function(x1, y1, x2, y2){
-      var cx = 0, cy = 0
-      if(!this.raw){
-         cx =  Math.floor(cs.camera.x)
-         cy =  Math.floor(cs.camera.y)
-      }
+   line: function({options}){
+      var cx = 0 - ((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)
+      var cy = 0 - ((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)
 
       this.ctx.beginPath();
-      this.ctx.moveTo(x1-cx-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50), y1-cy-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50));
-      this.ctx.lineTo(x2-cx-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50), y2-cy-((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50));
+      this.ctx.moveTo(options.x1-cx,options.y1-cy);
+      this.ctx.lineTo(options.x2-cx,options.y2-cy);
       this.ctx.stroke();
       cs.draw.reset();
    },
@@ -453,30 +472,23 @@ cs.draw = {
       if(typeof args.width == 'undefined') args.width = args.size || 0
       if(typeof args.height == 'undefined') args.height = args.size || 0
 
-      args = this.fixPosition(args)
-
       this.ctx.fillRect(args.x,args.y,args.width,args.height);
       cs.draw.reset();
    },
    strokeRect: function(args){
-      if(typeof args.width == 'undefined') var w = args.size || 0
-      if(typeof args.height == 'undefined') var h = args.size || 0
-
-      args = this.fixPosition(args)
-
-      x+=((this.ctx.lineWidth % 2 == 0) ? 0 : -0.50)+Math.floor(this.ctx.lineWidth/2);
-      y+=((this.ctx.lineWidth % 2 == 0) ? 0 : -0.50)+Math.floor(this.ctx.lineWidth/2);
-      w-=this.ctx.lineWidth;
-      h-=this.ctx.lineWidth;
-      this.ctx.strokeRect(x,y,width,height);
+      var lineWidth = lineWidth > 1 ? this.ctx.lineWidth : 0
+      var lineWidthAdjust = (this.ctx.lineWidth % 2 ? -0.50 : 0) + Math.floor(this.ctx.lineWidth/2)
+      var rect = {
+         x: args.x + lineWidthAdjust,
+         y: args.y + lineWidthAdjust,
+         width: (args.width ? args.width : args.size) - lineWidth,
+         height: (args.height ? args.height : args.size) - lineWidth
+      }
+      this.ctx.strokeRect(rect.x, rect.y, rect.width, rect.height)
       cs.draw.reset();
    },
    circle : function(x, y, rad, fill){
       if(typeof fill == 'undefined') fill = true
-      if(!this.raw){
-         x =  Math.floor(x-cs.camera.x);
-         y =  Math.floor(y-cs.camera.y);
-      }
       cs.draw.ctx.beginPath();
       cs.draw.ctx.arc(x, y, rad, 0, Math.PI*2, true);
       cs.draw.ctx.closePath();
@@ -486,10 +498,6 @@ cs.draw = {
       cs.draw.reset();
    },
    circleGradient : function(x, y, radius, c1, c2){
-      if(!this.raw){
-         x =  Math.floor(x-cs.camera.x || 0);
-         y =  Math.floor(y-cs.camera.y || 0);
-      }
       //Draw a circle
       var g = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
       g.addColorStop(1, c2);
@@ -506,14 +514,8 @@ cs.draw = {
       x = Math.floor(args.x); y = Math.floor(args.y);
       width = Math.floor(args.width);
       height = Math.floor(args.height);
-      if(!this.raw){
-         x =  Math.floor(x-cs.camera.x);
-         y =  Math.floor(y-cs.camera.y);
-      }
-      return {
-         x:x, y:y,
-         width:width, height:height
-      }
+
+      return { x:x, y:y, width:width, height:height }
    },
    setColor: function(color){
       this.ctx.fillStyle = color;
@@ -541,19 +543,13 @@ cs.draw = {
    setOperation : function(operation){
       this.ctx.globalCompositeOperation = operation;
    },
-   setLayer : function(target, num){
-      this.target = this.surfaces[target][num];
-      this.ctx = this.target.ctx;
-      this.canvas = this.target.canvas;
-      this.width = this.canvas.width;
-      this.height = this.canvas.height;
-      this.raw = target == 'gui' ? true : false;//Use raw cordinates
-   },
-   setLayerAlpha : function(alpha){
-      this.target.alpha = alpha;
+   setSurface : function(name){
+      this.surface = this.surfaces[name]
+      this.canvas = this.surface.canvas
+      this.ctx = this.surface.ctx
+      this.raw = this.surface.raw
    },
    reset : function(){
-      cs.draw.target.alpha = 1;
       cs.draw.setAlpha(1);
       cs.draw.setWidth(1);
       cs.draw.setFont(this.fontSize + "px Trebuchet MS");
@@ -564,253 +560,14 @@ cs.draw = {
    }
 }
 //---------------------------------------------------------------------------------------------//
-//-----------------------------------| Sound Functions |---------------------------------------//
-//---------------------------------------------------------------------------------------------//
-cs.sound = {
-   list: {},
-   playList: [],
-   context: null,
-   canPlayAudio: false,
-   mute: false,
-   active: true,
-   volume : undefined,
-   enable: function(){
-      if(this.canPlayAudio === true || !this.context) return;
-
-      var source = this.context.createBufferSource();
-      source.buffer = this.context.createBuffer(1, 1, 22050);
-      source.connect(this.context.destination);
-      source.start(0);
-      this.canPlayAudio = true;
-   },
-   init: function(){
-      this.list = {};
-      try {
-         window.AudioContext =
-         window.AudioContext || window.webkitAudioContext;
-         this.context = new AudioContext();
-      } catch (e) {
-         this.context = undefined;
-         this.canPlayAudio = false;
-         alert('Web Audio API is not supported in this browser');
-      }
-   },
-   load: function(options){
-      var pathSplit = options.path.split('/');
-      var name = pathSplit.pop();
-      var path = pathSplit.toString('/');
-      var types = (options.extension ? options.extension : 'wav').split(',');
-
-      this.list[name] = {};
-      for(var i in types){
-         var type = types[i].trim();
-         this.list[name][type] = {
-            loaded: false,
-            path : path
-            + '/' + name
-            + '.' + type,
-            buffer: null,
-            request: new XMLHttpRequest()
-         }
-
-         this.list[name][type].request.csData = { name: name, type: type }
-         this.list[name][type].request.open('GET', this.list[name][type].path, true);
-         this.list[name][type].request.responseType = 'arraybuffer';
-
-         this.list[name][type].request.onload = function(){
-            var name = this.csData.name;
-            var type = this.csData.type;
-            cs.sound.context.decodeAudioData(this.response, function(buffer){
-               cs.sound.list[name][type].buffer = buffer;
-               cs.sound.list[name][type].loaded = true;
-            });
-         }
-         cs.sound.list[name][type].request.send();
-      }
-   },
-   play: functionplay = function(audioName, options){
-      if(this.list[audioName]['wav'].loaded === true){
-         this.playList.forEach(function(audioObj){
-            if(audioObj.name == audioName){
-               //console.log('Reuse this sound');
-            }
-         })
-         var csAudioObj = this.context.createBufferSource();
-         csAudioObj.name = audioName;
-         csAudioObj.buffer = this.list[audioName]['wav'].buffer;
-         for(var opt in options){ csAudioObj[opt] = options[opt] }
-         csAudioObj.gainNode = this.context.createGain();
-         csAudioObj.connect(csAudioObj.gainNode);
-         csAudioObj.gainNode.connect(this.context.destination);
-         csAudioObj.gainNode.gain.value = cs.sound.mute ? 0 : 1;
-         csAudioObj.start(0);
-         this.playList.push(csAudioObj);
-         return csAudioObj;
-      }
-      return undefined;
-   },
-   reset: function(){
-      for(var sound in this.playList){
-         //TODO there is an error here take a look in a second I got to go wash my cloths~!!!
-         if(!this.playList) return;
-         this.playList[sound].stop();
-         this.playList[sound].disconnect();
-      }
-   },
-   toggleMute: function(bool){
-      this.mute = bool;
-      (bool) ? this.setGain(0) : this.setGain(1);
-   },
-   setGain: function(gainValue){
-      console.log('GainValue: ' + gainValue);
-      for(var audioObj in this.playList){
-         console.log('Muting...', audioObj);
-         this.playList[audioObj].gainNode.gain.value = gainValue;
-      }
-   },
-   toggleActive: function(bool){
-      if(this.context !== undefined)
-         (bool) ? this.context.resume() : this.context.suspend();
-   }
-}
-//---------------------------------------------------------------------------------------------//
-//-----------------------------| Particle Engine Functions |-----------------------------------//
-//---------------------------------------------------------------------------------------------//
-cs.particle = {
-    settings : {},
-    obj : {},
-    burst : function(x, y, w, h, qty){
-       if(typeof qty == 'undefined') qty = 0
-        var num = qty;
-        if(num === 0){
-            num = this.settings.particlesPerStep;
-        }
-        if(num < 0){
-            num = (Math.floor(Math.random() * Math.abs(num)) === 1)
-        }
-        for(var i = 0; i < num; i++){
-            var c1 = cs.particle.rgbFromHex(this.settings.colorEnd);
-            var c2 = cs.particle.rgbFromHex(this.settings.colorStart);
-            var life = cs.math.iRandomRange(this.settings.lifeMin, this.settings.lifeMax);
-            var dir = cs.math.iRandomRange(this.settings.dirMin, this.settings.dirMax);
-            var speed = cs.math.iRandomRange(this.settings.speedMin, this.settings.speedMax);
-            var speedX = Math.cos(dir*Math.PI/180);
-            var speedY = Math.sin(dir*Math.PI/180);
-            var new_part = {
-                shape      : this.settings.shape,
-                c_r        : c1.r,
-                c_g        : c1.g,
-                c_b        : c1.b,
-                c_sr       : (c2.r - c1.r) / life,
-                c_sg       : (c2.g - c1.g) / life,
-                c_sb       : (c2.b - c1.b) / life,
-                alpha      : this.settings.alpha,
-                fade       : this.settings.fade,
-                size       : this.settings.size,
-                grow       : this.settings.grow,
-                speed      : speed/10,
-                speedX     : speedX,
-                speedY     : speedY,
-                dir        : dir,
-                accel      : this.settings.accel/10,
-                accelRate  : this.settings.accel/100,
-                gravity    : this.settings.gravity/10,
-                gravityRate : this.settings.gravity/100,
-                life       : life,
-                x          : cs.math.iRandomRange(x, x+w),
-                y          : cs.math.iRandomRange(y, y+h),
-                wobbleX    : cs.math.iRandomRange(-this.settings.wobbleX, this.settings.wobbleX),
-                wobbleSetX : this.settings.wobbleX,
-                wobbleY    : cs.math.iRandomRange(-this.settings.wobbleY, this.settings.wobbleY),
-                wobbleSetY : this.settings.wobbleY,
-            }
-            var len = this.obj.particle.list.length;
-            this.obj.particle.list[len] = new_part;
-        }
-    },
-    step : function(){
-        var tempParticles = [];
-        for(var i = 0; i < this.obj.particle.list.length; i++){
-            var particle = this.obj.particle.list[i];
-            particle.life -= 1;
-            particle.size = particle.size + particle.grow/100;
-            particle.alpha = particle.alpha - particle.fade/10;
-            if(particle.life > 0 && particle.alpha > 0 && particle.size > 0){
-                //Accelleration
-                particle.accel += particle.accelRate;
-                particle.gravity -= particle.gravityRate;
-
-                //Wobble
-                if(particle.wobbleSetX !== 0){
-                    if(particle.wobbleX > 0){
-                        particle.wobbleX -= 1; particle.x -= 1;
-                        if(particle.wobbleX === 0) particle.wobbleX = -particle.wobbleSetX
-                    } else {
-                        particle.wobbleX += 1; particle.x += 1;
-                        if(particle.wobbleX === 0) particle.wobbleX = particle.wobbleSetX
-                    }
-                }
-                if(particle.wobbleSetY !== 0){
-                    if(particle.wobbleY > 0){
-                        particle.wobbleY -= 1; particle.y -= 4;
-                        if(particle.wobbleY === 0) particle.wobbleY = -particle.wobbleSetY
-                    } else {
-                        particle.wobbleY += 1; particle.y += 4;
-                        if(particle.wobbleY === 0) particle.wobbleY = particle.wobbleSetY
-                    }
-                }
-
-                //Position Particle?
-                var speed = particle.speed + particle.accel
-                particle.x += particle.speedX*speed;
-                particle.y += particle.speedY*(speed+particle.gravity);
-
-                //Draw Particle
-                cs.draw.setAlpha(particle.alpha/100);
-                var r = Math.round(particle.c_r + particle.c_sr * particle.life);
-                var g = Math.round(particle.c_g + particle.c_sg * particle.life);
-                var b = Math.round(particle.c_b + particle.c_sb * particle.life);
-                cs.draw.setColor(cs.particle.hexFromRgb(r,g,b));
-                var cx = particle.x;
-                var cy = particle.y;
-                if(particle.shape == "square"){
-                    cx = cx - (particle.size/2);
-                    cy = cy - (particle.size/2);
-
-                    cs.draw.fillRect({ x:cx, y:cy, width:particle.size, height:particle.size });
-                } else {
-                    cs.draw.circle(cx, cy, particle.size);
-                }
-                tempParticles[tempParticles.length] = particle;
-            }
-        }
-        //Reset Particles with only live parts
-        this.obj.particle.list = tempParticles;
-    },
-    rgbFromHex : function(hex){
-        return {
-           r : parseInt('0x' + hex.slice(1,3)),
-           g : parseInt('0x' + hex.slice(3,5)),
-           b : parseInt('0x' + hex.slice(5,7))
-        }
-    },
-    hexFromRgb : function(r, g, b){
-        r = r.toString(16); g = g.toString(16); b = b.toString(16);
-        return '#' +
-            (r.length == 1 ? '0' + r : r) +
-            (g.length == 1 ? '0' + g : g) +
-            (b.length == 1 ? '0' + b : b);
-    }
-}
-//---------------------------------------------------------------------------------------------//
 //----------------------------------| Camera Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.camera = {
    scale : 1,
    x : 0,
    y : 0,
-   ux: 0,
-   uy: 0,
+   followX: 0,
+   followY: 0,
    width : 500, maxWidth : 500,
    height : 200, maxHeight : 400,
    lock : false,
@@ -823,63 +580,28 @@ cs.camera = {
       cs.draw.resize();
    },
    follow : function(obj){
-      this.ux = obj.x
-      this.uy = obj.y
-      this.uwidth = obj.width
-      this.uheight = obj.height
-      this.uxoff = obj.xoff
-      this.uyoff = obj.yoff
+      this.followX = obj.x
+      this.followY = obj.y
+      this.followWidth = obj.width
+      this.followHeight = obj.height
    },
    update: function(){
-      var width = this.width * this.scale/1;
-      var height = this.height * this.scale/1;
-      var gameWidth = cs.room.width
-      var gameHeight = cs.room.height
+      this.x = (this.followX+this.followWidth/2)-this.width/2
+      this.y = (this.followY+this.followHeight/2)-this.height/2
 
-      this.x = (this.ux+this.uwidth/2)-width/2-this.uxoff;
-      this.y = (this.uy+this.uheight/2)-height/2-this.uyoff;
+      if(this.x < 0) this.x = 0
+      if(this.y < 0) this.y = 0
 
-      //Check if camera over left
-      if(this.x < 0){ this.x = 0;}
-      if(this.x+width > gameWidth){
-         this.x = (gameWidth - width) / ((gameWidth < width) ? 2 : 1);
-      }
+      if(this.x+this.width > cs.room.width)
+         this.x = (cs.room.width - this.width) / (cs.room.width < this.width ? 2 : 1)
 
-      //Check is camera under or over
-      if(this.y < 0){ this.y = 0; }
-      if(this.y + height > gameHeight){
-         this.y = gameHeight - height + 1;
-      }
+      if(this.y + this.height > cs.room.height)
+         this.y = (cs.room.height - this.height) / (cs.room.height < this.height ? 2 : 1)
+
+      //console.log(cs.room.height-cs.camera.height)
    },
-   zoomOut : function(){
-      for(var i = 0; i < cs.draw.surfaces.game.length; i++){
-         cs.draw.surfaces.game[i].canvas.width = cs.draw.surfaces.game[i].canvas.width;
-         if(cs.camera.scale < 1){
-            cs.camera.scale += 0.25;
-         } else {
-            cs.camera.scale += 1;
-         }
-         cs.draw.surfaces.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
-         cs.draw.surfaces.game[i].ctx.imageSmoothingEnabled = false;
-         cs.draw.surfaces.game[i].ctx.mozImageSmoothingEnabled = false;
-      }
-   },
-   zoomIn : function(){
-      for(var i = 0; i < cs.draw.surfaces.game.length; i++){
-         cs.draw.surfaces.game[i].canvas.width = cs.draw.surfaces.game[i].canvas.width;
-         if(cs.camera.scale <= 1){
-            cs.camera.scale -= 0.25;
-            if(cs.camera.scale <= 0.25){
-               cs.camera.scale = 0.25;
-            }
-         } else {
-            cs.camera.scale -= 1;
-         }
-         cs.draw.surfaces.game[i].ctx.scale(1/cs.camera.scale, 1/cs.camera.scale);
-         cs.draw.surfaces.game[i].ctx.imageSmoothingEnabled = false;
-         cs.draw.surfaces.game[i].ctx.mozImageSmoothingEnabled = false;
-      }
-   }
+   zoomOut : function(){},
+   zoomIn : function(){}
 }
 //---------------------------------------------------------------------------------------------//
 //-----------------------------------| Room Functions |----------------------------------------//
@@ -1142,7 +864,6 @@ cs.touch = {
          down : false,
          held : false,
          up : false,
-         raw : raw,
          x : 0, y : 0,
          off_x : 0, off_y : 0,
          id : -1,
@@ -1158,7 +879,7 @@ cs.touch = {
                var touch = cs.touch.list[this.id];
                this.x = touch.x;
                this.y = touch.y;
-               if(!this.raw){
+               if(!cs.draw.raw){
                   convert = cs.touch.convertToGameCords(this.x, this.y)
                   this.x = convert.x; this.y = convert.y
                }
@@ -1178,7 +899,7 @@ cs.touch = {
                   this.x = ctouch.x;
                   this.y = ctouch.y;
 
-                  if(!this.raw){
+                  if(!cs.draw.raw){
                      convert = cs.touch.convertToGameCords(this.x, this.y)
                      this.x = convert.x; this.y = convert.y
                   }
@@ -1211,19 +932,257 @@ cs.touch = {
    },
    convertToGameCords(x, y){
       var canvas = cs.draw.view.canvas;
-      var gameCanvas = cs.draw.surfaces.game[0].canvas;
       var rect = canvas.getBoundingClientRect();
 
       var physicalViewWidth = (rect.right-rect.left);
       var physicalViewHeight = (rect.bottom-rect.top);
       var hortPercent = (x - rect.left)/physicalViewWidth;
       var vertPercent = (y - rect.top)/physicalViewHeight;
-      var gamex = Math.round(hortPercent*gameCanvas.width);
-      var gamey = Math.round(vertPercent*gameCanvas.height);
+      var gamex = Math.round(hortPercent*cs.camera.width);
+      var gamey = Math.round(vertPercent*cs.camera.height);
       gamex = (gamex * cs.camera.scale) + cs.camera.x
       gamey = (gamey * cs.camera.scale) + cs.camera.y
       return { x: gamex, y: gamey }
    }
+}
+//---------------------------------------------------------------------------------------------//
+//-----------------------------------| Sound Functions |---------------------------------------//
+//---------------------------------------------------------------------------------------------//
+cs.sound = {
+   list: {},
+   playList: [],
+   context: null,
+   canPlayAudio: false,
+   mute: false,
+   active: true,
+   volume : undefined,
+   enable: function(){
+      if(this.canPlayAudio === true || !this.context) return;
+
+      var source = this.context.createBufferSource();
+      source.buffer = this.context.createBuffer(1, 1, 22050);
+      source.connect(this.context.destination);
+      source.start(0);
+      this.canPlayAudio = true;
+   },
+   init: function(){
+      this.list = {};
+      try {
+         window.AudioContext =
+         window.AudioContext || window.webkitAudioContext;
+         this.context = new AudioContext();
+      } catch (e) {
+         this.context = undefined;
+         this.canPlayAudio = false;
+         alert('Web Audio API is not supported in this browser');
+      }
+   },
+   load: function(options){
+      var pathSplit = options.path.split('/');
+      var name = pathSplit.pop();
+      var path = pathSplit.toString('/');
+      var types = (options.extension ? options.extension : 'wav').split(',');
+
+      this.list[name] = {};
+      for(var i in types){
+         var type = types[i].trim();
+         this.list[name][type] = {
+            loaded: false,
+            path : path
+            + '/' + name
+            + '.' + type,
+            buffer: null,
+            request: new XMLHttpRequest()
+         }
+
+         this.list[name][type].request.csData = { name: name, type: type }
+         this.list[name][type].request.open('GET', this.list[name][type].path, true);
+         this.list[name][type].request.responseType = 'arraybuffer';
+
+         this.list[name][type].request.onload = function(){
+            var name = this.csData.name;
+            var type = this.csData.type;
+            cs.sound.context.decodeAudioData(this.response, function(buffer){
+               cs.sound.list[name][type].buffer = buffer;
+               cs.sound.list[name][type].loaded = true;
+            });
+         }
+         cs.sound.list[name][type].request.send();
+      }
+   },
+   play: functionplay = function(audioName, options){
+      if(this.list[audioName]['wav'].loaded === true){
+         this.playList.forEach(function(audioObj){
+            if(audioObj.name == audioName){
+               //console.log('Reuse this sound');
+            }
+         })
+         var csAudioObj = this.context.createBufferSource();
+         csAudioObj.name = audioName;
+         csAudioObj.buffer = this.list[audioName]['wav'].buffer;
+         for(var opt in options){ csAudioObj[opt] = options[opt] }
+         csAudioObj.gainNode = this.context.createGain();
+         csAudioObj.connect(csAudioObj.gainNode);
+         csAudioObj.gainNode.connect(this.context.destination);
+         csAudioObj.gainNode.gain.value = cs.sound.mute ? 0 : 1;
+         csAudioObj.start(0);
+         this.playList.push(csAudioObj);
+         return csAudioObj;
+      }
+      return undefined;
+   },
+   reset: function(){
+      for(var sound in this.playList){
+         //TODO there is an error here take a look in a second I got to go wash my cloths~!!!
+         if(!this.playList) return;
+         this.playList[sound].stop();
+         this.playList[sound].disconnect();
+      }
+   },
+   toggleMute: function(bool){
+      this.mute = bool;
+      (bool) ? this.setGain(0) : this.setGain(1);
+   },
+   setGain: function(gainValue){
+      console.log('GainValue: ' + gainValue);
+      for(var audioObj in this.playList){
+         console.log('Muting...', audioObj);
+         this.playList[audioObj].gainNode.gain.value = gainValue;
+      }
+   },
+   toggleActive: function(bool){
+      if(this.context !== undefined)
+         (bool) ? this.context.resume() : this.context.suspend();
+   }
+}
+//---------------------------------------------------------------------------------------------//
+//-----------------------------| Particle Engine Functions |-----------------------------------//
+//---------------------------------------------------------------------------------------------//
+cs.particle = {
+    settings : {},
+    obj : {},
+    burst : function(x, y, w, h, qty){
+       if(typeof qty == 'undefined') qty = 0
+        var num = qty;
+        if(num === 0){
+            num = this.settings.particlesPerStep;
+        }
+        if(num < 0){
+            num = (Math.floor(Math.random() * Math.abs(num)) === 1)
+        }
+        for(var i = 0; i < num; i++){
+            var c1 = cs.particle.rgbFromHex(this.settings.colorEnd);
+            var c2 = cs.particle.rgbFromHex(this.settings.colorStart);
+            var life = cs.math.iRandomRange(this.settings.lifeMin, this.settings.lifeMax);
+            var dir = cs.math.iRandomRange(this.settings.dirMin, this.settings.dirMax);
+            var speed = cs.math.iRandomRange(this.settings.speedMin, this.settings.speedMax);
+            var speedX = Math.cos(dir*Math.PI/180);
+            var speedY = Math.sin(dir*Math.PI/180);
+            var new_part = {
+                shape      : this.settings.shape,
+                c_r        : c1.r,
+                c_g        : c1.g,
+                c_b        : c1.b,
+                c_sr       : (c2.r - c1.r) / life,
+                c_sg       : (c2.g - c1.g) / life,
+                c_sb       : (c2.b - c1.b) / life,
+                alpha      : this.settings.alpha,
+                fade       : this.settings.fade,
+                size       : this.settings.size,
+                grow       : this.settings.grow,
+                speed      : speed/10,
+                speedX     : speedX,
+                speedY     : speedY,
+                dir        : dir,
+                accel      : this.settings.accel/10,
+                accelRate  : this.settings.accel/100,
+                gravity    : this.settings.gravity/10,
+                gravityRate : this.settings.gravity/100,
+                life       : life,
+                x          : cs.math.iRandomRange(x, x+w),
+                y          : cs.math.iRandomRange(y, y+h),
+                wobbleX    : cs.math.iRandomRange(-this.settings.wobbleX, this.settings.wobbleX),
+                wobbleSetX : this.settings.wobbleX,
+                wobbleY    : cs.math.iRandomRange(-this.settings.wobbleY, this.settings.wobbleY),
+                wobbleSetY : this.settings.wobbleY,
+            }
+            var len = this.obj.particle.list.length;
+            this.obj.particle.list[len] = new_part;
+        }
+    },
+    step : function(){
+        var tempParticles = [];
+        for(var i = 0; i < this.obj.particle.list.length; i++){
+            var particle = this.obj.particle.list[i];
+            particle.life -= 1;
+            particle.size = particle.size + particle.grow/100;
+            particle.alpha = particle.alpha - particle.fade/10;
+            if(particle.life > 0 && particle.alpha > 0 && particle.size > 0){
+                //Accelleration
+                particle.accel += particle.accelRate;
+                particle.gravity -= particle.gravityRate;
+
+                //Wobble
+                if(particle.wobbleSetX !== 0){
+                    if(particle.wobbleX > 0){
+                        particle.wobbleX -= 1; particle.x -= 1;
+                        if(particle.wobbleX === 0) particle.wobbleX = -particle.wobbleSetX
+                    } else {
+                        particle.wobbleX += 1; particle.x += 1;
+                        if(particle.wobbleX === 0) particle.wobbleX = particle.wobbleSetX
+                    }
+                }
+                if(particle.wobbleSetY !== 0){
+                    if(particle.wobbleY > 0){
+                        particle.wobbleY -= 1; particle.y -= 4;
+                        if(particle.wobbleY === 0) particle.wobbleY = -particle.wobbleSetY
+                    } else {
+                        particle.wobbleY += 1; particle.y += 4;
+                        if(particle.wobbleY === 0) particle.wobbleY = particle.wobbleSetY
+                    }
+                }
+
+                //Position Particle?
+                var speed = particle.speed + particle.accel
+                particle.x += particle.speedX*speed;
+                particle.y += particle.speedY*(speed+particle.gravity);
+
+                //Draw Particle
+                cs.draw.setAlpha(particle.alpha/100);
+                var r = Math.round(particle.c_r + particle.c_sr * particle.life);
+                var g = Math.round(particle.c_g + particle.c_sg * particle.life);
+                var b = Math.round(particle.c_b + particle.c_sb * particle.life);
+                cs.draw.setColor(cs.particle.hexFromRgb(r,g,b));
+                var cx = particle.x;
+                var cy = particle.y;
+                if(particle.shape == "square"){
+                    cx = cx - (particle.size/2);
+                    cy = cy - (particle.size/2);
+
+                    cs.draw.fillRect({ x:cx, y:cy, width:particle.size, height:particle.size });
+                } else {
+                    cs.draw.circle(cx, cy, particle.size);
+                }
+                tempParticles[tempParticles.length] = particle;
+            }
+        }
+        //Reset Particles with only live parts
+        this.obj.particle.list = tempParticles;
+    },
+    rgbFromHex : function(hex){
+        return {
+           r : parseInt('0x' + hex.slice(1,3)),
+           g : parseInt('0x' + hex.slice(3,5)),
+           b : parseInt('0x' + hex.slice(5,7))
+        }
+    },
+    hexFromRgb : function(r, g, b){
+        r = r.toString(16); g = g.toString(16); b = b.toString(16);
+        return '#' +
+            (r.length == 1 ? '0' + r : r) +
+            (g.length == 1 ? '0' + g : g) +
+            (b.length == 1 ? '0' + b : b);
+    }
 }
 //---------------------------------------------------------------------------------------------//
 //----------------------------------| Storage Functions |--------------------------------------//
