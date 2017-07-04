@@ -12,7 +12,7 @@ cs.objects['obj_buttons'] = {
 	create: function(){
 		this.width = 30;
 	   this.height = 30;
-	   this.draw = 'gui';
+	   this.surface = 'gui';
 		this.cx = 0;
 		this.cy = 0;
 	},
@@ -38,7 +38,7 @@ cs.objects['obj_buttons'] = {
 		if(this.touch.held) cs.draw.setAlpha(0.5)
 		cs.draw.fillRect(btnRect);
 		cs.draw.setColor("white");
-		cs.draw.strokeRect(btnRect);
+		//cs.draw.strokeRect(btnRect);
 	}
 }
 
@@ -46,19 +46,19 @@ cs.objects['obj_joystick'] = {
    create: function(){
       this.width = 64;
       this.height = 64;
-      this.draw = 'gui';
+      this.surface = 'gui';
       this.tx = 0;
       this.ty = 0;
       this.jw = this.width/2;
       this.jh = this.height/2;
     },
     step: function(){
-      this.x = 10; this.y = cs.draw.height - this.height - 10;
-
+      this.x = 10; this.y = cs.draw.canvas.height - this.height - 10;
       this.touch.check({ x:this.x, y:this.y, width:this.width, height:this.height });
 
       this.tx = this.x + (this.width/2) - (this.jw/2);
       this.ty = this.y + (this.width/2) - (this.jh/2);
+
       if(this.touch.held){
           this.tx = this.touch.x-(this.jw/2);
           if(this.tx < this.x){
@@ -95,11 +95,15 @@ cs.objects['obj_joystick'] = {
       }
 
       cs.draw.setAlpha(0.25);
+      cs.draw.setColor('#000000')
       cs.draw.fillRect({ x:this.x, y:this.y, width:this.width, height:this.height });
       cs.draw.setColor('#fff');
       cs.draw.strokeRect({ x:this.tx, y:this.ty, width:this.jw, height:this.jh });
-
+      console.log(this.tx)
       cs.draw.text(1, 0, 'FPS Step: ' + cs.fps.rate);
       cs.draw.text(1, 30, 'Scale: ' + cs.camera.scale);
+
+
+      //cs.draw.fillRect({ x: 0, y: cs.draw.canvas.height-this.height, width: 50, height: 50})
    }
 }
