@@ -2,7 +2,7 @@ cs.objects['obj_buttons'] = {
 	create: function(){
 		this.width = 30;
 	   this.height = 30;
-	   this.draw = 'gui';
+	   this.surface = 'gui';
 		this.cx = 0;
 		this.cy = 0;
 	},
