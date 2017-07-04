@@ -4,8 +4,8 @@ cs.objects['obj_light'] = {
         this.height = 30;
 
         //Create New Layer
-        var newLayer = cs.draw.createSurface('game');
-        this.layer = newLayer;
+        cs.draw.createSurface({ name: 'light', raw: false, zIndex: 100 })
+        this.surface = 'light'
 
         //Create Global Variable
         cs.global.lightList = [];
@@ -25,6 +25,5 @@ cs.objects['obj_light'] = {
             cs.draw.setColor(cs.global.lightList[i].color);
             cs.draw.circle(obj.x+light.xoff, obj.y+light.yoff, light.size);
         }
-        cs.draw.setLayerAlpha(0.6);
     }
 }
