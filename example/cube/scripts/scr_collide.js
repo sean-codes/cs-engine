@@ -3,10 +3,11 @@ cs.script.collide = function(that, objtype, options){
    var vspeed = that.vspeed || 0; var hspeed = that.hspeed;
    vspeed = (options.vspeed !== undefined) ? options.vspeed : that.vspeed || 0;
    hspeed = (options.hspeed !== undefined) ? options.hspeed : that.hspeed || 0;
-   var obj1top = (options.y || that.y) - that.yoff + vspeed;
-   var obj1bottom = obj1top + (options.height || that.height);
-   var obj1left = (options.x || that.x) - that.xoff + hspeed;
-   var obj1right = obj1left + (options.width || that.width);
+   var obj1top = (options.y || that.y) + vspeed;
+   var obj1bottom = obj1top + (options.height ? options.height : that.height);
+   var obj1left = (options.x || that.x) + hspeed;
+   var obj1right = obj1left + (options.width ? options.width : that.width);
+
    var i = cs.obj.list.length; while(i--){
       var obj2 = cs.obj.list[i];
       if (obj2.live === true && i !== that.id && obj2.type == objtype){
