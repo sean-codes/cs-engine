@@ -1,6 +1,6 @@
 cs.objects['obj_player'] = {
 	create: function(){
-	    this.core = true;
+	   this.core = true;
 		this.width = 16;
 		this.height = 16;
 		this.gravity = 7;
@@ -52,6 +52,7 @@ cs.objects['obj_player'] = {
 			this.vspeed += 1;
 		}
 		this.v_col = cs.script.collide(this, 'obj_block')
+
 		if(this.v_col){
 			this.vspeed = 0;
 			if(keys.up && this.v_col.y > this.y){
@@ -60,9 +61,7 @@ cs.objects['obj_player'] = {
 		}
 		this.y += this.vspeed;
 
-	    cs.camera.follow(this);
-		if(cs.key.down[33]){ cs.camera.zoomIn(); }
-		if(cs.key.down[34]){ cs.camera.zoomOut(); }
+		cs.camera.follow(this);
 
 		cs.draw.sprite({ spr:'spr_player', x:this.x, y:this.y, frame:this.dir})
 
