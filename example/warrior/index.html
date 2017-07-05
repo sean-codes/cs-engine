@@ -41,8 +41,7 @@
 			cs.start = function(){
 				cs.camera.setup({
 					maxWidth:300,
-					maxHeight:200,
-					lock: true
+					maxHeight:200
 				})
 				cs.room.setup(192, 192, "#9fd")
 
@@ -50,7 +49,7 @@
 				cs.obj.create({ type:'obj_player', x:50, y:50 })
 				cs.obj.create({ type:'obj_blob', x:50, y:1 })
 				cs.obj.create({ type:'obj_interface', x:50, y:1 })
-				for(var i = 0; i < 13; i++)
+				for(var i = 0; i < 12; i++)
 					cs.obj.create({ type:'obj_block', x:i*16, y:cs.room.height-16 })
 			}
 		</script>
