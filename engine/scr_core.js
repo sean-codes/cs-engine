@@ -32,33 +32,25 @@ cs.fps = {
 cs.init = function(canvasId){
    //Listen for Errors
    window.onerror = function(errorMsg, url, lineNumber){ cs.loop.run = false }
-   //Find/Set Up Canvas
-   var view = document.getElementById(canvasId);
-   view.tabIndex = 1000;
-   var viewCanvas = document.createElement('canvas');
-   view.appendChild(viewCanvas);
-   cs.draw.view.canvas = viewCanvas;
-   cs.draw.view.ctx = viewCanvas.getContext('2d');
-   cs.draw.view.ctx.webkitImageSmoothingEnabled = false
-   cs.draw.view.ctx.mozImageSmoothingEnabled = false
-   cs.draw.view.ctx.msImageSmoothingEnabled = false
-   cs.draw.view.ctx.imageSmoothingEnabled = false
-
-   //Game and GUI surface
-   cs.draw.createSurface({ name: 'gui', raw: true, zIndex: 1000 })
-   cs.draw.createSurface({ name: 'game', raw: false })
 
    //Initiate Inputs
-   view.addEventListener('keydown', cs.key.updateDown);
-   view.addEventListener('keyup', cs.key.updateUp);
-   view.addEventListener('mousemove', cs.mouse.move);
-   view.addEventListener('mousedown', cs.mouse.down);
-   view.addEventListener('mouseup', cs.mouse.up);
-   view.addEventListener("touchstart", cs.touch.down, false);
-   view.addEventListener("touchend", cs.touch.up, false);
-   view.addEventListener("touchcancel", cs.touch.up, false);
-   view.addEventListener("touchmove", cs.touch.move, false);
+   cs.view = document.getElementById('view')
+   cs.view.tabIndex = 1000
+   cs.view.addEventListener('keydown', cs.key.updateDown);
+   cs.view.addEventListener('keyup', cs.key.updateUp);
+   cs.view.addEventListener('mousemove', cs.mouse.move);
+   cs.view.addEventListener('mousedown', cs.mouse.down);
+   cs.view.addEventListener('mouseup', cs.mouse.up);
+   cs.view.addEventListener("touchstart", cs.touch.down, false);
+   cs.view.addEventListener("touchend", cs.touch.up, false);
+   cs.view.addEventListener("touchcancel", cs.touch.up, false);
+   cs.view.addEventListener("touchmove", cs.touch.move, false);
    cs.input.create();
+
+   //View, Game and GUI surfaces
+   cs.draw.createSurface({ name: 'view', raw: true, zIndex:1000, append: true})
+   cs.draw.createSurface({ name: 'gui', raw: true, zIndex: 100 })
+   cs.draw.createSurface({ name: 'game', raw: false })
 
    //Camera/View Size
    cs.draw.resize();
@@ -309,19 +301,19 @@ cs.draw = {
          drawnSprites: 0
       }
    },
-   createSurface : function(info){
-      var num = cs.draw.surfaces.length
-      var canvas = document.createElement("canvas")
-      canvas.style.display = "none";
-      var ctx = canvas.getContext('2d')
+   ctxImageSmoothing: function(ctx){
       ctx.webkitImageSmoothingEnabled = false
       ctx.mozImageSmoothingEnabled = false
       ctx.imageSmoothingEnabled = false
+   },
+   createSurface : function(info){
+      var num = cs.draw.surfaces.length
+      var canvas = document.createElement("canvas")
 
       this.surfaces[info.name] = {
          name: info.name,
          canvas: canvas,
-         ctx: ctx,
+         ctx: canvas.getContext('2d'),
          zIndex: info.zIndex || 0,
          width: info.width,
          height: info.height,
@@ -329,14 +321,23 @@ cs.draw = {
          draw: true,
          drawOutside: info.drawOutside || false,
          autoClear: info.autoClear || true,
+         append: info.append
       }
+      //Add and fix size
       this.addSurfaceOrder(this.surfaces[info.name])
-      cs.draw.resize();
+      cs.draw.resize()
+
+      //Append
+      if(info.append)
+         cs.view.appendChild(canvas)
+
+      //Return the element
+      return this.surfaces[info.name]
    },
    addSurfaceOrder: function(surface){
       //Find Place to put it!
       for(var i = 0; i < this.surfaceOrder.length; i++)
-         if(this.surfaceOrder[i].zIndex >= surface.zIndex)
+         if(this.surfaceOrder[i].zIndex <= surface.zIndex)
             break
 
       this.surfaceOrder.splice(i, 0, surface)
@@ -344,11 +345,6 @@ cs.draw = {
    clearSurfaces : function(){
       for(var surface of this.surfaceOrder)
          this.clearSurface(surface.name)
-
-      this.view.ctx.fillStyle = this.background
-      this.view.ctx.fillRect(0, 0,
-         this.view.canvas.width,
-         this.view.canvas.height);
    },
    clearSurface: function(surfaceName){
       var surface = this.surfaces[surfaceName]
@@ -361,8 +357,8 @@ cs.draw = {
       surface.ctx.clearRect(clearRect.x, clearRect.y, clearRect.width, clearRect.height)
    },
    displaySurfaces : function(){
-      for(var surface of this.surfaceOrder)
-         this.displaySurface(surface.name)
+      var i = this.surfaceOrder.length; while(i--)
+         this.displaySurface(this.surfaceOrder[i].name)
    },
    displaySurface: function(surfaceName){
       var surface = this.surfaces[surfaceName]
@@ -374,15 +370,15 @@ cs.draw = {
 
       dx = 0,
       dy = 0,
-      dWidth = this.view.canvas.width,
-      dHeight = this.view.canvas.height
+      dWidth = cs.view.width,
+      dHeight = cs.view.height
 
-      this.view.ctx.drawImage(image,
+      this.surfaceOrder[0].ctx.drawImage(image,
          sx, sy, sWidth, sHeight,
          dx, dy, dWidth, dHeight)
    },
    checkResize: function(){
-      var rect = this.view.canvas.getBoundingClientRect()
+      var rect = cs.view.getBoundingClientRect()
       var w = rect.width; var h = rect.height; var o = screen.orientation;
       if(w !== cs.draw.w || h !== cs.draw.h || o !== cs.draw.o){
           cs.draw.w = w;
@@ -393,7 +389,7 @@ cs.draw = {
       }
    },
    resize : function(){
-      var viewSize = cs.draw.view.canvas.getBoundingClientRect()
+      var viewSize = cs.view.getBoundingClientRect()
       var w = viewSize.width
       var h = viewSize.height;
       var ratioHeight = w/h; //How many h = w
@@ -406,14 +402,6 @@ cs.draw = {
          nh = cs.camera.maxHeight - (cs.camera.maxHeight%ratioHeight);
          nw = nh * ratioHeight;
       }
-      //console.log(nw, nh)
-      //console.log('CW: ' + nw + ' CH: ' + nh + ' - VH: ' + w + ' Vh: ' + h)
-      cs.draw.view.canvas.width = w;
-      cs.draw.view.canvas.height = h;
-      cs.draw.view.ctx.imageSmoothingEnabled = false;
-      cs.draw.view.ctx.webkitImageSmoothingEnabled = false;
-      cs.draw.view.ctx.mozImageSmoothingEnabled = false;
-      cs.draw.view.ctx.msImageSmoothingEnabled = false;
 
       for(var surface of this.surfaceOrder){
          surface.canvas.width = surface.raw ? w : cs.room.width
