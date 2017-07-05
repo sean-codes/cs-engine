@@ -140,7 +140,6 @@ cs.obj = {
       }
       //Run Create event
       object.create.call(newObj);
-      var create = cs.objects[options.type].create;
 
       //Add the object to the list
       this.list.splice(pos, 0, newObj)
