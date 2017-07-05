@@ -570,13 +570,11 @@ cs.camera = {
    followY: 0,
    width : 500, maxWidth : 500,
    height : 200, maxHeight : 400,
-   lock : false,
    setup: function(options){
       this.width = options.width;
       this.height = options.height;
       this.maxWidth = options.maxWidth || this.width;
       this.maxHeight = options.maxHeight || this.height;
-      this.lock = options.lock || this.lock;
       cs.draw.resize();
    },
    follow : function(obj){
