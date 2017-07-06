@@ -377,6 +377,7 @@ cs.draw = {
       if(sx < 0){ sx = 0; sWidth += sx*-1; }
       if(sy < 0){ sy = 0; sHeight += sy*-1; }
       if(sWidth > surface.canvas.width) sWidth = surface.canvas.width
+      if(sHeight > surface.canvas.height) sWidth = surface.canvas.height
 
       cs.view.ctx.drawImage(surface.canvas,
          sx, sy, sWidth, sHeight,
@@ -613,6 +614,7 @@ cs.room = {
       this.width = width; this.height = height;
       cs.draw.background = background || '#000'
       this.rect = {x: 0, y: 0, width: this.width, height: this.height}
+      cs.draw.resize()
    },
    outside(rect){
       if(typeof rect.width == 'undefined') rect.width = 0
