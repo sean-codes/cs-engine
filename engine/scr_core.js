@@ -379,6 +379,7 @@ cs.draw = {
       if(sWidth > surface.canvas.width) sWidth = surface.canvas.width
       if(sHeight > surface.canvas.height) sWidth = surface.canvas.height
 
+      console.log('name: ' + surface.name + ', sx: ' + sWidth + ', sx: ' + sx + ', cx: ' + cs.camera.x)
       cs.view.ctx.drawImage(surface.canvas,
          sx, sy, sWidth, sHeight,
          dx, dy, dWidth, dHeight)
