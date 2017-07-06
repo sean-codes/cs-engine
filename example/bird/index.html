@@ -22,7 +22,7 @@
 	</head>
 	<body>
 		<!--Game Area-->
-		<div id="view"></div>
+		<canvas id="view"></canvas>
 		<script>
 			//Initialize the view
 			cs.init('view');
@@ -48,12 +48,12 @@
 
 
 			//Room Setup
+			cs.room.setup(800, 256, '#87cefa');
 			cs.camera.setup({
 				maxWidth:800,
 				maxHeight:256,
 				lock: true
 			});
-			cs.room.setup(800, 256, '#87cefa');
 
 			//Start game
          cs.save = { topScore: 0, state: 'START' }
