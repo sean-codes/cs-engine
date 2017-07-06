@@ -21,7 +21,7 @@
 	<body>
 		<!--Game Area-->
 		<canvas id="view"></canvas>
-		
+
 		<script>
 			//Initialize the view
 			cs.init('view');
@@ -38,11 +38,11 @@
 			cs.sprite.load({ path: 'sprites/bg_wall', fwidth: 192, fheight: 1000, texture: true })
 
 			cs.start = function(){
+				cs.room.setup(192, 192, "#9fd")
 				cs.camera.setup({
 					maxWidth:300,
 					maxHeight:200
 				})
-				cs.room.setup(192, 192, "#9fd")
 
 				//Create Objects
 				cs.obj.create({ type:'obj_player', x:50, y:50 })
