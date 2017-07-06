@@ -34,7 +34,7 @@ cs.init = function(canvasId){
    window.onerror = function(errorMsg, url, lineNumber){ cs.loop.run = false }
 
    //Initiate Inputs
-   cs.view = document.getElementById('view')
+   cs.view = document.getElementById(canvasId)
    cs.view.ctx = cs.view.getContext('2d')
    cs.view.tabIndex = 1000
    cs.view.addEventListener('keydown', cs.key.updateDown);
@@ -67,8 +67,8 @@ cs.init = function(canvasId){
 cs.loop = {
    run : true,
    step : function(){
-      if(cs.loop.run)
-         setTimeout(function(){ cs.loop.step() }, 1000/60)
+      //if(cs.loop.run)
+      setTimeout(function(){ cs.loop.step() }, 1000/60)
 
       cs.fps.update()
       cs.key.execute()
@@ -364,10 +364,19 @@ cs.draw = {
       sWidth = surface.raw ? surface.canvas.width : cs.camera.width,
       sHeight = surface.raw ? surface.canvas.height : cs.camera.height,
 
-      dx = 0,
-      dy = 0,
-      dWidth = cs.view.width,
-      dHeight = cs.view.height
+      //We will have to scale the X over becuse safari doesnt act like chrome
+      dx = sx < 0 ? Math.floor(cs.camera.scale*(cs.camera.x*-1)) : 0,
+      dy = sy < 0 ? Math.floor(cs.camera.scale*(cs.camera.y*-1)) : 0,
+      dWidth = sWidth <= surface.canvas.width
+         ? cs.view.width
+         : cs.view.width - Math.floor(cs.camera.scale*((cs.camera.width)-surface.canvas.width)),
+      dHeight = sHeight <= surface.canvas.height
+         ? cs.view.height
+         : cs.view.height - Math.floor(cs.camera.scale*((cs.camera.height)-surface.canvas.height))
+
+      if(sx < 0){ sx = 0; sWidth += sx*-1; }
+      if(sy < 0){ sy = 0; sHeight += sy*-1; }
+      if(sWidth > surface.canvas.width) sWidth = surface.canvas.width
 
       cs.view.ctx.drawImage(surface.canvas,
          sx, sy, sWidth, sHeight,
@@ -410,6 +419,7 @@ cs.draw = {
 
       cs.camera.width = Math.ceil(nw)
       cs.camera.height = Math.ceil(nh)
+      cs.camera.scale = w/nw
    },
    sprite : function(options){
       sprite = cs.sprite.list[options.spr]
@@ -426,7 +436,7 @@ cs.draw = {
       }
 
       this.ctx.save();
-      this.ctx.translate(options.x, options.y);
+      this.ctx.translate(Math.floor(options.x), Math.floor(options.y));
       this.ctx.rotate(options.angle * Math.PI/180);
       this.ctx.scale(info.scaleX+0.001, info.scaleY+0.001);
       this.ctx.drawImage(sprite.frames[info.frame], -sprite.xoff, -sprite.yoff)
@@ -912,8 +922,7 @@ cs.touch = {
       }
    },
    convertToGameCords(x, y){
-      var canvas = cs.draw.view.canvas;
-      var rect = canvas.getBoundingClientRect();
+      var rect = cs.view.getBoundingClientRect();
 
       var physicalViewWidth = (rect.right-rect.left);
       var physicalViewHeight = (rect.bottom-rect.top);
