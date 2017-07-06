@@ -5,9 +5,7 @@
 		<!-- View Setup -->
 		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 		<link rel="stylesheet" type="text/css" href="../../engine/css.css?v=1" />
-		<style>
-			canvas{ background: #000}
-		</style>
+
 		<!-- Game Engine -->
 		<script src='../../engine/scr_core.js?v=12'></script>
 		<!-- Objects -->
@@ -22,7 +20,8 @@
 	</head>
 	<body>
 		<!--Game Area-->
-		<div id="view"></div>
+		<canvas id="view"></canvas>
+		
 		<script>
 			//Initialize the view
 			cs.init('view');
