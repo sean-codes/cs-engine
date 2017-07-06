@@ -35,6 +35,7 @@ cs.init = function(canvasId){
 
    //Initiate Inputs
    cs.view = document.getElementById('view')
+   cs.view.ctx = cs.view.getContext('2d')
    cs.view.tabIndex = 1000
    cs.view.addEventListener('keydown', cs.key.updateDown);
    cs.view.addEventListener('keyup', cs.key.updateUp);
@@ -48,7 +49,6 @@ cs.init = function(canvasId){
    cs.input.create();
 
    //View, Game and GUI surfaces
-   cs.draw.createSurface({ name: 'view', raw: true, zIndex:1000, append: true})
    cs.draw.createSurface({ name: 'gui', raw: true, zIndex: 100 })
    cs.draw.createSurface({ name: 'game', raw: false })
 
@@ -65,38 +65,37 @@ cs.init = function(canvasId){
    cs.loop.step();
 }
 cs.loop = {
-    run : true,
-    step : function(){
-        setTimeout(function(){ cs.loop.step() }, 1000/60)
-        //if(cs.loop.run)
-        //window.requestAnimFrame(cs.loop.step);
+   run : true,
+   step : function(){
+      if(cs.loop.run)
+         setTimeout(function(){ cs.loop.step() }, 1000/60)
 
-        cs.fps.update()
-        cs.camera.update()
-        cs.draw.clearSurfaces()
-        cs.key.execute()
-        cs.draw.debugReset()
+      cs.fps.update()
+      cs.key.execute()
+      cs.draw.debugReset()
+      cs.camera.update()
+      cs.draw.clearSurfaces()
 
-        var i = cs.obj.list.length; while(i--){
-            if(cs.obj.list[i].live){
-                var obj = cs.obj.list[i];
-                cs.draw.setSurface(obj.surface);
+      var i = cs.obj.list.length; while(i--){
+         if(cs.obj.list[i].live){
+            var obj = cs.obj.list[i];
+            cs.draw.setSurface(obj.surface);
 
-                cs.particle.settings = obj.particle.settings;
-                cs.particle.obj = obj;
-                var step = cs.objects[obj.type].step;
-                step.call(obj);
-            }
-        }
-        cs.key.reset();
-        cs.touch.reset();
+            cs.particle.settings = obj.particle.settings;
+            cs.particle.obj = obj;
+            var step = cs.objects[obj.type].step;
+            step.call(obj);
+         }
+      }
+      cs.key.reset()
+      cs.touch.reset()
 
-        //Resize Canvas
-        cs.draw.checkResize()
-        cs.draw.displaySurfaces();
-        if(cs.room.restarting === true)
-            cs.room.reset();
-    }
+      //Resize Canvas
+      cs.draw.checkResize()
+      cs.draw.displaySurfaces()
+      if(cs.room.restarting === true)
+         cs.room.reset()
+   }
 }
 //---------------------------------------------------------------------------------------------//
 //-----------------------------------| Object Functions |--------------------------------------//
@@ -150,11 +149,10 @@ cs.obj = {
    },
    findPosition : function(zIndex){
       for(var i = 0; i < this.list.length; i++){
-         if(zIndex >= this.list[i].zIndex){
-            return i;
-         }
+         if(zIndex >= this.list[i].zIndex)
+            return i
       }
-      return i;
+      return i
    },
    all: function(options){
       for(obj of this.list)
@@ -317,7 +315,7 @@ cs.draw = {
          zIndex: info.zIndex || 0,
          width: info.width,
          height: info.height,
-         raw: info.raw || info.raw,
+         raw: info.raw,
          draw: true,
          drawOutside: info.drawOutside || false,
          autoClear: info.autoClear || true,
@@ -326,10 +324,6 @@ cs.draw = {
       //Add and fix size
       this.addSurfaceOrder(this.surfaces[info.name])
       cs.draw.resize()
-
-      //Append
-      if(info.append)
-         cs.view.appendChild(canvas)
 
       //Return the element
       return this.surfaces[info.name]
@@ -343,6 +337,7 @@ cs.draw = {
       this.surfaceOrder.splice(i, 0, surface)
    },
    clearSurfaces : function(){
+      cs.view.ctx.clearRect(0, 0, cs.view.width, cs.view.height)
       for(var surface of this.surfaceOrder)
          this.clearSurface(surface.name)
    },
@@ -357,12 +352,13 @@ cs.draw = {
       surface.ctx.clearRect(clearRect.x, clearRect.y, clearRect.width, clearRect.height)
    },
    displaySurfaces : function(){
-      var i = this.surfaceOrder.length; while(i--)
+      var i = this.surfaceOrder.length;
+      while(i--){
          this.displaySurface(this.surfaceOrder[i].name)
+      }
    },
    displaySurface: function(surfaceName){
       var surface = this.surfaces[surfaceName]
-      var image = surface.canvas,
       sx = surface.raw ? 0 : cs.camera.x,
       sy = surface.raw ? 0 : cs.camera.y,
       sWidth = surface.raw ? surface.canvas.width : cs.camera.width,
@@ -373,7 +369,7 @@ cs.draw = {
       dWidth = cs.view.width,
       dHeight = cs.view.height
 
-      this.surfaceOrder[0].ctx.drawImage(image,
+      cs.view.ctx.drawImage(surface.canvas,
          sx, sy, sWidth, sHeight,
          dx, dy, dWidth, dHeight)
    },
@@ -390,11 +386,11 @@ cs.draw = {
    },
    resize : function(){
       var viewSize = cs.view.getBoundingClientRect()
+
       var w = viewSize.width
-      var h = viewSize.height;
+      var h = viewSize.height
       var ratioHeight = w/h; //How many h = w
       var ratioWidth = h/w;//how man w = a h
-
 
       var nw = cs.camera.maxWidth - (cs.camera.maxWidth%ratioWidth);
       var nh = nw * ratioWidth;
@@ -402,14 +398,14 @@ cs.draw = {
          nh = cs.camera.maxHeight - (cs.camera.maxHeight%ratioHeight);
          nw = nh * ratioHeight;
       }
+      cs.view.width = w
+      cs.view.height = h
+      this.ctxImageSmoothing(cs.view.ctx)
 
       for(var surface of this.surfaceOrder){
          surface.canvas.width = surface.raw ? w : cs.room.width
          surface.canvas.height = surface.raw ? h : cs.room.height
-         surface.ctx.imageSmoothingEnabled = false
-         surface.ctx.webkitImageSmoothingEnabled = false
-         surface.ctx.mozImageSmoothingEnabled = false
-         surface.ctx.msImageSmoothingEnabled = false
+         this.ctxImageSmoothing(surface.ctx)
       }
 
       cs.camera.width = Math.ceil(nw)
