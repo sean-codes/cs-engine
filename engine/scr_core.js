@@ -305,6 +305,7 @@ cs.draw = {
    ctxImageSmoothing: function(ctx){
       ctx.webkitImageSmoothingEnabled = false
       ctx.mozImageSmoothingEnabled = false
+      ctx.msImageSmoothingEnabled = false
       ctx.imageSmoothingEnabled = false
    },
    createSurface : function(info){
