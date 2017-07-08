@@ -317,10 +317,12 @@ cs.draw = {
          height: info.height,
          raw: info.raw,
          draw: true,
+         skip: info.skip,
          drawOutside: info.drawOutside || false,
-         autoClear: info.autoClear || true,
+         autoClear: info.autoClear == undefined ? true : info.autoClear,
          append: info.append
       }
+
       //Add and fix size
       this.addSurfaceOrder(this.surfaces[info.name])
       cs.draw.resize()
@@ -339,7 +341,8 @@ cs.draw = {
    clearSurfaces : function(){
       cs.view.ctx.clearRect(0, 0, cs.view.width, cs.view.height)
       for(var surface of this.surfaceOrder)
-         this.clearSurface(surface.name)
+         if(surface.autoClear)
+            this.clearSurface(surface.name)
    },
    clearSurface: function(surfaceName){
       var surface = this.surfaces[surfaceName]
@@ -426,7 +429,7 @@ cs.draw = {
       sprite = cs.sprite.list[options.spr]
       if(!sprite) return
       var info = cs.sprite.info(options)
-      if(!this.raw){
+      if(!this.raw && !this.skip){
          //If outside camera skip
          if(options.x+sprite.fwidth < cs.camera.x || options.x  > cs.camera.x+cs.camera.width
          || options.y+sprite.fheight < cs.camera.y || options.y  > cs.camera.y+cs.camera.height ){
@@ -542,6 +545,7 @@ cs.draw = {
       this.canvas = this.surface.canvas
       this.ctx = this.surface.ctx
       this.raw = this.surface.raw
+      this.skip = this.surface.skip
    },
    reset : function(){
       cs.draw.setAlpha(1);
