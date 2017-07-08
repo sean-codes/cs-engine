@@ -336,17 +336,19 @@ cs.draw = {
    },
    addSurfaceOrder: function(surface){
       //Find Place to put it!
-      for(var i = 0; i < this.surfaceOrder.length; i++)
+      for(var i = 0; i < this.surfaceOrder.length; i++){
          if(this.surfaceOrder[i].zIndex <= surface.zIndex)
             break
+      }
 
       this.surfaceOrder.splice(i, 0, surface)
    },
    clearSurfaces : function(){
       cs.view.ctx.clearRect(0, 0, cs.view.width, cs.view.height)
-      for(var surface of this.surfaceOrder)
+      for(var surface of this.surfaceOrder){
          if(surface.autoClear)
             this.clearSurface(surface.name)
+      }
    },
    clearSurface: function(surfaceName){
       var surface = this.surfaces[surfaceName]
@@ -433,8 +435,9 @@ cs.draw = {
    },
    sprite : function(options){
       sprite = cs.sprite.list[options.spr]
-      if(!sprite) return
       var info = cs.sprite.info(options)
+
+      this.debug.drawnSprites += 1
       if(!this.raw && !this.skip){
          //If outside camera skip
          if(options.x+sprite.fwidth < cs.camera.x || options.x  > cs.camera.x+cs.camera.width
@@ -443,23 +446,22 @@ cs.draw = {
             return;
          }
       }
-      this.debug.drawnSprites += 1
 
       this.ctx.save();
-      this.ctx.translate(Math.floor(options.x), Math.floor(options.y));
-      this.ctx.rotate(options.angle * Math.PI/180);
-      this.ctx.scale(info.scaleX+0.001, info.scaleY+0.001);
+      this.ctx.translate(Math.floor(options.x), Math.floor(options.y))
+      this.ctx.rotate(options.angle * Math.PI/180)
+      this.ctx.scale(info.scaleX+0.001, info.scaleY+0.001)
       this.ctx.drawImage(sprite.frames[info.frame], -sprite.xoff, -sprite.yoff)
-      this.ctx.restore();
+      this.ctx.restore()
 
-      cs.draw.reset();
+      cs.draw.reset()
    },
    text: function(options){
       this.ctx.fillText(options.text, options.x, options.y);
       cs.draw.reset();
    },
    textSize: function(str){
-      return this.ctx.measureText(str);
+      return this.ctx.measureText(str)
    },
    line: function({options}){
       var cx = 0 - ((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)
@@ -502,16 +504,16 @@ cs.draw = {
    },
    circleGradient : function(x, y, radius, c1, c2){
       //Draw a circle
-      var g = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
-      g.addColorStop(1, c2);
-      g.addColorStop(0, c1);
-      this.ctx.fillStyle = g;
-      this.ctx.beginPath();
-      this.ctx.arc(x, y, radius, 0, Math.PI*2, true);
-      this.ctx.closePath();
+      var g = this.ctx.createRadialGradient(x, y, 0, x, y, radius)
+      g.addColorStop(1, c2)
+      g.addColorStop(0, c1)
+      this.ctx.fillStyle = g
+      this.ctx.beginPath()
+      this.ctx.arc(x, y, radius, 0, Math.PI*2, true)
+      this.ctx.closePath()
       //Fill
-      this.ctx.fill();
-      cs.draw.reset();
+      this.ctx.fill()
+      cs.draw.reset()
    },
    fixPosition: function(args){
       x = Math.floor(args.x); y = Math.floor(args.y);
