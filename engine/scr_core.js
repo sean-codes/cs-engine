@@ -103,12 +103,9 @@ cs.loop = {
 cs.obj = {
    list : [],
    types : {},
-   objCounts: {},
+   objGroups: {},
    unique: 0,
    create : function(options){
-      var count = cs.obj.count(options.type)
-      this.objCounts[options.type] = (count) ? count+1 : 1
-
       var object = cs.objects[options.type]
       var zIndex = cs.objects[options.type].zIndex || 0
       var pos = this.findPosition(zIndex)
@@ -136,16 +133,24 @@ cs.obj = {
       this.list.splice(pos, 0, newObj)
       this.unique += 1
 
+      //Object Grouping
+      if(!this.objGroups[options.type]) this.objGroups[options.type] = []
+      this.objGroups[options.type].push(newObj)
       return newObj
    },
    destroy : function(destroyObj){
-      this.objCounts[destroyObj.type] -= 1
-      if(typeof destroyObj === 'object')
+      var type = destroyObj.type
+      if(typeof destroyObj === 'object'){
          destroyObj.live = false
-      else
-         for(var obj of cs.obj.list)
-            if(obj.id === destroyObj)
+      } else {
+         for(var obj of cs.obj.list){
+            if(obj.id === destroyObj){
                obj.live = false
+               var type = obj.type
+            }
+         }
+      }
+      this.objGroups[type] = this.objGroups[type].filter(function(live){ return live })
    },
    findPosition : function(zIndex){
       for(var i = 0; i < this.list.length; i++){
@@ -154,10 +159,8 @@ cs.obj = {
       }
       return i
    },
-   all: function(options){
-      for(obj of this.list)
-         if(obj.type == options.type)
-            options.run.call(obj)
+   all: function(type){
+      return this.objGroups[type]
    },
    find: function(options){
       for(obj of this.list){
@@ -168,7 +171,7 @@ cs.obj = {
       }
    },
    count: function(type){
-      return this.objCounts[type]
+      return this.objGroups[type].length || 0
    }
 }
 //---------------------------------------------------------------------------------------------//
@@ -402,8 +405,8 @@ cs.draw = {
 
       var w = viewSize.width
       var h = viewSize.height
-      var ratioHeight = w/h; //How many h = w
-      var ratioWidth = h/w;//how man w = a h
+      var ratioHeight = w/h //How many h = w
+      var ratioWidth = h/w //how man w = a h
 
       var nw = cs.camera.maxWidth - (cs.camera.maxWidth%ratioWidth);
       var nh = nw * ratioWidth;
@@ -416,8 +419,10 @@ cs.draw = {
       this.ctxImageSmoothing(cs.view.ctx)
 
       for(var surface of this.surfaceOrder){
+         var img = surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
          surface.canvas.width = surface.raw ? w : cs.room.width
          surface.canvas.height = surface.raw ? h : cs.room.height
+         surface.ctx.putImageData(img, 0, 0)
          this.ctxImageSmoothing(surface.ctx)
       }
 
@@ -436,8 +441,8 @@ cs.draw = {
             this.debug.skippedSprites += 1
             return;
          }
-         this.debug.drawnSprites += 1
       }
+      this.debug.drawnSprites += 1
 
       this.ctx.save();
       this.ctx.translate(Math.floor(options.x), Math.floor(options.y));
