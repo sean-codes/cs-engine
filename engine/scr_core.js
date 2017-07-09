@@ -67,8 +67,8 @@ cs.init = function(canvasId){
 cs.loop = {
    run : true,
    step : function(){
-      //if(cs.loop.run)
-      setTimeout(function(){ cs.loop.step() }, 1000/60)
+      if(cs.loop.run)
+         setTimeout(function(){ cs.loop.step() }, 1000/60)
 
       cs.fps.update()
       cs.key.execute()
@@ -463,7 +463,7 @@ cs.draw = {
    textSize: function(str){
       return this.ctx.measureText(str)
    },
-   line: function({options}){
+   line: function(options){
       var cx = 0 - ((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)
       var cy = 0 - ((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)
 
@@ -481,7 +481,7 @@ cs.draw = {
       cs.draw.reset();
    },
    strokeRect: function(args){
-      var lineWidth = lineWidth > 1 ? this.ctx.lineWidth : 0
+      var lineWidth = this.ctx.lineWidth > 1 ? this.ctx.lineWidth : 0
       var lineWidthAdjust = (this.ctx.lineWidth % 2 ? -0.50 : 0) + Math.floor(this.ctx.lineWidth/2)
       var rect = {
          x: args.x + lineWidthAdjust,
@@ -791,6 +791,7 @@ cs.key = {
 cs.mouse = {
    x: undefined, y: undefined,
    pos : function(){
+
       var convert = cs.touch.convertToGameCords(cs.mouse.x, cs.mouse.y)
       return (cs.draw.raw)
          ? {x: cs.mouse.x, y: cs.mouse.y}
@@ -798,11 +799,8 @@ cs.mouse = {
    },
    move : function(e){
       var pos = cs.touch.updatePos(-1, e.clientX, e.clientY)
-
-      if(pos){
-         cs.mouse.x = (pos) ? pos.x : 0
-         cs.mouse.y = (pos) ? pos.y : 0
-      }
+      cs.mouse.x = (pos) ? pos.x : 0
+      cs.mouse.y = (pos) ? pos.y : 0
    },
    down : function(e){
       cs.touch.add(-1)
@@ -938,12 +936,12 @@ cs.touch = {
    convertToGameCords(x, y){
       var rect = cs.view.getBoundingClientRect();
 
-      var physicalViewWidth = (rect.right-rect.left);
-      var physicalViewHeight = (rect.bottom-rect.top);
-      var hortPercent = (x - rect.left)/physicalViewWidth;
-      var vertPercent = (y - rect.top)/physicalViewHeight;
-      var gamex = Math.round(hortPercent*cs.camera.width);
-      var gamey = Math.round(vertPercent*cs.camera.height);
+      var physicalViewWidth = (rect.right-rect.left)
+      var physicalViewHeight = (rect.bottom-rect.top)
+      var hortPercent = (x - rect.left)/physicalViewWidth
+      var vertPercent = (y - rect.top)/physicalViewHeight
+      var gamex = Math.round(hortPercent*cs.camera.width)
+      var gamey = Math.round(vertPercent*cs.camera.height)
       gamex = (gamex * cs.camera.scale) + cs.camera.x
       gamey = (gamey * cs.camera.scale) + cs.camera.y
       return { x: gamex, y: gamey }
