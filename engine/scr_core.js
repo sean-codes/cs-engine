@@ -87,6 +87,8 @@ cs.loop = {
             step.call(obj);
          }
       }
+
+      cs.draw.resetSurfaces()
       cs.key.reset()
       cs.touch.reset()
 
@@ -150,7 +152,7 @@ cs.obj = {
             }
          }
       }
-      this.objGroups[type] = this.objGroups[type].filter(function(live){ return live })
+      this.objGroups[type] = this.objGroups[type].filter(function(obj){ return obj.live })
    },
    findPosition : function(zIndex){
       for(var i = 0; i < this.list.length; i++){
@@ -171,7 +173,9 @@ cs.obj = {
       }
    },
    count: function(type){
-      return this.objGroups[type].length || 0
+      return this.objGroups[type]
+         ? this.objGroups[type].length
+         : 0
    }
 }
 //---------------------------------------------------------------------------------------------//
@@ -221,6 +225,10 @@ cs.sprite = {
             if(dx === this.width)
                dx = 0, dy+= this.fwidth
          }
+
+         for(var surface of cs.draw.surfaceOrder)
+            surface.clear = false
+
 
          //Sprites Loaded Start Engine
          cs.loading -= 1
@@ -324,7 +332,9 @@ cs.draw = {
          skip: info.skip,
          drawOutside: info.drawOutside || false,
          autoClear: info.autoClear == undefined ? true : info.autoClear,
-         append: info.append
+         append: info.append,
+         clearRequest: false,
+         clear: false
       }
 
       //Add and fix size
@@ -346,19 +356,28 @@ cs.draw = {
    clearSurfaces : function(){
       cs.view.ctx.clearRect(0, 0, cs.view.width, cs.view.height)
       for(var surface of this.surfaceOrder){
-         if(surface.autoClear)
-            this.clearSurface(surface.name)
+         if(surface.autoClear || surface.clearRequest){
+            clearRect = {
+               x: surface.raw ? 0 : cs.camera.x,
+               y: surface.raw ? 0 : cs.camera.y,
+               width: surface.raw ? surface.canvas.width : cs.camera.width,
+               height: surface.raw ? surface.canvas.height : cs.camera.height,
+            }
+            if(surface.clearRequest) clearRect = surface.clearRequest
+            surface.ctx.clearRect(clearRect.x, clearRect.y, clearRect.width, clearRect.height)
+            surface.clearRequest = undefined
+            surface.clear = true
+         }
       }
    },
-   clearSurface: function(surfaceName){
-      var surface = this.surfaces[surfaceName]
-      clearRect = {
-         x: surface.raw ? 0 : cs.camera.x,
-         y: surface.raw ? 0 : cs.camera.y,
-         width: surface.raw ? surface.canvas.width : cs.camera.width,
-         height: surface.raw ? surface.canvas.height : cs.camera.height,
+   clearSurface: function(options){
+      var surface = this.surfaces[options.name]
+      surface.clearRequest = {
+         x: options.x || 0,
+         y: options.y || 0,
+         width: options.width || surface.canvas.width,
+         height: options.height || surface.canvas.height
       }
-      surface.ctx.clearRect(clearRect.x, clearRect.y, clearRect.width, clearRect.height)
    },
    displaySurfaces : function(){
       var i = this.surfaceOrder.length;
@@ -391,6 +410,10 @@ cs.draw = {
       cs.view.ctx.drawImage(surface.canvas,
          sx, sy, sWidth, sHeight,
          dx, dy, dWidth, dHeight)
+   },
+   resetSurfaces: function(){
+      for(var surface of cs.draw.surfaceOrder)
+         surface.clear = false
    },
    checkResize: function(){
       var rect = cs.view.getBoundingClientRect()
@@ -791,7 +814,6 @@ cs.key = {
 cs.mouse = {
    x: undefined, y: undefined,
    pos : function(){
-
       var convert = cs.touch.convertToGameCords(cs.mouse.x, cs.mouse.y)
       return (cs.draw.raw)
          ? {x: cs.mouse.x, y: cs.mouse.y}
@@ -942,8 +964,8 @@ cs.touch = {
       var vertPercent = (y - rect.top)/physicalViewHeight
       var gamex = Math.round(hortPercent*cs.camera.width)
       var gamey = Math.round(vertPercent*cs.camera.height)
-      gamex = (gamex * cs.camera.scale) + cs.camera.x
-      gamey = (gamey * cs.camera.scale) + cs.camera.y
+      gamex = (gamex) + cs.camera.x
+      gamey = (gamey) + cs.camera.y
       return { x: gamex, y: gamey }
    }
 }
