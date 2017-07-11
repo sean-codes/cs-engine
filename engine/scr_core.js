@@ -419,9 +419,9 @@ cs.draw = {
       var rect = cs.view.getBoundingClientRect()
       var w = rect.width; var h = rect.height; var o = screen.orientation;
       if(w !== cs.draw.w || h !== cs.draw.h || o !== cs.draw.o){
-          cs.draw.w = w;
-          cs.draw.h = h;
-          cs.draw.o = o;
+          cs.draw.w = w
+          cs.draw.h = h
+          cs.draw.o = o
           cs.input.resize();
           this.resize();
       }
