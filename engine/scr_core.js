@@ -402,8 +402,8 @@ cs.draw = {
          ? cs.view.height
          : cs.view.height - Math.floor(cs.camera.scale*((cs.camera.height)-surface.canvas.height))
 
-      if(sx < 0){ sx = 0; sWidth += sx*-1; }
-      if(sy < 0){ sy = 0; sHeight += sy*-1; }
+      if(sx < 0){ sx = 0; sWidth += sx*-1 }
+      if(sy < 0){ sy = 0; sHeight += sy*-1 }
       if(sWidth > surface.canvas.width) sWidth = surface.canvas.width
       if(sHeight > surface.canvas.height) sWidth = surface.canvas.height
 
