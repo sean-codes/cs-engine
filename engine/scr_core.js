@@ -162,15 +162,14 @@ cs.obj = {
       return i
    },
    all: function(type){
-      return this.objGroups[type]
+      return this.list.filter(function(obj){
+         return (obj.type == type && obj.live)
+      })
    },
-   find: function(options){
-      for(obj of this.list){
-         if(obj.type == options.type){
-            options.run.call(obj)
-            return
-         }
-      }
+   find: function(type){
+      return this.list.find(function(obj){
+         return (obj.type == type && obj.live)
+      })
    },
    count: function(type){
       return this.objGroups[type]
