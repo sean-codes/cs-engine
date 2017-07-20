@@ -48,12 +48,16 @@
 
 
 			//Room Setup
-			cs.room.setup(800, 256, '#87cefa');
+			cs.room.setup({
+				width: 800,
+				height: 256,
+				background: '#87cefa'
+			})
 			cs.camera.setup({
 				maxWidth:800,
 				maxHeight:256,
 				lock: true
-			});
+			})
 
 			//Start game
          cs.save = { topScore: 0, state: 'START' }
