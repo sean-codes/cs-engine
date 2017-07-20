@@ -38,7 +38,11 @@
 			cs.sprite.load({ path: 'sprites/bg_wall', fwidth: 192, fheight: 1000, texture: true })
 
 			cs.start = function(){
-				cs.room.setup(192, 192, "#9fd")
+				cs.room.setup({
+					width: 192,
+					height: 192,
+					background: "#9fd"
+				})
 				cs.camera.setup({
 					maxWidth:300,
 					maxHeight:200
