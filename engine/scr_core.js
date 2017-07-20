@@ -644,9 +644,9 @@ cs.room = {
       cs.sound.reset();
       this.restarting = false
    },
-   setup: function(width, height, background){
-      this.width = width; this.height = height;
-      cs.draw.background = background || '#000'
+   setup: function(info){
+      this.width = info.width; this.height = info.height;
+      cs.draw.background = info.background || '#000'
       this.rect = {x: 0, y: 0, width: this.width, height: this.height}
       cs.draw.resize()
    },
@@ -1222,7 +1222,7 @@ cs.storage = {
 
             var store = (info.group) ? that[info.group][info.name] : that[info.name]
             store = JSON.parse(this.responseText)
-            
+
             cs.loading -= 1
             if(cs.loading == 0)
                cs.start()
