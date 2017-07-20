@@ -1218,10 +1218,12 @@ cs.storage = {
       cs.loading += 1
       ajax.onreadystatechange = function() {
          if(this.readyState == 4){
+            var data = JSON.parse(this.responseText)
             if(info.group && !that[info.group]) that[info.group] = {}
 
-            var store = (info.group) ? that[info.group][info.name] : that[info.name]
-            store = JSON.parse(this.responseText)
+            info.group
+               ? that[info.group][info.name] = data
+               : that[info.name] = data
 
             cs.loading -= 1
             if(cs.loading == 0)
