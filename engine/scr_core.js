@@ -1211,21 +1211,25 @@ cs.particle = {
 //----------------------------------| Storage Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.storage = {
-   load: function(location, path){
+   load: function(info){
       var that = this
-      var name = path.split('/').pop()
+      var name = info.path.split('/').pop()
       var ajax = new XMLHttpRequest()
       cs.loading += 1
       ajax.onreadystatechange = function() {
          if(this.readyState == 4){
-            if(!that[location]) that[location] = {}
-            that[location][name] = JSON.parse(this.responseText)
+            if(info.group && !that[info.group]) that[info.group] = {}
+
+            var store = (info.group) ? that[info.group][info.name] : that[info.name]
+            store = JSON.parse(this.responseText)
+
+            console.log(store)
             cs.loading -= 1
             if(cs.loading == 0)
                cs.start()
          }
       }
-      ajax.open("POST", `./${path}.json`, true)
+      ajax.open("POST", `./${info.path}.json`, true)
       ajax.send()
    },
    cache: function(){
