@@ -1222,8 +1222,7 @@ cs.storage = {
 
             var store = (info.group) ? that[info.group][info.name] : that[info.name]
             store = JSON.parse(this.responseText)
-
-            console.log(store)
+            
             cs.loading -= 1
             if(cs.loading == 0)
                cs.start()
