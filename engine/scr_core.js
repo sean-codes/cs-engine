@@ -421,8 +421,8 @@ cs.draw = {
           cs.draw.w = w
           cs.draw.h = h
           cs.draw.o = o
-          cs.input.resize();
-          this.resize();
+          cs.input.resize()
+          this.resize()
       }
    },
    resize : function(){
@@ -480,7 +480,7 @@ cs.draw = {
    },
    text: function(options){
       this.ctx.fillText(options.text, options.x, options.y);
-      cs.draw.reset();
+      cs.draw.reset()
    },
    textSize: function(str){
       return this.ctx.measureText(str)
