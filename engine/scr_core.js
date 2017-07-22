@@ -647,7 +647,7 @@ cs.room = {
    setup: function(info){
       this.width = info.width; this.height = info.height;
       cs.draw.background = info.background || '#000'
-      this.rect = {x: 0, y: 0, width: this.width, height: this.height}
+      this.rect = {x: 0, y: 0, width: this.width, height: this.height
       cs.draw.resize()
    },
    outside(rect){
@@ -799,11 +799,11 @@ cs.key = {
     },
     reset : function(){
         for(var tmp in cs.key.down){
-            cs.key.down[tmp] = false;
+            cs.key.down[tmp] = false
             if(cs.key.up[tmp]){
-                cs.key.held[tmp] = false;
+                cs.key.held[tmp] = false
             }
-            cs.key.up[tmp] = false;
+            cs.key.up[tmp] = false
         }
     }
 }
