@@ -187,8 +187,8 @@ cs.sprite = {
       var sprName = options.path.split('/').pop();
 
       //Set up
-      cs.sprite.list[sprName] = new Image();
-      cs.sprite.list[sprName].src = options.path + '.png';
+      cs.sprite.list[sprName] = new Image()
+      cs.sprite.list[sprName].src = options.path + '.png'
       cs.sprite.list[sprName].frames = []
 
       //Frame Width/Height/Tile
