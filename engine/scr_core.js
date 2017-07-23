@@ -868,7 +868,7 @@ cs.touch = {
    },
    updatePos : function(id, x, y){
       for(var i = 0; i < cs.touch.list.length; i++){
-         var touch = cs.touch.list[i];
+         var touch = cs.touch.list[i]
          if(touch.id == id){
              touch.x = x
              touch.y = y
@@ -879,7 +879,7 @@ cs.touch = {
    move: function(e){
       e.preventDefault();
       for(var i = 0; i < e.changedTouches.length; i++){
-         var etouch = e.changedTouches[i];
+         var etouch = e.changedTouches[i]
          cs.touch.updatePos(etouch.identifier, etouch.clientX, etouch.clientY);
       }
    },
@@ -900,28 +900,28 @@ cs.touch = {
          check : function(arg){
             if(this.id !== -1){
                //We have an id attached up or down
-               var touch = cs.touch.list[this.id];
-               this.x = touch.x;
-               this.y = touch.y;
+               var touch = cs.touch.list[this.id]
+               this.x = touch.x
+               this.y = touch.y
                if(!cs.draw.raw){
                   convert = cs.touch.convertToGameCords(this.x, this.y)
                   this.x = convert.x; this.y = convert.y
                }
-               this.down = touch.down;
-               this.held = touch.held;
+               this.down = touch.down
+               this.held = touch.held
                this.up = touch.up;
                if(this.up){
-                  touch.used = false;
-                  this.held = false;
-                  this.id = -1;
+                  touch.used = false
+                  this.held = false
+                  this.id = -1
                }
             } else {
                this.up = false;
                for(var i = 0; i < cs.touch.list.length; i++){
-                  var ctouch = cs.touch.list[i];
+                  var ctouch = cs.touch.list[i]
 
-                  this.x = ctouch.x;
-                  this.y = ctouch.y;
+                  this.x = ctouch.x
+                  this.y = ctouch.y
 
                   if(!cs.draw.raw){
                      convert = cs.touch.convertToGameCords(this.x, this.y)
@@ -932,12 +932,12 @@ cs.touch = {
                      if(this.x > arg.x && this.x < arg.x+arg.width
                         && this.y > arg.y && this.y < arg.y+arg.height){
                         //Being Touched
-                        ctouch.used = true;
-                        this.down = true;
-                        this.id = i;
+                        ctouch.used = true
+                        this.down = true
+                        this.id = i
 
-                        this.off_x = this.x-arg.x;
-                        this.off_y = this.y-arg.y;
+                        this.off_x = this.x-arg.x
+                        this.off_y = this.y-arg.y
                      }
                   }
                }
