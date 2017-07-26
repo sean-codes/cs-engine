@@ -43,7 +43,6 @@ cs.objects['obj_blob'] = {
       }
 
       this.h_col = cs.script.collide.obj(this, 'obj_block')
-      console.log(this.h_col)
       if(this.h_col || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width)
          this.hspeed = 0;
 
