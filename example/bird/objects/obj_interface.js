@@ -52,6 +52,7 @@ cs.objects['obj_interface'] = {
 					cs.draw.setAlpha(0.5);
 					var rect = { x: cs.draw.canvas.width-100, y: 0, width:100, height:60 }
 					cs.draw.fillRect(rect);
+					cs.draw.setColor('#FFFFFF');
 					cs.draw.strokeRect(rect);
 					cs.draw.setColor('#FFFFFF');
 					cs.draw.setFont("20px Arial")

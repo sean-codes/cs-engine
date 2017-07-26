@@ -21,8 +21,8 @@ cs.script.interface.drawButtons = function(btns){
       totalButtonHeight = totalHeight
 
    var btnHeight = totalButtonHeight/btns.length
-   var dy = cs.draw.canvas.height/2 - (totalButtonHeight)/2
-   var dx = cs.draw.canvas.width/2 - btnWidth/2
+   var dy = Math.floor(cs.draw.canvas.height/2 - (totalButtonHeight)/2)
+   var dx = Math.floor(cs.draw.canvas.width/2 - btnWidth/2)
    var space = 20
    for(var btn of btns){
       var btnRect = {
