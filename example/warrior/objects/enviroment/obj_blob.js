@@ -20,7 +20,7 @@ cs.objects['obj_blob'] = {
    },
    step: function(){
       //Horizontal Movement
-      pcol = cs.script.collide(this, 'obj_player',{
+      pcol = cs.script.collide.rect('obj_player',{
          x: this.x-50,
          y: this.y-100,
          width: this.width+100,
@@ -42,7 +42,8 @@ cs.objects['obj_blob'] = {
          this.hspeed -= (this.hspeed*0.5)
       }
 
-      this.h_col = cs.script.collide(this, 'obj_block', {vspeed:0})
+      this.h_col = cs.script.collide.obj(this, 'obj_block')
+      console.log(this.h_col)
       if(this.h_col || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width)
          this.hspeed = 0;
 
@@ -52,13 +53,13 @@ cs.objects['obj_blob'] = {
       if(this.vspeed < this.gravity)
          this.vspeed += 1
 
-      this.v_col = cs.script.collide(this, 'obj_block');
+      this.y += this.vspeed
+      this.v_col = cs.script.collide.obj(this, 'obj_block')
+
       if(this.v_col){
-         this.vspeed = 0;
-         if(this.jump && this.v_col.y > this.y)
-            this.vspeed = -this.jump;
+         this.y -= this.vspeed
+         this.vspeed = 0
       }
-      this.y += this.vspeed;
 
       //Draw the Sprite draw less opacity is just took damage
       if(this.hit.timer > 0)
