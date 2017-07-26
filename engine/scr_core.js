@@ -187,8 +187,8 @@ cs.sprite = {
       var sprName = options.path.split('/').pop();
 
       //Set up
-      cs.sprite.list[sprName] = new Image();
-      cs.sprite.list[sprName].src = options.path + '.png';
+      cs.sprite.list[sprName] = new Image()
+      cs.sprite.list[sprName].src = options.path + '.png'
       cs.sprite.list[sprName].frames = []
 
       //Frame Width/Height/Tile
@@ -421,8 +421,8 @@ cs.draw = {
           cs.draw.w = w
           cs.draw.h = h
           cs.draw.o = o
-          cs.input.resize();
-          this.resize();
+          cs.input.resize()
+          this.resize()
       }
    },
    resize : function(){
@@ -480,7 +480,7 @@ cs.draw = {
    },
    text: function(options){
       this.ctx.fillText(options.text, options.x, options.y);
-      cs.draw.reset();
+      cs.draw.reset()
    },
    textSize: function(str){
       return this.ctx.measureText(str)
@@ -644,10 +644,10 @@ cs.room = {
       cs.sound.reset();
       this.restarting = false
    },
-   setup: function(width, height, background){
-      this.width = width; this.height = height;
-      cs.draw.background = background || '#000'
-      this.rect = {x: 0, y: 0, width: this.width, height: this.height}
+   setup: function(info){
+      this.width = info.width; this.height = info.height;
+      cs.draw.background = info.background || '#000'
+      this.rect = { x: 0, y: 0, width: this.width, height: this.height }
       cs.draw.resize()
    },
    outside(rect){
@@ -799,11 +799,11 @@ cs.key = {
     },
     reset : function(){
         for(var tmp in cs.key.down){
-            cs.key.down[tmp] = false;
+            cs.key.down[tmp] = false
             if(cs.key.up[tmp]){
-                cs.key.held[tmp] = false;
+                cs.key.held[tmp] = false
             }
-            cs.key.up[tmp] = false;
+            cs.key.up[tmp] = false
         }
     }
 }
@@ -868,7 +868,7 @@ cs.touch = {
    },
    updatePos : function(id, x, y){
       for(var i = 0; i < cs.touch.list.length; i++){
-         var touch = cs.touch.list[i];
+         var touch = cs.touch.list[i]
          if(touch.id == id){
              touch.x = x
              touch.y = y
@@ -879,7 +879,7 @@ cs.touch = {
    move: function(e){
       e.preventDefault();
       for(var i = 0; i < e.changedTouches.length; i++){
-         var etouch = e.changedTouches[i];
+         var etouch = e.changedTouches[i]
          cs.touch.updatePos(etouch.identifier, etouch.clientX, etouch.clientY);
       }
    },
@@ -900,28 +900,28 @@ cs.touch = {
          check : function(arg){
             if(this.id !== -1){
                //We have an id attached up or down
-               var touch = cs.touch.list[this.id];
-               this.x = touch.x;
-               this.y = touch.y;
+               var touch = cs.touch.list[this.id]
+               this.x = touch.x
+               this.y = touch.y
                if(!cs.draw.raw){
                   convert = cs.touch.convertToGameCords(this.x, this.y)
                   this.x = convert.x; this.y = convert.y
                }
-               this.down = touch.down;
-               this.held = touch.held;
+               this.down = touch.down
+               this.held = touch.held
                this.up = touch.up;
                if(this.up){
-                  touch.used = false;
-                  this.held = false;
-                  this.id = -1;
+                  touch.used = false
+                  this.held = false
+                  this.id = -1
                }
             } else {
                this.up = false;
                for(var i = 0; i < cs.touch.list.length; i++){
-                  var ctouch = cs.touch.list[i];
+                  var ctouch = cs.touch.list[i]
 
-                  this.x = ctouch.x;
-                  this.y = ctouch.y;
+                  this.x = ctouch.x
+                  this.y = ctouch.y
 
                   if(!cs.draw.raw){
                      convert = cs.touch.convertToGameCords(this.x, this.y)
@@ -932,12 +932,12 @@ cs.touch = {
                      if(this.x > arg.x && this.x < arg.x+arg.width
                         && this.y > arg.y && this.y < arg.y+arg.height){
                         //Being Touched
-                        ctouch.used = true;
-                        this.down = true;
-                        this.id = i;
+                        ctouch.used = true
+                        this.down = true
+                        this.id = i
 
-                        this.off_x = this.x-arg.x;
-                        this.off_y = this.y-arg.y;
+                        this.off_x = this.x-arg.x
+                        this.off_y = this.y-arg.y
                      }
                   }
                }
@@ -1211,21 +1211,26 @@ cs.particle = {
 //----------------------------------| Storage Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.storage = {
-   load: function(location, path){
+   load: function(info){
       var that = this
-      var name = path.split('/').pop()
+      var name = info.path.split('/').pop()
       var ajax = new XMLHttpRequest()
       cs.loading += 1
       ajax.onreadystatechange = function() {
          if(this.readyState == 4){
-            if(!that[location]) that[location] = {}
-            that[location][name] = JSON.parse(this.responseText)
+            var data = JSON.parse(this.responseText)
+            if(info.group && !that[info.group]) that[info.group] = {}
+
+            info.group
+               ? that[info.group][info.name] = data
+               : that[info.name] = data
+
             cs.loading -= 1
             if(cs.loading == 0)
                cs.start()
          }
       }
-      ajax.open("POST", `./${path}.json`, true)
+      ajax.open("POST", `./${info.path}.json`, true)
       ajax.send()
    },
    cache: function(){
@@ -1240,7 +1245,7 @@ cs.math = {
         return (number >= 0) ? 1 : -1;
     },
     iRandomRange : function(min, max) {
-        return Math.floor(Math.random() * (max - min+1)) + min
+        return Math.round(min + Math.random()*(max-min))
     },
     choose: function(array){
         return array[this.iRandomRange(0, array.length-1)];

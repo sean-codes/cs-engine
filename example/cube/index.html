@@ -43,7 +43,7 @@
 
 			cs.start = function(){
 				cs.global.networkControl = { id: -1, list: {} }
-				cs.network.connect({ host:'cube-script.net', port:9999, ssl: false });
+				cs.network.connect({ host:'cube-script.net', port:9999, ssl: false })
 
 				cs.obj.create({ type: 'obj_light' })
 				cs.obj.create({ type: 'obj_buttons', x:100, y:100 })
@@ -53,7 +53,7 @@
 				var tx = 0;
 				while(tx < cs.room.width){
 					cs.obj.create({ type:'obj_block', x:tx, y:cs.room.height-16 })
-					tx += 16;
+					tx += 16
 				}
 
 				cs.obj.create({ type: 'obj_joystick', x:100, y:100 })
