@@ -503,8 +503,8 @@ cs.draw = {
       cs.draw.reset();
    },
    strokeRect: function(args){
-      var lineWidth = this.ctx.lineWidth > 1 ? this.ctx.lineWidth : 0
-      var lineWidthAdjust = (this.ctx.lineWidth % 2 ? -0.50 : 0) + Math.floor(this.ctx.lineWidth/2)
+      var lineWidth = this.ctx.lineWidth
+      var lineWidthAdjust = lineWidth/2
       var rect = {
          x: args.x + lineWidthAdjust,
          y: args.y + lineWidthAdjust,
