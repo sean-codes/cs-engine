@@ -47,22 +47,24 @@ cs.objects['obj_player'] = {
           }
        }
 
-       this.h_col = cs.script.collide(this, 'obj_block', {vspeed: 0})
+       this.h_col = cs.script.collide.obj(this, 'obj_block')
        if(this.h_col || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width){
           this.hspeed = 0;
        }
        this.x += this.hspeed;
 
         //Vertical Movement
-        if(this.vspeed < this.gravity){
+        if(this.vspeed < this.gravity)
             this.vspeed += 1;
-        }
-        this.v_col = cs.script.collide(this, 'obj_block', {hspeed: 0})
 
-        if(this.v_col)
-           this.vspeed = 0;
-        else
-           this.y += this.vspeed;
+        this.y += this.vspeed;
+        this.v_col = cs.script.collide.obj(this, 'obj_block')
+
+        if(this.v_col){
+            this.y -= this.vspeed;
+            this.vspeed = 0;
+         } 
+
         //console.log(this.v_col)
         //Check if jumping
         if(keys.up && this.v_col && this.v_col.y > this.y)
@@ -145,8 +147,6 @@ cs.objects['obj_player'] = {
             cs.draw.sprite({ spr:'spr_body', x:this.x+1, y:this.y+7 })
             cs.draw.sprite({ spr:'spr_shield', x:this.x+4+this.bounce, y:this.y+8 })
         }
-
-        //Camera
 
         if(cs.key.down[33]){ cs.camera.zoomIn(); }
         if(cs.key.down[34]){ cs.camera.zoomOut(); }
