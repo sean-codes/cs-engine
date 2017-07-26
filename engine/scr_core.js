@@ -647,7 +647,7 @@ cs.room = {
    setup: function(info){
       this.width = info.width; this.height = info.height;
       cs.draw.background = info.background || '#000'
-      this.rect = {x: 0, y: 0, width: this.width, height: this.height
+      this.rect = { x: 0, y: 0, width: this.width, height: this.height }
       cs.draw.resize()
    },
    outside(rect){
@@ -1245,7 +1245,7 @@ cs.math = {
         return (number >= 0) ? 1 : -1;
     },
     iRandomRange : function(min, max) {
-        return Math.floor(Math.random() * (max - min+1)) + min
+        return Math.round(min + Math.random()*(max-min))
     },
     choose: function(array){
         return array[this.iRandomRange(0, array.length-1)];
