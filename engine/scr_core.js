@@ -644,7 +644,9 @@ cs.room = {
    width : 1000,
    height : 400,
    transition: false,
-   restart: function(){this.restarting = true;},
+   restart: function(){
+      this.restarting = true
+   },
    reset: function(){
       cs.obj.list = [];
       cs.global = {};
@@ -759,18 +761,17 @@ cs.key = {
     held : {},
     events : [],
     addEvent : function(keyCode, eventType){
-        var num = cs.key.events.length;
+        var num = cs.key.events.length
         cs.key.events[num] = {
             event : eventType,
             key : keyCode
         }
-
     },
     execute : function(){
         for(var i = 0; i < cs.key.events.length; i++){
             var event = cs.key.events[i].event;
-            var key = cs.key.events[i].key;
-            cs.key.processEvent(key, event);
+            var key = cs.key.events[i].key
+            cs.key.processEvent(key, event)
         }
         cs.key.events = [];
     },
@@ -808,9 +809,9 @@ cs.key = {
     reset : function(){
         for(var tmp in cs.key.down){
             cs.key.down[tmp] = false
-            if(cs.key.up[tmp]){
+            if(cs.key.up[tmp])
                 cs.key.held[tmp] = false
-            }
+
             cs.key.up[tmp] = false
         }
     }
@@ -907,7 +908,7 @@ cs.touch = {
          },
          check : function(arg){
             if(this.id !== -1){
-               //We have an id attached up or down
+               // Move the current touch associated with that ID
                var touch = cs.touch.list[this.id]
                this.x = touch.x
                this.y = touch.y
