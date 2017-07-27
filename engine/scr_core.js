@@ -32,10 +32,10 @@ cs.fps = {
 //----------------------------------| Global Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.init = function(canvasId){
-   //Listen for Errors
+   // Listen for Errors
    window.onerror = function(errorMsg, url, lineNumber){ cs.loop.run = false }
 
-   //Initiate Inputs
+   // Initiate Inputs
    cs.view = document.getElementById(canvasId)
    cs.view.ctx = cs.view.getContext('2d')
    cs.view.tabIndex = 1000
@@ -50,20 +50,20 @@ cs.init = function(canvasId){
    cs.view.addEventListener("touchmove", cs.touch.move, false);
    cs.input.create();
 
-   //View, Game and GUI surfaces
+   // View, Game and GUI surfaces
    cs.surface.create({ name: 'gui', raw: true, zIndex: 100 })
    cs.surface.create({ name: 'game', raw: false })
 
-   //Camera/View Size
+   // Camera/View Size
    cs.surface.resize();
    cs.input.resize();
 
-   //Sound
+   // Sound
    cs.sound.active = cs.sound.init();
    window.onfocus = function(){ cs.sound.toggleActive(true) }
    window.onblur = function(){ cs.sound.toggleActive(false) }
 
-   //Start your engines!
+   // Start your engines!
    cs.loop.step();
 }
 cs.loop = {
@@ -174,11 +174,10 @@ cs.obj = {
       })
    },
    count: function(type){
-      return this.objGroups[type]
-         ? this.objGroups[type].length
-         : 0
+      return this.objGroups[type] ? this.objGroups[type].length : 0
    }
 }
+
 //---------------------------------------------------------------------------------------------//
 //-----------------------------------| Sprite Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
@@ -186,8 +185,8 @@ cs.sprite = {
    list: {},
    order: [],
    load: function(options){
-      cs.loading += 1;
-      var sprName = options.path.split('/').pop();
+      cs.loading += 1
+      var sprName = options.path.split('/').pop()
 
       //Set up
       cs.sprite.list[sprName] = new Image()
@@ -204,13 +203,13 @@ cs.sprite = {
 
       var that = this
       cs.sprite.list[sprName].onload = function(){
-         //Set up
+         // Set up
          if(this.fwidth == 0)
             this.fwidth = this.width
          if(this.fheight == 0)
             this.fheight = this.height
 
-         //Create Frames
+         // Create Frames
          this.frames = []
          var dx = 0, dy = 0
          while(dx < this.width && dy < this.height){
@@ -228,11 +227,11 @@ cs.sprite = {
                dx = 0, dy+= this.fwidth
          }
 
-         for(var surface of cs.draw.surfaceOrder)
+         for(var surface of cs.surface.order)
             surface.clear = false
 
 
-         //Sprites Loaded Start Engine
+         // Sprites Loaded Start Engine
          cs.loading -= 1
          if(cs.loading == 0)
             cs.start()
@@ -256,7 +255,7 @@ cs.sprite = {
       }
    },
    info: function(options){
-      //We need something to return info on sprites based on scale etc
+      // We need something to return info on sprites based on scale etc
       if(typeof options.frame == 'undefined') options.frame = 0
       if(typeof options.scaleX == 'undefined') options.scaleX = 1
       if(typeof options.scaleY == 'undefined') options.scaleY = 1
@@ -265,13 +264,13 @@ cs.sprite = {
          options.scaleX = options.scale
          options.scaleY = options.scale
       }
-      //Scaling with width/height
+      // Scaling with width/height
       if(options.width)
          options.scaleX = options.width/sprite.fwidth
       if(options.height)
          options.scaleY = options.height/sprite.fheight
 
-      //Locking aspect ratio
+      // Locking aspect ratio
       if(options.aspectLock)
          (options.scaleX !== 1)
             ? options.scaleY = options.scaleX
@@ -294,8 +293,9 @@ cs.sprite = {
 cs.surface = {
    list: [],
    order: [],
+   imageSmoothing: false,
    create: function(info){
-      var num = cs.draw.surfaces.length
+      var num = this.list.length
       var canvas = document.createElement("canvas")
 
       this.list[info.name] = {
@@ -315,15 +315,15 @@ cs.surface = {
          clear: false
       }
 
-      //Add and fix size
+      // Add and fix size
       this.addToOrder(this.list[info.name])
       cs.surface.resize()
 
-      //Return the element
+      // Return the element
       return this.list[info.name]
    },
    addToOrder: function(surface){
-      //Find Place to put it!
+      // Find Place to put it!
       for(var i = 0; i < this.order.length; i++){
          if(this.order[i].zIndex <= surface.zIndex)
             break
@@ -359,9 +359,8 @@ cs.surface = {
    },
    displayAll: function(){
       var i = this.order.length;
-      while(i--){
+      while(i--)
          this.display(this.order[i].name)
-      }
    },
    display: function(surfaceName){
       var surface = this.list[surfaceName]
@@ -390,7 +389,7 @@ cs.surface = {
          dx, dy, dWidth, dHeight)
    },
    resetAll: function(){
-      for(var surface of cs.draw.surfaceOrder)
+      for(var surface of cs.surface.order)
          surface.clear = false
    },
    checkResize: function(){
@@ -435,10 +434,10 @@ cs.surface = {
       cs.camera.scale = w/nw
    },
    ctxImageSmoothing: function(ctx){
-      ctx.webkitImageSmoothingEnabled = false
-      ctx.mozImageSmoothingEnabled = false
-      ctx.msImageSmoothingEnabled = false
-      ctx.imageSmoothingEnabled = false
+      ctx.webkitImageSmoothingEnabled = this.imageSmoothing
+      ctx.mozImageSmoothingEnabled = this.imageSmoothing
+      ctx.msImageSmoothingEnabled = this.imageSmoothing
+      ctx.imageSmoothingEnabled = this.imageSmoothing
    }
 }
 
@@ -446,11 +445,8 @@ cs.surface = {
 //----------------------------------| Drawing Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.draw = {
-   view : { ctx: undefined, canvas : undefined },
-   surfaces: {},
-   surfaceOrder: [],
    ctx : undefined,
-   canvas : {width: 0, height: 0},
+   canvas : { width: 0, height: 0 },
    alpha : 1,
    raw : false,
    height : 0,
