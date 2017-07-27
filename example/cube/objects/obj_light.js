@@ -4,7 +4,7 @@ cs.objects['obj_light'] = {
         this.height = 30;
 
         //Create New Layer
-        cs.draw.createSurface({ name: 'light', raw: false, zIndex: 10 })
+        cs.surface.create({ name: 'light', raw: false, zIndex: 10 })
         this.surface = 'light'
 
         //Create Global Variable
