@@ -3,12 +3,11 @@ var cs = {};
 //---------------------------------------------------------------------------------------------//
 //-----------------------------| Global Variables and Scripts |--------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.global = {};
-cs.script = {};
-cs.save = {};
-cs.objects = {};
-cs.sprites = {};
-cs.loading = 0;
+cs.global = {}
+cs.script = {}
+cs.save = {}
+cs.objects = {}
+cs.sprites = {}
 //---------------------------------------------------------------------------------------------//
 //--------------------------------| Performance Monitoring |-----------------------------------//
 //---------------------------------------------------------------------------------------------//
@@ -102,6 +101,21 @@ cs.loop = {
    }
 }
 //---------------------------------------------------------------------------------------------//
+//-----------------------------------| Loading Functions |-------------------------------------//
+//---------------------------------------------------------------------------------------------//
+cs.load = {
+   count: 0,
+   add: function(){
+      this.count += 1
+   },
+   check: function(){
+      this.count -= 1
+      if(!this.count)
+         cs.start()
+   }
+}
+
+//---------------------------------------------------------------------------------------------//
 //-----------------------------------| Object Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.obj = {
@@ -185,7 +199,7 @@ cs.sprite = {
    list: {},
    order: [],
    load: function(options){
-      cs.loading += 1
+      cs.load.add()
       var sprName = options.path.split('/').pop()
 
       //Set up
@@ -232,9 +246,7 @@ cs.sprite = {
 
 
          // Sprites Loaded Start Engine
-         cs.loading -= 1
-         if(cs.loading == 0)
-            cs.start()
+         cs.load.check()
       }
    },
    texture: function(spriteName, width, height){
@@ -1224,7 +1236,7 @@ cs.storage = {
       var that = this
       var name = info.path.split('/').pop()
       var ajax = new XMLHttpRequest()
-      cs.loading += 1
+      cs.load.add()
       ajax.onreadystatechange = function() {
          if(this.readyState == 4){
             var data = JSON.parse(this.responseText)
@@ -1234,9 +1246,7 @@ cs.storage = {
                ? that[info.group][info.name] = data
                : that[info.name] = data
 
-            cs.loading -= 1
-            if(cs.loading == 0)
-               cs.start()
+            cs.load.check()
          }
       }
       ajax.open("POST", `./${info.path}.json`, true)
