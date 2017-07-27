@@ -17,17 +17,14 @@ cs.fps = {
    frame : 0,
    check : Date.now(),
    update : function(){
-      this.checkReset() ? this.addFrame() : this.reset()
+      this.checkReset() ? this.frame += 1 : this.reset()
    },
    checkReset: function(){
       return Date.now() - this.check < 1000
    },
-   addFrame: function(){
-      this.frame += 1
-   },
    reset: function(){
-      this.check = Date.now();
-      this.rate = this.frame;
+      this.check = Date.now()
+      this.rate = this.frame
       this.frame = 0
    }
 }
