@@ -49,11 +49,11 @@ cs.init = function(canvasId){
    cs.input.create();
 
    //View, Game and GUI surfaces
-   cs.draw.createSurface({ name: 'gui', raw: true, zIndex: 100 })
-   cs.draw.createSurface({ name: 'game', raw: false })
+   cs.surface.create({ name: 'gui', raw: true, zIndex: 100 })
+   cs.surface.create({ name: 'game', raw: false })
 
    //Camera/View Size
-   cs.draw.resize();
+   cs.surface.resize();
    cs.input.resize();
 
    //Sound
@@ -74,7 +74,7 @@ cs.loop = {
       cs.key.execute()
       cs.draw.debugReset()
       cs.camera.update()
-      cs.draw.clearSurfaces()
+      cs.surface.clearAll()
 
       var i = cs.obj.list.length; while(i--){
          if(cs.obj.list[i].live){
@@ -88,13 +88,13 @@ cs.loop = {
          }
       }
 
-      cs.draw.resetSurfaces()
+      cs.surface.resetAll()
       cs.key.reset()
       cs.touch.reset()
 
       //Resize Canvas
-      cs.draw.checkResize()
-      cs.draw.displaySurfaces()
+      cs.surface.checkResize()
+      cs.surface.displayAll()
       if(cs.room.restarting === true)
          cs.room.reset()
    }
@@ -182,6 +182,7 @@ cs.obj = {
 //---------------------------------------------------------------------------------------------//
 cs.sprite = {
    list: {},
+   order: [],
    load: function(options){
       cs.loading += 1;
       var sprName = options.path.split('/').pop();
@@ -284,42 +285,18 @@ cs.sprite = {
       }
    }
 }
+
 //---------------------------------------------------------------------------------------------//
-//----------------------------------| Drawing Functions |--------------------------------------//
+//----------------------------------| Surface Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.draw = {
-   view : { ctx: undefined, canvas : undefined },
-   surfaces: {},
-   surfaceOrder: [],
-   ctx : undefined,
-   canvas : {width: 0, height: 0},
-   alpha : 1,
-   raw : false,
-   height : 0,
-   width : 0,
-   fontSize : 12,
-   background: '#465',
-   debug: {},
-   w : 0,
-   h : 0,
-   o : 0,
-   debugReset: function(){
-      this.debug = {
-         skippedSprites: 0,
-         drawnSprites: 0
-      }
-   },
-   ctxImageSmoothing: function(ctx){
-      ctx.webkitImageSmoothingEnabled = false
-      ctx.mozImageSmoothingEnabled = false
-      ctx.msImageSmoothingEnabled = false
-      ctx.imageSmoothingEnabled = false
-   },
-   createSurface : function(info){
+cs.surface = {
+   list: [],
+   order: [],
+   create: function(info){
       var num = cs.draw.surfaces.length
       var canvas = document.createElement("canvas")
 
-      this.surfaces[info.name] = {
+      this.list[info.name] = {
          name: info.name,
          canvas: canvas,
          ctx: canvas.getContext('2d'),
@@ -337,24 +314,24 @@ cs.draw = {
       }
 
       //Add and fix size
-      this.addSurfaceOrder(this.surfaces[info.name])
-      cs.draw.resize()
+      this.addToOrder(this.list[info.name])
+      cs.surface.resize()
 
       //Return the element
-      return this.surfaces[info.name]
+      return this.list[info.name]
    },
-   addSurfaceOrder: function(surface){
+   addToOrder: function(surface){
       //Find Place to put it!
-      for(var i = 0; i < this.surfaceOrder.length; i++){
-         if(this.surfaceOrder[i].zIndex <= surface.zIndex)
+      for(var i = 0; i < this.order.length; i++){
+         if(this.order[i].zIndex <= surface.zIndex)
             break
       }
 
-      this.surfaceOrder.splice(i, 0, surface)
+      this.order.splice(i, 0, surface)
    },
-   clearSurfaces : function(){
+   clearAll: function(){
       cs.view.ctx.clearRect(0, 0, cs.view.width, cs.view.height)
-      for(var surface of this.surfaceOrder){
+      for(var surface of this.order){
          if(surface.autoClear || surface.clearRequest){
             clearRect = {
                x: surface.raw ? 0 : cs.camera.x,
@@ -369,7 +346,7 @@ cs.draw = {
          }
       }
    },
-   clearSurface: function(options){
+   clear: function(options){
       var surface = this.surfaces[options.name]
       surface.clearRequest = {
          x: options.x || 0,
@@ -378,14 +355,14 @@ cs.draw = {
          height: options.height || surface.canvas.height
       }
    },
-   displaySurfaces : function(){
-      var i = this.surfaceOrder.length;
+   displayAll: function(){
+      var i = this.order.length;
       while(i--){
-         this.displaySurface(this.surfaceOrder[i].name)
+         this.display(this.order[i].name)
       }
    },
-   displaySurface: function(surfaceName){
-      var surface = this.surfaces[surfaceName]
+   display: function(surfaceName){
+      var surface = this.list[surfaceName]
       sx = surface.raw ? 0 : cs.camera.x,
       sy = surface.raw ? 0 : cs.camera.y,
       sWidth = surface.raw ? surface.canvas.width : cs.camera.width,
@@ -410,7 +387,7 @@ cs.draw = {
          sx, sy, sWidth, sHeight,
          dx, dy, dWidth, dHeight)
    },
-   resetSurfaces: function(){
+   resetAll: function(){
       for(var surface of cs.draw.surfaceOrder)
          surface.clear = false
    },
@@ -443,7 +420,7 @@ cs.draw = {
       cs.view.height = h
       this.ctxImageSmoothing(cs.view.ctx)
 
-      for(var surface of this.surfaceOrder){
+      for(var surface of this.order){
          var img = surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
          surface.canvas.width = surface.raw ? w : cs.room.width
          surface.canvas.height = surface.raw ? h : cs.room.height
@@ -454,6 +431,39 @@ cs.draw = {
       cs.camera.width = Math.ceil(nw)
       cs.camera.height = Math.ceil(nh)
       cs.camera.scale = w/nw
+   },
+   ctxImageSmoothing: function(ctx){
+      ctx.webkitImageSmoothingEnabled = false
+      ctx.mozImageSmoothingEnabled = false
+      ctx.msImageSmoothingEnabled = false
+      ctx.imageSmoothingEnabled = false
+   }
+}
+
+//---------------------------------------------------------------------------------------------//
+//----------------------------------| Drawing Functions |--------------------------------------//
+//---------------------------------------------------------------------------------------------//
+cs.draw = {
+   view : { ctx: undefined, canvas : undefined },
+   surfaces: {},
+   surfaceOrder: [],
+   ctx : undefined,
+   canvas : {width: 0, height: 0},
+   alpha : 1,
+   raw : false,
+   height : 0,
+   width : 0,
+   fontSize : 12,
+   background: '#465',
+   debug: {},
+   w : 0,
+   h : 0,
+   o : 0,
+   debugReset: function(){
+      this.debug = {
+         skippedSprites: 0,
+         drawnSprites: 0
+      }
    },
    sprite : function(options){
       sprite = cs.sprite.list[options.spr]
@@ -571,7 +581,7 @@ cs.draw = {
       this.ctx.globalCompositeOperation = operation;
    },
    setSurface : function(name){
-      this.surface = this.surfaces[name]
+      this.surface = cs.surface.list[name]
       this.canvas = this.surface.canvas
       this.ctx = this.surface.ctx
       this.raw = this.surface.raw
@@ -603,7 +613,7 @@ cs.camera = {
       this.height = options.height;
       this.maxWidth = options.maxWidth || this.width;
       this.maxHeight = options.maxHeight || this.height;
-      cs.draw.resize();
+      cs.surface.resize();
    },
    follow : function(obj){
       this.followX = obj.x
@@ -648,7 +658,7 @@ cs.room = {
       this.width = info.width; this.height = info.height;
       cs.draw.background = info.background || '#000'
       this.rect = { x: 0, y: 0, width: this.width, height: this.height }
-      cs.draw.resize()
+      cs.surface.resize()
    },
    outside(rect){
       if(typeof rect.width == 'undefined') rect.width = 0
