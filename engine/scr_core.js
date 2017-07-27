@@ -13,18 +13,23 @@ cs.loading = 0;
 //--------------------------------| Performance Monitoring |-----------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.fps = {
-    rate : 0,
-    frame : 0,
-    check : Date.now(),
-    update : function(){
-        if(Date.now() - this.check > 1000){
-            this.check = Date.now();
-            this.rate = this.frame;
-            this.frame = 0;
-        } else {
-            this.frame += 1;
-        }
-    },
+   rate : 0,
+   frame : 0,
+   check : Date.now(),
+   update : function(){
+      this.checkReset() ? this.addFrame() : this.reset()
+   },
+   checkReset: function(){
+      return Date.now() - this.check < 1000
+   },
+   addFrame: function(){
+      this.frame += 1
+   },
+   reset: function(){
+      this.check = Date.now();
+      this.rate = this.frame;
+      this.frame = 0
+   }
 }
 //---------------------------------------------------------------------------------------------//
 //----------------------------------| Global Functions |---------------------------------------//
@@ -347,7 +352,7 @@ cs.surface = {
       }
    },
    clear: function(options){
-      var surface = this.surfaces[options.name]
+      var surface = this.list[options.name]
       surface.clearRequest = {
          x: options.x || 0,
          y: options.y || 0,
