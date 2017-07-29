@@ -177,14 +177,10 @@ cs.obj = {
       return i
    },
    all: function(type){
-      return this.list.filter(function(obj){
-         return (obj.type == type && obj.live)
-      })
+      return this.objGroups[type]
    },
    find: function(type){
-      return this.list.find(function(obj){
-         return (obj.type == type && obj.live)
-      })
+      return this.objGroups[type][0]
    },
    count: function(type){
       return this.objGroups[type] ? this.objGroups[type].length : 0
