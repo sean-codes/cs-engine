@@ -341,7 +341,10 @@ cs.surface = {
                width: surface.raw ? surface.canvas.width : cs.camera.width,
                height: surface.raw ? surface.canvas.height : cs.camera.height,
             }
-            if(surface.clearRequest) clearRect = surface.clearRequest
+
+            if(surface.clearRequest)
+               clearRect = surface.clearRequest
+
             surface.ctx.clearRect(clearRect.x, clearRect.y, clearRect.width, clearRect.height)
             surface.clearRequest = undefined
             surface.clear = true
@@ -359,8 +362,9 @@ cs.surface = {
    },
    displayAll: function(){
       var i = this.order.length;
-      while(i--)
+      while(i--){
          this.display(this.order[i].name)
+      }
    },
    display: function(surfaceName){
       var surface = this.list[surfaceName]
@@ -389,8 +393,9 @@ cs.surface = {
          dx, dy, dWidth, dHeight)
    },
    resetAll: function(){
-      for(var surface of cs.surface.order)
+      for(var surface of cs.surface.order){
          surface.clear = false
+      }
    },
    checkResize: function(){
       var rect = cs.view.getBoundingClientRect()
@@ -631,8 +636,6 @@ cs.camera = {
 
       if(this.y + this.height > cs.room.height)
          this.y = (cs.room.height - this.height) / (cs.room.height < this.height ? 2 : 1)
-
-      //console.log(cs.room.height-cs.camera.height)
    },
    zoomOut : function(){},
    zoomIn : function(){}
