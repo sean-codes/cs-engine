@@ -238,8 +238,6 @@ cs.sprite = {
          for(var surface of cs.surface.order)
             surface.clear = false
 
-
-         // Sprites Loaded Start Engine
          cs.load.check()
       }
    },
@@ -476,15 +474,15 @@ cs.draw = {
       sprite = cs.sprite.list[options.spr]
       var info = cs.sprite.info(options)
 
-      this.debug.drawnSprites += 1
       if(!this.raw && !this.skip){
          //If outside camera skip
          if(options.x+sprite.fwidth < cs.camera.x || options.x  > cs.camera.x+cs.camera.width
          || options.y+sprite.fheight < cs.camera.y || options.y  > cs.camera.y+cs.camera.height ){
             this.debug.skippedSprites += 1
-            return;
+            return
          }
       }
+      this.debug.drawnSprites += 1
 
       this.ctx.save();
       this.ctx.translate(Math.floor(options.x), Math.floor(options.y))
