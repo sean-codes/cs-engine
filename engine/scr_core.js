@@ -176,6 +176,9 @@ cs.obj = {
       }
       return i
    },
+   undefined: function(type){
+      return typeof cs.objects[type] === 'undefined' ? true : false
+   },
    all: function(type){
       return this.objGroups[type]
    },
