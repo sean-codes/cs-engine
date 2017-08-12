@@ -67,6 +67,7 @@ cs.init = function(canvasId){
 }
 cs.loop = {
    run : true,
+   endSteps: [],
    step : function(){
       if(cs.loop.run)
          setTimeout(function(){ cs.loop.step() }, 1000/60)
@@ -98,6 +99,13 @@ cs.loop = {
       cs.surface.displayAll()
       if(cs.room.restarting === true)
          cs.room.reset()
+
+      //Execute end steps
+      while(this.endSteps.length)
+         this.endSteps.pop()()
+   },
+   endStep: function(func){
+      this.endSteps.push(func)
    }
 }
 //---------------------------------------------------------------------------------------------//
