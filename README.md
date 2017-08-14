@@ -1,6 +1,8 @@
 # CS-Engine
 The engine for building 2D games
 
+> Please no pull requests/forks on this project. This is a personal project of mine. Not made to compete with other game development solutions. Meant as read-only
+
 # What's included
 
     cs-engine/
