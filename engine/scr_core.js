@@ -172,9 +172,11 @@ cs.obj = {
             if(obj.id === destroyObj){
                obj.live = false
                var type = obj.type
+               destroyObj = obj
             }
          }
       }
+      if(cs.objects[type].destroy) cs.objects[type].destroy.call(destroyObj)
       this.objGroups[type] = this.objGroups[type].filter(function(obj){ return obj.live })
    },
    findPosition : function(zIndex){
