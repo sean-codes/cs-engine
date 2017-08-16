@@ -101,13 +101,13 @@ cs.loop = {
       if(cs.room.restarting === true)
          cs.room.reset()
 
-      //Execute end steps
+      // Execute end steps
       while(this.endSteps.length)
          this.endSteps.pop()()
 
-      //Execute end steps
-      while(this.nextSteps.length)
-         this.endSteps.push(this.nextSteps.pop())
+      // Transfer nextSteps
+      this.endSteps = this.nextSteps
+      this.nextSteps = []
    },
    endStep: function(func){
       this.endSteps.push(func)
