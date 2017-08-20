@@ -462,6 +462,15 @@ cs.surface = {
       cs.camera.height = Math.ceil(nh)
       cs.camera.scale = w/nw
    },
+   compare: function(surfaceName1, surfaceName2){
+      var s1 = this.list[surfaceName1].canvas
+      var s2 = this.list[surfaceName2].canvas
+      
+      return {
+         ratioX: s1.width/s2.width,
+         ratioY: s1.height/s2.height
+      }
+   },
    ctxImageSmoothing: function(ctx){
       ctx.webkitImageSmoothingEnabled = this.imageSmoothing
       ctx.mozImageSmoothingEnabled = this.imageSmoothing
