@@ -515,11 +515,17 @@ cs.draw = {
       cs.draw.reset()
    },
    text: function(options){
-      this.ctx.fillText(options.text, options.x, options.y);
+      maxWidth = options.width || this.ctx.measureText(options.text).width
+      this.ctx.fillText(options.text, options.x, options.y, maxWidth);
       cs.draw.reset()
    },
-   textSize: function(str){
-      return this.ctx.measureText(str)
+   textSize: function(options){
+      // Sean upgrade this darn function already!!
+      var totalWidth = this.ctx.measureText(options.text).width
+      return {
+         width: options.width || totalWidth,
+         height: options.width ? options.lineHeight * Math.ceil(totalWidth/options.width) : 0
+      }
    },
    line: function(options){
       var cx = 0 - ((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)
@@ -623,6 +629,15 @@ cs.draw = {
       cs.draw.setOperation('source-over');
    }
 }
+//---------------------------------------------------------------------------------------------//
+//-----------------------------------| Text Functions |----------------------------------------//
+//---------------------------------------------------------------------------------------------//
+// Considering this for preloading and canvas based text
+cs.text = {
+   font: 'Arial',
+   size: 12
+}
+
 //---------------------------------------------------------------------------------------------//
 //----------------------------------| Camera Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
