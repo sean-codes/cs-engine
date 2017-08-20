@@ -515,16 +515,65 @@ cs.draw = {
       cs.draw.reset()
    },
    text: function(options){
-      maxWidth = options.width || this.ctx.measureText(options.text).width
-      this.ctx.fillText(options.text, options.x, options.y, maxWidth);
+      var y = options.y
+      var x = options.x
+      var text = options.text.split('')// Making this an array so I can use splice
+
+      if(!options.width || !options.lineHeight){
+         // Draw the text and get the hell out of there
+         this.ctx.fillText(options.text, options.x, options.y)
+         return
+      }
+      var curLine = []
+      for(var pos in text){
+         curLine.push(text[pos])
+         if(this.ctx.measureText(curLine.join('')).width > options.width){
+            // Try to find a space
+            for(var o = curLine.length; o > 0; o--){
+               if(curLine[o] == ' '){ o+=1; break }
+            }
+
+            // If no space add a dash
+            if(!o){
+               o = curLine.length-2
+               curLine.splice(o-1, 1, '-')
+            }
+
+            // Draw and reset
+            this.ctx.fillText(curLine.slice(0, o).join(''), x, y)
+            curLine = curLine.slice(o, curLine.length)
+            y += options.lineHeight
+         }
+         //Last letter just do the damn thing
+         if(pos == text.length-1){
+            this.ctx.fillText(curLine.join(''), x, y)
+         }
+      }
       cs.draw.reset()
    },
    textSize: function(options){
-      // Sean upgrade this darn function already!!
-      var totalWidth = this.ctx.measureText(options.text).width
+      var totalWidth = this.ctx.measureText(options.text)
+      if(options.width && options.lineHeight){
+         var text = options.text.split('')
+         var curLine = []
+         var height = 0
+         for(var letter of text){
+            curLine.push(letter)
+            if(this.ctx.measureText(curLine.join('')).width > options.width){
+               // Try to find a space
+               for(var o = curLine.length; o > 0; o--){
+                  if(curLine[o] == ' ') break
+               }
+
+               if(!o){ o = curLine.length-2 }
+               curLine = curLine.slice(o, curLine.length)
+               height += options.lineHeight
+            }
+         }
+      }
       return {
          width: options.width || totalWidth,
-         height: options.width ? options.lineHeight * Math.ceil(totalWidth/options.width) : 0
+         height: options.width ? height : 0
       }
    },
    line: function(options){
