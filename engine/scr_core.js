@@ -517,7 +517,7 @@ cs.draw = {
    text: function(options){
       var y = options.y
       var x = options.x
-      var text = options.text.split('')// Making this an array so I can use splice
+      var text = options.text.toString().split('')// Making this an array so I can use splice
 
       if(!options.width || !options.lineHeight){
          // Draw the text and get the hell out of there
@@ -556,7 +556,7 @@ cs.draw = {
       if(options.width && options.lineHeight){
          var text = options.text.split('')
          var curLine = []
-         var height = 0
+         var height = options.lineHeight
          for(var letter of text){
             curLine.push(letter)
             if(this.ctx.measureText(curLine.join('')).width > options.width){
