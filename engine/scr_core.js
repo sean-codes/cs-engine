@@ -462,13 +462,12 @@ cs.surface = {
       cs.camera.height = Math.ceil(nh)
       cs.camera.scale = w/nw
    },
-   compare: function(surfaceName1, surfaceName2){
-      var s1 = this.list[surfaceName1].canvas
-      var s2 = this.list[surfaceName2].canvas
-      
+   info: function(surfaceName1, surfaceName2){
+      var surface = this.list[surfaceName1].canvas
+
       return {
-         ratioX: s1.width/s2.width,
-         ratioY: s1.height/s2.height
+         width: surface.width,
+         height: surface.height
       }
    },
    ctxImageSmoothing: function(ctx){
@@ -565,17 +564,24 @@ cs.draw = {
       if(options.width && options.lineHeight){
          var text = options.text.split('')
          var curLine = []
-         var height = options.lineHeight
-         for(var letter of text){
-            curLine.push(letter)
+         var height = 0
+         for(var pos in text){
+            curLine.push(text[pos])
             if(this.ctx.measureText(curLine.join('')).width > options.width){
                // Try to find a space
                for(var o = curLine.length; o > 0; o--){
-                  if(curLine[o] == ' ') break
+                  if(curLine[o] == ' '){ o+=1; break }
                }
 
-               if(!o){ o = curLine.length-2 }
+               if(!o){
+                  o = curLine.length-2
+                  curLine.splice(o-1, 1, '-')
+               }
                curLine = curLine.slice(o, curLine.length)
+               height += options.lineHeight
+            }
+
+            if(pos == text.length-1){
                height += options.lineHeight
             }
          }
