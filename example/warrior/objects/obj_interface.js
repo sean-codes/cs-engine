@@ -99,9 +99,9 @@ cs.objects['obj_joystick'] = {
       cs.draw.fillRect({ x:this.x, y:this.y, width:this.width, height:this.height });
       cs.draw.setColor('#fff');
       cs.draw.strokeRect({ x:this.tx, y:this.ty, width:this.jw, height:this.jh });
-      
-      cs.draw.text(1, 0, 'FPS Step: ' + cs.fps.rate);
-      cs.draw.text(1, 30, 'Scale: ' + cs.camera.scale);
+
+      cs.draw.text({ x:1, y:0, text:'FPS Step: ' + cs.fps.rate });
+      cs.draw.text({ x:1, y:30, text:'Scale: ' + cs.camera.scale });
 
 
       //cs.draw.fillRect({ x: 0, y: cs.draw.canvas.height-this.height, width: 50, height: 50})
