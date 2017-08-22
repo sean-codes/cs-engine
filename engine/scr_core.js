@@ -590,7 +590,7 @@ cs.draw = {
             }
          }
       }
-      
+
       return {
          width: width,
          height: options.width ? height : 0
@@ -1353,6 +1353,7 @@ cs.particle = {
 //----------------------------------| Storage Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.storage = {
+   data: {},
    load: function(info){
       var that = this
       var name = info.path.split('/').pop()
@@ -1361,17 +1362,27 @@ cs.storage = {
       ajax.onreadystatechange = function() {
          if(this.readyState == 4){
             var data = JSON.parse(this.responseText)
-            if(info.group && !that[info.group]) that[info.group] = {}
-
-            info.group
-               ? that[info.group][info.name] = data
-               : that[info.name] = data
-
+            that.write({
+               location: info.name,
+               data: data
+            })
             cs.load.check()
          }
       }
       ajax.open("POST", `./${info.path}.json`, true)
       ajax.send()
+   },
+   write: function(options){
+      this.data[options.location] = JSON.parse(JSON.stringify(options.data))
+   },
+   read: function(location){
+      return JSON.parse(JSON.stringify(this.data[location]))
+   },
+   group: function(group){
+      var that = this
+      return Object.keys(this.data).filter(function(key){
+         return (key.startsWith(group + '/'))
+      })
    },
    cache: function(){
       //we could cache something to local storage here
