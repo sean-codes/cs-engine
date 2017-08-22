@@ -560,14 +560,15 @@ cs.draw = {
       cs.draw.reset()
    },
    textSize: function(options){
-      var totalWidth = this.ctx.measureText(options.text)
+      var width = 0
       if(options.width && options.lineHeight){
          var text = options.text.split('')
          var curLine = []
          var height = 0
          for(var pos in text){
             curLine.push(text[pos])
-            if(this.ctx.measureText(curLine.join('')).width > options.width){
+            var curLineWidth = this.ctx.measureText(curLine.join('')).width
+            if(curLineWidth > options.width){
                // Try to find a space
                for(var o = curLine.length; o > 0; o--){
                   if(curLine[o] == ' '){ o+=1; break }
@@ -577,6 +578,9 @@ cs.draw = {
                   o = curLine.length-2
                   curLine.splice(o-1, 1, '-')
                }
+
+               var curLineWidth = this.ctx.measureText(curLine.slice(0, o).join('')).width
+               width = Math.max(curLineWidth, width)
                curLine = curLine.slice(o, curLine.length)
                height += options.lineHeight
             }
@@ -586,8 +590,9 @@ cs.draw = {
             }
          }
       }
+      
       return {
-         width: options.width || totalWidth,
+         width: width,
          height: options.width ? height : 0
       }
    },
@@ -605,7 +610,12 @@ cs.draw = {
       if(typeof args.width == 'undefined') args.width = args.size || 0
       if(typeof args.height == 'undefined') args.height = args.size || 0
 
-      this.ctx.fillRect(args.x,args.y,args.width,args.height);
+      this.ctx.fillRect(
+         args.x + (args.relative ? args.relative.x : 0),
+         args.y + (args.relative ? args.relative.y : 0),
+         args.width,
+         args.height
+      )
       cs.draw.reset();
    },
    strokeRect: function(args){
