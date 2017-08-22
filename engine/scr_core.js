@@ -643,6 +643,24 @@ cs.draw = {
       this.ctx.fill()
       cs.draw.reset()
    },
+   fillPoints: function(points){
+      this.loopPoints(points)
+      this.ctx.fill()
+      cs.draw.reset()
+   },
+   strokePoints: function(points){
+      this.loopPoints(points)
+      this.ctx.stroke()
+      cs.draw.reset()
+   },
+   loopPoints: function(points){
+      this.ctx.beginPath()
+      this.ctx.moveTo(points[0].x, points[0].y)
+      for(var point of points){
+         this.ctx.lineTo(point.x, point.y)
+      }
+      this.ctx.closePath()
+   },
    fixPosition: function(args){
       x = Math.floor(args.x); y = Math.floor(args.y);
       width = Math.floor(args.width);
