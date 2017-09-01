@@ -8,56 +8,69 @@
 
 		<!-- Game Engine -->
 		<script src='../../engine/scr_core.js'></script>
-		<!-- Events -->
-		<script src='events/network.js'></script>
-		<!-- Objects -->
-		<script src='objects/obj_block.js'></script>
-		<script src='objects/obj_buttons.js'></script>
-		<script src='objects/obj_crate.js'></script>
-		<script src='objects/obj_fire.js'></script>
-		<script src='objects/obj_inventory.js'></script>
-		<script src='objects/obj_joystick.js'></script>
-		<script src='objects/obj_light.js'></script>
-		<script src='objects/obj_otherplayer.js'></script>
-		<script src='objects/obj_player.js'></script>
-		<!-- Scripts -->
-		<script src='scripts/compareObj.js'></script>
-		<script src='scripts/lightAdd.js'></script>
-		<script src='scripts/networkRecievedMessage.js'></script>
-		<script src='scripts/networkSendMovement.js'></script>
-		<script src='scripts/scr_collide.js'></script>
 	</head>
 	<body>
 		<!--Game Area-->
 		<canvas id="view"></canvas>
 		<script>
-			cs.init('view');
 
-			//Load Sprites
-			cs.sprite.load({ path: 'sprites/spr_block' })
-			cs.sprite.load({ path: 'sprites/spr_crate' })
-			cs.sprite.load({ path: 'sprites/spr_inventory' })
-			cs.sprite.load({ path: 'sprites/spr_item_rupee' })
-			cs.sprite.load({ path: 'sprites/spr_player', frames: 2, fwidth:16, fheight:16 })
+			// Wait for the core to load
+			cs.core.init('../../engine/')
 
-			cs.start = function(){
-				cs.global.networkControl = { id: -1, list: {} }
-				cs.network.connect({ host:'cube-script.net', port:9999, ssl: false })
+			cs.core.ready = function(){
+				// Initialize the view
+				cs.init('view')
 
-				cs.obj.create({ type: 'obj_light' })
-				cs.obj.create({ type: 'obj_buttons', x:100, y:100 })
-				cs.obj.create({ type: 'obj_crate', x:100, y:0 })
-				cs.obj.create({ type: 'obj_player', x:40, y:40 })
+				// Load Scripts
+				cs.core.loadScripts([
+					// Objects
+					{ path: 'objects/obj_block' },
+					{ path: 'objects/obj_buttons' },
+					{ path: 'objects/obj_crate' },
+					{ path: 'objects/obj_fire' },
+					{ path: 'objects/obj_inventory' },
+					{ path: 'objects/obj_joystick' },
+					{ path: 'objects/obj_light.js' },
+					{ path: 'objects/obj_otherplayer' },
+					{ path: 'objects/obj_player' },
+					// Scripts
+					{ path: 'scripts/compareObj' },
+					{ path: 'scripts/lightAdd' },
+					{ path: 'scripts/networkRecievedMessage' },
+					{ path: 'scripts/networkSendMovement' },
+					{ path: 'scripts/scr_collide' },
+					// Events
+					{ path: 'events/network' }
+				])
 
-				var tx = 0;
-				while(tx < cs.room.width){
-					cs.obj.create({ type:'obj_block', x:tx, y:cs.room.height-16 })
-					tx += 16
+				// Load Images
+				cs.sprite.load([
+					{ path: 'sprites/spr_block' },
+					{ path: 'sprites/spr_crate' },
+					{ path: 'sprites/spr_inventory' },
+					{ path: 'sprites/spr_item_rupee' },
+					{ path: 'sprites/spr_player', frames: 2, fwidth:16, fheight:16 }
+				])
+
+				cs.start = function(){
+					cs.global.networkControl = { id: -1, list: {} }
+					cs.network.connect({ host:'cube-script.net', port:9999, ssl: false })
+
+					cs.obj.create({ type: 'obj_light' })
+					cs.obj.create({ type: 'obj_buttons', x:100, y:100 })
+					cs.obj.create({ type: 'obj_crate', x:100, y:0 })
+					cs.obj.create({ type: 'obj_player', x:40, y:40 })
+
+					var tx = 0;
+					while(tx < cs.room.width){
+						cs.obj.create({ type:'obj_block', x:tx, y:cs.room.height-16 })
+						tx += 16
+					}
+
+					cs.obj.create({ type: 'obj_joystick', x:100, y:100 })
+					cs.obj.create({ type: 'obj_inventory', x:100, y:100 })
+					cs.obj.create({ type: 'obj_fire', x:150, y:375 })
 				}
-
-				cs.obj.create({ type: 'obj_joystick', x:100, y:100 })
-				cs.obj.create({ type: 'obj_inventory', x:100, y:100 })
-				cs.obj.create({ type: 'obj_fire', x:150, y:375 })
 			}
 		</script>
 	</body>
