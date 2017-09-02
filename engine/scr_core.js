@@ -14,6 +14,7 @@ cs.sprites = {}
 //---------------------------------------------------------------------------------------------//
 cs.core = {
    loading: 0,
+   path: document.getElementById('cs-core').src+'/..',
    parts: [
       { path: 'camera' },
       { path: 'draw' },
@@ -35,30 +36,34 @@ cs.core = {
       { path: 'surface' },
       { path: 'touch' }
    ],
-   init: function(path){
+   init: function(info){
+      // When finished loading
+      this.canvas = info.canvas
+      this.start = info.start
       for(var part of this.parts){
-         part.path = path +'/parts/'+ part.path
+         part.path = this.path +'/parts/'+ part.path
       }
-      this.loadScripts(this.parts)
+      this.sprites = info.sprites
+      this.loadScripts(this.parts.concat(info.scripts))
    },
    loadScripts: function(files){
+      this.loading += files.length
       for(var file of files){
          this.load(file.path)
       }
    },
    load: function(part){
-      this.loading += 1
-      console.log(this.loading)
       var that = this
       var script = document.createElement('script')
       script.src = part+'.js'
-      script.onload = function() { that.loaded() }
+      script.onload = function() { that.onload() }
       document.head.appendChild(script)
    },
-   loaded: function(){
+   onload: function(){
       this.loading -= 1
-      if(!this.loading){
-         console.log('wtf')
+      console.log(this.loading)
+      if(!this.loading && this.start){
+         cs.sprite.load(this.sprites)
       }
    }
 }

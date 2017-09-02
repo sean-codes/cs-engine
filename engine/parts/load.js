@@ -8,7 +8,9 @@ cs.load = {
    },
    check: function(){
       this.count -= 1
-      if(!this.count)
-         cs.start()
+      if(!this.count){
+         cs.init()
+         cs.core.start()
+      }
    }
 }

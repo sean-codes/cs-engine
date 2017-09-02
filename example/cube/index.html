@@ -7,22 +7,16 @@
 		<link rel="stylesheet" type="text/css" href="../../engine/css.css?v=1" />
 
 		<!-- Game Engine -->
-		<script src='../../engine/scr_core.js'></script>
+		<script src='../../engine/scr_core.js' id="cs-core"></script>
 	</head>
 	<body>
 		<!--Game Area-->
-		<canvas id="view"></canvas>
+		<canvas id="cs-view"></canvas>
 		<script>
-
 			// Wait for the core to load
-			cs.core.init('../../engine/')
-
-			cs.core.ready = function(){
-				// Initialize the view
-				cs.init('view')
-
-				// Load Scripts
-				cs.core.loadScripts([
+			cs.core.init({
+				canvas: 'cs-view',
+				scripts: [
 					// Objects
 					{ path: 'objects/obj_block' },
 					{ path: 'objects/obj_buttons' },
@@ -30,7 +24,7 @@
 					{ path: 'objects/obj_fire' },
 					{ path: 'objects/obj_inventory' },
 					{ path: 'objects/obj_joystick' },
-					{ path: 'objects/obj_light.js' },
+					{ path: 'objects/obj_light' },
 					{ path: 'objects/obj_otherplayer' },
 					{ path: 'objects/obj_player' },
 					// Scripts
@@ -41,18 +35,15 @@
 					{ path: 'scripts/scr_collide' },
 					// Events
 					{ path: 'events/network' }
-				])
-
-				// Load Images
-				cs.sprite.load([
+				],
+				sprites: [
 					{ path: 'sprites/spr_block' },
 					{ path: 'sprites/spr_crate' },
 					{ path: 'sprites/spr_inventory' },
 					{ path: 'sprites/spr_item_rupee' },
 					{ path: 'sprites/spr_player', frames: 2, fwidth:16, fheight:16 }
-				])
-
-				cs.start = function(){
+				],
+				start: function(){
 					cs.global.networkControl = { id: -1, list: {} }
 					cs.network.connect({ host:'cube-script.net', port:9999, ssl: false })
 
@@ -71,7 +62,7 @@
 					cs.obj.create({ type: 'obj_inventory', x:100, y:100 })
 					cs.obj.create({ type: 'obj_fire', x:150, y:375 })
 				}
-			}
+			})
 		</script>
 	</body>
 </html>

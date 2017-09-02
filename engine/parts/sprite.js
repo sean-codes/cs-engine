@@ -4,7 +4,13 @@
 cs.sprite = {
    list: {},
    order: [],
-   load: function(options){
+   load: function(sprites){
+      console.log(sprites)
+      for(var sprite of sprites){
+         this.loadSprite(sprite)
+      }
+   },
+   loadSprite: function(options){
       cs.load.add()
       var sprName = options.path.split('/').pop()
 

@@ -6,7 +6,7 @@ body{
 	margin:0px;
 	padding:0px;
 }
-#view {
+#cs-view {
 	outline: none;
 	position:absolute;
 	top:0px; left:0px;

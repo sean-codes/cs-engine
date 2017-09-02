@@ -104,7 +104,7 @@ cs.sound = {
       }
    },
    toggleActive: function(bool){
-      if(this.context !== undefined)
+      if(this.context)
          (bool) ? this.context.resume() : this.context.suspend();
    }
 }

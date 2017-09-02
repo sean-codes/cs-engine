@@ -1,9 +1,9 @@
-cs.init = function(canvasId){
+cs.init = function(){
    // Listen for Errors
    window.onerror = function(errorMsg, url, lineNumber){ cs.loop.run = false }
 
    // Initiate Inputs
-   cs.view = document.getElementById(canvasId)
+   cs.view = document.getElementById(cs.core.canvas)
    cs.view.ctx = cs.view.getContext('2d')
    cs.view.tabIndex = 1000
    cs.view.addEventListener('keydown', cs.key.updateDown);
@@ -26,7 +26,7 @@ cs.init = function(canvasId){
    cs.input.resize();
 
    // Sound
-   cs.sound.active = cs.sound.init();
+   //cs.sound.active = cs.sound.init();
    window.onfocus = function(){ cs.sound.toggleActive(true) }
    window.onblur = function(){ cs.sound.toggleActive(false) }
 
