@@ -7,7 +7,7 @@
 		<link rel="stylesheet" type="text/css" href="../../engine/css.css?v=1" />
 
 		<!-- Game Engine -->
-		<script src='../../engine/scr_core.js'></script>
+		<script src='../../engine/scr_core.js' id="cs-core"></script>
 		<!-- My Objects -->
 		<script src='objects/obj_bird.js'></script>
 		<script src='objects/obj_pipe.js'></script>
@@ -22,59 +22,69 @@
 	</head>
 	<body>
 		<!--Game Area-->
-		<canvas id="view"></canvas>
+		<canvas id="cs-view"></canvas>
 		<script>
-			//Initialize the view
-			cs.init('view');
+			//Initialize
+			cs.init({
+				canvas: 'cs-view',
+				scripts: [
+					{ path: 'objects/obj_bird' },
+					{ path: 'objects/obj_pipe' },
+					{ path: 'objects/obj_score' },
+					{ path: 'objects/obj_interface' },
+					{ path: 'objects/obj_background' },
+					{ path: 'scripts/scr_collide' },
+					{ path: 'scripts/scr_sprite' },
+					{ path: 'scripts/scr_interface' }
+				],
+				sprites: [
+					{ path: 'sprites/bird', xoff:8, yoff:7},
+					{ path: 'sprites/bird2', xoff:8, yoff:7},
+					{ path: 'sprites/pipe_down' },
+					{ path: 'sprites/pipe_up' },
+					{ path: 'sprites/cloud1' },
+					{ path: 'sprites/cloud2' },
+					{ path: 'sprites/cloud3' },
+					{ path: 'sprites/mountain1' },
+					{ path: 'sprites/mountain2' },
+					{ path: 'sprites/sound_on' },
+					{ path: 'sprites/sound_off' }
+				],
+				sounds: [
+					{ path: 'sounds/flap' },
+					{ path: 'sounds/background' },
+					{ path: 'sounds/score' }
+				],
+				start: function(){
+					//Room Setup
+					cs.room.setup({
+						width: 800,
+						height: 256,
+						background: '#87cefa'
+					})
 
-			//Load Sprites
-			cs.sprite.load({ path:'sprites/bird', xoff:8, yoff:7})
-			cs.sprite.load({ path:'sprites/bird2', xoff:8, yoff:7})
-			cs.sprite.load({ path:'sprites/pipe_down' })
-			cs.sprite.load({ path:'sprites/pipe_up' })
-			cs.sprite.load({ path:'sprites/pipe_up' })
-			cs.sprite.load({ path:'sprites/cloud1' })
-			cs.sprite.load({ path:'sprites/cloud2' })
-			cs.sprite.load({ path:'sprites/cloud3' })
-			cs.sprite.load({ path:'sprites/mountain1' })
-			cs.sprite.load({ path:'sprites/mountain2' })
-			cs.sprite.load({ path:'sprites/sound_on' })
-			cs.sprite.load({ path:'sprites/sound_off' })
+					cs.camera.setup({
+						maxWidth:800,
+						maxHeight:256,
+						lock: true
+					})
 
-			//Load Sounds
-			cs.sound.load({path:'sounds/flap'});
-			cs.sound.load({path:'sounds/background'});
-			cs.sound.load({path:'sounds/score'});
+					//Start game
+		         cs.save = { topScore: 0, state: 'START' }
+					//Globals
+	            cs.global = {
+	               live: true,
+	               score: 0,
+	               flap: false,
+	               start: false,
+	               speed: 1
+	            }
 
-
-			//Room Setup
-			cs.room.setup({
-				width: 800,
-				height: 256,
-				background: '#87cefa'
+					cs.obj.create({ type:'obj_bird', x:(cs.room.width/2), y:cs.room.height/2 })
+					cs.obj.create({ type:'obj_interface' })
+					cs.obj.create({ type:'obj_background'})
+				}
 			})
-			cs.camera.setup({
-				maxWidth:800,
-				maxHeight:256,
-				lock: true
-			})
-
-			//Start game
-         cs.save = { topScore: 0, state: 'START' }
-			cs.start = function(){
-				//Globals
-            cs.global = {
-               live: true,
-               score: 0,
-               flap: false,
-               start: false,
-               speed: 1
-            }
-
-				cs.obj.create({ type:'obj_bird', x:(cs.room.width/2), y:cs.room.height/2 })
-				cs.obj.create({ type:'obj_interface' })
-				cs.obj.create({ type:'obj_background'})
-			}
 		</script>
 	</body>
 </html>
