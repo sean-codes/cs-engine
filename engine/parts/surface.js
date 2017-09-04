@@ -97,7 +97,7 @@ cs.surface = {
       if(sx < 0){ sx = 0; sWidth += sx*-1 }
       if(sy < 0){ sy = 0; sHeight += sy*-1 }
       if(sWidth > surface.canvas.width) sWidth = surface.canvas.width
-      if(sHeight > surface.canvas.height) sWidth = surface.canvas.height
+      if(sHeight > surface.canvas.height) sHeight = surface.canvas.height
 
       cs.view.ctx.drawImage(surface.canvas,
          sx, sy, sWidth, sHeight,
