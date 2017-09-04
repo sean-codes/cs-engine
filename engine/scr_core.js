@@ -29,21 +29,31 @@ var cs = new function(){
    this.init = function(info){
       // Setup core info
       this.viewcanvas = info.canvas
-      this.sprites = info.sprites
-      this.scripts = this.scripts.concat(info.scripts)
-
-      // When done loading we run this
       this.startEvent = info.start
 
-      // Load Everything
-      this.loading = this.scripts.length + this.sprites.length
-      this.loadScripts(this.scripts)
-      this.loadSprites(this.sprites)
-   }
+      // Resources
+      this.scripts.concat(info.scripts)
+      this.sprites = info.sprites
+      this.sounds = info.sounds
 
-   this.loadScripts = function(scripts){
-      for(var script of scripts){
+
+      // PreLoad Scripts/Sprites
+      this.preload()
+   }
+   this.preload = function(){
+      this.loading = this.scripts.length + this.sprites.length + this.sounds.length
+      // Load Scripts
+      for(var script of this.scripts){
          this.loadScript(script)
+      }
+      // Load Sprites
+      for(var sprite of this.sprites){
+         this.loadSprite(sprite)
+      }
+
+      // Load sounds
+      for(var sound of this.sounds){
+         this.loadSound(sound)
       }
    }
 
@@ -55,22 +65,39 @@ var cs = new function(){
       document.head.appendChild(script.html)
    }
 
-   this.loadSprites = function(sprites){
-      for(var sprite of sprites){
-         this.loadSprite(sprite)
-      }
-   }
-
    this.loadSprite = function(sprite){
       var that = this
       sprite.html = document.createElement('img')
       sprite.html.src = sprite.path + '.png'
       sprite.html.onload = function() { that.onload() }
-      document.head.appendChild(sprite.html)
+   }
+
+   this.loadSound = function(sound){
+      var that = this
+
+      sound.loaded = false
+      sound.src = sound.path + '.wav'
+      sound.buffer = null
+      sound.request = new XMLHttpRequest()
+
+      sound.request.open('GET', sound.src, true);
+      sound.request.responseType = 'arraybuffer';
+
+      sound.request.onload = function(){
+         window.AudioContext = window.AudioContext || window.webkitAudioContext
+         if(window.AudioContext){
+            new AudioContext().decodeAudioData(this.response, function(buffer){
+               sound.buffer = buffer
+            })
+         }
+         that.onload()
+      }
+      sound.request.send();
    }
 
    this.onload = function(){
       this.loading -= 1
+      console.log(this.loading)
       if(!this.loading && this.startEvent){
          cs.start()
       }
