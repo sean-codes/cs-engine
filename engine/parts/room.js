@@ -9,14 +9,15 @@ cs.room = {
       this.restarting = true
    },
    reset: function(){
-      cs.obj.list = [];
-      cs.global = {};
-      cs.start();
-      cs.sound.reset();
+      cs.obj.list = []
+      cs.global = {}
+      cs.start()
+      cs.sound.reset()
       this.restarting = false
    },
    setup: function(info){
-      this.width = info.width; this.height = info.height;
+      this.width = info.width
+      this.height = info.height
       cs.draw.background = info.background || '#000'
       this.rect = { x: 0, y: 0, width: this.width, height: this.height }
       cs.surface.resize()
