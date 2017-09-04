@@ -4,59 +4,45 @@
 cs.sprite = {
    list: {},
    order: [],
-   render: function(sprites){
+   init: function(sprites){
       for(var sprite of cs.sprites){
-         this.loadSprite(sprite)
+         this.initSprite(sprite)
       }
    },
-   renderSprite: function(options){
-      cs.load.add()
-      var sprName = options.path.split('/').pop()
+   initSprite: function(options){
 
-      //Set up
-      cs.sprite.list[sprName] = new Image()
-      cs.sprite.list[sprName].src = options.path + '.png'
-      cs.sprite.list[sprName].frames = []
-
-      //Frame Width/Height/Tile
-      cs.sprite.list[sprName].texture = options.texture
-      cs.sprite.list[sprName].frames = options.frames || 1
-      cs.sprite.list[sprName].fwidth = options.fwidth || 0
-      cs.sprite.list[sprName].fheight = options.fheight || 0
-      cs.sprite.list[sprName].xoff = options.xoff || 0
-      cs.sprite.list[sprName].yoff = options.yoff || 0
-
-      var that = this
-      cs.sprite.list[sprName].onload = function(){
-         // Set up
-         if(this.fwidth == 0)
-            this.fwidth = this.width
-         if(this.fheight == 0)
-            this.fheight = this.height
-
-         // Create Frames
-         this.frames = []
-         var dx = 0, dy = 0
-         while(dx < this.width && dy < this.height){
-            var frame = {}
-            frame.canvas = document.createElement('canvas')
-            frame.canvas.width = this.fwidth
-            frame.canvas.height = this.fheight
-            frame.canvas.ctx = frame.canvas.getContext('2d')
-
-            frame.canvas.ctx.drawImage(this, dx, dy, this.fwidth, this.fheight,
-               0, 0, this.fwidth, this.fheight)
-            this.frames.push(frame.canvas)
-            dx += this.fwidth
-            if(dx === this.width)
-               dx = 0, dy+= this.fwidth
-         }
-
-         for(var surface of cs.surface.order)
-            surface.clear = false
-
-         cs.load.check()
+      // Create Sprite
+      var newSprite = {
+         html: options.html,
+         name: options.path.split('/').pop(),
+         texture: options.texture,
+         frames: options.frames || 1,
+         fwidth: options.fwidth || options.html.width,
+         fheight: options.fheight || options.html.height,
+         xoff: options.xoff || 0,
+         yoff: options.yoff || 0,
+         frames : []
       }
+
+      // Handle Frames
+      var dx = 0, dy = 0
+      while(dx < newSprite.html.width && dy < newSprite.html.height){
+         var frame = {}
+         frame.canvas = document.createElement('canvas')
+         frame.canvas.width = newSprite.fwidth
+         frame.canvas.height = newSprite.fheight
+         frame.canvas.ctx = frame.canvas.getContext('2d')
+
+         frame.canvas.ctx.drawImage(newSprite.html, dx, dy, newSprite.fwidth, newSprite.fheight,
+            0, 0, newSprite.fwidth, newSprite.fheight)
+         newSprite.frames.push(frame.canvas)
+         console.log('adding frame')
+         dx += newSprite.fwidth
+         if(dx === newSprite.width)
+            dx = 0, dy+= newSprite.fwidth
+      }
+
+      cs.sprite.list[newSprite.name] = newSprite
    },
    texture: function(spriteName, width, height){
       var sprite = cs.sprite.list[spriteName]
