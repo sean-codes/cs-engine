@@ -36,10 +36,12 @@ cs.sprite = {
          frame.canvas.ctx.drawImage(newSprite.html, dx, dy, newSprite.fwidth, newSprite.fheight,
             0, 0, newSprite.fwidth, newSprite.fheight)
          newSprite.frames.push(frame.canvas)
-         console.log('adding frame')
+
          dx += newSprite.fwidth
-         if(dx === newSprite.width)
-            dx = 0, dy+= newSprite.fwidth
+         if(dx === newSprite.html.width){
+            dx = 0
+            dy += newSprite.fwidth
+         }
       }
 
       cs.sprite.list[newSprite.name] = newSprite
