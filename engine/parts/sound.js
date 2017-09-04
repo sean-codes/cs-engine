@@ -4,7 +4,7 @@
 cs.sound = {
    list: {},
    playList: [],
-   context: null,
+   context: undefined,
    canPlayAudio: false,
    mute: false,
    active: true,
@@ -16,55 +16,25 @@ cs.sound = {
       source.buffer = this.context.createBuffer(1, 1, 22050);
       source.connect(this.context.destination);
       source.start(0);
-      this.canPlayAudio = true;
    },
    init: function(){
       this.list = {};
-      try {
-         window.AudioContext =
-         window.AudioContext || window.webkitAudioContext;
-         this.context = new AudioContext();
-      } catch (e) {
-         this.context = undefined;
-         this.canPlayAudio = false;
-         alert('Web Audio API is not supported in this browser');
+      window.AudioContext = window.AudioContext || window.webkitAudioContext
+      if(window.AudioContext){
+         this.context = new AudioContext()
+         this.canPlayAudio = true
+      }
+      this.loadSounds()
+   },
+   loadSounds: function(){
+      for(var sound of cs.sounds){
+         var name = sound.path.split('/').pop()
+         this.list[name] = sound
       }
    },
-   load: function(options){
-      var pathSplit = options.path.split('/');
-      var name = pathSplit.pop();
-      var path = pathSplit.toString('/');
-      var types = (options.extension ? options.extension : 'wav').split(',');
-
-      this.list[name] = {};
-      for(var i in types){
-         var type = types[i].trim();
-         this.list[name][type] = {
-            loaded: false,
-            path : path
-            + '/' + name
-            + '.' + type,
-            buffer: null,
-            request: new XMLHttpRequest()
-         }
-
-         this.list[name][type].request.csData = { name: name, type: type }
-         this.list[name][type].request.open('GET', this.list[name][type].path, true);
-         this.list[name][type].request.responseType = 'arraybuffer';
-
-         this.list[name][type].request.onload = function(){
-            var name = this.csData.name;
-            var type = this.csData.type;
-            cs.sound.context.decodeAudioData(this.response, function(buffer){
-               cs.sound.list[name][type].buffer = buffer;
-               cs.sound.list[name][type].loaded = true;
-            });
-         }
-         cs.sound.list[name][type].request.send();
-      }
-   },
-   play: functionplay = function(audioName, options){
-      if(this.list[audioName]['wav'].loaded === true){
+   play: function(audioName, options){
+      var sound = this.list[audioName]
+      if(this.canPlayAudio && sound){
          this.playList.forEach(function(audioObj){
             if(audioObj.name == audioName){
                //console.log('Reuse this sound');
@@ -72,7 +42,7 @@ cs.sound = {
          })
          var csAudioObj = this.context.createBufferSource();
          csAudioObj.name = audioName;
-         csAudioObj.buffer = this.list[audioName]['wav'].buffer;
+         csAudioObj.buffer = sound.buffer;
          for(var opt in options){ csAudioObj[opt] = options[opt] }
          csAudioObj.gainNode = this.context.createGain();
          csAudioObj.connect(csAudioObj.gainNode);
