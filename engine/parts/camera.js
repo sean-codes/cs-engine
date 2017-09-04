@@ -26,7 +26,6 @@ cs.camera = {
       this.x = (this.followX+this.followWidth/2)-this.width/2
       this.y = (this.followY+this.followHeight/2)-this.height/2
 
-      console.log(this.y)
       if(this.x < 0) this.x = 0
       if(this.y < 0) this.y = 0
 
