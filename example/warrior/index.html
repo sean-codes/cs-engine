@@ -4,57 +4,57 @@
 		<title>cs-engine</title>
 		<!-- View Setup -->
 		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-		<link rel="stylesheet" type="text/css" href="../../engine/css.css?v=1" />
 
 		<!-- Game Engine -->
-		<script src='../../engine/scr_core.js?v=12'></script>
-		<!-- Objects -->
-		<script src='objects/obj_player.js'></script>
-		<script src='objects/enviroment/obj_blob.js'></script>
-		<script src='objects/enviroment/obj_block.js'></script>
-		<script src='objects/obj_interface.js'></script>
-		<script src='objects/obj_text.js'></script>
-
-		<!-- Scripts -->
-		<script src='scripts/scr_collide.js'></script>
+		<link rel="stylesheet" type="text/css" href="../../engine/css.css?v=1" />
+		<script src='../../engine/scr_core.js' id="cs-core"></script>
 	</head>
 	<body>
 		<!--Game Area-->
-		<canvas id="view"></canvas>
+		<canvas id="cs-view"></canvas>
 
 		<script>
 			//Initialize the view
-			cs.init('view');
+			cs.load({
+				canvas: 'cs-view',
+				scripts: [
+					{ path: 'objects/obj_player' },
+					{ path: 'objects/enviroment/obj_blob' },
+					{ path: 'objects/enviroment/obj_block' },
+					{ path: 'objects/obj_interface' },
+					{ path: 'objects/obj_text' },
+					{ path: 'scripts/scr_collide' }
+				],
+				sprites: [
+					{ path: 'sprites/spr_block' },
+					{ path: 'sprites/spr_head' },
+					{ path: 'sprites/spr_body' },
+					{ path: 'sprites/spr_hand' },
+					{ path: 'sprites/spr_foot' },
+					{ path: 'sprites/spr_sword', xoff: 4, yoff: 18 },
+					{ path: 'sprites/spr_shield' },
+					{ path: 'sprites/spr_blob' },
+					{ path: 'sprites/bg_wall', fwidth: 192, fheight: 1000, texture: true }
+				],
+				start: function(){
+					cs.room.setup({
+						width: 192,
+						height: 192,
+						background: "#222"
+					})
+					cs.camera.setup({
+						maxWidth:300,
+						maxHeight:200
+					})
 
-			//Load Sprites
-			cs.sprite.load({ path: 'sprites/spr_block' })
-			cs.sprite.load({ path: 'sprites/spr_head' })
-			cs.sprite.load({ path: 'sprites/spr_body' })
-			cs.sprite.load({ path: 'sprites/spr_hand' })
-			cs.sprite.load({ path: 'sprites/spr_foot' })
-			cs.sprite.load({ path: 'sprites/spr_sword', xoff: 4, yoff: 18 })
-			cs.sprite.load({ path: 'sprites/spr_shield' })
-			cs.sprite.load({ path: 'sprites/spr_blob' })
-			cs.sprite.load({ path: 'sprites/bg_wall', fwidth: 192, fheight: 1000, texture: true })
-
-			cs.start = function(){
-				cs.room.setup({
-					width: 192,
-					height: 192,
-					background: "#222"
-				})
-				cs.camera.setup({
-					maxWidth:300,
-					maxHeight:200
-				})
-
-				//Create Objects
-				cs.obj.create({ type:'obj_player', x:50, y:50 })
-				cs.obj.create({ type:'obj_blob', x:50, y:1 })
-				cs.obj.create({ type:'obj_interface', x:50, y:1 })
-				for(var i = 0; i < 12; i++)
-					cs.obj.create({ type:'obj_block', x:i*16, y:cs.room.height-16 })
-			}
+					//Create Objects
+					cs.obj.create({ type:'obj_player', x:50, y:50 })
+					cs.obj.create({ type:'obj_blob', x:50, y:1 })
+					cs.obj.create({ type:'obj_interface', x:50, y:1 })
+					for(var i = 0; i < 12; i++)
+						cs.obj.create({ type:'obj_block', x:i*16, y:cs.room.height-16 })
+				}
+			})
 		</script>
 	</body>
 </html>
