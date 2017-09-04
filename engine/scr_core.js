@@ -4,6 +4,10 @@
 var cs = new function(){
    // Core Path and Parts
    this.path = document.getElementById('cs-core').src+'/..'
+
+   // Resources
+   this.sounds = []
+   this.sprites = []
    this.scripts = [
       { path: this.path + '/parts/camera' },
       { path: this.path + '/parts/draw' },
@@ -17,41 +21,43 @@ var cs = new function(){
       { path: this.path + '/parts/object' },
       { path: this.path + '/parts/particle' },
       { path: this.path + '/parts/room' },
+      { path: this.path + '/parts/setup' },
       { path: this.path + '/parts/sound' },
       { path: this.path + '/parts/sprite' },
-      { path: this.path + '/parts/start' },
       { path: this.path + '/parts/storage' },
       { path: this.path + '/parts/surface' },
       { path: this.path + '/parts/touch' }
    ]
 
+   // Globals / For user
+   this.global = {}
+   this.script = {}
+   this.objects = {}
+
    // Initialize: Load Scripts and Sprites. Setup canvas
-   this.init = function(info){
+   this.load = function(info){
       // Setup core info
       this.viewcanvas = info.canvas
-      this.startEvent = info.start
+      this.start = info.start
 
       // Resources
-      this.scripts.concat(info.scripts)
-      this.sprites = info.sprites
-      this.sounds = info.sounds
-
-
-      // PreLoad Scripts/Sprites
+      this.scripts = this.scripts.concat(info.scripts || [])
+      this.sprites = this.sprites.concat(info.sprites || [])
+      this.sounds = this.sounds.concat(info.sounds || [])
       this.preload()
    }
+
    this.preload = function(){
       this.loading = this.scripts.length + this.sprites.length + this.sounds.length
-      // Load Scripts
+      // Load Scripts/Sprites/Sounds
       for(var script of this.scripts){
          this.loadScript(script)
       }
-      // Load Sprites
+
       for(var sprite of this.sprites){
          this.loadSprite(sprite)
       }
 
-      // Load sounds
       for(var sound of this.sounds){
          this.loadSound(sound)
       }
@@ -97,18 +103,8 @@ var cs = new function(){
 
    this.onload = function(){
       this.loading -= 1
-      console.log(this.loading)
-      if(!this.loading && this.startEvent){
-         cs.start()
+      if(!this.loading && this.start){
+         cs.setup()
       }
    }
 }
-
-//---------------------------------------------------------------------------------------------//
-//-----------------------------| Global Variables and Scripts |--------------------------------//
-//---------------------------------------------------------------------------------------------//
-cs.global = {}
-cs.script = {}
-cs.save = {}
-cs.objects = {}
-cs.sprites = {}
