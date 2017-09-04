@@ -8,6 +8,7 @@ var cs = new function(){
    // Resources
    this.sounds = []
    this.sprites = []
+   this.storages = []
    this.scripts = [
       { path: this.path + '/parts/camera' },
       { path: this.path + '/parts/draw' },
@@ -44,11 +45,16 @@ var cs = new function(){
       this.scripts = this.scripts.concat(info.scripts || [])
       this.sprites = this.sprites.concat(info.sprites || [])
       this.sounds = this.sounds.concat(info.sounds || [])
+      this.storages = this.storages.concat(info.storages || [])
       this.preload()
    }
 
    this.preload = function(){
-      this.loading = this.scripts.length + this.sprites.length + this.sounds.length
+      this.loading = this.scripts.length
+         + this.sprites.length
+         + this.sounds.length
+         + this.storages.length
+
       // Load Scripts/Sprites/Sounds
       for(var script of this.scripts){
          this.loadScript(script)
@@ -60,6 +66,10 @@ var cs = new function(){
 
       for(var sound of this.sounds){
          this.loadSound(sound)
+      }
+
+      for(var storage of this.storages){
+         this.loadStorage(storage)
       }
    }
 
@@ -76,6 +86,21 @@ var cs = new function(){
       sprite.html = document.createElement('img')
       sprite.html.src = sprite.path + '.png'
       sprite.html.onload = function() { that.onload() }
+   }
+
+   this.loadStorage = function(storage){
+      var that = this
+      storage.data = {}
+      storage.request = new XMLHttpRequest()
+      storage.request.onreadystatechange = function() {
+         if(this.readyState == 4){
+            var data = JSON.parse(this.responseText)
+            storage.data = data
+            that.onload()
+         }
+      }
+      storage.request.open("POST", `./${storage.path}.json`, true)
+      storage.request.send()
    }
 
    this.loadSound = function(sound){
@@ -100,6 +125,7 @@ var cs = new function(){
       }
       sound.request.send();
    }
+
 
    this.onload = function(){
       this.loading -= 1
