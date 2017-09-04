@@ -145,7 +145,7 @@ cs.draw = {
    reset : function(){
       cs.draw.setAlpha(1);
       cs.draw.setWidth(1);
-      cs.draw.setFont(this.fontSize + "px Trebuchet MS");
+      cs.draw.setFont(this.fontSize + "px Arial");
       cs.draw.setTextAlign('start');
       cs.draw.setTextBaseline('top');
       cs.draw.setColor("#000");
