@@ -30,8 +30,9 @@ cs.setup = function(){
    window.onfocus = function(){ cs.sound.toggleActive(true) }
    window.onblur = function(){ cs.sound.toggleActive(false) }
 
-   // Sprites
+   // Sprites/Storage/Sound
    cs.sprite.init()
+   cs.storage.init()
    cs.sound.init()
 
    // Start your engines!
