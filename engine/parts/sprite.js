@@ -74,10 +74,10 @@ cs.sprite = {
          options.scaleY = options.scale
       }
       // Scaling with width/height
-      if(options.width)
-         options.scaleX = options.width/sprite.fwidth
-      if(options.height)
-         options.scaleY = options.height/sprite.fheight
+      if(options.width || options.size)
+         options.scaleX = (options.width || options.size)/sprite.fwidth
+      if(options.height || options.size)
+         options.scaleY = (options.height || options.size)/sprite.fheight
 
       // Locking aspect ratio
       if(options.aspectLock)
