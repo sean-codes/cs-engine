@@ -14,8 +14,8 @@ cs.surface = {
          canvas: canvas,
          ctx: canvas.getContext('2d'),
          zIndex: info.zIndex || 0,
-         width: info.width,
-         height: info.height,
+         width: canvas.width,
+         height: canvas.height,
          raw: info.raw,
          draw: true,
          skip: info.skip,
@@ -141,6 +141,8 @@ cs.surface = {
          var img = surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
          surface.canvas.width = surface.raw ? w : cs.room.width
          surface.canvas.height = surface.raw ? h : cs.room.height
+         surface.width = surface.canvas.width
+         surface.height = surface.canvas.height
          surface.ctx.putImageData(img, 0, 0)
          this.ctxImageSmoothing(surface.ctx)
       }
