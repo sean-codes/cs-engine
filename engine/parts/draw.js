@@ -46,7 +46,8 @@ cs.draw = {
    text: function(options){
       //this.ctx.fillText(options.text, options.x, options.y);
       if(options.test){
-         var img = cs.text[options.text].ctx.canvas
+         var img = cs.text.list[options.text].ctx.canvas
+         
          this.ctx.drawImage(img, options.x, options.y)
       }
       cs.draw.reset()

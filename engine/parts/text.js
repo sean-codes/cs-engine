@@ -12,21 +12,27 @@ cs.text = {
          ctx: document.createElement('canvas').getContext('2d')
       }
 
-      this.list[options.name] = text
+      this.list[options.name] = this.setup(text)
    },
    setup: function(text){
+      // Setup and Draw Lines
+      this.setupLines(text)
+      this.drawLines(text)
+
+      return text
+   },
+   setupLines: function(text){
       // Guessing the size
-      text.ctx.canvas.width = text.width
-      text.ctx.canvas.height = text.ctx.measureText(text.text).width / text.width * text.lineHeight
-
+      var lines = []
       var curLine = []
-      var y = 0
-      var x = 0
-      var tempText = text.text.split('')// Making this an array so I can use splice
-      for(var pos in tempText){
-         curLine.push(tempText[pos])
+      var y = 0, x = 0
+      var textArr = text.text.split('')
 
-         if(text.ctx.measureText(curLine.join('')).width >= options.width){
+      // Setup the lines
+      for(var pos in textArr){
+         curLine.push(textArr[pos])
+
+         if(text.ctx.measureText(curLine.join('')).width >= text.width){
             // Try to find a space
             for(var o = curLine.length; o > 0; o--)
                if(curLine[o] == ' ') break
@@ -38,14 +44,29 @@ cs.text = {
             }
 
             // Draw and reset
-            text.ctx.fillText(curLine.slice(0, o).join('').trim(), x, y)
+            lines.push(curLine.slice(0, o).join('').trim())
             curLine = curLine.slice(o, curLine.length)
             y += text.lineHeight
          }
-         if(pos == tempText.length-1){
-            text.ctx.fillText(curLine.join(''), x, y)
+         if(pos == textArr.length-1){
+            lines.push(curLine.join('').trim())
          }
       }
-      text.height = y + text.lineHeight
+
+      text.width = text.width,
+      text.height = lines.length * text.lineHeight,
+      text.lines = lines
+   },
+   drawLines(text){
+      text.ctx.canvas.width = text.width,
+      text.ctx.canvas.height = text.height
+      text.ctx.textBaseline = 'top'
+
+      for(var line in text.lines){
+         text.ctx.fillText(text.lines[line], 0, line * text.lineHeight)
+      }
+   },
+   info: function(name){
+      return this.list[name]
    }
 }
