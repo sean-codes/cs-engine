@@ -5,10 +5,7 @@ cs.camera = {
    scale : 1,
    x : 0,
    y : 0,
-   followX: 0,
-   followY: 0,
-   followWidth: 0,
-   followHeight: 0,
+   followPos: { x: 0, y: 0, width: 0, height: 0 },
    width : 500, maxWidth : 500,
    height : 200, maxHeight : 400,
    setup: function(options){
@@ -19,14 +16,11 @@ cs.camera = {
       cs.surface.resize();
    },
    follow : function(obj){
-      this.followX = obj.x
-      this.followY = obj.y
-      this.followWidth = obj.width
-      this.followHeight = obj.height
+      this.followPos = { x: obj.x, y: obj.y, width: obj.width, height: obj.height }
    },
    update: function(){
-      this.x = (this.followX+this.followWidth/2)-this.width/2
-      this.y = (this.followY+this.followHeight/2)-this.height/2
+      this.x = (this.followPos.x+this.followPos.width/2)-this.width/2
+      this.y = (this.followPos.y+this.followPos.height/2)-this.height/2
 
       if(this.x < 0) this.x = 0
       if(this.y < 0) this.y = 0
