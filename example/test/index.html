@@ -4,24 +4,28 @@
 		<title>Cube-Script</title>
 		<!-- View Setup -->
 		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-		<link rel="stylesheet" type="text/css" href="../../engine/css.css?v=1" />
 
 		<!-- Game Engine -->
-		<script src='../../engine/scr_core.js'></script>
-		<script src='objects/obj_block.js'></script>
-
+		<link rel="stylesheet" type="text/css" href="../../engine/css.css?v=1" />
+		<script src='../../engine/scr_core.js' id="cs-core"></script>
 	</head>
 	<body>
 		<!--Game Area-->
-		<canvas id="view"></canvas>
+		<canvas id="cs-view"></canvas>
 		<script>
-			cs.init('view')
+			cs.load({
+				canvas: 'cs-view',
+				scripts: [
+					{ path: 'objects/obj_block' }
+				],
+				sprites: [
+					{ path: 'sprites/spr_block' }
+				],
+				start: function(){
+					cs.obj.create({ type:'obj_block', x:10, y:10 })
+				}
+			})
 
-			//Load Sprites
-			cs.sprite.load({ path: 'sprites/spr_block' })
-			cs.start = function(){
-				cs.obj.create({ type:'obj_block', x:10, y:10 })
-			}
 		</script>
 	</body>
 </html>
