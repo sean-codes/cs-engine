@@ -5,6 +5,7 @@ cs.surface = {
    list: [],
    order: [],
    imageSmoothing: false,
+   maxRes: 2000,
    create: function(info){
       var num = this.list.length
       var canvas = document.createElement("canvas")
@@ -126,6 +127,16 @@ cs.surface = {
       var h = viewSize.height
       var ratioHeight = w/h //How many h = w
       var ratioWidth = h/w //how man w = a h
+
+      if(w > this.maxRes){
+         w = this.maxRes
+         h = ratioWidth * w
+      }
+
+      if(h > this.maxRes){
+         h = this.maxRes
+         w = ratioHeight * h
+      }
 
       var nw = cs.camera.maxWidth - (cs.camera.maxWidth%ratioWidth);
       var nh = nw * ratioWidth;
