@@ -2,7 +2,7 @@
 //------------------------------------| Text Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.text = {
-   list: [],
+   list: {},
    create: function(options){
       var text = {
          text: options.text,
@@ -12,7 +12,7 @@ cs.text = {
          ctx: document.createElement('canvas').getContext('2d')
       }
 
-      list[options.name] = text
+      this.list[options.name] = text
    },
    setup: function(text){
       // Guessing the size
