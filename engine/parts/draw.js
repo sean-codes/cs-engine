@@ -44,7 +44,11 @@ cs.draw = {
       cs.draw.reset()
    },
    text: function(options){
-      this.ctx.fillText(options.text, options.x, options.y);
+      //this.ctx.fillText(options.text, options.x, options.y);
+      if(options.test){
+         var img = cs.text[options.text].ctx.canvas
+         this.ctx.drawImage(img, options.x, options.y)
+      }
       cs.draw.reset()
    },
    textSize: function(str){
