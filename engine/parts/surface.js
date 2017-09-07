@@ -5,7 +5,7 @@ cs.surface = {
    list: [],
    order: [],
    imageSmoothing: false,
-   maxRes: 2000,
+   maxRes: 10000,
    create: function(info){
       var num = this.list.length
       var canvas = document.createElement("canvas")
