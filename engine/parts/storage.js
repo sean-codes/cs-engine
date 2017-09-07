@@ -21,7 +21,7 @@ cs.storage = {
       return group
    },
    read: function(name){
-      return this.data[name]
+      return JSON.parse(JSON.stringify(this.data[name]))
    },
    write: function(info){
       this.data[info.location] = info.data
