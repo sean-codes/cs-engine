@@ -167,5 +167,11 @@ cs.surface = {
       ctx.mozImageSmoothingEnabled = this.imageSmoothing
       ctx.msImageSmoothingEnabled = this.imageSmoothing
       ctx.imageSmoothingEnabled = this.imageSmoothing
+   },
+   info: function(surfaceName){
+      return {
+         width: this.list[surfaceName].width,
+         height: this.list[surfaceName].height
+      }
    }
 }
