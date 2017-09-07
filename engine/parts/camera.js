@@ -7,6 +7,8 @@ cs.camera = {
    y : 0,
    followX: 0,
    followY: 0,
+   followWidth: 0,
+   followHeight: 0,
    width : 500, maxWidth : 500,
    height : 200, maxHeight : 400,
    setup: function(options){
