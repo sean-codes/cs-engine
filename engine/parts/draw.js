@@ -43,12 +43,52 @@ cs.draw = {
 
       cs.draw.reset()
    },
+   textInfo: function(options){
+      // Guessing the size
+      var lines = []
+      var curLine = []
+      var y = 0, x = 0
+      var textArr = options.text.split('')
+
+      // Setup the lines
+      for(var pos in textArr){
+         curLine.push(textArr[pos])
+
+         if(this.ctx.measureText(curLine.join('')).width >= options.width){
+            // Try to find a space
+            for(var o = curLine.length; o > 0; o--)
+               if(curLine[o] == ' ') break
+
+            // If no space add a dash
+            if(!o){
+               o = curLine.length-2
+               curLine.splice(o-1, 0, '-')
+            }
+
+            // Draw and reset
+            lines.push(curLine.slice(0, o).join('').trim())
+            curLine = curLine.slice(o, curLine.length)
+            y += options.lineHeight
+         }
+         if(pos == textArr.length-1){
+            lines.push(curLine.join('').trim())
+         }
+      }
+
+      return {
+         lines: lines,
+         lineHeight: options.lineHeight,
+         width: options.width,
+         height: lines.length * options.lineHeight,
+      }
+   },
    text: function(options){
-      //this.ctx.fillText(options.text, options.x, options.y);
-      if(options.test){
-         var img = cs.text.list[options.text].ctx.canvas
-         
-         this.ctx.drawImage(img, options.x, options.y)
+      if(options.lines){
+         for(var line in options.lines){
+            this.ctx.fillText(options.lines[line], options.x, options.y + (line*options.lineHeight))
+         }
+      } else {
+         this.ctx.fillText(options.text, options.x, options.y)
       }
       cs.draw.reset()
    },
