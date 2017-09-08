@@ -1,6 +1,7 @@
 cs.loop = {
    run : true,
    endSteps: [],
+   nextSteps: [],
    step : function(){
       if(cs.loop.run)
          setTimeout(function(){ cs.loop.step() }, 1000/60)
@@ -10,6 +11,7 @@ cs.loop = {
       cs.draw.debugReset()
       cs.camera.update()
       cs.surface.clearAll()
+
 
       var i = cs.obj.list.length; while(i--){
          if(cs.obj.list[i].live){
@@ -33,11 +35,15 @@ cs.loop = {
       if(cs.room.restarting === true)
          cs.room.reset()
 
-      //Execute end steps
-      while(this.endSteps.length)
-         this.endSteps.pop()()
+      //Execute next steps
+      var i = this.endSteps.length; while(i--){
+         (!this.endSteps[i].next)
+            ? this.endSteps.pop().func()
+            : this.endSteps[i].next = false
+      }
    },
-   endStep: function(func){
-      this.endSteps.push(func)
+   endStep: function(options){
+      if(!options.next){ options.next = false }
+      this.endSteps.push({ next: options.next, func: options.func })
    }
 }
