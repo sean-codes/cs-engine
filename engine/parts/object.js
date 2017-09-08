@@ -71,6 +71,9 @@ cs.obj = {
    find: function(type){
       return this.objGroups[type][0]
    },
+   id: function(id){
+      return this.list.find(function(e){ return e.id == id})
+   },
    count: function(type){
       return this.objGroups[type] ? this.objGroups[type].length : 0
    }
