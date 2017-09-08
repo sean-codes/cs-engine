@@ -8,7 +8,8 @@ cs.draw = {
    raw : false,
    height : 0,
    width : 0,
-   fontSize : 12,
+   fontSize : 10,
+   lineHeight: 10,
    background: '#465',
    debug: {},
    w : 0,
@@ -85,7 +86,7 @@ cs.draw = {
    text: function(options){
       if(options.lines){
          for(var line in options.lines){
-            this.ctx.fillText(options.lines[line], options.x, options.y + (line*options.lineHeight))
+            this.ctx.fillText(options.lines[line], options.x, options.y + (line*(options.lineHeight || this.ctx.lineHeight)))
          }
       } else {
          this.ctx.fillText(options.text, options.x, options.y)
@@ -167,6 +168,9 @@ cs.draw = {
    setFont : function(font){
       this.ctx.font = font;
    },
+   setLineHeight: function(height){
+      this.ctx.lineHeight = height
+   },
    setTextAlign : function(alignment){
       this.ctx.textAlign = alignment;
    },
@@ -194,6 +198,7 @@ cs.draw = {
       cs.draw.setTextAlign('start');
       cs.draw.setTextBaseline('top');
       cs.draw.setColor("#000");
+      cs.draw.setLineHeight(this.lineHeight)
       cs.draw.setOperation('source-over');
    }
 }
