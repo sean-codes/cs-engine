@@ -27,7 +27,6 @@ var cs = new function(){
       { path: this.path + '/parts/sprite' },
       { path: this.path + '/parts/storage' },
       { path: this.path + '/parts/surface' },
-      { path: this.path + '/parts/text' },
       { path: this.path + '/parts/touch' }
    ]
 
