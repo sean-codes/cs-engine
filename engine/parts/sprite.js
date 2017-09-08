@@ -57,10 +57,10 @@ cs.sprite = {
       while(x < width){
          var y = 0
          while(y < height){
-            sprite.frames[0].ctx.drawImage(sprite, x, y)
-            y += sprite.height
+            sprite.frames[0].ctx.drawImage(sprite.html, x, y)
+            y += sprite.html.height
          }
-         x+= sprite.width
+         x+= sprite.html.width
       }
    },
    info: function(options){
