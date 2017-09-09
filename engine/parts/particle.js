@@ -49,14 +49,14 @@ cs.particle = {
                 wobbleY    : cs.math.iRandomRange(-this.settings.wobbleY, this.settings.wobbleY),
                 wobbleSetY : this.settings.wobbleY,
             }
-            var len = this.obj.particle.list.length;
-            this.obj.particle.list[len] = new_part;
+            var len = this.obj.core.particle.list.length;
+            this.obj.core.particle.list[len] = new_part;
         }
     },
     step : function(){
         var tempParticles = [];
-        for(var i = 0; i < this.obj.particle.list.length; i++){
-            var particle = this.obj.particle.list[i];
+        for(var i = 0; i < this.obj.core.particle.list.length; i++){
+            var particle = this.obj.core.particle.list[i];
             particle.life -= 1;
             particle.size = particle.size + particle.grow/100;
             particle.alpha = particle.alpha - particle.fade/10;
@@ -110,7 +110,7 @@ cs.particle = {
             }
         }
         //Reset Particles with only live parts
-        this.obj.particle.list = tempParticles;
+        this.obj.core.particle.list = tempParticles;
     },
     rgbFromHex : function(hex){
         return {
