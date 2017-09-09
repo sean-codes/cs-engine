@@ -14,13 +14,12 @@ cs.loop = {
 
 
       var i = cs.obj.list.length; while(i--){
-         if(cs.obj.list[i].live){
+         if(cs.obj.list[i].core.live){
             var obj = cs.obj.list[i];
-            cs.draw.setSurface(obj.surface);
-
-            cs.particle.settings = obj.particle.settings;
+            cs.draw.setSurface(obj.core.surface);
+            cs.particle.settings = obj.core.particle.settings;
             cs.particle.obj = obj;
-            var step = cs.objects[obj.type].step;
+            var step = cs.objects[obj.core.type].step;
             step.call(obj);
          }
       }
