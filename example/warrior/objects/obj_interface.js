@@ -12,7 +12,7 @@ cs.objects['obj_buttons'] = {
 	create: function(){
 		this.width = 30;
 	   this.height = 30;
-	   this.surface = 'gui';
+	   this.core.surface = 'gui';
 		this.cx = 0;
 		this.cy = 0;
 	},
@@ -24,8 +24,8 @@ cs.objects['obj_buttons'] = {
          height: this.height
       }
 
-		this.touch.check(btnRect);
-		if(this.touch.down){
+		this.core.touch.check(btnRect);
+		if(this.core.touch.down){
 			//console.log('open');
 			cs.key.virtualPress(32);
 		}
@@ -35,7 +35,7 @@ cs.objects['obj_buttons'] = {
 			console.log('Button 1 Says: ' + text);
 		}
 
-		if(this.touch.held) cs.draw.setAlpha(0.5)
+		if(this.core.touch.held) cs.draw.setAlpha(0.5)
 		cs.draw.fillRect(btnRect);
 		cs.draw.setColor("white");
 		//cs.draw.strokeRect(btnRect);
@@ -46,7 +46,7 @@ cs.objects['obj_joystick'] = {
    create: function(){
       this.width = 64;
       this.height = 64;
-      this.surface = 'gui';
+      this.core.surface = 'gui';
       this.tx = 0;
       this.ty = 0;
       this.jw = this.width/2;
@@ -54,13 +54,13 @@ cs.objects['obj_joystick'] = {
     },
     step: function(){
       this.x = 10; this.y = cs.draw.canvas.height - this.height - 10;
-      this.touch.check({ x:this.x, y:this.y, width:this.width, height:this.height });
+      this.core.touch.check({ x:this.x, y:this.y, width:this.width, height:this.height });
 
       this.tx = this.x + (this.width/2) - (this.jw/2);
       this.ty = this.y + (this.width/2) - (this.jh/2);
 
-      if(this.touch.held){
-          this.tx = this.touch.x-(this.jw/2);
+      if(this.core.touch.held){
+          this.tx = this.core.touch.x-(this.jw/2);
           if(this.tx < this.x){
              this.tx = this.x;
              //left key
@@ -71,7 +71,7 @@ cs.objects['obj_joystick'] = {
              //right key
              cs.key.virtualDown(39);
           } else {cs.key.virtualUp(39)}
-          this.ty = this.touch.y-(this.jh/2);
+          this.ty = this.core.touch.y-(this.jh/2);
           if(this.ty < this.y){
              this.ty = this.y;
              //up key
@@ -81,7 +81,7 @@ cs.objects['obj_joystick'] = {
              this.ty = this.y+this.height-this.jh;
           }
       } else {
-       if(this.touch.up){
+       if(this.core.touch.up){
           if(cs.key.held[37]){
              cs.key.virtualUp(37);
           }

@@ -48,11 +48,11 @@
 					})
 
 					//Create Objects
-					cs.obj.create({ type:'obj_player', x:50, y:50 })
-					cs.obj.create({ type:'obj_blob', x:50, y:1 })
-					cs.obj.create({ type:'obj_interface', x:50, y:1 })
+					cs.obj.create({ type:'obj_player', attr: { x:50, y:50 }})
+					cs.obj.create({ type:'obj_blob', attr: { x:50, y:1 }})
+					cs.obj.create({ type:'obj_interface', attr: { x:50, y:1 }})
 					for(var i = 0; i < 12; i++)
-						cs.obj.create({ type:'obj_block', x:i*16, y:cs.room.height-16 })
+						cs.obj.create({ type:'obj_block', attr: {x:i*16, y:cs.room.height-16 }})
 				}
 			})
 		</script>

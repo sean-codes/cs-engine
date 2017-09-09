@@ -2,7 +2,7 @@ cs.script.collide = {
    obj: function(obj1, objtype){
       var i = cs.obj.list.length; while(i--){
          var obj2 = cs.obj.list[i]
-         if (obj2.live !== true || obj2.id == obj1.id || obj2.type !== objtype)
+         if (obj2.core.live !== true || obj2.core.id == obj1.id || obj2.core.type !== objtype)
             continue
 
          if(!this.rectInRect(
@@ -18,7 +18,7 @@ cs.script.collide = {
       var i = cs.obj.list.length; while(i--){
          var obj = cs.obj.list[i];
          //Damn this is kind of creepy looking :]
-         if(obj.live === true && (obj.type == objtype || objtype == '')){
+         if(obj.core.live === true && (obj.core.type == objtype || objtype == '')){
             if(options.x + options.width > obj.x && options.x < obj.x + obj.width
                && options.y + options.height > obj.y && options.y < obj.y + obj.height)
                   return obj;
