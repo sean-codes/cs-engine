@@ -7,10 +7,10 @@ cs.objects['obj_crate'] = {
 		this.gravity = 8;
 	},
 	step: function(){
-	    this.touch.check({ x:this.x, y:this.y, width:this.width, height:this.height });
-	    if(this.touch.held){
-	        this.x = this.touch.x-this.touch.off_x;
-	        this.y = this.touch.y-this.touch.off_y;
+	    this.core.touch.check({ x:this.x, y:this.y, width:this.width, height:this.height });
+	    if(this.core.touch.held){
+	        this.x = this.core.touch.x-this.core.touch.off_x;
+	        this.y = this.core.touch.y-this.core.touch.off_y;
 		} else {
 			//Vertical Movement
 			if(this.vspeed < this.gravity){

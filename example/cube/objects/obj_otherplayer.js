@@ -1,6 +1,5 @@
 cs.objects['obj_otherplayer'] = {
 	create: function(){
-	    this.core = true;
 		this.width = 16;
 		this.height = 16;
 		this.gravity = 7;

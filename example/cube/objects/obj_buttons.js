@@ -14,8 +14,8 @@ cs.objects['obj_buttons'] = {
 			height:this.height
 		}
 
-		this.touch.check(btnRect);
-		if(this.touch.down){
+		this.core.touch.check(btnRect);
+		if(this.core.touch.down){
 			//console.log('open');
 			cs.key.virtualPress(38);
 		}
@@ -25,7 +25,7 @@ cs.objects['obj_buttons'] = {
 			console.log('Button 1 Says: ' + text);
 		}
 
-		if(this.touch.held){
+		if(this.core.touch.held){
 			cs.draw.setAlpha(0.5);
 		}
 		cs.draw.fillRect(btnRect)

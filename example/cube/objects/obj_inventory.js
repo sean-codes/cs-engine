@@ -2,7 +2,7 @@ cs.objects['obj_inventory'] = {
 	create: function(){1
 	   this.width = 32;
 	   this.height = 32;
-	   this.surface = 'gui';
+	   this.core.surface = 'gui';
 		this.slots = [];
 		for(var i = 0; i < 12; i++){
 			this.slots[i] = '';
@@ -56,13 +56,13 @@ cs.objects['obj_inventory'] = {
 				y: openRect.y+(openSize/2),
 				text: 'i'
 			})
-         this.touch.check(openRect)
-			if(this.touch.down){
+         this.core.touch.check(openRect)
+			if(this.core.touch.down){
 				this.show = true;
 				cs.global.showJoyStick = false;
 			}
 		} else {
-         this.touch.check({ x:0, y:0, width:cs.draw.canvas.width, height:cs.draw.canvas.height })
+         this.core.touch.check({ x:0, y:0, width:cs.draw.canvas.width, height:cs.draw.canvas.height })
 
     		var slotCount = this.slots.length;
     		var colCount = 3;
@@ -93,8 +93,8 @@ cs.objects['obj_inventory'] = {
     		var img = ''; var himg = ''; var hx = 0; var hy = 0
 
 
-    		if(this.touch.down){
-    			console.log('why? x: ' + this.touch.x + ' y: ' + this.touch.y );
+    		if(this.core.touch.down){
+    			console.log('why? x: ' + this.core.touch.x + ' y: ' + this.core.touch.y );
     		}
     		for(var i = 1; i <= slotCount; i++){
     			var slot = i-1;
@@ -105,27 +105,27 @@ cs.objects['obj_inventory'] = {
     			cs.draw.sprite({ spr:img, x:slotRect.x, y:slotRect.y });
     			//blah blah blah
     			if(this.slotDown == -1){
-    				if(this.touch.down && this.touch.within(slotRect)){
+    				if(this.core.touch.down && this.core.touch.within(slotRect)){
     					console.log('Slot Down: ' + slot);
     					if(this.slots[slot] !== ''){
-    						this.touch.off_x = this.touch.off_x-slotRect.x;
-    						this.touch.off_y = this.touch.off_y-slotRect.y
+    						this.core.touch.off_x = this.core.touch.off_x-slotRect.x;
+    						this.core.touch.off_y = this.core.touch.off_y-slotRect.y
     						this.slotDown = slot;
     					}
     				}
     			} else {
     				//Check slot over
-    				if(this.touch.x < inventRect.x || this.touch.x > inventRect.x+inventRect.width ||
-    				  	this.touch.y < inventRect.y || this.touch.y > inventRect.y+this.inventHeight){
+    				if(this.core.touch.x < inventRect.x || this.core.touch.x > inventRect.x+inventRect.width ||
+    				  	this.core.touch.y < inventRect.y || this.core.touch.y > inventRect.y+this.inventHeight){
     					this.slotOver = -1;
     				} else {
-    					if(this.touch.x > slotRect.x && this.touch.x < slotRect.x + this.width &&
-    						this.touch.y > slotRect.y && this.touch.y < slotRect.y + this.height){
+    					if(this.core.touch.x > slotRect.x && this.core.touch.x < slotRect.x + this.width &&
+    						this.core.touch.y > slotRect.y && this.core.touch.y < slotRect.y + this.height){
     						this.slotOver = slot;
     					}
     				}
 
-    				if(this.touch.up){
+    				if(this.core.touch.up){
     					if(this.slotOver !== -1){
     						var save = this.slots[this.slotDown];
     						this.slots[this.slotDown] = this.slots[this.slotOver];
@@ -135,9 +135,9 @@ cs.objects['obj_inventory'] = {
     					console.log("Slot Up: " + this.slotOver);
     				}
 
-    				if(this.slotDown == slot && this.touch.held){
-    					hx = this.touch.x-this.touch.off_x;
-    					hy = this.touch.y-this.touch.off_y;
+    				if(this.slotDown == slot && this.core.touch.held){
+    					hx = this.core.touch.x-this.core.touch.off_x;
+    					hy = this.core.touch.y-this.core.touch.off_y;
     					himg = img;
     				}
     			}
@@ -162,7 +162,7 @@ cs.objects['obj_inventory'] = {
 				size: space*2
 			}
 
-    		if(this.touch.down && this.touch.within(closeRect)){
+    		if(this.core.touch.down && this.core.touch.within(closeRect)){
     			this.show = false;
     			cs.global.showJoyStick = true;
     		}

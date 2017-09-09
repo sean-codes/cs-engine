@@ -2,7 +2,7 @@ cs.objects['obj_joystick'] = {
    create: function(){
       this.width = 64;
       this.height = 64;
-      this.surface = 'gui';
+      this.core.surface = 'gui';
     	this.tx = 0;
     	this.ty = 0;
     	this.jw = this.width/2;
@@ -15,11 +15,11 @@ cs.objects['obj_joystick'] = {
 
         this.x = 10; this.y = cs.draw.canvas.height - this.height - 10;
 
-        this.touch.check({ x:this.x, y:this.y, width:this.width, height:this.height });
+        this.core.touch.check({ x:this.x, y:this.y, width:this.width, height:this.height });
 
         this.tx = this.x + (this.width/2) - (this.jw/2);
         this.ty = this.y + (this.width/2) - (this.jh/2);
-        if(this.touch.held){
+        if(this.core.touch.held){
             this.tx = this.touch.x-(this.jw/2);
             if(this.tx < this.x){
                 this.tx = this.x;
@@ -41,7 +41,7 @@ cs.objects['obj_joystick'] = {
                 this.ty = this.y+this.height-this.jh;
             }
         } else {
-    		if(this.touch.up){
+    		if(this.core.touch.up){
     			if(cs.key.held[37]){
     				cs.key.virtualUp(37);
     			}

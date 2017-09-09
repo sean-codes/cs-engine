@@ -5,7 +5,7 @@ cs.objects['obj_light'] = {
 
         //Create New Layer
         cs.surface.create({ name: 'light', raw: false, zIndex: 10 })
-        this.surface = 'light'
+        this.core.surface = 'light'
 
         //Create Global Variable
         cs.global.lightList = [];

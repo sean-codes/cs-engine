@@ -5,7 +5,7 @@ cs.objects['obj_fire'] = {
 		this.vspeed = 0;
 		this.gravity = 8;
 		cs.script.lightAdd(this, '#0ed604', 200, 8, 8);
-		this.particle.settings = JSON.parse(`{
+		this.core.particle.settings = JSON.parse(`{
 			"shape": "circle",
 			"colorStart": "#ffffff",
 			"colorEnd": "#0fff0f",

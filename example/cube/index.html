@@ -48,19 +48,19 @@
 					cs.network.connect({ host:'cube-script.net', port:9999, ssl: false })
 
 					cs.obj.create({ type: 'obj_light' })
-					cs.obj.create({ type: 'obj_buttons', x:100, y:100 })
-					cs.obj.create({ type: 'obj_crate', x:100, y:0 })
-					cs.obj.create({ type: 'obj_player', x:40, y:40 })
+					cs.obj.create({ type: 'obj_buttons', attr:{ x:100, y:100 }})
+					cs.obj.create({ type: 'obj_crate', attr:{ x:100, y:0 }})
+					cs.obj.create({ type: 'obj_player', attr:{ x:40, y:40 }})
 
 					var tx = 0;
 					while(tx < cs.room.width){
-						cs.obj.create({ type:'obj_block', x:tx, y:cs.room.height-16 })
+						cs.obj.create({ type:'obj_block', attr: { x:tx, y:cs.room.height-16 }})
 						tx += 16
 					}
 
-					cs.obj.create({ type: 'obj_joystick', x:100, y:100 })
-					cs.obj.create({ type: 'obj_inventory', x:100, y:100 })
-					cs.obj.create({ type: 'obj_fire', x:150, y:375 })
+					cs.obj.create({ type: 'obj_joystick', attr: { x:100, y:100 }})
+					cs.obj.create({ type: 'obj_inventory', attr: { x:100, y:100 }})
+					cs.obj.create({ type: 'obj_fire', attr: { x:150, y:375 }})
 				}
 			})
 		</script>
