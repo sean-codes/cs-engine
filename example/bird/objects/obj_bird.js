@@ -7,7 +7,7 @@ cs.objects['obj_bird'] = {
 		this.vspeed = 0;
 		this.diving = 0;
 		this.soaring = 0;
-		this.particle.settings = JSON.parse(`{
+		this.core.particle.settings = JSON.parse(`{
 				"shape": "square",
 				"colorStart": "#ffffff",
 				"colorEnd": "#ffffff",
