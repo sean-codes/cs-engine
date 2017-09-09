@@ -7,26 +7,29 @@ cs.obj = {
    objGroups: {},
    unique: 0,
    create : function(options){
+      var attr = options.attr
       var object = cs.objects[options.type]
       var zIndex = cs.objects[options.type].zIndex || 0
       var pos = this.findPosition(zIndex)
 
       //Create the object
       var newObj = {
-         zIndex: zIndex,
-         live: true,
-         type: options.type,
-         id: this.unique,
-         core: object.core || false,
-         surface: 'game',
-         particle: { list : [], settings : {} },
-         touch: cs.touch.create(),
-         x: options.x || 0,
-         y: options.y || 0,
-         width: object.width,
-         height: object.height,
-         sprite: object.sprite,
+         core: {
+            zIndex: zIndex,
+            live: true,
+            type: options.type,
+            id: this.unique,
+            core: object.core || false,
+            surface: 'game',
+            particle: { list : [], settings : {} },
+            touch: cs.touch.create()
+         }
       }
+
+      for(var name in attr){
+         newObj[name] = attr[name]
+      }
+
       //Run Create event
       object.create.call(newObj);
 
