@@ -26,9 +26,9 @@ cs.obj = {
          }
       }
 
-      for(var name in attr){
-         newObj[name] = attr[name]
-      }
+      //Predefined and Custom Attr
+      for(var name in object.attr){ newObj[name] = object.attr[name] }
+      for(var name in attr){ newObj[name] = attr[name] }
 
       //Run Create event
       object.create.call(newObj);
@@ -43,20 +43,20 @@ cs.obj = {
       return newObj
    },
    destroy : function(destroyObj){
-      var type = destroyObj.type
+      var type = destroyObj.core.type
       if(typeof destroyObj === 'object'){
          destroyObj.live = false
       } else {
          for(var obj of cs.obj.list){
-            if(obj.id === destroyObj){
-               obj.live = false
-               var type = obj.type
+            if(obj.core.id === destroyObj){
+               obj.core.live = false
+               var type = obj.core.ype
                destroyObj = obj
             }
          }
       }
       if(cs.objects[type].destroy) cs.objects[type].destroy.call(destroyObj)
-      this.objGroups[type] = this.objGroups[type].filter(function(obj){ return obj.live })
+      this.objGroups[type] = this.objGroups[type].filter(function(obj){ return obj.core.live })
    },
    findPosition : function(zIndex){
       for(var i = 0; i < this.list.length; i++){
