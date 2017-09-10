@@ -76,7 +76,7 @@ var cs = new function(){
    this.loadScript = function(script){
       var that = this
       script.html = document.createElement('script')
-      script.html.src = script.path + '.js'
+      script.html.src = script.path + '.js?' + Date.now()
       script.html.onload = function() { that.onload() }
       document.head.appendChild(script.html)
    }
@@ -84,7 +84,7 @@ var cs = new function(){
    this.loadSprite = function(sprite){
       var that = this
       sprite.html = document.createElement('img')
-      sprite.html.src = sprite.path + '.png'
+      sprite.html.src = sprite.path + '.png?' + Date.now()
       sprite.html.onload = function() { that.onload() }
    }
 
