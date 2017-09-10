@@ -45,12 +45,12 @@ cs.obj = {
    destroy : function(destroyObj){
       var type = destroyObj.core.type
       if(typeof destroyObj === 'object'){
-         destroyObj.live = false
+         destroyObj.core.live = false
       } else {
          for(var obj of cs.obj.list){
             if(obj.core.id === destroyObj){
                obj.core.live = false
-               var type = obj.core.ype
+               var type = obj.core.type
                destroyObj = obj
             }
          }
@@ -60,7 +60,7 @@ cs.obj = {
    },
    findPosition : function(zIndex){
       for(var i = 0; i < this.list.length; i++){
-         if(zIndex >= this.list[i].zIndex)
+         if(zIndex >= this.list[i].core.zIndex)
             return i
       }
       return i
@@ -69,13 +69,13 @@ cs.obj = {
       return typeof cs.objects[type] === 'undefined' ? true : false
    },
    all: function(type){
-      return this.objGroups[type]
+      return this.objGroups[type] || []
    },
    find: function(type){
       return this.objGroups[type][0]
    },
    id: function(id){
-      return this.list.find(function(e){ return e.id == id})
+      return this.list.find(function(e){ return e.core.id == id})
    },
    count: function(type){
       return this.objGroups[type] ? this.objGroups[type].length : 0
