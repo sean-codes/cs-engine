@@ -15,7 +15,7 @@ cs.sprite = {
       var newSprite = {
          html: options.html,
          name: options.path.split('/').pop(),
-         texture: options.texture,
+         texture: document.createElement('canvas'),
          frames: options.frames || 1,
          fwidth: options.fwidth || options.html.width,
          fheight: options.fheight || options.html.height,
@@ -48,16 +48,18 @@ cs.sprite = {
    },
    texture: function(spriteName, width, height){
       var sprite = cs.sprite.list[spriteName]
-      sprite.frames[0].width = width
-      sprite.frames[0].height = height
-      sprite.fwidth = width
-      sprite.fheight = height
-      sprite.frames[0].ctx.clearRect(0, 0, width, height)
+      sprite.texture = document.createElement('canvas')
+      sprite.texture.ctx = sprite.texture.getContext('2d')
+      sprite.texture.width = width
+      sprite.texture.height = height
+      sprite.texture.fwidth = width
+      sprite.texture.fheight = height
+
       var x = 0
       while(x < width){
          var y = 0
          while(y < height){
-            sprite.frames[0].ctx.drawImage(sprite.html, x, y)
+            sprite.texture.ctx.drawImage(sprite.html, x, y);
             y += sprite.html.height
          }
          x+= sprite.html.width
@@ -86,11 +88,11 @@ cs.sprite = {
             : options.scaleX = options.scaleY
 
       return {
-         width: sprite.fwidth * options.scaleX,
-         height: sprite.fheight * options.scaleY,
+         width: (options.texture ? sprite.texture.fwidth : sprite.fwidth) * options.scaleX,
+         height: (options.texture ? sprite.texture.fheight : sprite.fheight) * options.scaleY,
          scaleX: options.scaleX,
          scaleY: options.scaleY,
-         frames: sprite.frames,
+         frames: options.texture ? [sprite.texture] : sprite.frames,
          frame: options.frame
       }
    }
