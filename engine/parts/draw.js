@@ -25,7 +25,7 @@ cs.draw = {
       sprite = cs.sprite.list[options.spr]
       var info = cs.sprite.info(options)
 
-      if(!this.raw && !this.skip){
+      if(!this.raw && !this.skip && !options.noskip){
          //If outside camera skip
          if(options.x+sprite.fwidth < cs.camera.x || options.x  > cs.camera.x+cs.camera.width
          || options.y+sprite.fheight < cs.camera.y || options.y  > cs.camera.y+cs.camera.height ){
@@ -39,7 +39,7 @@ cs.draw = {
       this.ctx.translate(Math.floor(options.x), Math.floor(options.y))
       this.ctx.rotate(options.angle * Math.PI/180)
       this.ctx.scale(info.scaleX+0.001, info.scaleY+0.001)
-      this.ctx.drawImage(sprite.frames[info.frame], -sprite.xoff, -sprite.yoff)
+      this.ctx.drawImage(info.frames[info.frame], -sprite.xoff, -sprite.yoff)
       this.ctx.restore()
 
       cs.draw.reset()
