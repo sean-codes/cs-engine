@@ -93,8 +93,8 @@ cs.draw = {
       }
       cs.draw.reset()
    },
-   textSize: function(str){
-      return this.ctx.measureText(str)
+   textWidth: function(str){
+      return this.ctx.measureText(str).width
    },
    line: function(options){
       var cx = 0 - ((this.ctx.lineWidth % 2 == 0) ? 0 : 0.50)
