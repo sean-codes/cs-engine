@@ -3,14 +3,12 @@
 //---------------------------------------------------------------------------------------------//
 cs.sprite = {
    list: {},
-   order: [],
    init: function(sprites){
       for(var sprite of cs.sprites){
          this.initSprite(sprite)
       }
    },
    initSprite: function(options){
-
       // Create Sprite
       var newSprite = {
          html: options.html,
