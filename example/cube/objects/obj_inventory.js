@@ -108,8 +108,8 @@ cs.objects['obj_inventory'] = {
     				if(this.core.touch.down && this.core.touch.within(slotRect)){
     					console.log('Slot Down: ' + slot);
     					if(this.slots[slot] !== ''){
-    						this.core.touch.off_x = this.core.touch.off_x-slotRect.x;
-    						this.core.touch.off_y = this.core.touch.off_y-slotRect.y
+    						this.core.touch.offsetX = this.core.touch.offsetX-slotRect.x;
+    						this.core.touch.offsetY = this.core.touch.offsetY-slotRect.y
     						this.slotDown = slot;
     					}
     				}
@@ -136,8 +136,8 @@ cs.objects['obj_inventory'] = {
     				}
 
     				if(this.slotDown == slot && this.core.touch.held){
-    					hx = this.core.touch.x-this.core.touch.off_x;
-    					hy = this.core.touch.y-this.core.touch.off_y;
+    					hx = this.core.touch.x-this.core.touch.offsetX;
+    					hy = this.core.touch.y-this.core.touch.offsetY;
     					himg = img;
     				}
     			}

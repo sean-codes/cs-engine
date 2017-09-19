@@ -57,7 +57,7 @@ cs.touch = {
          held : false,
          up : false,
          x : 0, y : 0,
-         off_x : 0, off_y : 0,
+         offsetX : 0, offsetY : 0,
          id : -1,
          within : function(arg){
             if(typeof arg.width == 'undefined') arg.width = arg.size || 0
@@ -104,8 +104,8 @@ cs.touch = {
                         this.down = true
                         this.id = i
 
-                        this.off_x = this.x-arg.x
-                        this.off_y = this.y-arg.y
+                        this.offsetX = this.x-arg.x
+                        this.offsetY = this.y-arg.y
                      }
                   }
                }
