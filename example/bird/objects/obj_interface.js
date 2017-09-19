@@ -48,24 +48,26 @@ cs.objects['obj_interface'] = {
             case 'PLAYING':
 					var text = 'Score: ' + cs.global.score;
 					cs.draw.setFont("20px Arial")
-					var tw = cs.draw.textSize(text).width;
+					var tw = cs.draw.textWidth(text);
 					cs.draw.setAlpha(0.5);
-					var rect = { x: cs.draw.canvas.width-100, y: 0, width:100, height:60 }
+					var rect = { x: cs.draw.canvas.width-tw-20, y: 0, width:tw+20, height:60 }
 					cs.draw.fillRect(rect);
 					cs.draw.setColor('#FFFFFF');
 					cs.draw.strokeRect(rect);
 					cs.draw.setColor('#FFFFFF');
 					cs.draw.setFont("20px Arial")
+					cs.draw.setTextAlign('end')
 					cs.draw.text({
-						x: cs.draw.canvas.width - tw-10,
-						y: this.y+5,
-						text: 'Score: ' + cs.global.score
+						x: cs.draw.canvas.width -10,
+						y: 5,
+						text: text
 					})
 					cs.draw.setColor('#FFFFFF');
 					cs.draw.setFont("20px Arial")
+					cs.draw.setTextAlign('end')
 					cs.draw.text({
-						x: cs.draw.canvas.width - tw-10,
-						y: this.y+30,
+						x: cs.draw.canvas.width -10,
+						y: 30,
 						text: 'Best: ' + cs.save.topScore
 					})
 					if(this.core.touch.down)
