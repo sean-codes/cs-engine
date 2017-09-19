@@ -8,13 +8,14 @@ cs.touch = {
       for(var i = 0; i < cs.touch.list.length; i++)
          if(cs.touch.list[i].used === false) break
 
-      cs.touch.list[i] = {}
-      cs.touch.list[i].used = false
-      cs.touch.list[i].down = true
-      cs.touch.list[i].up = false
-      cs.touch.list[i].x = 0
-      cs.touch.list[i].y = 0
-      cs.touch.list[i].id = id
+      cs.touch.list[i] = {
+         used: false,
+         down: true,
+         up: false,
+         x: 0,
+         y: 0,
+         id: id
+      }
    },
    remove : function(id){
       for(var i = 0; i < cs.touch.list.length; i++){
