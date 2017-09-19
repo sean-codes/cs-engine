@@ -20,7 +20,7 @@ cs.objects['obj_joystick'] = {
         this.tx = this.x + (this.width/2) - (this.jw/2);
         this.ty = this.y + (this.width/2) - (this.jh/2);
         if(this.core.touch.held){
-            this.tx = this.touch.x-(this.jw/2);
+            this.tx = this.core.touch.x-(this.jw/2);
             if(this.tx < this.x){
                 this.tx = this.x;
                 //left key
@@ -31,7 +31,7 @@ cs.objects['obj_joystick'] = {
                 //right key
                 cs.key.virtualDown(39);
             } else {cs.key.virtualUp(39)}
-            this.ty = this.touch.y-(this.jh/2);
+            this.ty = this.core.touch.y-(this.jh/2);
             if(this.ty < this.y){
                 this.ty = this.y;
                 //up key
