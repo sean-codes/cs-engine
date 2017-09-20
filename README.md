@@ -39,27 +39,29 @@ The engine only requires the CSS and Javascript file. Here is a template for a b
             <!--Game Area-->
             <div id="view"></div>
             <script>
-               //Initialize the view
-               cs.init('view');
+               cs.init({
+                  canvas: 'cs-view',
+                  sprites: [
+                     { location: 'sprites/spr_player' }
+                  ],
+                  loaded: function(){
+                     //Camera Settings
+                     cs.camera.setup({
+                        width:144,
+                        height:256,
+                        maxWidth:300,
+                        maxHeight:200,
+                        lock: true
+                        })
+                        //Room Setup
+                        cs.room.setup(800, 256)
 
-               //Load Sprites
-               cs.sprite.load('sprites/spr_player')
-
-               //Camera Settings
-               cs.camera.setup({
-                  width:144,
-                  height:256,
-                  maxWidth:300,
-                  maxHeight:200,
-                  lock: true
-               })
-               //Room Setup
-               cs.room.setup(800, 256);
-
-               cs.room.start = function(){
-                  //Create Objects
-                  cs.obj.create('obj_player', 50, 50);
-               }
+                        cs.room.start = function(){
+                           //Create Objects
+                           cs.obj.create({ type: 'obj_player', attr: { 50, 50 }})
+                        }
+                    }
+                })
             </script>
          </body>
       </html>
@@ -153,14 +155,14 @@ Draw sprites using `cs.draw.sprite`
 ### Draw Settings
 
     cs.draw.settings({
-        alpha: 1,
-        width: 1,
-        font: '12px Arial',
-        textAlign: 'start',
-        textBaseline: 'top',
-        color: '#000',
-        lineHeight: 10,
-        operation: 'source-over'
+        alpha: [Optional Number (1): 0 being invisible 1 being fully visible],
+        width: [Optional Number (1): line width for stroke functions],
+        font: [Optional String ('12px Arial'): Font setting],
+        color: [Optional String ('#000'): Hex value of color,
+        textAlign: [Optional String ('start'): start/middle/end horizontal align,
+        textBaseline: [Optional String ('top'):  top/bottom/middle/baseline vertical align,
+        lineHeight: [Optional Number (10): line height spacing,
+        operation: [Optional String ('source-over'): set canvas manual on draw operations
     })
 
 Note: The draw settings are reset after any drawing event! They are layer specific and the layer resets after each draw event. You should use these right before your drawing event
