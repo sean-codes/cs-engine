@@ -62,7 +62,7 @@ cs.objects['obj_bird'] = {
 			cs.global.flap = false;
 			if(this.diving > 24){
 				cs.global.score += 1;
-				cs.obj.create({ type:'obj_score_text', x:this.x, y:this.y })
+				cs.obj.create({ type:'obj_score_text', attr: { x:this.x, y:this.y }})
 				cs.particle.burst(this.x, this.y, this.width, 0, 10);
 				cs.sound.play('score');
 			}
@@ -79,9 +79,9 @@ cs.objects['obj_bird'] = {
 				var space = 40;
 				var roomCenterVertical = cs.room.height/2;
 				var randomY = roomCenterVertical - cs.math.iRandomRange(-80, 80);
-				var down = cs.obj.create({ type:'obj_pipe', x:cs.room.width, y:randomY-space })
+				var down = cs.obj.create({ type:'obj_pipe', attr: { x:cs.room.width, y:randomY-space }})
 				down.y -= down.height; down.pipe = 'down';
-				var up = cs.obj.create({ type:'obj_pipe', x:cs.room.width, y:randomY+space })
+				var up = cs.obj.create({ type:'obj_pipe', attr: { x:cs.room.width, y:randomY+space }})
 				cs.obj.create({
 					type: 'obj_score',
 					x: cs.room.width+down.width,
