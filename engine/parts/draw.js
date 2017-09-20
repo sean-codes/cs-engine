@@ -15,6 +15,16 @@ cs.draw = {
    w : 0,
    h : 0,
    o : 0,
+   setting: {
+      alpha: 1,
+      width: 1,
+      font: '12px Arial',
+      textAlign: 'start',
+      textBaseline: 'top',
+      color: '#000',
+      lineHeight: 10,
+      operation: 'source-over'
+   },
    debugReset: function(){
       this.debug = {
          skippedSprites: 0,
@@ -41,8 +51,7 @@ cs.draw = {
       this.ctx.scale(info.scaleX+0.001, info.scaleY+0.001)
       this.ctx.drawImage(info.frames[info.frame], -sprite.xoff, -sprite.yoff)
       this.ctx.restore()
-
-      cs.draw.reset()
+      this.settingsReset()
    },
    textInfo: function(options){
       // Guessing the size
@@ -91,7 +100,6 @@ cs.draw = {
       } else {
          this.ctx.fillText(options.text, options.x, options.y)
       }
-      cs.draw.reset()
    },
    textWidth: function(str){
       return this.ctx.measureText(str).width
@@ -103,15 +111,15 @@ cs.draw = {
       this.ctx.beginPath();
       this.ctx.moveTo(options.x1-cx,options.y1-cy);
       this.ctx.lineTo(options.x2-cx,options.y2-cy);
-      this.ctx.stroke();
-      cs.draw.reset();
+      this.ctx.stroke()
+      this.settingsReset()
    },
    fillRect: function(args){
       if(typeof args.width == 'undefined') args.width = args.size || 0
       if(typeof args.height == 'undefined') args.height = args.size || 0
 
-      this.ctx.fillRect(args.x,args.y,args.width,args.height);
-      cs.draw.reset();
+      this.ctx.fillRect(args.x,args.y,args.width,args.height)
+      this.settingsReset()
    },
    strokeRect: function(args){
       var lineWidth = this.ctx.lineWidth
@@ -123,7 +131,7 @@ cs.draw = {
          height: (args.height ? args.height : args.size) - lineWidth
       }
       this.ctx.strokeRect(rect.x, rect.y, rect.width, rect.height)
-      cs.draw.reset();
+      this.settingsReset()
    },
    circle : function(x, y, rad, fill){
       if(typeof fill == 'undefined') fill = true
@@ -133,7 +141,7 @@ cs.draw = {
       (fill)
           ? cs.draw.ctx.fill()
           : cs.draw.ctx.stroke()
-      cs.draw.reset();
+      this.settingsReset()
    },
    circleGradient : function(x, y, radius, c1, c2){
       //Draw a circle
@@ -146,7 +154,7 @@ cs.draw = {
       this.ctx.closePath()
       //Fill
       this.ctx.fill()
-      cs.draw.reset()
+      this.settingsReset()
    },
    fixPosition: function(args){
       x = Math.floor(args.x); y = Math.floor(args.y);
@@ -190,15 +198,36 @@ cs.draw = {
       this.ctx = this.surface.ctx
       this.raw = this.surface.raw
       this.skip = this.surface.skip
+
+      this.settingsReset()
    },
-   reset : function(){
-      cs.draw.setAlpha(1);
-      cs.draw.setWidth(1);
-      cs.draw.setFont(this.fontSize + "px Arial");
-      cs.draw.setTextAlign('start');
-      cs.draw.setTextBaseline('top');
-      cs.draw.setColor("#000");
-      cs.draw.setLineHeight(this.lineHeight)
-      cs.draw.setOperation('source-over');
+   settings: function(settings){
+      for(var setting in settings){
+         cs.draw.setting[setting] = settings[setting]
+      }
+      this.settingsUpdate()
+   },
+   settingsUpdate: function(){
+      cs.draw.setAlpha(this.setting.alpha)
+      cs.draw.setWidth(this.setting.width)
+      cs.draw.setFont(this.setting.font)
+      cs.draw.setTextAlign(this.setting.textAlign)
+      cs.draw.setLineHeight(this.setting.lineHeight)
+      cs.draw.setTextBaseline(this.setting.textBaseline)
+      cs.draw.setColor(this.setting.color)
+      cs.draw.setOperation(this.setting.operation)
+   },
+   settingsReset: function(){
+      this.setting = {
+         alpha: 1,
+         width: 1,
+         font: '12px Arial',
+         textAlign: 'start',
+         textBaseline: 'top',
+         color: '#000',
+         lineHeight: 10,
+         operation: 'source-over'
+      }
+      this.settingsUpdate()
    }
 }
