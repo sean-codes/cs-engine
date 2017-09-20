@@ -150,34 +150,20 @@ Draw sprites using `cs.draw.sprite`
       y2: [Required Number: coordinate 2 y position]
     })
 
-### Set Functions:
+### Draw Settings
 
-    //Color
-    cs.draw.setColor("hexvalue");
+    cs.draw.settings({
+        alpha: 1,
+        width: 1,
+        font: '12px Arial',
+        textAlign: 'start',
+        textBaseline: 'top',
+        color: '#000',
+        lineHeight: 10,
+        operation: 'source-over'
+    })
 
-    //Alpha
-    cs.draw.setAlpha(0-1);
-
-    //Line Thickness
-    cs.draw.setWidth(decimal);
-
-    //Font
-    cs.draw.setFont('Times New Roman 12px');
-
-    //Text Align Horizontal
-    cs.draw.setTextHort('center, left, right');
-
-    //Text Align Vertical
-    cs.draw.setTextVert('top, bottom, baseline, middle');
-
-    //Text Center vertically and hortizontally
-    cs.draw.setTextCenter();
-
-Note: The set function are reset after any drawing event! They are layer specific and the layer resets after each draw event. You should use these right before your drawing event
-
-    //Draw a white filled square
-    cs.draw.setColor("#FFFFFF");
-    cs.draw.rect(0, 0, 40, 40, true);
+Note: The draw settings are reset after any drawing event! They are layer specific and the layer resets after each draw event. You should use these right before your drawing event
 
 # The Game Camera
 The game camera is the area the game and GUI is drawn to. The GUI and Game are drawn to hidden canvases separately then drawn to the view/camera canvas. There are a couple settings that can be tweeked to change the view.
