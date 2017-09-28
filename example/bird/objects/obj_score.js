@@ -1,7 +1,6 @@
 cs.objects['obj_score'] = {
 	create: function(){
-		this.height = 40;
-		this.width = 2;
+		this.mask = { x: 0, y: 0, width: 2, height: 40 }
 		this.hspeed = 1;
 	},
 	step: function(){

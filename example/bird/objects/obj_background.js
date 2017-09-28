@@ -23,30 +23,30 @@ cs.objects['obj_bgPart'] = {
 		this.timer = 600;
 		this.bgType = cs.math.choose(['mountain', 'cloud']);
 
-		cs.script.setSprite(this, cs.math.choose([
+		this.sprite = cs.math.choose([
 			'cloud1',
 			'cloud2',
 			'cloud3'
-		]));
-
+		]);
+		this.mask = cs.sprite.info({ spr: this.sprite }).mask
 		//Cloud
-		this.y = cs.math.iRandomRange(0, cs.room.height-this.height*2);
+		this.y = cs.math.iRandomRange(0, cs.room.height-this.mask.height*2);
 		this.hspeed = cs.global.speed+cs.math.choose([0, 1]);
 		//Mountain
 		if(this.bgType == 'mountain'){
-			cs.script.setSprite(this,cs.math.choose([
+			this.sprite = cs.math.choose([
 				'mountain1',
 				'mountain2'
-			]));
+			]);
 			this.hspeed = cs.global.speed;
-			this.y = cs.room.height-this.height;
+			this.y = cs.room.height-this.mask.height;
 		}
 	},
 	step: function(){
 		if(cs.save.state !== 'WRECKED' || this.bgType == 'cloud')
 			this.x -= this.hspeed;
 
-		if(this.x < -this.width){
+		if(this.x < -this.mask.width){
 			cs.obj.destroy(this);
 		}
 

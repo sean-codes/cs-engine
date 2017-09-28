@@ -1,7 +1,8 @@
 cs.objects['obj_bird'] = {
 	zIndex: 20,
 	create: function(){
-		cs.script.setSprite(this, 'bird');
+		this.sprite = 'bird'
+		this.mask = cs.sprite.info({ spr: this.sprite }).mask
 		this.timer = 60;
 		this.direction = .1;
 		this.vspeed = 0;
@@ -80,11 +81,11 @@ cs.objects['obj_bird'] = {
 				var roomCenterVertical = cs.room.height/2;
 				var randomY = roomCenterVertical - cs.math.iRandomRange(-80, 80);
 				var down = cs.obj.create({ type:'obj_pipe', attr: { x:cs.room.width, y:randomY-space }})
-				down.y -= down.height; down.pipe = 'down';
+				down.y -= down.mask.height; down.pipe = 'down';
 				var up = cs.obj.create({ type:'obj_pipe', attr: { x:cs.room.width, y:randomY+space }})
 				cs.obj.create({
 					type: 'obj_score',
-					x: cs.room.width+down.width,
+					x: cs.room.width+down.mask.width,
 					y: randomY - space/2
 				})
 			}

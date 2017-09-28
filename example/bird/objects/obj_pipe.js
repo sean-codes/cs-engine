@@ -1,8 +1,7 @@
 cs.objects['obj_pipe'] = {
 	zIndex: 15,
 	create: function(){
-		this.width = 24;
-		this.height = 256;
+		this.mask = { x: 0, y: 0, width: 24, height: 256 }
 		this.pipe = 'up';
 		this.hspeed = cs.global.speed;
 	},
@@ -12,7 +11,7 @@ cs.objects['obj_pipe'] = {
 
 		this.x -= this.hspeed;
 
-		if(this.x < -this.width){
+		if(this.x < -this.mask.width){
 			cs.obj.destroy(this);
 		}
 	}
