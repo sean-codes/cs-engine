@@ -16,7 +16,7 @@ cs.camera = {
       cs.surface.resize();
    },
    follow : function(obj){
-      this.followPos = { x: obj.x, y: obj.y, width: obj.width, height: obj.height }
+      this.followPos = { x: obj.x, y: obj.y, width: obj.mask.width, height: obj.mask.height }
    },
    update: function(){
       this.x = (this.followPos.x+this.followPos.width/2)-this.width/2

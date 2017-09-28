@@ -10,15 +10,23 @@ cs.sprite = {
    },
    initSprite: function(options){
       // Create Sprite
+      var width = options.fwidth || options.html.width
+      var height = options.fheight || options.html.height
       var newSprite = {
          html: options.html,
          name: options.path.split('/').pop(),
          texture: document.createElement('canvas'),
          frames: options.frames || 1,
-         fwidth: options.fwidth || options.html.width,
-         fheight: options.fheight || options.html.height,
+         fwidth: width,
+         fheight: height,
          xoff: options.xoff || 0,
          yoff: options.yoff || 0,
+         mask: {
+            x: options.mask ? (options.mask.x || 0) : 0,
+            y: options.mask ? (options.mask.x || 0) : 0,
+            width: options.mask ? (options.mask.width || width) : width,
+            height: options.mask ? (options.mask.height || height) : height
+         },
          frames : []
       }
 
@@ -91,7 +99,8 @@ cs.sprite = {
          scaleX: options.scaleX,
          scaleY: options.scaleY,
          frames: options.texture ? [sprite.texture] : sprite.frames,
-         frame: options.frame
+         frame: options.frame,
+         mask: sprite.mask
       }
    }
 }
