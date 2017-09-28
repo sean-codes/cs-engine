@@ -10,5 +10,13 @@ cs.math = {
     },
     choose: function(array){
         return array[this.iRandomRange(0, array.length-1)]
-    }
+    },
+    chooseRatio: function(ratios){
+      var test = Math.random() * 100
+      for(var ratio in ratios){
+         if(test < ratios[ratio]){
+            return ratio
+         }
+      }
+   }
 }
