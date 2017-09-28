@@ -5,8 +5,7 @@ cs.objects['obj_player'] = {
       this.dir = -1;
       this.speed = 2;
       this.gravity = 5;
-      this.width = 8;
-      this.height = 15;
+      this.mask = { x: 0, y: 0, width: 8, height: 15 }
       this.jump = 10;
 
       this.bounce = 0;
@@ -63,7 +62,7 @@ cs.objects['obj_player'] = {
         if(this.v_col){
             this.y -= this.vspeed;
             this.vspeed = 0;
-         } 
+         }
 
         //console.log(this.v_col)
         //Check if jumping

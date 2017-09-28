@@ -6,8 +6,8 @@ cs.script.collide = {
             continue
 
          if(!this.rectInRect(
-            { x: obj1.x, y: obj1.y, width: obj1.width, height: obj1.height },
-            { x: obj2.x, y: obj2.y, width: obj2.width, height: obj2.height }))
+            { x: obj1.x+obj1.mask.x, y: obj1.y+obj1.mask.y, width: obj1.mask.width, height: obj1.mask.height },
+            { x: obj2.x+obj2.mask.x, y: obj2.y+obj2.mask.y, width: obj2.mask.width, height: obj2.mask.height }))
             continue
 
          return obj2

@@ -1,8 +1,7 @@
 cs.objects['obj_blob'] = {
    create: function(){
       this.sprite = 'spr_blob'
-      this.width = 16
-      this.height = 16
+      this.mask = cs.sprite.info({ spr: this.sprite }).mask
       this.hspeed = 0
       this.vspeed = 0
       this.speed = 2
