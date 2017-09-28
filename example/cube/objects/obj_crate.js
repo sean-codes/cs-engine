@@ -1,16 +1,16 @@
 cs.objects['obj_crate'] = {
 	create: function(){
-	   this.width = 32;
-	   this.height = 48;
+		this.mask = cs.sprite.info({ spr: 'spr_crate' }).mask
 		this.vspeed = 0;
 		this.hspeed = 0;
 		this.gravity = 8;
 	},
 	step: function(){
-	    this.core.touch.check({ x:this.x, y:this.y, width:this.width, height:this.height });
+	    this.core.touch.check({ x:this.x, y:this.y, width:this.mask.width, height:this.mask.height });
 	    if(this.core.touch.held){
-	        this.x = this.core.touch.x-this.core.touch.off_x;
-	        this.y = this.core.touch.y-this.core.touch.off_y;
+			 console.log(this.core.touch.off_x)
+	        this.x = this.core.touch.x-this.core.touch.offsetX;
+	        this.y = this.core.touch.y-this.core.touch.offsetY;
 		} else {
 			//Vertical Movement
 			if(this.vspeed < this.gravity){

@@ -1,7 +1,6 @@
 cs.objects['obj_player'] = {
 	create: function(){
-		this.width = 16;
-		this.height = 16;
+		this.mask = { x: 0, y: 0, width: 16, height: 16 }
 		this.gravity = 7;
 		this.vspeed = 0;
 		this.hspeed = 0;
