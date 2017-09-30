@@ -23,7 +23,7 @@ cs.sprite = {
          yoff: options.yoff || 0,
          mask: {
             x: options.mask ? (options.mask.x || 0) : 0,
-            y: options.mask ? (options.mask.x || 0) : 0,
+            y: options.mask ? (options.mask.y || 0) : 0,
             width: options.mask ? (options.mask.width || width) : width,
             height: options.mask ? (options.mask.height || height) : height
          },
