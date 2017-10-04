@@ -1,11 +1,11 @@
 cs.objects['obj_player'] = {
    create: function(){
+      this.mask = { x: 0, y: 0, width: 8, height: 15 }
       this.hspeed = 0;
       this.vspeed = 0;
       this.dir = -1;
       this.speed = 2;
       this.gravity = 5;
-      this.mask = { x: 0, y: 0, width: 8, height: 15 }
       this.jump = 10;
 
       this.bounce = 0;
@@ -27,11 +27,11 @@ cs.objects['obj_player'] = {
       cs.camera.follow(this);
        //Vertical Collisions
        var keys = {
-          left: cs.key.held[37] || false,
-          right: cs.key.held[39] || false,
-          up: cs.key.held[38] || false,
-          down: cs.key.held[40] || false,
-          space: cs.key.held[32] || false
+          left: cs.key.held(37),
+          right: cs.key.held(39),
+          up: cs.key.held(38),
+          down: cs.key.held(40),
+          space: cs.key.held(32)
        }
 
        //Horizontal Movement
