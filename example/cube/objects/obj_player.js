@@ -21,10 +21,10 @@ cs.objects['obj_player'] = {
 	},
 	step: function(){
 	    var keys = {
-	    	left: cs.key.held[37] || false,
-	    	right: cs.key.held[39] || false,
-	    	up: cs.key.held[38] || false,
-	    	down: cs.key.held[40] || false
+	    	left: cs.key.held(37),
+	    	right: cs.key.held(39),
+	    	up: cs.key.held(38),
+	    	down: cs.key.held(40)
 	    }
 
 		//Horizontal Movement

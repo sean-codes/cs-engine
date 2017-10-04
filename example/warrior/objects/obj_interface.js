@@ -82,13 +82,13 @@ cs.objects['obj_joystick'] = {
           }
       } else {
        if(this.core.touch.up){
-          if(cs.key.held[37]){
+          if(cs.key.held(37)){
              cs.key.virtualUp(37);
           }
-          if(cs.key.held[38]){
+          if(cs.key.held(38)){
              cs.key.virtualUp(38);
           }
-          if(cs.key.held[39]){
+          if(cs.key.held(39)){
              cs.key.virtualUp(39);
           }
        }
