@@ -64,7 +64,7 @@ cs.draw = {
       for(var pos in textArr){
          curLine.push(textArr[pos])
 
-         if(this.ctx.measureText(curLine.join('')).width >= options.width){
+         if(this.ctx.measureText(curLine.join('')).width > options.width){
             // Try to find a space
             for(var o = curLine.length; o > 0; o--)
                if(curLine[o] == ' ') break
@@ -100,6 +100,7 @@ cs.draw = {
       } else {
          this.ctx.fillText(options.text, options.x, options.y)
       }
+      this.settingsReset()
    },
    textWidth: function(str){
       return this.ctx.measureText(str).width
