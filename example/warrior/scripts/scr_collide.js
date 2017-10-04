@@ -19,8 +19,8 @@ cs.script.collide = {
          var obj = cs.obj.list[i];
          //Damn this is kind of creepy looking :]
          if(obj.core.live === true && (obj.core.type == objtype || objtype == '')){
-            if(options.x + options.width > obj.x && options.x < obj.x + obj.width
-               && options.y + options.height > obj.y && options.y < obj.y + obj.height)
+            if(options.x + options.width > obj.x && options.x < obj.x + obj.mask.width
+               && options.y + options.height > obj.y && options.y < obj.y + obj.mask.height)
                   return obj;
          }
       }
