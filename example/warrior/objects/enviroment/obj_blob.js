@@ -22,12 +22,12 @@ cs.objects['obj_blob'] = {
       pcol = cs.script.collide.rect('obj_player',{
          x: this.x-50,
          y: this.y-100,
-         width: this.width+100,
-         height: this.height+100
+         width: this.mask.width+100,
+         height: this.mask.height+100
       })
 
       //This is going to be a little weird but trust me! :]
-      if(pcol && (pcol.x > this.x+this.width || pcol.x + pcol.width < this.x)){
+      if(pcol && (pcol.x > this.x+this.mask.width || pcol.x + pcol.mask.width < this.x)){
          if(pcol.x > this.x){
             if(this.hspeed < 1)
                this.hspeed += 0.1
@@ -42,7 +42,7 @@ cs.objects['obj_blob'] = {
       }
 
       this.h_col = cs.script.collide.obj(this, 'obj_block')
-      if(this.h_col || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.width >= cs.room.width)
+      if(this.h_col || (this.x+this.hspeed) <= 0 || (this.x+this.hspeed) + this.mask.width >= cs.room.width)
          this.hspeed = 0;
 
       this.x += this.hspeed
@@ -65,7 +65,7 @@ cs.objects['obj_blob'] = {
 
       cs.draw.sprite({
         spr:'spr_blob',
-        x:this.x+((this.dir < 0) ? this.width : 0),
+        x:this.x+((this.dir < 0) ? this.mask.width : 0),
         y:this.y, scaleX:this.dir
       })
    }
