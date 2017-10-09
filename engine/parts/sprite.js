@@ -8,6 +8,9 @@ cs.sprite = {
          this.initSprite(sprite)
       }
    },
+   exists: function(name){
+      return this.list[name] ? true : false
+   },
    initSprite: function(options){
       // Create Sprite
       var width = options.fwidth || options.html.width
@@ -77,15 +80,19 @@ cs.sprite = {
       if(typeof options.scaleX == 'undefined') options.scaleX = 1
       if(typeof options.scaleY == 'undefined') options.scaleY = 1
       var sprite = this.list[options.spr]
+      var tallSprite = sprite.fheight > sprite.fwidth
+      var hRatio = tallSprite ? sprite.fwidth/sprite.fheight : 1
+      var vRatio = tallSprite ? 1 : sprite.fheight/sprite.fwidth
+
       if(options.scale){
          options.scaleX = options.scale
          options.scaleY = options.scale
       }
       // Scaling with width/height
       if(options.width || options.size)
-         options.scaleX = (options.width || options.size)/sprite.fwidth
+         options.scaleX = (options.width || options.size)/sprite.fwidth * hRatio
       if(options.height || options.size)
-         options.scaleY = (options.height || options.size)/sprite.fheight
+         options.scaleY = (options.height || options.size)/sprite.fheight * vRatio
 
       // Locking aspect ratio
       if(options.aspectLock)

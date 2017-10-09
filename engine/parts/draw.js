@@ -44,12 +44,16 @@ cs.draw = {
          }
       }
       this.debug.drawnSprites += 1
+      var centerX = options.center ? info.width/2 : 0
+      var centerY = options.center ? info.height/2 : 0
 
       this.ctx.save();
-      this.ctx.translate(Math.floor(options.x), Math.floor(options.y))
+      this.ctx.translate(Math.floor(options.x - centerX), Math.floor(options.y - centerY))
       this.ctx.rotate(options.angle * Math.PI/180)
       this.ctx.scale(info.scaleX+0.001, info.scaleY+0.001)
-      this.ctx.drawImage(info.frames[info.frame], -sprite.xoff, -sprite.yoff)
+      this.ctx.drawImage(info.frames[info.frame],
+         options.ignoreOffset ? 0 : -sprite.xoff,
+         options.ignoreOffset ? 0 : -sprite.yoff)
       this.ctx.restore()
       this.settingsReset()
    },
