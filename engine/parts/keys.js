@@ -33,22 +33,21 @@ cs.key = {
    reset: function() {
       for (var tmp in cs.key.downList) {
          cs.key.downList[tmp] = false
-         if (cs.key.upList[tmp])
+         if (cs.key.upList[tmp]){
             cs.key.heldList[tmp] = false
-
+         }
+         
          cs.key.upList[tmp] = false
       }
    },
    updateDown: function(keyEvent) {
       keyEvent.preventDefault();
       if (!keyEvent.repeat) {
-         var key = keyEvent.keyCode;
-         cs.key.virtualDown(key);
+         cs.key.virtualDown(keyEvent.keyCode);
       }
    },
    updateUp: function(keyEvent) {
-      var key = keyEvent.keyCode;
-      cs.key.virtualUp(key);
+      cs.key.virtualUp(keyEvent.keyCode);
    },
    virtualDown: function(keyCode) {
       cs.key.addEvent(keyCode, 'down');
