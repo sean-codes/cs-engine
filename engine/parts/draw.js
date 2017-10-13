@@ -27,23 +27,25 @@ cs.draw = {
    },
    debugReset: function(){
       this.debug = {
-         skippedSprites: 0,
-         drawnSprites: 0
+         spritesSkipped: this.debug.spritesSkippedCount,
+         spritesDrawn: this.debug.spritesDrawnCount,
+         spritesSkippedCount: 0,
+         spritesDrawnCount: 0
       }
    },
    sprite : function(options){
       sprite = cs.sprite.list[options.spr]
       var info = cs.sprite.info(options)
 
-      if(!this.raw && !this.skip && !options.noskip){
+      if(!this.raw && !this.surface.noskip && !options.noskip){
          //If outside camera skip
          if(options.x+sprite.fwidth < cs.camera.x || options.x  > cs.camera.x+cs.camera.width
          || options.y+sprite.fheight < cs.camera.y || options.y  > cs.camera.y+cs.camera.height ){
-            this.debug.skippedSprites += 1
+            this.debug.spritesSkippedCount += 1
             return
          }
       }
-      this.debug.drawnSprites += 1
+      this.debug.spritesDrawnCount += 1
       var centerX = options.center ? info.width/2 : 0
       var centerY = options.center ? info.height/2 : 0
 
