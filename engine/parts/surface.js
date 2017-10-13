@@ -19,9 +19,9 @@ cs.surface = {
          height: canvas.height,
          raw: info.raw,
          draw: true,
-         skip: info.skip,
+         noskip: info.noskip,
          drawOutside: info.drawOutside || false,
-         autoClear: info.autoClear == undefined ? true : info.autoClear,
+         manualClear: info.manualClear,
          append: info.append,
          clearRequest: false,
          clear: false
@@ -46,7 +46,7 @@ cs.surface = {
    clearAll: function(){
       cs.view.ctx.clearRect(0, 0, cs.view.width, cs.view.height)
       for(var surface of this.order){
-         if(surface.autoClear || surface.clearRequest){
+         if(!surface.manualClear || surface.clearRequest){
             clearRect = {
                x: surface.raw ? 0 : cs.camera.x,
                y: surface.raw ? 0 : cs.camera.y,
@@ -60,7 +60,9 @@ cs.surface = {
             surface.ctx.clearRect(clearRect.x, clearRect.y, clearRect.width, clearRect.height)
             surface.clearRequest = undefined
             surface.clear = true
+            continue
          }
+         surface.clear = false
       }
    },
    clear: function(options){
@@ -103,11 +105,6 @@ cs.surface = {
       cs.view.ctx.drawImage(surface.canvas,
          sx, sy, sWidth, sHeight,
          dx, dy, dWidth, dHeight)
-   },
-   resetAll: function(){
-      for(var surface of cs.surface.order){
-         surface.clear = false
-      }
    },
    checkResize: function(){
       var rect = cs.view.getBoundingClientRect()
