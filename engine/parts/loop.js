@@ -24,7 +24,6 @@ cs.loop = {
          }
       }
 
-      cs.surface.resetAll()
       cs.key.reset()
       cs.touch.reset()
 
