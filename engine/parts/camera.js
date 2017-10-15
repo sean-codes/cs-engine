@@ -32,5 +32,8 @@ cs.camera = {
          this.y = (cs.room.height - this.height) / (cs.room.height < this.height ? 2 : 1)
    },
    zoomOut : function(){},
-   zoomIn : function(){}
+   zoomIn : function(){},
+   outside: function(rect){
+      return true;
+   }
 }

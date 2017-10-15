@@ -38,7 +38,7 @@ var cs = new function(){
    // Initialize: Load Scripts and Sprites. Setup canvas
    this.load = function(info){
       // Setup core info
-      this.viewcanvas = info.canvas
+      this.view = info.view
       this.start = info.start
 
       // Resources

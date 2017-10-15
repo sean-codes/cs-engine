@@ -3,7 +3,7 @@ cs.setup = function(){
    window.onerror = function(errorMsg, url, lineNumber){ cs.loop.run = false }
 
    // Initiate Inputs
-   cs.view = document.getElementById(cs.viewcanvas)
+   cs.view = document.getElementById(cs.view)
    cs.view.ctx = cs.view.getContext('2d')
    cs.view.tabIndex = 1000
    cs.view.addEventListener('keydown', cs.key.updateDown)
