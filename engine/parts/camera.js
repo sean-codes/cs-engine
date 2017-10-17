@@ -34,6 +34,10 @@ cs.camera = {
    zoomOut : function(){},
    zoomIn : function(){},
    outside: function(rect){
-      return true;
+      if(rect.x+rect.width < this.x || rect.x > this.x+this.width ||
+         rect.y+rect.height < this.y || rect.y > this.y+this.height ){
+            return true;
+      }
+      return false
    }
 }
