@@ -12,7 +12,6 @@ cs.loop = {
       cs.camera.update()
       cs.surface.clearAll()
 
-
       var i = cs.obj.list.length; while(i--){
          if(cs.obj.list[i].core.live){
             var obj = cs.obj.list[i];

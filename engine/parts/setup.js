@@ -18,8 +18,8 @@ cs.setup = function(){
    cs.input.create()
 
    // View, Game and GUI surfaces
-   cs.surface.create({ name: 'gui', raw: true, zIndex: 100 })
-   cs.surface.create({ name: 'game', raw: false })
+   cs.surface.create({ name: 'gui', raw: true, depth: 0 })
+   cs.surface.create({ name: 'game', raw: false, depth: 10 })
 
    // Camera/View Size
    cs.surface.resize()

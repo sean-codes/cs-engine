@@ -14,7 +14,7 @@ cs.surface = {
          name: info.name,
          canvas: canvas,
          ctx: canvas.getContext('2d'),
-         zIndex: info.zIndex || 0,
+         depth: info.depth || 0,
          width: canvas.width,
          height: canvas.height,
          raw: info.raw,
@@ -37,10 +37,9 @@ cs.surface = {
    addToOrder: function(surface){
       // Find Place to put it!
       for(var i = 0; i < this.order.length; i++){
-         if(this.order[i].zIndex <= surface.zIndex)
+         if(this.order[i].depth > surface.depth)
             break
       }
-
       this.order.splice(i, 0, surface)
    },
    clearAll: function(){
