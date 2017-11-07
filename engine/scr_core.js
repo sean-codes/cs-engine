@@ -27,18 +27,18 @@ var cs = new function(){
       { path: this.path + '/parts/sprite' },
       { path: this.path + '/parts/storage' },
       { path: this.path + '/parts/surface' },
+      { path: this.path + '/parts/text' },
       { path: this.path + '/parts/touch' }
    ]
 
    // Globals / For user
    this.global = {}
    this.script = {}
-   this.objects = {}
 
    // Initialize: Load Scripts and Sprites. Setup canvas
    this.load = function(info){
       // Setup core info
-      this.view = info.view
+      this.viewcanvas = info.canvas
       this.start = info.start
 
       // Resources
@@ -50,45 +50,41 @@ var cs = new function(){
    }
 
    this.preload = function(){
-      this.loading = this.scripts.length
-         + this.sprites.length
-         + this.sounds.length
-         + this.storages.length
+		this.loading = {
+			scripts: { item: 0, required: this.scripts.length },
+			sprites: { item: 0, required: this.sprites.length },
+			sounds: { item: 0, required: this.sounds.length },
+			storages: { item: 0, required: this.storages.length },
+			total: { item: 0, required: this.scripts.length + this.sprites.length + this.sounds.length + this.storages.length }
+		}
 
       // Load Scripts/Sprites/Sounds
-      for(var script of this.scripts){
-         this.loadScript(script)
-      }
-
-      for(var sprite of this.sprites){
-         this.loadSprite(sprite)
-      }
-
-      for(var sound of this.sounds){
-         this.loadSound(sound)
-      }
-
-      for(var storage of this.storages){
-         this.loadStorage(storage)
-      }
+		if(this.scripts.length) this.loadscripts()
+      if(this.sprites.length) this.loadsprites()
+      if(this.sounds.length) this.loadsounds()
+      if(this.storages.length) this.loadstorages()
    }
 
-   this.loadScript = function(script){
+   this.loadscripts = function(){
+		var script = this.scripts[this.loading.scripts.item]
       var that = this
+
       script.html = document.createElement('script')
-      script.html.src = script.path + '.js?' + Date.now()
-      script.html.onload = function() { that.onload() }
+      script.html.src = script.path + '.js'
+      script.html.onload = function() { that.onload('scripts') }
       document.head.appendChild(script.html)
    }
 
-   this.loadSprite = function(sprite){
+   this.loadsprites = function(){
+		var sprite = this.sprites[this.loading.sprites.item]
       var that = this
       sprite.html = document.createElement('img')
-      sprite.html.src = sprite.path + '.png?' + Date.now()
-      sprite.html.onload = function() { that.onload() }
+      sprite.html.src = sprite.path + '.png'
+      sprite.html.onload = function() { that.onload('sprites') }
    }
 
-   this.loadStorage = function(storage){
+   this.loadstorages = function(){
+		var storage = this.storages[this.loading.storages.item]
       var that = this
       storage.data = {}
       storage.request = new XMLHttpRequest()
@@ -96,14 +92,15 @@ var cs = new function(){
          if(this.readyState == 4){
             var data = JSON.parse(this.responseText)
             storage.data = data
-            that.onload()
+            that.onload('storages')
          }
       }
       storage.request.open("POST", `./${storage.path}.json`, true)
       storage.request.send()
    }
 
-   this.loadSound = function(sound){
+   this.loadsounds = function(sound){
+		var sound = this.sounds[this.loading.sounds.item]
       var that = this
 
       sound.loaded = false
@@ -121,15 +118,21 @@ var cs = new function(){
                sound.buffer = buffer
             })
          }
-         that.onload()
+         that.onload('sounds')
       }
       sound.request.send();
    }
 
 
-   this.onload = function(){
-      this.loading -= 1
-      if(!this.loading && this.start){
+   this.onload = function(type){
+      this.loading.total.item += 1
+		this.loading[type].item += 1
+
+		if(this.loading[type].item !== this.loading[type].required){
+			this['load'+type]()
+		}
+
+      if(this.loading.total.item == this.loading.total.required && this.start){
          cs.setup()
       }
    }
