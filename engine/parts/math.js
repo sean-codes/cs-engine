@@ -12,12 +12,13 @@ cs.math = {
         return array[this.iRandomRange(0, array.length-1)]
     },
     chooseRatio: function(ratios){
-      // ratios = { "Choice": 50, "Choice 2": 100 }
+      // ratios = {"50": "Choice1", "100": "Choice2"}
       var random = Math.random() * 100
       for(var ratio in ratios){
-         if(ratio > random){
+         if(parseInt(ratio) > random){
             return ratios[ratio]
          }
       }
+      return ratios[ratio]
    }
 }
