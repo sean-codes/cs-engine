@@ -102,7 +102,7 @@ cs.particle = {
                     cx = cx - (particle.size/2);
                     cy = cy - (particle.size/2);
 
-                    cs.draw.fillRect({ x:cx, y:cy, width:particle.size, height:particle.size });
+                    cs.draw.fillRect({ x:Math.floor(cx), y:Math.floor(cy), width:particle.size, height:particle.size });
                 } else {
                     cs.draw.circle(cx, cy, particle.size);
                 }
