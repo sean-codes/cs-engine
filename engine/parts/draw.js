@@ -50,12 +50,15 @@ cs.draw = {
       var centerY = options.center ? info.height/2 : 0
 
       this.ctx.save();
-      this.ctx.translate(Math.floor(options.x - centerX), Math.floor(options.y - centerY))
+		options.spr == 'spr_equip_offhand_shield' && console.log(sprite.xoff)
+      this.ctx.translate(
+			Math.floor(options.x - centerX - (info.scaleX < 0 ? info.scaleX * sprite.fwidth : 0)),
+			Math.floor(options.y - centerY - (info.scaleY < 0 ? info.scaleY * sprite.fheight : 0)))
       this.ctx.rotate(options.angle * Math.PI/180)
       this.ctx.scale(info.scaleX+0.001, info.scaleY+0.001)
       this.ctx.drawImage(info.frames[info.frame],
-         options.ignoreOffset ? 0 : -sprite.xoff,
-         options.ignoreOffset ? 0 : -sprite.yoff)
+         options.ignoreOffset ? 0 : -(sprite.xoff*info.scaleX),
+         options.ignoreOffset ? 0 : -(sprite.yoff*info.scaleY))
       this.ctx.restore()
       this.settingsReset()
    },
