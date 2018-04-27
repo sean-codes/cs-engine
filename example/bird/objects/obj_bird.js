@@ -3,6 +3,7 @@ cs.objects['obj_bird'] = {
 	create: function(){
 		this.sprite = 'bird'
 		this.mask = cs.sprite.info({ spr: this.sprite }).mask
+		this.x -= this.mask.width/2
 		this.timer = 60;
 		this.direction = .1;
 		this.vspeed = 0;
@@ -36,7 +37,7 @@ cs.objects['obj_bird'] = {
 		}
 		cs.particle.step();
 		var spr = (this.vspeed > 0) ? 'bird2' : 'bird2'
-		cs.draw.sprite({ spr:spr, x:this.x, y:this.y, angle:angle})
+		cs.draw.sprite({ spr:spr, x:this.x+this.mask.width/2, y:this.y+this.mask.height/2, angle:angle})
 
 		cs.camera.follow(this);
       if(cs.save.state == 'PLAYING'){
