@@ -52,7 +52,7 @@ cs.draw = {
 		var yoff = options.center ? sprite.fheight/2 : sprite.yoff
 
       this.ctx.save()
-		this.ctx.translate(options.x-0.5, options.y-0.5)
+		this.ctx.translate(Math.floor(options.x)-0.5, Math.floor(options.y)-0.5)
 		this.ctx.scale(info.scaleX, info.scaleY)
 		this.ctx.rotate(options.angle * Math.PI/180 * Math.sign(info.scaleX))
 		this.ctx.drawImage(info.frames[info.frame], -xoff+0.5, -yoff+0.5)
