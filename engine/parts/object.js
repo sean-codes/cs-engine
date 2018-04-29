@@ -7,6 +7,7 @@ cs.obj = {
    types : {},
    objGroups: {},
    unique: 0,
+	newObjects: [],
    create : function(options){
       var attr = options.attr
       var object = cs.objects[options.type]
@@ -35,7 +36,7 @@ cs.obj = {
       object.create.call(newObj);
 
       //Add the object to the list
-      this.list.splice(pos, 0, newObj)
+      this.newObjects.push({ pos: pos, obj: newObj })//this.list.splice(pos, 0, newObj))
       this.unique += 1
 
       //Object Grouping
@@ -43,6 +44,12 @@ cs.obj = {
       this.objGroups[options.type].push(newObj)
       return newObj
    },
+	addNewObjects: function() {
+		while(this.newObjects.length) {
+			var obj = this.newObjects.shift()
+			this.list.splice(obj.pos, 0, obj.obj)
+		}
+	},
    destroy : function(destroyObj){
       var type = destroyObj.core.type
       if(typeof destroyObj === 'object'){
