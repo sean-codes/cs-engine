@@ -23,16 +23,20 @@ cs.loop = {
          }
       }
 
+		// Add new objects
+		cs.obj.addNewObjects()
+
+		// Touch / Keyboard
       cs.key.reset()
       cs.touch.reset()
 
-      //Resize Canvas
+      // Resize Canvas
       cs.surface.checkResize()
       cs.surface.displayAll()
       if(cs.room.restarting === true)
          cs.room.reset()
 
-      //Execute next steps
+      // Execute next steps
       var i = this.endSteps.length; while(i--){
          (!this.endSteps[i].next)
             ? this.endSteps.pop().func()
