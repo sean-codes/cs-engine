@@ -105,6 +105,8 @@ cs.sprite = {
          height: (options.texture ? sprite.texture.fheight : sprite.fheight) * options.scaleY,
          scaleX: options.scaleX,
          scaleY: options.scaleY,
+			xoff: sprite.xoff,
+			yoff: sprite.yoff,
          frames: options.texture ? [sprite.texture] : sprite.frames,
          frame: options.frame,
          mask: sprite.mask
