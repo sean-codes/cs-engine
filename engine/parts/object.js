@@ -76,6 +76,9 @@ cs.obj = {
    undefined: function(type){
       return typeof cs.objects[type] === 'undefined' ? true : false
    },
+	every: function() {
+		return this.list.concat(this.newObjects)
+	},
    all: function(type){
       return this.objGroups[type] || []
    },
