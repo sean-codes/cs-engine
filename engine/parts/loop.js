@@ -11,6 +11,7 @@ cs.loop = {
       cs.draw.debugReset()
       cs.camera.update()
       cs.surface.clearAll()
+		cs.obj.addNewObjects()
 
       var i = cs.obj.list.length; while(i--){
          if(cs.obj.list[i].core.live){
@@ -22,9 +23,6 @@ cs.loop = {
             step.call(obj);
          }
       }
-
-		// Add new objects
-		cs.obj.addNewObjects()
 
 		// Touch / Keyboard
       cs.key.reset()
