@@ -12,7 +12,6 @@ cs.obj = {
       var attr = options.attr
       var object = cs.objects[options.type]
       var zIndex = cs.objects[options.type].zIndex || 0
-      var pos = this.findPosition(zIndex)
 
       //Create the object
       var newObj = {
@@ -36,7 +35,7 @@ cs.obj = {
       object.create.call(newObj);
 
       //Add the object to the list
-      this.newObjects.push({ pos: pos, obj: newObj })//this.list.splice(pos, 0, newObj))
+      this.newObjects.push({ obj: newObj, zIndex: zIndex })//this.list.splice(pos, 0, newObj))
       this.unique += 1
 
       //Object Grouping
@@ -47,7 +46,8 @@ cs.obj = {
 	addNewObjects: function() {
 		while(this.newObjects.length) {
 			var obj = this.newObjects.shift()
-			this.list.splice(obj.pos, 0, obj.obj)
+			var pos = this.findPosition(obj.zIndex)
+			this.list.splice(pos, 0, obj.obj)
 		}
 	},
    destroy : function(destroyObj){
