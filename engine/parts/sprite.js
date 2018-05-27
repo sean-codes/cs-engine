@@ -109,7 +109,7 @@ cs.sprite = {
 			yoff: sprite.yoff,
          frames: options.texture ? [sprite.texture] : sprite.frames,
          frame: options.frame,
-         mask: sprite.mask
+         mask: { x:sprite.mask.x, y:sprite.mask.y, width:sprite.mask.width, height:sprite.mask.height }
       }
    }
 }
