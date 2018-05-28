@@ -51,11 +51,16 @@ cs.draw = {
 		var xoff = options.center ? sprite.fwidth/2 : sprite.xoff
 		var yoff = options.center ? sprite.fheight/2 : sprite.yoff
 
+		// Sean.. We will talk about this later. Not sure you know what you are doing.
+		// I want to overlap on a single pixel when flipping
+		if(info.scaleX < 0 && xoff) options.x++
+		if(info.scaleY < 0 && yoff) options.y++
+
       this.ctx.save()
-		this.ctx.translate(Math.floor(options.x)-0.5, Math.floor(options.y)-0.5)
+		this.ctx.translate(Math.floor(options.x), Math.floor(options.y))
 		this.ctx.scale(info.scaleX, info.scaleY)
 		this.ctx.rotate(options.angle * Math.PI/180 * Math.sign(info.scaleX))
-		this.ctx.drawImage(info.frames[info.frame], -xoff+0.5, -yoff+0.5)
+		this.ctx.drawImage(info.frames[info.frame], -xoff, -yoff)
       this.ctx.restore()
       this.settingsReset()
    },
@@ -125,7 +130,7 @@ cs.draw = {
       if(typeof args.width == 'undefined') args.width = args.size || 0
       if(typeof args.height == 'undefined') args.height = args.size || 0
 
-      this.ctx.fillRect(args.x,args.y,args.width,args.height)
+      this.ctx.fillRect(Math.floor(args.x),Math.floor(args.y),args.width,args.height)
       this.settingsReset()
    },
    strokeRect: function(args){
