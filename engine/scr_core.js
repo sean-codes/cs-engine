@@ -55,14 +55,15 @@ var cs = new function(){
 			sprites: { item: 0, required: this.sprites.length },
 			sounds: { item: 0, required: this.sounds.length },
 			storages: { item: 0, required: this.storages.length },
-			total: { item: 0, required: this.scripts.length + this.sprites.length + this.sounds.length + this.storages.length }
+			total: { item: 0, required: this.scripts.length + this.sprites.length + this.sounds.length + this.storages.length, timer: performance.now() }
 		}
 
       // Load Scripts/Sprites/Sounds
-		if(this.scripts.length) this.loadscripts()
-      if(this.sprites.length) this.loadsprites()
-      if(this.sounds.length) this.loadsounds()
-      if(this.storages.length) this.loadstorages()
+		console.groupCollapsed('Loading...')
+		if(this.storages.length) this.loadstorages()
+		// if(this.scripts.length) this.loadscripts()
+      // if(this.sprites.length) this.loadsprites()
+      // if(this.sounds.length) this.loadsounds()
    }
 
    this.loadscripts = function(){
@@ -71,19 +72,21 @@ var cs = new function(){
 
       script.html = document.createElement('script')
       script.html.src = script.path + '.js'
-      script.html.onload = function() { that.onload('scripts') }
+      script.html.onload = function() { that.onload('scripts', 1) }
       document.head.appendChild(script.html)
    }
 
    this.loadsprites = function(){
+		if(!this.sprites.length) return this.onload('sprites', 0)
 		var sprite = this.sprites[this.loading.sprites.item]
       var that = this
       sprite.html = document.createElement('img')
       sprite.html.src = sprite.path + '.png'
-      sprite.html.onload = function() { that.onload('sprites') }
+      sprite.html.onload = function() { that.onload('sprites', 1) }
    }
 
    this.loadstorages = function(){
+		if(!this.storages.length) return this.onload('storages', 0)
 		var storage = this.storages[this.loading.storages.item]
       var that = this
       storage.data = {}
@@ -92,7 +95,7 @@ var cs = new function(){
          if(this.readyState == 4){
             var data = JSON.parse(this.responseText)
             storage.data = data
-            that.onload('storages')
+            that.onload('storages', 1)
          }
       }
       storage.request.open("POST", `./${storage.path}.json`, true)
@@ -100,6 +103,7 @@ var cs = new function(){
    }
 
    this.loadsounds = function(sound){
+		if(!this.sounds.length) return this.onload('sounds', 0)
 		var sound = this.sounds[this.loading.sounds.item]
       var that = this
 
@@ -118,22 +122,28 @@ var cs = new function(){
                sound.buffer = buffer
             })
          }
-         that.onload('sounds')
+         that.onload('sounds', 1)
       }
       sound.request.send();
    }
 
 
-   this.onload = function(type){
-      this.loading.total.item += 1
-		this.loading[type].item += 1
+   this.onload = function(type, loaded){
+      this.loading.total.item += loaded
+		this.loading[type].item += loaded
+		console.log('loaded ' + type + ' ' + this.loading[type].item + '/' + this.loading[type].required + ' - total: ' + Math.floor(this.loading.total.item/this.loading.total.required*100) + '%')
 
-		if(this.loading[type].item !== this.loading[type].required){
-			this['load'+type]()
+		if(this.loading[type].item < this.loading[type].required){
+			return this['load'+type]()
 		}
 
       if(this.loading.total.item == this.loading.total.required && this.start){
-         cs.setup()
+			console.groupEnd()
+			console.log('Loaded in ' + Math.ceil(performance.now() - this.loading.total.timer) + 'ms')
+         return cs.setup()
       }
+
+		var loadOrder = ['storages', 'sprites', 'sounds', 'scripts']
+		this['load'+loadOrder[loadOrder.indexOf(type)+1]]()
    }
 }
