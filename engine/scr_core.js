@@ -2,6 +2,9 @@
 //------------------------------------| Core Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
 var cs = new function(){
+	// Handy
+	this.default = function(want, ifnot) { return want != null ? want : ifnot }
+	
    // Core Path and Parts
    this.path = document.getElementById('cs-core').src+'/..'
 
