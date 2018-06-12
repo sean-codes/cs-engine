@@ -11,6 +11,7 @@ cs.setup = function(){
    cs.view.addEventListener('mousemove', cs.mouse.move)
    cs.view.addEventListener('mousedown', cs.mouse.down)
    cs.view.addEventListener('mouseup', cs.mouse.up)
+	cs.view.addEventListener('mouseout', cs.mouse.up)
    cs.view.addEventListener("touchstart", cs.touch.down, false)
    cs.view.addEventListener("touchend", cs.touch.up, false)
    cs.view.addEventListener("touchcancel", cs.touch.up, false)
