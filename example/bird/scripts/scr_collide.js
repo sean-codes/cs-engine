@@ -3,9 +3,9 @@ cs.script.collide = function(that, objtype, options){
    var vspeed = that.vspeed || 0; var hspeed = that.hspeed;
    vspeed = (options.vspeed !== undefined) ? options.vspeed : that.vspeed || 0;
    hspeed = (options.hspeed !== undefined) ? options.hspeed : that.hspeed || 0;
-   var obj1top = (options.y || that.y + that.mask.y) + vspeed;
+   var obj1top = (options.y || that.y + that.mask.y);// + vspeed;
    var obj1bottom = obj1top + (options.height ? options.height : that.mask.height);
-   var obj1left = (options.x || that.x + that.mask.x) + hspeed;
+   var obj1left = (options.x || that.x + that.mask.x);// + hspeed;
    var obj1right = obj1left + (options.width ? options.width : that.mask.width);
 
    var i = cs.obj.list.length; while(i--){
