@@ -4,7 +4,7 @@
 var cs = new function(){
 	// Handy
 	this.default = function(want, ifnot) { return want != null ? want : ifnot }
-	
+
    // Core Path and Parts
    this.path = document.getElementById('cs-core').src+'/..'
 
@@ -63,10 +63,10 @@ var cs = new function(){
 
       // Load Scripts/Sprites/Sounds
 		console.groupCollapsed('Loading...')
-		if(this.storages.length) this.loadstorages()
-		// if(this.scripts.length) this.loadscripts()
-      // if(this.sprites.length) this.loadsprites()
-      // if(this.sounds.length) this.loadsounds()
+		if(this.storages.length) return this.loadstorages()
+      if(this.sprites.length) return this.loadsprites()
+      if(this.sounds.length) return this.loadsounds()
+		if(this.scripts.length) return this.loadscripts()
    }
 
    this.loadscripts = function(){
