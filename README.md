@@ -39,50 +39,43 @@ engine for building 2D games
 # Setup
 The engine requires the CSS and Javascript file. Here is a template for a project
 ```html
-	<!DOCTYPE html>
-	<html>
-		<head>
-			<!-- Title/Meta Setup -->
-			<title>cs-engine</title>
-			<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+<!DOCTYPE html>
+<html>
+   <head>
+      <!-- Title/Meta Setup -->
+      <title>cs-engine</title>
+      <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 
-			<!-- Game Engine -->
-			<link rel="stylesheet" type="text/css" href="/engine/css.css" />
-			<script src='/engine/scr_core.js'></script>
-		</head>
-		<body>
-      	<!--Game Area-->
-         <div id="cs-view"></div>
+      <!-- Game Engine -->
+      <link rel="stylesheet" type="text/css" href="/engine/css.css" />
+      <script src='/engine/scr_core.js'></script>
+   </head>
+   <body>
+      <!--Game Area-->
+      <div id="cs-view"></div>
 
-			<!-- Initialize -->
-			<script>
-				cs.load({
-					canvas: 'cs-view',
-					sprites: [
-						{ path: 'sprites/spr_player' }
-				],
-					scripts: [
-						{ path: 'objects/obj_player' }
-				],
-					start: function(){
-						cs.room.setup({
-							width: 192,
-							height: 192,
-							background: "#222"
-						})
+      <!-- Initialize -->
+      <script>
+         cs.load({
+            canvas: 'cs-view',
+            sprites: [
+               { path: 'sprites/spr_player' }
+            ],
+            scripts: [
+               { path: 'objects/obj_player' }
+            ],
+            start: function(){
+               // Room / Camera setup
+               cs.room.setup({ width: 192, height: 192, background: "#222" })
+               cs.camera.setup({ maxWidth:300, maxHeight:200 })
 
-						cs.camera.setup({
-							maxWidth:300,
-							maxHeight:200
-						})
-
-						//Create Objects
-						cs.obj.create({ type:'obj_player', attr: { x:50, y:50 }})
-					}
-				})
-				</script>
-			</body>
-		</html>
+               //Create Objects
+               cs.obj.create({ type:'obj_player', attr: { x:50, y:50 }})
+            }
+         })
+      </script>
+   </body>
+</html>
 ```
 
 # Initialization
