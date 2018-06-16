@@ -1,5 +1,5 @@
 # CS-Engine
-The engine for building 2D games
+engine for building 2D games
 
 > Please no pull requests/forks on this project. This is a personal project of mine. Not made to compete with other game development solutions. Meant as read-only
 
@@ -8,170 +8,284 @@ The engine for building 2D games
     cs-engine/
     ├── engine/
     │   ├── style.css
-    │   ├── script.js
-    │   └── template.html
+    │   ├── scr_core.js
+    │   ├── template.html
+    │   └── parts/
+    │       ├── camera.js
+    │       ├── draw.js
+    │       ├── fps.js
+    │       ├── input.js
+    │       ├── keys.js
+    │       ├── loop.js
+    │       ├── math.js
+    │       ├── mouse.js
+    │       ├── network.js
+    │       ├── object.js
+    │       ├── particle.js
+    │       ├── room.js
+    │       ├── setup.js
+    │       ├── setup.js
+    │       ├── sound.js
+    │       ├── sprite.js
+    │       ├── storage.js
+    │       ├── surface.js
+    │       ├── text.js
+    │       └── touch.js
     └── example/
         ├── bird
         ├── cube
         └── warrior
 
 # Setup
-The engine only requires the CSS and Javascript file. Here is a template for a basic project
+The engine requires the CSS and Javascript file. Here is a template for a project
+```html
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<!-- Title/Meta Setup -->
+			<title>cs-engine</title>
+			<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 
-    <!DOCTYPE html>
-    <html>
-        <head>
-            <!-- Title/Meta Setup -->
-            <title>cs-engine</title>
-            <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+			<!-- Game Engine -->
+			<link rel="stylesheet" type="text/css" href="/engine/css.css" />
+			<script src='/engine/scr_core.js'></script>
+		</head>
+		<body>
+      	<!--Game Area-->
+         <div id="cs-view"></div>
 
-            <!-- Game Engine -->
-            <link rel="stylesheet" type="text/css" href="/engine/css.css" />
-            <script src='/engine/scr_core.js'></script>
+			<!-- Initialize -->
+			<script>
+				cs.load({
+					canvas: 'cs-view',
+					sprites: [
+						{ path: 'sprites/spr_player' }
+				],
+					scripts: [
+						{ path: 'objects/obj_player' }
+				],
+					start: function(){
+						cs.room.setup({
+							width: 192,
+							height: 192,
+							background: "#222"
+						})
 
-            <!-- Objects -->
-            <script src='objects/obj_player.js'></script>
+						cs.camera.setup({
+							maxWidth:300,
+							maxHeight:200
+						})
 
-            <!-- Scripts -->
-            <script src='scripts/scr_player.js'></script>
-         </head>
-         <body>
-            <!--Game Area-->
-            <div id="view"></div>
-            <script>
-               cs.init({
-                  canvas: 'cs-view',
-                  sprites: [
-                     { location: 'sprites/spr_player' }
-                  ],
-                  loaded: function(){
-                     //Camera Settings
-                     cs.camera.setup({
-                        width:144,
-                        height:256,
-                        maxWidth:300,
-                        maxHeight:200,
-                        lock: true
-                        })
-                        //Room Setup
-                        cs.room.setup(800, 256)
+						//Create Objects
+						cs.obj.create({ type:'obj_player', attr: { x:50, y:50 }})
+					}
+				})
+				</script>
+			</body>
+		</html>
+```
 
-                        cs.room.start = function(){
-                           //Create Objects
-                           cs.obj.create({ type: 'obj_player', attr: { 50, 50 }})
-                        }
-                    }
-                })
-            </script>
-         </body>
-      </html>
+# Initialization
+The cs.load function loads the assets and initializes a canvas
 
-# Loading Sprites
-Load a sprite using `cs.sprite.load`
+```js
+/**
+* load function
+* @arg {object} options - the options
+* @arg {string} options.canvas - the id of the canvas to use
+* @arg {array of objects} options.sprites - the list of sprites to load
+* @arg {array of objects} options.scripts - the list of sprites to load
+* @arg {array of objects} options.sounds - the list of sounds to load
+* @arg {array of objects} options.storages - the list of storages to load
+* @arg {function} options.start - called when finished loading
+**/
+```
 
-      cs.sprite.load([Object: options])
+# Sprite Loading Options
+When loading sprites we can specify some options. Only path is required
 
-      //Example options none are required!
-      options = {
-         path: [Required String: path to file]
-         name: [Optional String (File Name): Override the filename and set sprite name]
-         frames: [Optional Number (1): How many frames in the sprite sheet],
-         width: [Optional Number (IMG Width): The width of a frame],
-         height: [Optional Number (IMG Height): The width of a frame],
-         xoff: [Optional Number (0): The horizontal offset when drawing],
-         yoff: [Optional Number (0): The vertical offset when drawing]
-      }
+```js
+/**
+* sprite load
+* @arg {object} options - the options
+* @arg {string} options.path - the id of the canvas to use
+* @arg {string} [options.name=calculated] - override the filename and set sprite name]
+* @arg {number} [options.frames=0] - how many frames in the sprite sheet
+* @arg {number} [options.width=calculated] - The width of a frame
+* @arg {number} [options.height=calculated] - The height of a frame
+* @arg {number} [options.xoff=0] - The horizontal offset when drawing
+* @arg {number} [options.yoff=0] - The vertical offset when drawing
+* @arg {object} [options.mask=calculated] - And object with { x, y, width, height }
+**/
+```
 
-# Loading Objects
-Use a `.js` file include it in your `index.html`
+# Script Loading Options
+Any `.js` files that are required for the project
+```js
+/**
+* script load
+* @arg {object} options - the options
+* @arg {string} options.path - the id of the canvas to use
+**/
+```
 
-    <script src="cscript/_objects/obj_something.js"></script>
+# Room
+In the start function define the room size.
 
-Inside the new JS file you can create the object by using:
+> note: This can be changed at any time
 
-    cs.objects['obj_name'] = {
-        create: [required Function: run this when we create the object]
-        step: [required Function: run this each every frame of the game]
-    }
+```js
+// example room 192px by 192px and a grey background
+cs.room.setup({ width: 192, height: 192, background: "#222" })
 
-To create the object use `cs.obj.create()`
+/**
+* room setup
+* @arg {object} options - the options
+* @arg {number} [options.width] - The width of a room
+* @arg {number} [options.height] - The height of a room
+* @arg {string} [options.background] - The background of the room
+**/
 
-    cs.obj.create({
-        type: [required String: object type],
-        x: [optional Number (0): x position to create the object],
-        y: [optional Number (0): y position to create the object]
-    })
-
-# Drawing Functions
-CS Engine has functions for drawing sprites, shapes, and text.
-
-### Sprites:
-Draw sprites using `cs.draw.sprite`
-
-    cs.draw.sprite({
-        spr: [Required String: The name of the sprite],
-        x: [Required Number: The x position],
-        y: [Required Number: the y position],
-        width: [Optional Number (Frame Width): The width to draw the sprite],
-        height: [Optional Number (Frame Height): The height to draw the sprite],
-        scaleX: [Optional Number (1): Horizontal scaling],
-        scaleY: [Optional Number (1): Vertical scaling]
-    })
-
-### Text:
-
-    cs.draw.text({
-        x: [Required Number: x position],
-        y: [Required Number: y position],
-        text: [Required String: The text to draw]
-    })
+```
 
 
-### Shapes:
+# Camera
+The camera is the area the game and GUI is drawn to. The game/gui surfaces are drawn to hidden canvases separately then drawn to the view/camera canvas. There are a couple settings that can be tweaked to change the view.
 
-    //Rectangle
-    cs.draw.fillRect({
-        x: [Required Number: x position to start drawing],
-        y: [Required Number: y position to start drawing],
-        width: [Required Number: width of the drawing],
-        height: [Required Number: height of the drawing],
-    })
+The maxWidth and maxHeight set the maximum literal pixel size of the canvas. The engine will then try to get the closest aspect ratio to the size you set. Then it will be stretched with CSS to fill the entire screen.
 
-    cs.draw.strokeRect({
-        x: [Required Number: x position to start drawing],
-        y: [Required Number: y position to start drawing],
-        width: [Required Number: width of the drawing],
-        height: [Required Number: height of the drawing],
-    })
+In the start function define the camera settings.
 
-    //Line
-    cs.draw.line({
-      x1: [Required Number: coordinate 1 x position],
-      y1: [Required Number: coordinate 1 y position],
-      x2: [Required Number: coordinate 2 x position],
-      y2: [Required Number: coordinate 2 y position]
-    })
+> note: this can be changed at any time
 
-### Draw Settings
+```js
+// example camera maxWidth and Height
+cs.camera.setup({ maxWidth:300, maxHeight:200 })
 
-    cs.draw.settings({
-        alpha: [Optional Number (1): 0 being invisible 1 being fully visible],
-        width: [Optional Number (1): line width for stroke functions],
-        font: [Optional String ('12px Arial'): Font setting],
-        color: [Optional String ('#000'): Hex value of color,
-        textAlign: [Optional String ('start'): start/middle/end horizontal align,
-        textBaseline: [Optional String ('top'):  top/bottom/middle/baseline vertical align,
-        lineHeight: [Optional Number (10): line height spacing,
-        operation: [Optional String ('source-over'): set canvas manual on draw operations
-    })
+/**
+* camera setup
+* @arg {object} options - the options
+* @arg {number} [options.maxWidth] - The max width of the camera
+* @arg {number} [options.maxHeight] - The max height of the camera
+**/
 
-Note: The draw settings are reset after any drawing event! They are layer specific and the layer resets after each draw event. You should use these right before your drawing event
+```
+
+# Game Objects
+Inside a script file you can create the object by using:
+```js
+ cs.objects['obj_name'] = {
+	create: function() { console.log('i run when created') },
+	step: function() { console.log('i run each frame of the game') }
+ }
+```
+
+Create an object using `cs.obj.create()`
+```js
+cs.obj.create({
+   type: 'obj_name',
+   attr: {
+      // Attributes to add to the game object example x/y
+      x: 50,
+      y: 50
+   }
+})
+```
+
+# Drawing
+
+## Sprites
+```js
+// example drawing player sprite at coordinated (50, 50)
+cs.draw.sprite({ spr: 'spr_player', x: 50, y: 50 })
+
+/**
+* @arg {object} options - the options
+* @arg {string} options.spr - The name of the sprite
+* @arg {number} [options.x] - The x position
+* @arg {number} [options.y] - the y position
+* @arg {number} [options.width=width] - The width to draw the sprite
+* @arg {number} [options.height=height] - The height to draw the sprite
+* @arg {number} [options.scaleX=1] - Horizontal scaling
+* @arg {number} [options.scaleY=1] - Vertical scaling
+**/
+```
+
+## Text
+```js
+// example drawing text 'hello world' at coordinated (50, 50)
+cs.draw.text({ text: 'hello world', x: 50, y: 50 })
+
+/**
+* @arg {object} options - the options
+* @arg {string} options.text - The text to draw
+* @arg {number} [options.x] - The x position
+* @arg {number} [options.y] - the y position
+**/
+```
+
+## Shapes
+
+##### Fill Recangle
+```js
+// example fill rectangle in top corner with width 50 and height 50
+cs.draw.fillRect({ x:0, y:0, width:50, height: 50 })
+
+/**
+* @arg {object} options - the options
+* @arg {number} [options.x] - The x position
+* @arg {number} [options.y] - the y position
+* @arg {number} [options.width] - the width
+* @arg {number} [options.height] - the height
+**/
+```
+
+##### Stroke Rectangle
+```js
+// example outlined rectangle in top corner with width 50 and height 50
+cs.draw.strokeRect({ x:0, y:0, width:50, height: 50 })
+
+/**
+* @arg {object} options - the options
+* @arg {number} [options.x] - The x position
+* @arg {number} [options.y] - the y position
+* @arg {number} [options.width] - the width
+* @arg {number} [options.height] - the height
+**/
+```
+
+##### Line
+```js
+// example of a line starting in top left corner to (50, 50)
+cs.draw.line({ x1:0, y1:0, x2:50, y2: 50 })
+
+/**
+* @arg {object} options - the options
+* @arg {number} [options.x1] - The start x position
+* @arg {number} [options.y1] - the start y position
+* @arg {number} [options.x2] - the end x position
+* @arg {number} [options.y2] - the end y position
+**/
+```
+
+##### Draw Settings
+```js
+// example setting draw color to red and font to 16px arial
+cs.draw.settings({ color:'red', font:'16px Arial' })
+
+/**
+* @arg {object} options - the options
+* @arg {number} [options.color='#000'] - HEX/RGB/String value of color
+* @arg {number} [options.font='12px Arial'] - Font setting. Font Size space Font Name
+* @arg {number} [options.width=1] - line width for stroke functions
+* @arg {number} [options.alpha=1] - 0 being invisible 1 being fully visible
+* @arg {number} [options.textAlign='start'] - start/middle/end horizontal align
+* @arg {number} [options.textBaseline='top'] - top/bottom/middle/baseline vertical align
+* @arg {number} [options.lineHeight=10] - line height spacing for text
+* @arg {number} [options.operation='source-over'] - set canvas manual on draw operations
+**/
+```
+
+Note: Draw settings are reset after any drawing event! They are layer specific and the layer resets after each draw event. Use right before your drawing event
 
 # The Game Camera
-The game camera is the area the game and GUI is drawn to. The GUI and Game are drawn to hidden canvases separately then drawn to the view/camera canvas. There are a couple settings that can be tweeked to change the view.
-
-The maxWidth and maxHeight set the maximum literal pixel size of the canvas. The engine will then try to get the closest aspect ratio to the size you set. Then it will be stretched with CSS to make fill the entire screen.
-
-
-    maxWidth : 500
-    maxHeight : 400
