@@ -20,5 +20,14 @@ cs.math = {
          }
       }
       return ratios[ratio]
-   }
+   },
+	brakingDistance: function(options) {
+		return (Math.abs(options.speed) * options.friction)/(1-options.friction)
+	},
+	requiredSpeed: function(options) {
+		return Math.sqrt(2 * options.friction * options.distance);
+	},
+	inRange: function(options) {
+		return options.num > options.min && options.num < options.max
+	}
 }
