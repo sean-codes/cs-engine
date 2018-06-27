@@ -49,7 +49,7 @@ cs.sprite = {
          dx += newSprite.fwidth
          if(dx === newSprite.html.width){
             dx = 0
-            dy += newSprite.fwidth
+            dy += newSprite.fheight
          }
       }
 
