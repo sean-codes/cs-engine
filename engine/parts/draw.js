@@ -60,7 +60,7 @@ cs.draw = {
 		this.ctx.translate(Math.floor(options.x), Math.floor(options.y))
 		this.ctx.scale(info.scaleX, info.scaleY)
 		this.ctx.rotate(options.angle * Math.PI/180 * Math.sign(info.scaleX))
-		this.ctx.drawImage(info.frames[info.frame], -xoff, -yoff)
+		this.ctx.drawImage(info.frames[info.frame || 0], -xoff, -yoff)
       this.ctx.restore()
       this.settingsReset()
    },
@@ -127,8 +127,8 @@ cs.draw = {
       this.settingsReset()
    },
    fillRect: function(args){
-      if(typeof args.width == 'undefined') args.width = args.size || 0
-      if(typeof args.height == 'undefined') args.height = args.size || 0
+      if(typeof args.width == 'undefined') args.width = args.size || 1
+      if(typeof args.height == 'undefined') args.height = args.size || 1
 
       this.ctx.fillRect(Math.floor(args.x),Math.floor(args.y),args.width,args.height)
       this.settingsReset()
