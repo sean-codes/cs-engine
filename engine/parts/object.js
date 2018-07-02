@@ -77,7 +77,7 @@ cs.obj = {
       return typeof cs.objects[type] === 'undefined' ? true : false
    },
 	every: function() {
-		return this.list.concat(this.newObjects)
+		return this.list.concat(this.newObjects.map((obj) => obj.obj))
 	},
    all: function(type){
       return this.objGroups[type] || []
