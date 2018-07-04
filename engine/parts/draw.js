@@ -72,8 +72,6 @@ cs.draw = {
 		} else {
 			this.ctx.drawImage(info.frames[info.frame || 0], Math.floor(options.x - xoff), Math.floor(options.y - yoff))
 		}
-		
-      this.settingsReset()
    },
    textInfo: function(options){
       // Guessing the size
