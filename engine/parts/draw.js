@@ -62,14 +62,17 @@ cs.draw = {
 		if(info.scaleX < 0 && xoff) options.x++
 		if(info.scaleY < 0 && yoff) options.y++
 
-      this.ctx.save()
-		// i wonder if you could find a simpler solution
-		// potentially flipping and scaling the sprite itself rather than the surface
-		this.ctx.translate(Math.floor(options.x), Math.floor(options.y))
-		this.ctx.scale(info.scaleX, info.scaleY)
-		this.ctx.rotate(options.angle * Math.PI/180 * Math.sign(info.scaleX))
-		this.ctx.drawImage(info.frames[info.frame || 0], -xoff, -yoff)
-      this.ctx.restore()
+		if(options.angle || options.scaleX != 1 || options.scaleY != 1) {
+			this.ctx.save()
+			this.ctx.translate(Math.floor(options.x), Math.floor(options.y))
+			this.ctx.scale(info.scaleX, info.scaleY)
+			this.ctx.rotate(options.angle * Math.PI/180 * Math.sign(info.scaleX))
+			this.ctx.drawImage(info.frames[info.frame || 0], -xoff, -yoff)
+			this.ctx.restore()
+		} else {
+			this.ctx.drawImage(info.frames[info.frame || 0], Math.floor(options.x - xoff), Math.floor(options.y - yoff))
+		}
+		
       this.settingsReset()
    },
    textInfo: function(options){

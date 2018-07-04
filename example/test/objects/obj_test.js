@@ -9,7 +9,9 @@ cs.objects['obj_test'] = {
 		}
 	},
 	step: function(){
-		var textInfo = cs.draw.textInfo(this.myText)
-		cs.draw.text({ lines: textInfo.lines, x: 20, y:20 });
+		//var textInfo = cs.draw.textInfo(this.myText)
+		var draws = 2000;
+		cs.draw.text({ lines: [cs.fps.rate, 'draws: ' + draws], x: 20, y:20 });
+		var i = draws; while(i--) cs.draw.sprite({ spr: 'spr_test', x: 50, y: 50, scaleX: -1 })
 	}
 }
