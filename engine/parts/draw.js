@@ -41,8 +41,14 @@ cs.draw = {
 
       if(!this.raw && !this.surface.noskip && !options.noskip){
          //If outside camera skip
-         if(options.x+sprite.fwidth < cs.camera.x || options.x  > cs.camera.x+cs.camera.width
-         || options.y+sprite.fheight < cs.camera.y || options.y  > cs.camera.y+cs.camera.height ){
+			var x = options.x - (options.scaleX < 0 ? sprite.fwidth : 0)
+			var y = options.y - (options.scaleY < 0 ? sprite.fheight : 0)
+
+         if(x + sprite.fwidth < cs.camera.x
+				|| x > cs.camera.x+cs.camera.width
+         	|| y + sprite.fheight < cs.camera.y
+				|| y > cs.camera.y+cs.camera.height ){
+
             this.debug.spritesSkippedCount += 1
             return
          }
@@ -57,6 +63,8 @@ cs.draw = {
 		if(info.scaleY < 0 && yoff) options.y++
 
       this.ctx.save()
+		// i wonder if you could find a simpler solution
+		// potentially flipping and scaling the sprite itself rather than the surface
 		this.ctx.translate(Math.floor(options.x), Math.floor(options.y))
 		this.ctx.scale(info.scaleX, info.scaleY)
 		this.ctx.rotate(options.angle * Math.PI/180 * Math.sign(info.scaleX))
