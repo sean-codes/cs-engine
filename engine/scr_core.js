@@ -74,7 +74,7 @@ var cs = new function(){
       var that = this
 
       script.html = document.createElement('script')
-      script.html.src = script.path + '.js'
+      script.html.src = script.path + '.js?v='+Math.random()
       script.html.onload = function() { that.onload('scripts', 1) }
       document.head.appendChild(script.html)
    }
@@ -84,7 +84,7 @@ var cs = new function(){
 		var sprite = this.sprites[this.loading.sprites.item]
       var that = this
       sprite.html = document.createElement('img')
-      sprite.html.src = sprite.path + '.png'
+      sprite.html.src = sprite.path + '.png?v='+Math.random()
       sprite.html.onload = function() { that.onload('sprites', 1) }
    }
 
@@ -101,7 +101,7 @@ var cs = new function(){
             that.onload('storages', 1)
          }
       }
-      storage.request.open("POST", `./${storage.path}.json`, true)
+      storage.request.open("POST", `./${storage.path}.json?v=`+Math.random(), true)
       storage.request.send()
    }
 
@@ -111,7 +111,7 @@ var cs = new function(){
       var that = this
 
       sound.loaded = false
-      sound.src = sound.path + '.wav'
+      sound.src = sound.path + '.wav?v='+Math.random()
       sound.buffer = null
       sound.request = new XMLHttpRequest()
 
