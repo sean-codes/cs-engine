@@ -9,33 +9,13 @@ cs.objects['obj_bird'] = {
 		this.vspeed = 0;
 		this.diving = 0;
 		this.soaring = 0;
-		this.core.particle.settings = JSON.parse(`{
-				"shape": "square",
-				"colorStart": "#ffffff",
-				"colorEnd": "#ffffff",
-				"size": 4,
-				"grow": -4,
-				"alpha": 20,
-				"fade": 10,
-				"speedMin": 25,
-				"speedMax": 40,
-				"dirMin": 120,
-				"dirMax": 120,
-				"wobbleX": 0,
-				"wobbleY": 0,
-				"lifeMin": 5,
-				"lifeMax": 15,
-				"accel": 0,
-				"gravity": 0,
-				"particlesPerStep": 15
-		}`);
 	},
 	step: function(){
 		var angle = -30 * (this.vspeed/-5);
 		if(this.vspeed > 0){
 			angle = 75 * (this.vspeed/4);
 		}
-		cs.particle.step();
+
 		var spr = (this.vspeed > 0) ? 'bird2' : 'bird2'
 		cs.draw.sprite({ spr:spr, x:this.x+this.mask.width/2, y:this.y+this.mask.height/2, angle:angle})
 
@@ -65,7 +45,6 @@ cs.objects['obj_bird'] = {
 			if(this.diving > 24){
 				cs.global.score += 1;
 				cs.obj.create({ type:'obj_score_text', attr: { x:this.x, y:this.y }})
-				cs.particle.burst(this.x, this.y, this.width, 0, 10);
 				cs.sound.play('score');
 			}
 			this.diving = 0;

@@ -1,7 +1,6 @@
 <!doctype html>
 <html>
 	<head>
-		<script id="cs-core" src="../../engine/scr_core.js"></script>
 		<style>
 			html,
 			body {
@@ -22,13 +21,14 @@
 				background: #222;
 			}
 		</style>
+		<script id="cs-core" src="../../engine/scr_core.js"></script>
 	</head>
 	<body>
 		<canvas width=400 height=200 />
 
 		<script>
 			cs.load({
-				core: document.querySelector('#cs-core'),
+				core: '../../engine',
 				canvas: document.querySelector('canvas'),
 				assets: {
 					scripts: [

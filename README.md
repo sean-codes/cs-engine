@@ -21,7 +21,6 @@ engine for building 2D games
     │       ├── mouse.js
     │       ├── network.js
     │       ├── object.js
-    │       ├── particle.js
     │       ├── room.js
     │       ├── setup.js
     │       ├── setup.js
@@ -34,6 +33,7 @@ engine for building 2D games
     └── example/
         ├── bird
         ├── cube
+        ├── particles
         └── warrior
 
 # Setup
@@ -52,18 +52,19 @@ The engine requires the CSS and Javascript file. Here is a template for a projec
    </head>
    <body>
       <!--Game Area-->
-      <div id="cs-view"></div>
+      <canvas></canvas>
 
       <!-- Initialize -->
       <script>
          cs.load({
-            canvas: 'cs-view',
+				core: '/engine', // the path to scr_core.js
+            canvas: document.querySelector('canvas'),
             sprites: [
                { path: 'sprites/spr_player' }
             ],
             scripts: [
                { path: 'objects/obj_player' }
-            ],
+            ],B
             start: function(){
                // Room / Camera setup
                cs.room.setup({ width: 192, height: 192, background: "#222" })

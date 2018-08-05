@@ -14,7 +14,8 @@
 		<canvas id="cs-view"></canvas>
 		<script>
 			cs.load({
-				canvas: 'cs-view',
+				core: '../../engine',
+				canvas: document.querySelector('canvas'),
 				scripts: [
 					{ path: 'objects/obj_test' }
 				],

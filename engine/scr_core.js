@@ -7,7 +7,7 @@ cs.load = function(options){
 	this.default = function(want, ifnot) { return want != null ? want : ifnot }
 
    // Core Path and Parts
-   this.path = options.core.src+'/..'
+   this.path = options.core
 
    // Resources
    this.sounds = []

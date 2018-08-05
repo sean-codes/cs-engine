@@ -16,7 +16,7 @@
 		<script>
 			// Wait for the core to load
 			cs.load({
-				core: document.querySelector('#cs-core'),
+				core: '../../engine',
 				canvas: document.querySelector('canvas'),
 				assets: {
 					scripts: [
@@ -36,6 +36,7 @@
 						{ path: 'scripts/networkRecievedMessage' },
 						{ path: 'scripts/networkSendMovement' },
 						{ path: 'scripts/scr_collide' },
+						{ path: '../particles/scripts/particles' },
 						// Events
 						{ path: 'events/network' }
 					],
