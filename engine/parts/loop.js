@@ -24,6 +24,17 @@ cs.loop = {
          }
       }
 
+		var i = cs.obj.list.length; while(i--) {
+			if(cs.obj.list[i].core.live){
+				var obj = cs.obj.list[i]
+				cs.draw.setSurface(obj.core.surface)
+				cs.particle.settings = obj.core.particle.settings
+				cs.particle.obj = obj
+				var draw = cs.objects[obj.core.type].draw
+				draw && draw.call(obj)
+			}
+		}
+
 		// Touch / Keyboard
       cs.key.reset()
       cs.touch.reset()
@@ -40,6 +51,8 @@ cs.loop = {
             ? this.endSteps.pop().func()
             : this.endSteps[i].next = false
       }
+
+		// could clearup !live objects here
    },
    endStep: function(options){
       if(!options.next){ options.next = false }

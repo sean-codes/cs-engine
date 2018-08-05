@@ -47,8 +47,8 @@ cs.surface = {
       for(var surface of this.order){
          if(!surface.manualClear || surface.clearRequest){
             clearRect = {
-               x: surface.raw ? 0 : cs.camera.x,
-               y: surface.raw ? 0 : cs.camera.y,
+               x: surface.raw ? 0 : Math.floor(cs.camera.x),
+               y: surface.raw ? 0 : Math.floor(cs.camera.y),
                width: surface.raw ? surface.canvas.width : cs.camera.width,
                height: surface.raw ? surface.canvas.height : cs.camera.height,
             }
