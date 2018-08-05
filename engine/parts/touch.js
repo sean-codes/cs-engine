@@ -123,7 +123,7 @@ cs.touch = {
       }
    },
    convertToGameCords(x, y){
-      var rect = cs.view.getBoundingClientRect();
+      var rect = cs.canvas.getBoundingClientRect();
 
       var physicalViewWidth = (rect.right-rect.left)
       var physicalViewHeight = (rect.bottom-rect.top)

@@ -20,7 +20,8 @@ cs.objects['obj_buttons'] = {
 			cs.key.virtualPress(38);
 		}
 
-		var text = cs.input.return(this.id);
+		//var text = cs.input.return(this.id);
+		text = ''
 		if(text !== ''){
 			console.log('Button 1 Says: ' + text);
 		}

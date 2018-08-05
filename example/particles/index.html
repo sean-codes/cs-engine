@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+	<head>
+		<script id="cs-core" src="../../engine/scr_core.js"></script>
+		<style>
+			html, body {
+				width:100%;
+				height:100%;
+				padding:0; margin:0;
+			}
+			body {
+				display:flex;
+			}
+			canvas {
+				margin:auto;
+				width: 400px;
+				height:200px;
+				background:#FFF;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas width=400 height=200 />
+
+		<script>
+			cs.load({
+				core: document.querySelector('#cs-core'),
+				canvas: document.querySelector('canvas'),
+				assets: {
+					scripts: [],
+					sprites: []
+				},
+				objects: {
+					player: {
+						create: function() { console.log('created') },
+						step: function() {},
+						draw: function() {
+							cs.draw.fillRect({
+								x:0, y:0, width:50, height:50})
+						}
+					}
+				},
+				start: function() {
+					console.log('starting')
+
+					cs.obj.create({
+						type: 'player',
+						attr: {
+							x: 50, y: 50
+						}
+					})
+				}
+			})
+		</script>
+	</body>
+</html>

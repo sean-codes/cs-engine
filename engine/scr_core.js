@@ -1,12 +1,13 @@
 //---------------------------------------------------------------------------------------------//
 //------------------------------------| Core Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
-var cs = new function(){
+cs = {}
+cs.load = function(options){
 	// Handy
 	this.default = function(want, ifnot) { return want != null ? want : ifnot }
 
    // Core Path and Parts
-   this.path = document.getElementById('cs-core').src+'/..'
+   this.path = options.core.src+'/..'
 
    // Resources
    this.sounds = []
@@ -16,7 +17,6 @@ var cs = new function(){
       { path: this.path + '/parts/camera' },
       { path: this.path + '/parts/draw' },
       { path: this.path + '/parts/fps' },
-      { path: this.path + '/parts/input' },
       { path: this.path + '/parts/keys' },
       { path: this.path + '/parts/loop' },
       { path: this.path + '/parts/math' },
@@ -30,25 +30,28 @@ var cs = new function(){
       { path: this.path + '/parts/sprite' },
       { path: this.path + '/parts/storage' },
       { path: this.path + '/parts/surface' },
-      { path: this.path + '/parts/text' },
+      //{ path: this.path + '/parts/text' },
+		//{ path: this.path + '/parts/input' },
       { path: this.path + '/parts/touch' }
    ]
 
    // Globals / For user
+	this.assets = options.assets || {}
+	this.objects = options.objects || {}
    this.global = {}
    this.script = {}
 
-   // Initialize: Load Scripts and Sprites. Setup canvas
-   this.load = function(info){
-      // Setup core info
-      this.view = info.canvas
-      this.start = info.start
+	// Setup core info
+	this.canvas = options.canvas
+	this.start = options.start
 
+   // Initialize: Load Scripts and Sprites. Setup canvas
+   this.load = function(assets){
       // Resources
-      this.scripts = this.scripts.concat(info.scripts || [])
-      this.sprites = this.sprites.concat(info.sprites || [])
-      this.sounds = this.sounds.concat(info.sounds || [])
-      this.storages = this.storages.concat(info.storages || [])
+      this.scripts = this.scripts.concat(this.assets.scripts || [])
+      this.sprites = this.sprites.concat(this.assets.sprites || [])
+      this.sounds = this.sounds.concat(this.assets.sounds || [])
+      this.storages = this.storages.concat(this.assets.storages || [])
       this.preload()
    }
 
@@ -149,4 +152,6 @@ var cs = new function(){
 		var loadOrder = ['storages', 'sprites', 'sounds', 'scripts']
 		this['load'+loadOrder[loadOrder.indexOf(type)+1]]()
    }
+
+	this.load(options.assets)
 }

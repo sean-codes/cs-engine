@@ -30,11 +30,6 @@ cs.objects['obj_buttons'] = {
 			cs.key.virtualPress(32);
 		}
 
-		var text = cs.input.return(this.id);
-		if(text !== ''){
-			console.log('Button 1 Says: ' + text);
-		}
-
 		if(this.core.touch.held) cs.draw.setAlpha(0.5)
 		cs.draw.fillRect(btnRect);
 		cs.draw.setColor("white");

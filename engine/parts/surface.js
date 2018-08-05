@@ -9,6 +9,8 @@ cs.surface = {
    create: function(info){
       var num = this.list.length
       var canvas = document.createElement("canvas")
+		canvas.width = cs.canvas.width
+		canvas.height = cs.canvas.height
 
       this.list[info.name] = {
          name: info.name,
@@ -43,7 +45,7 @@ cs.surface = {
       this.order.splice(i, 0, surface)
    },
    clearAll: function(){
-      cs.view.ctx.clearRect(0, 0, cs.view.width, cs.view.height)
+      cs.ctx.clearRect(0, 0, cs.canvas.width, cs.canvas.height)
       for(var surface of this.order){
          if(!surface.manualClear || surface.clearRequest){
             clearRect = {
@@ -90,34 +92,33 @@ cs.surface = {
       dx = sx < 0 ? Math.floor(cs.camera.scale*(cs.camera.x*-1)) : 0,
       dy = sy < 0 ? Math.floor(cs.camera.scale*(cs.camera.y*-1)) : 0,
       dWidth = sWidth <= surface.canvas.width
-         ? cs.view.width
-         : cs.view.width - Math.floor(cs.camera.scale*((cs.camera.width)-surface.canvas.width)),
+         ? cs.canvas.width
+         : cs.canvas.width - Math.floor(cs.camera.scale*((cs.camera.width)-surface.canvas.width)),
       dHeight = sHeight <= surface.canvas.height
-         ? cs.view.height
-         : cs.view.height - Math.floor(cs.camera.scale*((cs.camera.height)-surface.canvas.height))
+         ? cs.canvas.height
+         : cs.canvas.height - Math.floor(cs.camera.scale*((cs.camera.height)-surface.canvas.height))
 
       if(sx < 0){ sx = 0; sWidth += sx*-1 }
       if(sy < 0){ sy = 0; sHeight += sy*-1 }
       if(sWidth > surface.canvas.width) sWidth = surface.canvas.width
       if(sHeight > surface.canvas.height) sHeight = surface.canvas.height
 
-      cs.view.ctx.drawImage(surface.canvas,
+      cs.ctx.drawImage(surface.canvas,
          sx, sy, sWidth, sHeight,
          dx, dy, dWidth, dHeight)
    },
    checkResize: function(){
-      var rect = cs.view.getBoundingClientRect()
+      var rect = cs.canvas.getBoundingClientRect()
       var w = rect.width; var h = rect.height; var o = screen.orientation;
       if(w !== cs.draw.w || h !== cs.draw.h || o !== cs.draw.o){
           cs.draw.w = w
           cs.draw.h = h
           cs.draw.o = o
-          cs.input.resize()
           this.resize()
       }
    },
    resize : function(){
-      var viewSize = cs.view.getBoundingClientRect()
+      var viewSize = cs.canvas.getBoundingClientRect()
 
       var w = viewSize.width
       var h = viewSize.height
@@ -140,9 +141,9 @@ cs.surface = {
          nh = cs.camera.maxHeight - (cs.camera.maxHeight%ratioHeight);
          nw = nh * ratioHeight;
       }
-      cs.view.width = w
-      cs.view.height = h
-      this.ctxImageSmoothing(cs.view.ctx)
+      cs.canvas.width = w
+      cs.canvas.height = h
+      this.ctxImageSmoothing(cs.ctx)
 
       for(var surface of this.order){
          var img = surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
