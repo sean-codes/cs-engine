@@ -23,7 +23,6 @@ cs.load = function(options){
       { path: this.path + '/parts/mouse' },
       { path: this.path + '/parts/network' },
       { path: this.path + '/parts/object' },
-      { path: this.path + '/parts/particle' },
       { path: this.path + '/parts/room' },
       { path: this.path + '/parts/setup' },
       { path: this.path + '/parts/sound' },
@@ -38,8 +37,8 @@ cs.load = function(options){
    // Globals / For user
 	this.assets = options.assets || {}
 	this.objects = options.objects || {}
-   this.global = {}
-   this.script = {}
+	this.script = options.script || {}
+   this.global = options.global || {}
 
 	// Setup core info
 	this.canvas = options.canvas

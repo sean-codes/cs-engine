@@ -17,8 +17,6 @@ cs.loop = {
          if(cs.obj.list[i].core.live){
             var obj = cs.obj.list[i];
 				cs.draw.setSurface(obj.core.surface);
-            cs.particle.settings = obj.core.particle.settings;
-            cs.particle.obj = obj;
             var step = cs.objects[obj.core.type].step;
             step && step.call(obj);
          }
@@ -28,8 +26,6 @@ cs.loop = {
 			if(cs.obj.list[i].core.live){
 				var obj = cs.obj.list[i]
 				cs.draw.setSurface(obj.core.surface)
-				cs.particle.settings = obj.core.particle.settings
-				cs.particle.obj = obj
 				var draw = cs.objects[obj.core.type].draw
 				draw && draw.call(obj)
 			}

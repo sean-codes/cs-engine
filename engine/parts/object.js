@@ -21,7 +21,7 @@ cs.obj = {
             id: this.unique,
             core: object.core || false,
             surface: 'game',
-            particle: { list : [], settings : {} },
+            
             touch: cs.touch.create()
          }
       }
