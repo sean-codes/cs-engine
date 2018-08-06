@@ -21,7 +21,7 @@ cs.obj = {
             id: this.unique,
             core: object.core || false,
             surface: 'game',
-            
+
             touch: cs.touch.create()
          }
       }
@@ -31,7 +31,7 @@ cs.obj = {
       for(var name in attr){ newObj[name] = attr[name] }
 
       //Run Create event
-      object.create.call(newObj);
+      object.create && object.create.call(newObj);
 
       //Add the object to the list
       this.newObjects.push({ obj: newObj, zIndex: zIndex })//this.list.splice(pos, 0, newObj))

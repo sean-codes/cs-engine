@@ -3,7 +3,7 @@ engine for building 2D games
 
 > Please no pull requests/forks on this project. This is a personal project of mine. Not made to compete with other game development solutions. Meant as read-only
 
-# What's included
+## What's included
 
     cs-engine/
     ├── engine/
@@ -36,50 +36,44 @@ engine for building 2D games
         ├── particles
         └── warrior
 
-# Setup
-The engine requires the CSS and Javascript file. Here is a template for a project
+## Setup
+- [ ] include `scr_core.js`
+- [ ] add a canvas
+- [ ] run cs.init with configuration
+
 ```html
 <!DOCTYPE html>
 <html>
-   <head>
-      <!-- Title/Meta Setup -->
-      <title>cs-engine</title>
-      <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+	<head>
+		<!-- Game Engine -->
+		<script src='../../engine/scr_core.js'></script>
+	</head>
+	<body>
+		<!--Game Area-->
+		<canvas style="background:#FFF"></canvas>
 
-      <!-- Game Engine -->
-      <link rel="stylesheet" type="text/css" href="/engine/css.css" />
-      <script src='/engine/scr_core.js'></script>
-   </head>
-   <body>
-      <!--Game Area-->
-      <canvas></canvas>
+		<script>
+			cs.load({
+				core: '../../engine', // path to parts folder
+				canvas: document.querySelector('canvas'),
+				objects: {
+					player: {
+						draw: function() {
+							cs.draw.fillRect({ x: 0, y: 0, width: 50, height: 50 })
+						}
+					}
+				},
+				start: function(){
+					cs.obj.create({ type:'player', x:10, y:10 })
+				}
+			})
 
-      <!-- Initialize -->
-      <script>
-         cs.load({
-				core: '/engine', // the path to scr_core.js
-            canvas: document.querySelector('canvas'),
-            sprites: [
-               { path: 'sprites/spr_player' }
-            ],
-            scripts: [
-               { path: 'objects/obj_player' }
-            ],B
-            start: function(){
-               // Room / Camera setup
-               cs.room.setup({ width: 192, height: 192, background: "#222" })
-               cs.camera.setup({ maxWidth:300, maxHeight:200 })
-
-               //Create Objects
-               cs.obj.create({ type:'obj_player', attr: { x:50, y:50 }})
-            }
-         })
-      </script>
-   </body>
+		</script>
+	</body>
 </html>
 ```
 
-# Initialization
+## Initialization
 The cs.load function loads the assets and initializes a canvas
 
 ```js
@@ -95,7 +89,7 @@ The cs.load function loads the assets and initializes a canvas
 **/
 ```
 
-# Sprite Loading Options
+## Sprite Loading Options
 When loading sprites we can specify some options. Only path is required
 
 ```js
@@ -113,7 +107,7 @@ When loading sprites we can specify some options. Only path is required
 **/
 ```
 
-# Script Loading Options
+## Script Loading Options
 Any `.js` files that are required for the project
 ```js
 /**
@@ -123,7 +117,7 @@ Any `.js` files that are required for the project
 **/
 ```
 
-# Room
+## Room
 In the start function define the room size.
 
 > note: This can be changed at any time
@@ -143,7 +137,7 @@ cs.room.setup({ width: 192, height: 192, background: "#222" })
 ```
 
 
-# Camera
+## Camera
 The camera is the area the game and GUI is drawn to. The game/gui surfaces are drawn to hidden canvases separately then drawn to the view/camera canvas. There are a couple settings that can be tweaked to change the view.
 
 The maxWidth and maxHeight set the maximum literal pixel size of the canvas. The engine will then try to get the closest aspect ratio to the size you set. Then it will be stretched with CSS to fill the entire screen.
@@ -165,7 +159,7 @@ cs.camera.setup({ maxWidth:300, maxHeight:200 })
 
 ```
 
-# Game Objects
+## Game Objects
 Inside a script file you can create the object by using:
 ```js
  cs.objects['obj_name'] = {
@@ -186,9 +180,9 @@ cs.obj.create({
 })
 ```
 
-# Drawing
+## Drawing
 
-## Sprites
+### Sprites
 ```js
 // example drawing player sprite at coordinated (50, 50)
 cs.draw.sprite({ spr: 'spr_player', x: 50, y: 50 })
@@ -205,7 +199,7 @@ cs.draw.sprite({ spr: 'spr_player', x: 50, y: 50 })
 **/
 ```
 
-## Text
+### Text
 ```js
 // example drawing text 'hello world' at coordinated (50, 50)
 cs.draw.text({ text: 'hello world', x: 50, y: 50 })
@@ -218,7 +212,7 @@ cs.draw.text({ text: 'hello world', x: 50, y: 50 })
 **/
 ```
 
-## Shapes
+### Shapes
 
 ##### Fill Recangle
 ```js
@@ -281,5 +275,3 @@ cs.draw.settings({ color:'red', font:'16px Arial' })
 ```
 
 Note: Draw settings are reset after any drawing event! They are layer specific and the layer resets after each draw event. Use right before your drawing event
-
-# The Game Camera

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Game Engine -->
+		<script src='../../engine/scr_core.js'></script>
+	</head>
+	<body>
+		<!--Game Area-->
+		<canvas style="background:#FFF"></canvas>
+
+		<script>
+			cs.load({
+				core: '../../engine',
+				canvas: document.querySelector('canvas'),
+				objects: {
+					player: {
+						draw: function() {
+							cs.draw.fillRect({ x: 0, y: 0, width: 50, height: 50 })
+						}
+					}
+				},
+				start: function(){
+					cs.obj.create({ type:'player', x:10, y:10 })
+				}
+			})
+
+		</script>
+	</body>
+</html>
