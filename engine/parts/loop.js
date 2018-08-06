@@ -14,21 +14,17 @@ cs.loop = {
 		cs.obj.addNewObjects()
 
 		var i = cs.obj.list.length; while(i--){
-         if(cs.obj.list[i].core.live){
-            var obj = cs.obj.list[i];
-				cs.draw.setSurface(obj.core.surface);
-            var step = cs.objects[obj.core.type].step;
-            step && step.call(obj);
-         }
+			var obj = cs.obj.list[i];
+			var step = cs.objects[obj.core.type].step
+			cs.draw.setSurface(obj.core.surface)
+			obj.core.live && step && step.call(obj);
       }
 
 		var i = cs.obj.list.length; while(i--) {
-			if(cs.obj.list[i].core.live){
-				var obj = cs.obj.list[i]
-				cs.draw.setSurface(obj.core.surface)
-				var draw = cs.objects[obj.core.type].draw
-				draw && draw.call(obj)
-			}
+			var obj = cs.obj.list[i]
+			var draw = cs.objects[obj.core.type].draw
+			cs.draw.setSurface(obj.core.surface)
+			obj.core.live && draw && draw.call(obj)
 		}
 
 		// Touch / Keyboard
