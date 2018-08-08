@@ -84,6 +84,12 @@ cs.obj = {
    find: function(type){
       return this.objGroups[type][0]
    },
+	search: function(call){
+		return this.list.find(function(obj) {
+			if(!obj.core.live) return false
+			return call(obj)
+		})
+	},
    id: function(id){
       return this.list.find(function(e){ return e.core.id == id})
    },
