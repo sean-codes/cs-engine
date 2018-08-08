@@ -54,8 +54,8 @@ cs.draw = {
          }
       }
 
-		var xoff = options.center ? sprite.fwidth/2 : sprite.xoff
-		var yoff = options.center ? sprite.fheight/2 : sprite.yoff
+		var xoff = options.center ? sprite.fwidth/2 : cs.default(options.xoff, sprite.xoff)
+		var yoff = options.center ? sprite.fheight/2 : cs.default(options.yoff, sprite.yoff)
 
 		// Sean.. We will talk about this later. Not sure you know what you are doing.
 		// I want to overlap on a single pixel when flipping
