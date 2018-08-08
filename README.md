@@ -1,7 +1,7 @@
 # CS-Engine
 engine for building 2D games
 
-> Please no pull requests/forks on this project. This is a personal project of mine. Not made to compete with other game development solutions. Meant as read-only
+> a love story
 
 ## What's included
 
@@ -44,32 +44,33 @@ engine for building 2D games
 ```html
 <!DOCTYPE html>
 <html>
-	<head>
-		<!-- Game Engine -->
-		<script src='../../engine/scr_core.js'></script>
-	</head>
-	<body>
-		<!--Game Area-->
-		<canvas style="background:#FFF"></canvas>
+  <head>
+    <!-- include -->
+    <script src='../../engine/scr_core.js'></script>
+  </head>
+  <body>
+    <!-- canvas -->
+    <canvas style="background:#FFF"></canvas>
 
-		<script>
-			cs.load({
-				core: '../../engine', // path to parts folder
-				canvas: document.querySelector('canvas'),
-				objects: {
-					player: {
-						draw: function() {
-							cs.draw.fillRect({ x: 0, y: 0, width: 50, height: 50 })
-						}
-					}
-				},
-				start: function(){
-					cs.obj.create({ type:'player', x:10, y:10 })
-				}
-			})
+    <script>
 
-		</script>
-	</body>
+      cs.load({
+        core: '../../engine', // path to parts/scr_core
+        canvas: document.querySelector('canvas'),
+        objects: {
+          player: {
+            draw: function() {
+              cs.draw.fillRect({ x: 0, y: 0, width: 50, height: 50 })
+            }
+          }
+        },
+        start: function(){
+          cs.obj.create({ type:'player', x:10, y:10 })
+        }
+      })
+
+    </script>
+  </body>
 </html>
 ```
 
@@ -85,6 +86,7 @@ The cs.load function loads the assets and initializes a canvas
 * @arg {array of objects} options.scripts - the list of sprites to load
 * @arg {array of objects} options.sounds - the list of sounds to load
 * @arg {array of objects} options.storages - the list of storages to load
+* @arg {array of objects} options.objects - initial game objects
 * @arg {function} options.start - called when finished loading
 **/
 ```
@@ -108,7 +110,7 @@ When loading sprites we can specify some options. Only path is required
 ```
 
 ## Script Loading Options
-Any `.js` files that are required for the project
+Scripts are any `.js` files that are required for the project
 ```js
 /**
 * script load
@@ -160,13 +162,35 @@ cs.camera.setup({ maxWidth:300, maxHeight:200 })
 ```
 
 ## Game Objects
-Inside a script file you can create the object by using:
+Game objects have a create, step, and draw function. The are stored in cs.objects. Add them in the init or external script file.
+
+> in the init
+
 ```js
- cs.objects['obj_name'] = {
-	create: function() { console.log('i run when created') },
-	step: function() { console.log('i run each frame of the game') }
- }
+cs.load({
+  ...
+  objects: {
+    myObjName: {
+      create: function() { console.log('i run when created') },
+      step: function() { console.log('i run each frame of the game') },
+      draw: function() { console.log('i run before the step for drawing') }
+	 }
+  }
+  ...
+})
 ```
+
+> External script file
+
+```js
+// /object/obj_name.js
+cs.objects.myObjName = {
+  create: function() { console.log('i run when created') },
+  step: function() { console.log('i run each frame of the game') },
+  draw: function() { console.log('i run before the step for drawing') }
+}
+```
+
 
 Create an object using `cs.obj.create()`
 ```js
@@ -184,7 +208,7 @@ cs.obj.create({
 
 ### Sprites
 ```js
-// example drawing player sprite at coordinated (50, 50)
+// example drawing player sprite at coordinates (50, 50)
 cs.draw.sprite({ spr: 'spr_player', x: 50, y: 50 })
 
 /**
