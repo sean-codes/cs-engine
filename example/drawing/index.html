@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+	<head>
+		<script src="../../engine/scr_core.js"></script>
+		<style>
+			html, body {
+				margin:0;
+				padding:0;
+				height:100%;
+			}
+
+			body {
+				display:flex;
+			}
+
+			canvas{
+				margin:auto;
+				background:#222;
+				width:400px;
+				height:300px;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas></canvas>
+		<script>
+			cs.load({
+				canvas: document.querySelector('canvas'),
+				core: '../../engine',
+				assets: {
+					sprites: [
+						{ path: './spr_arrow' },
+						{ path: './spr_center', xoff: 7 }
+					]
+				},
+				objects: {
+					demo: {
+						draw: function() {
+							// drawing a filled rectangle
+							cs.draw.fillRect({ x: 0, y: 0, width:16, height: 16 })
+							// drawing a stroked rectangle
+							cs.draw.strokeRect({ x: 16, y: 0, width:16, height: 16 })
+
+							// drawing a sprite
+							cs.draw.sprite({ spr: 'spr_arrow', x: 16, y: 16 })
+							// flipping a sprite horizontally
+							cs.draw.sprite({ spr: 'spr_arrow', x: 16, y: 16, scaleX: -1 })
+
+							// drawing a sprite with an off
+							cs.draw.sprite({ spr: 'spr_center', x: 16, y: 48 })
+							// xoff is preserved in a negative fashion
+							cs.draw.sprite({ spr: 'spr_center', x: 16, y: 56, scaleX: -1 })
+
+							// drawing a line
+							cs.draw.line({ x1: 75, x2: 75, y1: 0, y2: 100})
+							// xoff can be set on during the draw event. example wrapping a sprite around a line
+							cs.draw.sprite({ spr: 'spr_arrow', x: 77, y: 25, xoff: 1 })
+							cs.draw.sprite({ spr: 'spr_arrow', x: 73, y: 25, xoff: 1, scaleX: -1 })
+						}
+					}
+				},
+				start: function() {
+					// scaling up x4
+					cs.room.setup({ width:100, height:75 })
+					cs.camera.setup({ width:100, height:75 })
+
+					// create demo object
+					cs.obj.create({ type: 'demo' })
+				}
+			})
+		</script>
+	</body>
+</html>
