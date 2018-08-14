@@ -2,9 +2,10 @@ cs.loop = {
    run : true,
    endSteps: [],
    nextSteps: [],
+	speed: 1000/60,
    step : function(){
       if(cs.loop.run)
-         setTimeout(function(){ cs.loop.step() }, 1000/60)
+         setTimeout(function(){ cs.loop.step() }, this.speed)
 
       cs.fps.update()
       cs.key.execute()
