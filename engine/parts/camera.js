@@ -5,22 +5,27 @@ cs.camera = {
    scale : 1,
    x : 0,
    y : 0,
-   followPos: { x: 0, y: 0, width: 0, height: 0 },
+   followPos: { x: 0, y: 0 },
    width : 500, maxWidth : 500,
    height : 200, maxHeight : 400,
+	smoothing: 1,
    setup: function(options){
-      this.width = options.width;
-      this.height = options.height;
-      this.maxWidth = options.maxWidth || this.width;
-      this.maxHeight = options.maxHeight || this.height;
+      this.width = options.width
+      this.height = options.height
+      this.maxWidth = options.maxWidth || this.width
+      this.maxHeight = options.maxHeight || this.height
+		this.smoothing = options.smoothing || this.smoothing
       cs.surface.resize();
    },
-   follow : function(obj){
-      this.followPos = { x: obj.x, y: obj.y, width: obj.mask.width, height: obj.mask.height }
+   follow : function(pos){
+      this.followPos = { x: pos.x, y: pos.y }
    },
    update: function(){
-      this.x = (this.followPos.x+this.followPos.width/2)-this.width/2
-      this.y = (this.followPos.y+this.followPos.height/2)-this.height/2
+		var differenceX = this.followPos.x - (this.x + this.width/2)
+		var differenceY = this.followPos.y - (this.y + this.height/2)
+
+      this.x += Math.floor(differenceX/this.smoothing)
+      this.y += Math.floor(differenceY/this.smoothing)
 
       if(this.x < 0) this.x = 0
       if(this.y < 0) this.y = 0
