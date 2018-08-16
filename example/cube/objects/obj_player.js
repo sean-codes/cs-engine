@@ -59,7 +59,7 @@ cs.objects['obj_player'] = {
 		}
 		this.y += this.vspeed;
 
-		cs.camera.follow(this);
+		cs.camera.follow({ x: this.x + this.mask.width/2, y: this.y + this.mask.height/2 });
 
 		cs.draw.sprite({ spr:'spr_player', x:this.x, y:this.y, frame:this.dir})
 

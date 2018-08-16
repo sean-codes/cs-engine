@@ -51,7 +51,8 @@
 				start: function(){
 					cs.camera.setup({
 						width:600,
-						height:400
+						height:400,
+						smoothing: 5
 					})
 					cs.global.networkControl = { id: -1, list: {} }
 					cs.network.connect({ host:'cube-script.net', port:9999, ssl: false })

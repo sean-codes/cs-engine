@@ -19,7 +19,7 @@ cs.objects['obj_bird'] = {
 		var spr = (this.vspeed > 0) ? 'bird2' : 'bird2'
 		cs.draw.sprite({ spr:spr, x:this.x+this.mask.width/2, y:this.y+this.mask.height/2, angle:angle})
 
-		cs.camera.follow(this);
+		cs.camera.follow({ x: this.x + this.mask.width/2, y: this.y + this.mask.height/2 });
       if(cs.save.state == 'PLAYING'){
 			if(this.vspeed < 4)
 				this.vspeed += 0.25;

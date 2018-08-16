@@ -24,7 +24,7 @@ cs.objects['obj_player'] = {
          this.attackTotal += this.attackTimer[i]
     },
     step: function(){
-      cs.camera.follow(this);
+      cs.camera.follow({ x: this.x + this.mask.width/2, y: this.y + this.mask.height/2 });
        //Vertical Collisions
        var keys = {
           left: cs.key.held(37),
