@@ -1,29 +1,32 @@
-//---------------------------------------------------------------------------------------------//
-//----------------------------------| Storage Functions |--------------------------------------//
-//---------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------| Storage Functions |---------------------//
+//----------------------------------------------------------------------------//
 cs.storage = {
    data: {},
    init: function(){
       for(var storage of cs.storages){
-         this.data[storage.name] = storage.data
+         this.set(storage)
       }
    },
-   cache: function(){
-      //we could cache something to local storage here
+	set: function(storage) {
+		this.data[storage.name] = JSON.stringify(storage.data)
+	},
+   read: function(name) {
+      return JSON.parse(this.data[name])
    },
-   group: function(groupName){
-      var group = []
-      for(var storageName of Object.keys(this.data)){
-         if(storageName.startsWith(groupName)){
-            group.push(storageName)
-         }
-      }
-      return group
-   },
-   read: function(name){
-      return JSON.parse(JSON.stringify(this.data[name]))
-   },
-   write: function(info){
+   write: function(info) {
       this.data[info.location] = info.data
+   },
+	search: function(search) {
+		var list = []
+		for(var storageName of Object.keys(this.data)){
+			if(storageName.startsWith(search)){
+				list.push(storageName)
+			}
+		}
+		return list
+	},
+	cache: function() {
+      //we could cache something to local storage here
    }
 }
