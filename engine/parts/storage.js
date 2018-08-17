@@ -5,22 +5,19 @@ cs.storage = {
    data: {},
    init: function(){
       for(var storage of cs.storages){
-         this.set(storage)
+         this.write(storage)
       }
    },
-	set: function(storage) {
-		this.data[storage.name] = JSON.stringify(storage.data)
-	},
-   read: function(name) {
-      return JSON.parse(this.data[name])
+   read: function(location) {
+      return JSON.parse(this.data[location])
    },
-   write: function(info) {
-      this.data[info.location] = info.data
+   write: function(options) {
+      this.data[options.location] = JSON.stringify(options.data)
    },
-	search: function(search) {
+	search: function(location) {
 		var list = []
 		for(var storageName of Object.keys(this.data)){
-			if(storageName.startsWith(search)){
+			if(storageName.startsWith(location)){
 				list.push(storageName)
 			}
 		}
