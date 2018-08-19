@@ -14,7 +14,8 @@ cs.storage = {
    write: function(options) {
       this.data[options.location] = JSON.stringify(options.data)
    },
-	search: function(location) {
+	ls: function(location) {
+		// reminds me of bash ls command
 		var list = []
 		for(var storageName of Object.keys(this.data)){
 			if(storageName.startsWith(location)){
@@ -24,6 +25,6 @@ cs.storage = {
 		return list
 	},
 	cache: function() {
-      //we could cache something to local storage here
+      // local storage
    }
 }
