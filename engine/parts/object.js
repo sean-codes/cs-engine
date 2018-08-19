@@ -76,7 +76,10 @@ cs.obj = {
       return typeof cs.objects[type] === 'undefined' ? true : false
    },
 	every: function() {
-		return this.list.concat(this.newObjects.map((obj) => obj.obj))
+		return this.list.concat(this.newObjects.map((obj) => obj.obj)).reduce(function(sum, num) {
+			num.core.live && sum.push(num)
+			return sum
+		}, [])
 	},
    all: function(type){
       return this.objGroups[type] || []
