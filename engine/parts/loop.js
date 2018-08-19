@@ -39,16 +39,13 @@ cs.loop = {
          cs.room.reset()
 
       // Execute next steps
-      var i = this.endSteps.length; while(i--){
-         (!this.endSteps[i].next)
-            ? this.endSteps.pop().func()
-            : this.endSteps[i].next = false
-      }
+		while(this.endSteps.length) {
+			this.endSteps.pop()()
+		}
 
 		// could clearup !live objects here
    },
-   endStep: function(options){
-      if(!options.next){ options.next = false }
-      this.endSteps.push({ next: options.next, func: options.func })
+   endStep: function(func){
+      this.endSteps.push(func)
    }
 }
