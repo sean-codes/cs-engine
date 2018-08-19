@@ -4,7 +4,6 @@
 cs.room = {
    width : 100,
    height : 100,
-   transition: false,
    restart: function(){
       this.restarting = true
    },
