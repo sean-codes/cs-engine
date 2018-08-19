@@ -8,7 +8,7 @@ engine for building 2D games
     cs-engine/
     ├── engine/
     │   ├── style.css
-    │   ├── scr_core.js
+    │   ├── core.js
     │   ├── template.html
     │   └── parts/
     │       ├── camera.js
@@ -37,7 +37,7 @@ engine for building 2D games
         └── warrior
 
 ## Setup
-- [ ] include `scr_core.js`
+- [ ] include `core.js`
 - [ ] add a canvas
 - [ ] run cs.init with configuration
 
@@ -46,7 +46,7 @@ engine for building 2D games
 <html>
   <head>
     <!-- include -->
-    <script src='../../engine/scr_core.js'></script>
+    <script src='../../engine/core.js'></script>
   </head>
   <body>
     <!-- canvas -->
@@ -55,7 +55,7 @@ engine for building 2D games
     <script>
 
       cs.load({
-        core: '../../engine', // path to parts/scr_core
+        core: '../../engine', // path to parts/core
         canvas: document.querySelector('canvas'),
         objects: {
           player: {
