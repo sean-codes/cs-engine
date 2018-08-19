@@ -82,6 +82,9 @@ cs.obj = {
       return this.objGroups[type] || []
    },
    find: function(type){
+		if(!this.objGroups[type]) {
+			return undefined
+		}
       return this.objGroups[type][0]
    },
 	search: function(call){
