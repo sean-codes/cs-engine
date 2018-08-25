@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+	<head>
+		<link rel="stylesheet" href="style.css">
+		<!-- include engine -->
+		<script src="../engine/core.js"></script>
+		<style>
+			html,body {
+				background:#222;
+				color:#FFF;
+			}
+			h1 {
+				font-family: monospace;
+			}
+			canvas {
+				display:hidden;
+				width:200px;
+				height:100px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Open Console</h1>
+		<canvas width=200 height=100></canvas>
+		<!-- tests -->
+		<script>
+			var tests = [
+				'./parts/math.js',
+				'./parts/camera.js'
+			]
+
+			// fake testing framework :]
+			var testUtility = {
+				log: function(message, color) {
+					console.log(`%c${message}`, `color: ${color}`)
+				},
+				test: function(testGroup) {
+
+					var results = {
+						passed: 0,
+						failed: 0,
+						executed: 0,
+						tests: []
+					}
+
+					for(var test of testGroup.tests) {
+						var pass = test.pass()
+						results[pass ? 'passed' : 'failed'] += 1
+						results.executed += 1
+
+						results.tests.push({
+							message: `${test.name} - ${test.should}`,
+							pass: pass
+						})
+
+					}
+					var groupStyle = results.failed ? 'group' : 'groupCollapsed'
+					console[groupStyle](`${testGroup.title} | ${results.executed} tests | ${results.passed} passed | ${results.failed} failed`)
+					for(var test of results.tests) {
+						testUtility.log(test.message, test.pass ? '#495' : '#f22')
+					}
+					console.groupEnd()
+				}
+			}
+
+			cs.load({
+				core: '../engine',
+				canvas: document.querySelector('canvas'),
+				start: function() {
+
+					// once the engine load run the tests
+					for(var test of tests) {
+						var script = document.createElement('script')
+						script.src = test
+						document.body.appendChild(script)
+					}
+				}
+			})
+		</script>
+	</body>
+</html>
