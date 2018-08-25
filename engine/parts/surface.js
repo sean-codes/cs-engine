@@ -107,40 +107,15 @@ cs.surface = {
          sx, sy, sWidth, sHeight,
          dx, dy, dWidth, dHeight)
    },
-   checkResize: function(){
-      var rect = cs.canvas.getBoundingClientRect()
-      var w = rect.width; var h = rect.height; var o = screen.orientation;
-      if(w !== cs.draw.w || h !== cs.draw.h || o !== cs.draw.o){
-          cs.draw.w = w
-          cs.draw.h = h
-          cs.draw.o = o
-          this.resize()
-      }
-   },
    resize : function(){
-      var viewSize = cs.canvas.getBoundingClientRect()
+		var viewSize = cs.canvas.getBoundingClientRect()
 
       var w = viewSize.width
       var h = viewSize.height
       var ratioHeight = w/h //How many h = w
       var ratioWidth = h/w //how man w = a h
 
-      if(w > this.maxRes){
-         w = this.maxRes
-         h = ratioWidth * w
-      }
 
-      if(h > this.maxRes){
-         h = this.maxRes
-         w = ratioHeight * h
-      }
-
-      var nw = cs.camera.maxWidth - (cs.camera.maxWidth%ratioWidth);
-      var nh = nw * ratioWidth;
-      if(nh >= cs.camera.maxHeight){
-         nh = cs.camera.maxHeight - (cs.camera.maxHeight%ratioHeight);
-         nw = nh * ratioHeight;
-      }
       cs.canvas.width = w
       cs.canvas.height = h
       this.ctxImageSmoothing(cs.ctx)
@@ -154,10 +129,6 @@ cs.surface = {
          surface.ctx.putImageData(img, 0, 0)
          this.ctxImageSmoothing(surface.ctx)
       }
-
-      cs.camera.width = Math.ceil(nw)
-      cs.camera.height = Math.ceil(nh)
-      cs.camera.scale = w/nw
    },
    ctxImageSmoothing: function(ctx){
       ctx.webkitImageSmoothingEnabled = this.imageSmoothing

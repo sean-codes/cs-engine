@@ -15,8 +15,29 @@ cs.camera = {
       this.maxWidth = options.maxWidth || this.width
       this.maxHeight = options.maxHeight || this.height
 		this.smoothing = options.smoothing || this.smoothing
-      cs.surface.resize();
+
+		this.resize()
+      //cs.surface.resize();
    },
+	resize: function() {
+		var viewSize = cs.canvas.getBoundingClientRect()
+
+      var w = viewSize.width
+      var h = viewSize.height
+      var ratioHeight = w/h //How many h = w
+      var ratioWidth = h/w //how man w = a h
+
+		var nw = cs.camera.maxWidth - (cs.camera.maxWidth%ratioWidth);
+      var nh = nw * ratioWidth;
+      if(nh >= cs.camera.maxHeight){
+         nh = cs.camera.maxHeight - (cs.camera.maxHeight%ratioHeight);
+         nw = nh * ratioHeight;
+      }
+
+		this.width = Math.ceil(nw)
+      this.height = Math.ceil(nh)
+      this.scale = w/nw
+	},
    follow : function(pos){
       this.followPos = { x: pos.x, y: pos.y }
    },
@@ -26,7 +47,7 @@ cs.camera = {
 
       this.x += Math.floor(differenceX/this.smoothing)
       this.y += Math.floor(differenceY/this.smoothing)
-
+		
       if(this.x < 0) this.x = 0
       if(this.y < 0) this.y = 0
 

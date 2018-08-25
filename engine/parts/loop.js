@@ -33,7 +33,6 @@ cs.loop = {
       cs.touch.reset()
 
       // Resize Canvas
-      cs.surface.checkResize()
       cs.surface.displayAll()
       if(cs.room.restarting === true)
          cs.room.reset()

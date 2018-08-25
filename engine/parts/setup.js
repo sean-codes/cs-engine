@@ -22,11 +22,18 @@ cs.setup = function(){
 
    // Camera/View Size
    cs.surface.resize()
+	cs.camera.resize()
 
    // Sound
    //cs.sound.active = cs.sound.init();
    window.onfocus = function(){ cs.sound.toggleActive(true) }
    window.onblur = function(){ cs.sound.toggleActive(false) }
+
+	// watch for resizing
+	window.onresize = function() {
+		cs.camera.resize()
+		cs.surface.resize()
+	}
 
    // Sprites/Storage/Sound
    cs.sprite.init()
