@@ -60,10 +60,10 @@ cs.touch = {
          offsetX : 0, offsetY : 0,
          id : -1,
          within : function(arg){
-            if(typeof arg.width == 'undefined') arg.width = arg.size || 0
-            if(typeof arg.height == 'undefined') arg.height = arg.size || 0
-            return (this.x > arg.x && this.x < arg.x+arg.width
-                 && this.y > arg.y && this.y < arg.y+arg.height);
+				var width = cs.default(arg.width, arg.size || 0)
+				var height = cs.default(arg.height, arg.size || 0)
+            return (this.x > arg.x && this.x < arg.x+width
+                 && this.y > arg.y && this.y < arg.y+height);
          },
          check : function(arg){
             if(this.id !== -1){
