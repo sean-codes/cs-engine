@@ -19,10 +19,7 @@ cs.obj = {
             live: true,
             type: options.type,
             id: this.unique,
-            core: object.core || false,
-            surface: 'game',
-
-            touch: cs.touch.create()
+            surface: 'game'
          }
       }
 

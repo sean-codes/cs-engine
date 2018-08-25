@@ -1,5 +1,6 @@
 cs.objects['obj_joystick'] = {
    create: function() {
+		this.touch = cs.touch.create()
       this.width = 64;
       this.height = 64;
       this.core.surface = 'gui';
@@ -16,7 +17,7 @@ cs.objects['obj_joystick'] = {
       this.x = 10;
       this.y = cs.draw.canvas.height - this.height - 10;
 
-      this.core.touch.check({
+      this.touch.check({
          x: this.x,
          y: this.y,
          width: this.width,
@@ -25,8 +26,8 @@ cs.objects['obj_joystick'] = {
 
       this.tx = this.x + (this.width / 2) - (this.jw / 2);
       this.ty = this.y + (this.width / 2) - (this.jh / 2);
-      if (this.core.touch.held) {
-         this.tx = this.core.touch.x - (this.jw / 2);
+      if (this.touch.held) {
+         this.tx = this.touch.x - (this.jw / 2);
          if (this.tx < this.x) {
             this.tx = this.x;
             //left key
@@ -41,7 +42,7 @@ cs.objects['obj_joystick'] = {
          } else {
             cs.key.virtualUp(39)
          }
-         this.ty = this.core.touch.y - (this.jh / 2);
+         this.ty = this.touch.y - (this.jh / 2);
          if (this.ty < this.y) {
             this.ty = this.y;
             //up key
@@ -53,7 +54,7 @@ cs.objects['obj_joystick'] = {
             this.ty = this.y + this.height - this.jh;
          }
       } else {
-         if (this.core.touch.up) {
+         if (this.touch.up) {
             if (cs.key.held(37)) {
                cs.key.virtualUp(37);
             }

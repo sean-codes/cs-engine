@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+	<body>
+		<!-- engine -->
+		<script src="../../engine/core.js"></script>
+		<link rel="stylesheet" href="../../engine/fullscreen.css" />
+
+		<!-- example -->
+		<canvas class="cs-canvas" style="background:#fff"/>
+		<script>
+			cs.load({
+				core: '../../engine',
+				canvas: document.querySelector('canvas'),
+				objects: {
+					touch: {
+						create: function() {
+							this.touch = cs.touch.create()
+						},
+						draw: function() {
+							cs.draw.setColor(this.bgColor)
+							cs.draw.fillRect(this)
+
+							this.touch.check({
+								x: this.x,
+								y: this.y,
+								width: this.width,
+								height: this.height
+							})
+
+							if(this.touch.held) {
+								var pointerSize = 30
+								cs.draw.setColor(this.color)
+								cs.draw.fillRect({
+									x: this.touch.x-pointerSize/2,
+									y: this.touch.y-pointerSize/2,
+									width: pointerSize,
+									height: pointerSize
+								})
+							}
+						}
+					}
+				},
+				start: function() {
+					// right side
+					cs.obj.create({
+						type: 'touch',
+						attr: {
+							x: 0,
+							y: 0,
+							width: cs.room.width/2,
+							height: cs.room.height,
+							bgColor: '#465',
+							color: '#d55',
+						}
+					})
+
+					// left side
+					cs.obj.create({
+						type: 'touch',
+						attr: {
+							x: cs.room.width/2,
+							y: 0,
+							width: cs.room.width/2,
+							height: cs.room.height,
+							bgColor: '#d55',
+							color: '#465'
+						}
+					})
+				}
+			})
+		</script>
+	</body>
+<html>
