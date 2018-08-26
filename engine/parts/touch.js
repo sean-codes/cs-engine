@@ -2,125 +2,142 @@
 //-------------------------------| Touch Input Functions |-------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.touch = {
-   list : [],
-   add : function(id){
-      cs.sound.enable();
+   list : [
+		{ id: -1, x: undefined, y: undefined, used: false } // mouse
+	],
+	eventDown: function(e){
+		cs.touch.touchUse(e.changedTouches[0].identifier)
+		cs.touch.eventMove(e)
+	},
+	eventUp: function(e){
+		var id = e.changedTouches[0].identifier;
+		cs.touch.touchUnuse(id);
+	},
+	eventMove: function(e){
+      e.preventDefault();
+		for(var touch of e.changedTouches) {
+			cs.touch.updatePos({
+				id: touch.identifier,
+				x: touch.clientX,
+				y: touch.clientY
+			})
+      }
+   },
+   touchUse : function(id){
+		// reuse from list or add to end
       for(var i = 0; i < cs.touch.list.length; i++)
          if(cs.touch.list[i].used === false) break
 
       cs.touch.list[i] = {
+			id: id,
          used: false,
          down: true,
+			held: true,
          up: false,
-         x: 0,
-         y: 0,
-         id: id
+         x: undefined,
+         y: undefined
       }
    },
-   remove : function(id){
-      for(var i = 0; i < cs.touch.list.length; i++){
-         if(cs.touch.list[i].id == id){
-            cs.touch.list[i].used = false
-            cs.touch.list[i].down = false
-            cs.touch.list[i].up = true
-         }
-      }
+   touchUnuse : function(id){
+		var touch = cs.touch.list.find(function(t) { return t.id == id })
+		touch.used = false
+		touch.held = false
+		touch.up = true
    },
-   down: function(e){
-      cs.touch.add(e.changedTouches[0].identifier)
-      cs.touch.move(e)
+   updatePos: function(eTouch){
+		var touch = cs.touch.list.find(function(t) { return t.id == eTouch.id })
+		touch.x = eTouch.x
+		touch.y = eTouch.y
    },
-   up: function(e){
-      var id = e.changedTouches[0].identifier;
-      cs.touch.remove(id);
-   },
-   updatePos : function(id, x, y){
-      for(var i = 0; i < cs.touch.list.length; i++){
-         var touch = cs.touch.list[i]
-         if(touch.id == id){
-             touch.x = x
-             touch.y = y
-             return { x: touch.x, y: touch.y }
-         }
-      }
-   },
-   move: function(e){
-      e.preventDefault();
-      for(var i = 0; i < e.changedTouches.length; i++){
-         var etouch = e.changedTouches[i]
-         cs.touch.updatePos(etouch.identifier, etouch.clientX, etouch.clientY);
-      }
-   },
-   create : function(raw){
+   observer: function(useGameCords){
       return {
+			observing: false,
+			useGameCords: useGameCords,
          down : false,
          held : false,
          up : false,
          x : 0, y : 0,
-         offsetX : 0, offsetY : 0,
-         id : -1,
-         within : function(arg){
-				var width = cs.default(arg.width, arg.size || 0)
-				var height = cs.default(arg.height, arg.size || 0)
-            return (this.x > arg.x && this.x < arg.x+width
-                 && this.y > arg.y && this.y < arg.y+height);
-         },
-         check : function(arg){
-            if(this.id !== -1){
-               // Move the current touch associated with that ID
-               var touch = cs.touch.list[this.id]
-               this.x = touch.x
-               this.y = touch.y
-               if(!cs.draw.raw){
-                  convert = cs.touch.convertToGameCords(this.x, this.y)
-                  this.x = convert.x; this.y = convert.y
+         offsetX : 0,
+			offsetY : 0,
+         check : function(area){
+				this.observing
+					? this.observe()
+					: this.findTouchToObserve(area)
+			},
+			observe: function() {
+				// im observing. lets update my values
+            if(this.observing) {
+               this.x = this.touch.x
+               this.y = this.touch.y
+               if(this.useGameCords){
+                  var convertedToGameCords = cs.touch.convertToGameCords(this.x, this.y)
+                  this.x = convertedToGameCords.x
+						this.y = convertedToGameCords.y
                }
-               this.down = touch.down
-               this.held = touch.held
-               this.up = touch.up;
-               if(this.up){
-                  touch.used = false
-                  this.held = false
-                  this.id = -1
-               }
-            } else {
-               this.up = false;
-               for(var i = 0; i < cs.touch.list.length; i++){
-                  var ctouch = cs.touch.list[i]
 
-                  this.x = ctouch.x
-                  this.y = ctouch.y
+               this.down = this.touch.down
+               this.held = this.touch.held
+               this.up = this.touch.up
 
-                  if(!cs.draw.raw){
-                     convert = cs.touch.convertToGameCords(this.x, this.y)
-                     this.x = convert.x; this.y = convert.y
-                  }
-
-                  if(ctouch.down === true && ctouch.used === false){
-                     if(this.x > arg.x && this.x < arg.x+arg.width
-                        && this.y > arg.y && this.y < arg.y+arg.height){
-                        //Being Touched
-                        ctouch.used = true
-                        this.down = true
-                        this.id = i
-
-                        this.offsetX = this.x-arg.x
-                        this.offsetY = this.y-arg.y
-                     }
-                  }
-               }
+					if(this.up) this.observing = false
+					return
             }
+			},
+			findTouchToObserve(area) {
+				// find a touch to observe
+				for(var touch of cs.touch.list) {
+					// this touch is being observed or not available to latch
+					if(touch.used || !touch.down) continue
+
+					var touchX = touch.x
+					var touchY = touch.y
+					if(this.useGameCords) {
+						var convertedToGameCords = cs.touch.convertToGameCords(touchX, touchY)
+                  touchX = convertedToGameCords.x
+						touchY = convertedToGameCords.y
+					}
+
+					// check if within
+					if(touchX > area.x && touchX < area.x + area.width &&
+						touchY > area.y && touchY < area.y + area.height ){
+						// observe this touch!
+						touch.used = true
+
+						// setup
+						this.observing = true
+						this.touch = touch
+						// handy
+						this.offsetX = touchX - area.x
+						this.offsetY = touchY - area.y
+
+						this.observe()
+					}
+				}
+         },
+			isDown: function() {
+				return this.touch && this.touch.down
+			},
+			isUp: function() {
+				return this.touch && this.touch.up
+			},
+			isHeld: function() {
+				return this.touch && this.touch.held
+			},
+			isWithin : function(rect){
+				var width = cs.default(rect.width, rect.size || 0)
+				var height = cs.default(rect.height, rect.size || 0)
+
+            return (this.x > rect.x) && (this.x < rect.x+width)
+        				&& (this.y > rect.y) && (this.y < rect.y+height)
          }
       }
    },
    reset : function(){
-      for(var i = 0; i < cs.touch.list.length; i++){
-         if(cs.touch.list[i].down === true){
-            cs.touch.list[i].down = false;
-            cs.touch.list[i].held = true;
-         }
-         cs.touch.list[i].up = false;
-      }
+		// up and down state only last one step
+		for(var touch of cs.touch.list) {
+			touch.down = false
+			touch.up = false
+		}
    },
    convertToGameCords(x, y){
       var rect = cs.canvas.getBoundingClientRect();
