@@ -15,7 +15,7 @@
 				objects: {
 					touch: {
 						create: function() {
-							this.touch = cs.touch.create()
+							this.touch = cs.touch.observer()
 						},
 						draw: function() {
 							this.touch.check({
@@ -25,7 +25,7 @@
 								height: this.height
 							})
 
-							if(this.touch.held) {
+							if(this.touch.isHeld()) {
 								var pointerSize = 60
 								cs.draw.setColor(this.color)
 								cs.draw.fillRect({

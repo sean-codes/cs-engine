@@ -1,6 +1,6 @@
 cs.objects['obj_inventory'] = {
 	create: function(){
-		this.touch = cs.touch.create()
+		this.touch = cs.touch.observer()
 	   this.width = 32;
 	   this.height = 32;
 	   this.core.surface = 'gui';
@@ -58,7 +58,7 @@ cs.objects['obj_inventory'] = {
 				text: 'i'
 			})
          this.touch.check(openRect)
-			if(this.touch.down){
+			if(this.touch.isDown()){
 				this.show = true;
 				cs.global.showJoyStick = false;
 			}
@@ -94,7 +94,7 @@ cs.objects['obj_inventory'] = {
     		var img = ''; var himg = ''; var hx = 0; var hy = 0
 
 
-    		if(this.touch.down){
+    		if(this.touch.isDown()){
     			console.log('why? x: ' + this.touch.x + ' y: ' + this.touch.y );
     		}
     		for(var i = 1; i <= slotCount; i++){
@@ -106,7 +106,7 @@ cs.objects['obj_inventory'] = {
     			cs.draw.sprite({ spr:img, x:slotRect.x, y:slotRect.y });
     			//blah blah blah
     			if(this.slotDown == -1){
-    				if(this.touch.down && this.touch.within(slotRect)){
+    				if(this.touch.isDown() && this.touch.isWithin(slotRect)){
     					console.log('Slot Down: ' + slot);
     					if(this.slots[slot] !== ''){
     						this.touch.offsetX = this.touch.offsetX-slotRect.x;
@@ -126,7 +126,7 @@ cs.objects['obj_inventory'] = {
     					}
     				}
 
-    				if(this.touch.up){
+    				if(this.touch.isUp()){
     					if(this.slotOver !== -1){
     						var save = this.slots[this.slotDown];
     						this.slots[this.slotDown] = this.slots[this.slotOver];
@@ -136,7 +136,7 @@ cs.objects['obj_inventory'] = {
     					console.log("Slot Up: " + this.slotOver);
     				}
 
-    				if(this.slotDown == slot && this.touch.held){
+    				if(this.slotDown == slot && this.touch.isHeld()){
     					hx = this.touch.x-this.touch.offsetX;
     					hy = this.touch.y-this.touch.offsetY;
     					himg = img;
@@ -163,7 +163,7 @@ cs.objects['obj_inventory'] = {
 				size: space*2
 			}
 
-    		if(this.touch.down && this.touch.within(closeRect)){
+    		if(this.touch.isDown() && this.touch.isWithin(closeRect)){
     			this.show = false;
     			cs.global.showJoyStick = true;
     		}

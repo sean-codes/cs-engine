@@ -9,7 +9,7 @@ cs.objects['obj_player'] = {
 		this.dir = 0;
 		this.v_col = -1;
 		this.h_col = -1;
-		this.touch = cs.touch.create();
+		this.touch = cs.touch.observer();
 		this.old_keys = {
 			left: false,
 			right: false,

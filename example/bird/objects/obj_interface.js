@@ -6,13 +6,13 @@ cs.objects['obj_interface'] = {
 	   this.backgroundPlaying = undefined;
 		this.core.surface = 'gui'
 		cs.sound.toggleMute(true)
-		this.touch = cs.touch.create()
+		this.touch = cs.touch.observer()
 	},
 	step: function(){
         //Handling Touch
         this.touch.check({ x:0, y:0, width:cs.draw.canvas.width, height:cs.draw.canvas.height})
         //Sound
-        if(this.touch.down && this.touch.within({ x:0, y:0, width:14*3, height: 14*3})){
+        if(this.touch.isDown() && this.touch.isWithin({ x:0, y:0, width:14*3, height: 14*3})){
             cs.sound.toggleMute(!cs.sound.mute)
             return;
         }
@@ -33,14 +33,14 @@ cs.objects['obj_interface'] = {
         switch(cs.save.state){
             case 'START':
 					cs.script.interface.drawButtons(['Please tap to start'])
-               if(this.touch.down)
+               if(this.touch.isDown())
                   cs.save.state = 'TAPTOFLAP';
                break;
             case 'TAPTOFLAP':
                if(!this.backgroundPlaying)
             		this.backgroundPlaying = cs.sound.play('background', { loop: true });
 					cs.script.interface.drawButtons(['Tap to flap!', 'Your Best Score: ' + cs.save.topScore])
-                if(this.touch.down){
+                if(this.touch.isDown()){
                     cs.save.state = 'PLAYING'
                     cs.global.flap = true
                 }
@@ -71,7 +71,7 @@ cs.objects['obj_interface'] = {
 						y: 30,
 						text: 'Best: ' + cs.save.topScore
 					})
-					if(this.touch.down)
+					if(this.touch.isDown())
 					  	cs.global.flap = true;
 					break;
 
@@ -80,7 +80,7 @@ cs.objects['obj_interface'] = {
                if(cs.global.score > cs.save.topScore)
         				cs.save.topScore = cs.global.score;
 
-               if(this.touch.down){
+               if(this.touch.isDown()){
                     cs.save.state = 'TAPTOFLAP';
                     cs.room.restart();
                }

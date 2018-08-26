@@ -1,6 +1,6 @@
 cs.objects['obj_crate'] = {
 	create: function(){
-		this.touch = cs.touch.create()
+		this.touch = cs.touch.observer(true)
 		this.mask = cs.sprite.info({ spr: 'spr_crate' }).mask
 		this.vspeed = 0;
 		this.hspeed = 0;
@@ -8,7 +8,7 @@ cs.objects['obj_crate'] = {
 	},
 	step: function(){
 	    this.touch.check({ x:this.x, y:this.y, width:this.mask.width, height:this.mask.height });
-	    if(this.touch.held){
+	    if(this.touch.isHeld()){
 			 console.log(this.touch.off_x)
 	        this.x = this.touch.x-this.touch.offsetX;
 	        this.y = this.touch.y-this.touch.offsetY;

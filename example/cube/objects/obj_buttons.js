@@ -5,7 +5,7 @@ cs.objects['obj_buttons'] = {
 	   this.surface = 'gui';
 		this.cx = 0;
 		this.cy = 0;
-		this.touch = cs.touch.create()
+		this.touch = cs.touch.observer()
 	},
 	step: function(){
 		var btnRect = {
@@ -16,7 +16,7 @@ cs.objects['obj_buttons'] = {
 		}
 
 		this.touch.check(btnRect);
-		if(this.touch.down){
+		if(this.touch.isDown()){
 			//console.log('open');
 			cs.key.virtualPress(38);
 		}
@@ -27,7 +27,7 @@ cs.objects['obj_buttons'] = {
 			console.log('Button 1 Says: ' + text);
 		}
 
-		if(this.touch.held){
+		if(this.touch.isHeld()){
 			cs.draw.setAlpha(0.5);
 		}
 		cs.draw.fillRect(btnRect)

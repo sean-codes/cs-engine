@@ -10,7 +10,7 @@ cs.objects['obj_otherplayer'] = {
 		this.dir = 0;
 		this.v_col = -1;
 		this.h_col = -1;
-		this.touch = cs.touch.create();
+		this.touch = cs.touch.observer();
 		this.socketID = -1,
 		this.keys = {
 			left: false,
