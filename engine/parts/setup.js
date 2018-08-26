@@ -7,14 +7,14 @@ cs.setup = function(){
 	cs.canvas.tabIndex = 1000
    cs.canvas.addEventListener('keydown', cs.key.updateDown)
    cs.canvas.addEventListener('keyup', cs.key.updateUp)
-   cs.canvas.addEventListener('mousemove', cs.mouse.move)
-   cs.canvas.addEventListener('mousedown', cs.mouse.down)
-   cs.canvas.addEventListener('mouseup', cs.mouse.up)
-	cs.canvas.addEventListener('mouseout', cs.mouse.up)
-   cs.canvas.addEventListener("touchstart", cs.touch.down, false)
-   cs.canvas.addEventListener("touchend", cs.touch.up, false)
-   cs.canvas.addEventListener("touchcancel", cs.touch.up, false)
-   cs.canvas.addEventListener("touchmove", cs.touch.move, false)
+   cs.canvas.addEventListener('mousemove', cs.mouse.eventMove)
+   cs.canvas.addEventListener('mousedown', function(e) { cs.mouse.eventDown(e); cs.sound.enable() })
+   cs.canvas.addEventListener('mouseup', cs.mouse.eventUp)
+	cs.canvas.addEventListener('mouseout', cs.mouse.eventUp)
+   cs.canvas.addEventListener("touchstart",  function(e) { cs.touch.eventDown(e); cs.sound.enable() }, false)
+   cs.canvas.addEventListener("touchend", cs.touch.eventUp, false)
+   cs.canvas.addEventListener("touchcancel", cs.touch.eventUp, false)
+   cs.canvas.addEventListener("touchmove", cs.touch.eventMove, false)
 
    // View, Game and GUI surfaces
    cs.surface.create({ name: 'gui', raw: true, depth: 0 })
