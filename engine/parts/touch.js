@@ -46,6 +46,8 @@ cs.touch = {
    },
    updatePos: function(eTouch){
 		var touch = cs.touch.list.find(function(t) { return t.id == eTouch.id })
+
+		if(!touch) return
 		touch.x = eTouch.x
 		touch.y = eTouch.y
    },
