@@ -4,6 +4,7 @@
 cs = {}
 cs.load = function(options){
 	// Handy
+	this.clone = function(object) { return JSON.parse(JSON.stringify(object)) }
 	this.default = function(want, ifnot) { return want != null ? want : ifnot }
 
    // Core Path and Parts

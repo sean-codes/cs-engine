@@ -15,6 +15,34 @@ testUtility.test({
 			}
 		},
 		{
+			name: 'outside',
+			should: 'returns if num is outside two numbers',
+			pass: function() {
+				return (
+					cs.math.outside(1, 0, 0) &&
+					!cs.math.outside(1, 0, 1) &&
+					!cs.math.outside(100, 100, 0) &&
+					!cs.math.outside(-1, -10, 0) &&
+					cs.math.outside(100, 0, 99) &&
+					cs.math.outside(-10, 0, 99)
+				) ? true : false
+			}
+		},
+		{
+			name: 'between',
+			should: 'returns num is between two numbers',
+			pass: function() {
+				return (
+					!cs.math.between(1, 0, 0) &&
+					cs.math.between(1, 0, 1) &&
+					cs.math.between(100, 100, 0) &&
+					cs.math.between(-1, -10, 0) &&
+					!cs.math.between(100, 0, 99) &&
+					!cs.math.between(-10, 0, 99)
+				) ? true : false
+			}
+		},
+		{
 			name: 'iRandomRange',
 			should: 'returns a random integer between a min and max',
 			pass: function() {

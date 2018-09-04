@@ -6,6 +6,12 @@ cs.math = {
 	     if(!number) return 0
         return number < 0 ? -1 : 1
     },
+	 between: function(num, min, max) {
+		 return num >= Math.min(min, max) && num <= Math.max(min, max)
+	 },
+	 outside: function(num, min, max) {
+		 return num < Math.min(min, max) || num > Math.max(min, max)
+	 },
     iRandomRange : function(min, max) {
         return Math.round(min + Math.random()*(max-min))
     },
