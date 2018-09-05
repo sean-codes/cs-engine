@@ -40,14 +40,16 @@ cs.touch = {
    },
    touchUnuse : function(id){
 		var touch = cs.touch.list.find(function(t) { return t.id == id })
+		if(!touch) return
+		
 		touch.used = false
 		touch.held = false
 		touch.up = true
    },
    updatePos: function(eTouch){
 		var touch = cs.touch.list.find(function(t) { return t.id == eTouch.id })
-
 		if(!touch) return
+
 		touch.x = eTouch.x
 		touch.y = eTouch.y
    },
