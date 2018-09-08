@@ -10,21 +10,32 @@ cs.draw = {
    width : 0,
    fontSize : 10,
    lineHeight: 10,
-   background: '#465',
    debug: {},
    w : 0,
    h : 0,
    o : 0,
-   setting: {
-      alpha: 1,
-      width: 1,
-      font: '12px Arial',
-      textAlign: 'start',
-      textBaseline: 'top',
-      color: '#000',
-      lineHeight: 10,
-      operation: 'source-over'
-   },
+   settings: {
+		defaults: {
+			alpha: 1,
+	      width: 1,
+	      font: '12px Arial',
+	      textAlign: 'start',
+	      textBaseline: 'top',
+	      color: '#000',
+	      lineHeight: 10,
+	      operation: 'source-over'
+		},
+		current: {} // will clone on settingsDefault()
+	},
+	setSurface : function(name){
+		this.surface = cs.surface.list[name]
+		this.canvas = this.surface.canvas
+		this.ctx = this.surface.ctx
+		this.raw = this.surface.raw
+		this.skip = this.surface.skip
+
+		this.settingsDefault()
+	},
    debugReset: function(){
       this.debug = {
          spritesSkipped: this.debug.spritesSkippedCount,
@@ -73,7 +84,7 @@ cs.draw = {
 			this.ctx.drawImage(info.frames[info.frame || 0], Math.ceil(options.x - xoff), Math.ceil(options.y - yoff))
 		}
 
-		cs.draw.settingsReset()
+		cs.draw.settingsDefault()
    },
    textInfo: function(options){
       // Guessing the size
@@ -122,7 +133,7 @@ cs.draw = {
       } else {
          this.ctx.fillText(options.text, options.x, options.y)
       }
-      this.settingsReset()
+      this.settingsDefault()
    },
    textWidth: function(str){
       return this.ctx.measureText(str).width
@@ -135,14 +146,14 @@ cs.draw = {
       this.ctx.moveTo(options.x1-cx,options.y1-cy);
       this.ctx.lineTo(options.x2-cx,options.y2-cy);
       this.ctx.stroke()
-      this.settingsReset()
+      this.settingsDefault()
    },
    fillRect: function(args){
       if(typeof args.width == 'undefined') args.width = args.size || 1
       if(typeof args.height == 'undefined') args.height = args.size || 1
 
       this.ctx.fillRect(Math.floor(args.x),Math.floor(args.y),args.width,args.height)
-      this.settingsReset()
+      this.settingsDefault()
    },
    strokeRect: function(args){
       var lineWidth = this.ctx.lineWidth
@@ -154,7 +165,7 @@ cs.draw = {
          height: (args.height ? args.height : args.size) - lineWidth
       }
       this.ctx.strokeRect(rect.x, rect.y, rect.width, rect.height)
-      this.settingsReset()
+      this.settingsDefault()
    },
    circle : function(x, y, rad, fill){
       if(typeof fill == 'undefined') fill = true
@@ -164,7 +175,7 @@ cs.draw = {
       (fill)
           ? cs.draw.ctx.fill()
           : cs.draw.ctx.stroke()
-      this.settingsReset()
+      this.settingsDefault()
    },
    circleGradient : function(x, y, radius, c1, c2){
       //Draw a circle
@@ -177,7 +188,7 @@ cs.draw = {
       this.ctx.closePath()
       //Fill
       this.ctx.fill()
-      this.settingsReset()
+      this.settingsDefault()
    },
    fixPosition: function(args){
       x = Math.floor(args.x); y = Math.floor(args.y);
@@ -215,42 +226,34 @@ cs.draw = {
    setOperation : function(operation){
       this.ctx.globalCompositeOperation = operation;
    },
-   setSurface : function(name){
-      this.surface = cs.surface.list[name]
-      this.canvas = this.surface.canvas
-      this.ctx = this.surface.ctx
-      this.raw = this.surface.raw
-      this.skip = this.surface.skip
-
-      this.settingsReset()
-   },
-   settings: function(settings){
+	set: function(settings){
       for(var setting in settings){
-         cs.draw.setting[setting] = settings[setting]
+         this.settings.current[setting] = settings[setting]
       }
       this.settingsUpdate()
    },
-   settingsUpdate: function(){
-      cs.draw.setAlpha(this.setting.alpha)
-      cs.draw.setWidth(this.setting.width)
-      cs.draw.setFont(this.setting.font)
-      cs.draw.setTextAlign(this.setting.textAlign)
-      cs.draw.setLineHeight(this.setting.lineHeight)
-      cs.draw.setTextBaseline(this.setting.textBaseline)
-      cs.draw.setColor(this.setting.color)
-      cs.draw.setOperation(this.setting.operation)
-   },
-   settingsReset: function(){
-      this.setting = {
-         alpha: 1,
-         width: 1,
-         font: '12px Arial',
-         textAlign: 'start',
-         textBaseline: 'top',
-         color: '#000',
-         lineHeight: 10,
-         operation: 'source-over'
+	default: function(settings){
+      for(var setting in settings){
+         this.settings.defaults[setting] = settings[setting]
       }
+      this.settingsDefault()
+   },
+   settingsUpdate: function(){
+      cs.draw.setAlpha(this.settings.current.alpha)
+      cs.draw.setWidth(this.settings.current.width)
+      cs.draw.setFont(this.settings.current.font)
+      cs.draw.setTextAlign(this.settings.current.textAlign)
+      cs.draw.setLineHeight(this.settings.current.lineHeight)
+      cs.draw.setTextBaseline(this.settings.current.textBaseline)
+      cs.draw.setColor(this.settings.current.color)
+      cs.draw.setColor(this.settings.current.color)
+      cs.draw.setOperation(this.settings.current.operation)
+   },
+   settingsDefault: function(){
+		for(var setting in this.settings.defaults) {
+			this.settings.current[setting] = this.settings.defaults[setting]
+		}
+
       this.settingsUpdate()
    }
 }

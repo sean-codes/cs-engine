@@ -283,7 +283,7 @@ cs.draw.line({ x1:0, y1:0, x2:50, y2: 50 })
 ##### Draw Settings
 ```js
 // example setting draw color to red and font to 16px arial
-cs.draw.settings({ color:'red', font:'16px Arial' })
+cs.draw.set({ color:'red', font:'16px Arial' })
 
 /**
 * @arg {object} options - the options
