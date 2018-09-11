@@ -18,14 +18,14 @@ cs.loop = {
 			var obj = cs.obj.list[i];
 			var step = cs.objects[obj.core.type].step
 			cs.draw.setSurface(obj.core.surface)
-			obj.core.live && step && step.call(obj);
+			obj.core.live && step && step.call(obj, obj);
       }
 
 		var i = cs.obj.list.length; while(i--) {
 			var obj = cs.obj.list[i]
 			var draw = cs.objects[obj.core.type].draw
 			cs.draw.setSurface(obj.core.surface)
-			obj.core.live && draw && draw.call(obj)
+			obj.core.live && draw && draw.call(obj, obj)
 		}
 
 		// Touch / Keyboard
