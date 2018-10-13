@@ -33,10 +33,10 @@ cs.key = {
    reset: function() {
       for (var tmp in cs.key.downList) {
          cs.key.downList[tmp] = false
-         if (cs.key.upList[tmp]){
+         if (cs.key.upList[tmp]) {
             cs.key.heldList[tmp] = false
          }
-         
+
          cs.key.upList[tmp] = false
       }
    },

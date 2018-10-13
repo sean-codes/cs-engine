@@ -1,79 +1,82 @@
 <!doctype html>
 <html>
-	<body>
-		<!-- engine -->
-		<script src="../../engine/core.js"></script>
-		<link rel="stylesheet" href="../../engine/fullscreen.css" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<!-- example -->
-		<canvas class="cs-canvas" style="background:#222; outline:none"/>
-		<script>
-			cs.load({
-				core: '../../engine',
-				canvas: document.querySelector('canvas'),
-				objects: {
-					touch: {
-						create: function() {
-							this.touch = cs.touch.observer()
-						},
-						draw: function() {
-							this.touch.check({
-								x: this.x,
-								y: this.y,
-								width: this.width,
-								height: this.height
-							})
+<body>
+   <!-- engine -->
+   <script src="../../engine/core.js"></script>
+   <link rel="stylesheet" href="../../engine/fullscreen.css" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-							if(this.touch.isHeld()) {
-								var pointerSize = 60
-								cs.draw.setColor(this.color)
-								cs.draw.fillRect({
-									x: this.touch.x-pointerSize/2,
-									y: this.touch.y-pointerSize/2,
-									width: pointerSize,
-									height: pointerSize
-								})
-							}
-						}
-					},
-					display: {
-						zIndex: 100,
-						draw: function() {
-							var x = 25
-							var y = 25
-							for(var touch of cs.touch.list) {
-								cs.draw.setColor('#fff')
-								cs.draw.text({
-									x: x,
-									y: y,
-									text: 'x: '+Math.round(touch.x)+' y: '+Math.round(touch.y)+' id: '+touch.id+' used: '+touch.used
-								})
+   <!-- example -->
+   <canvas class="cs-canvas" style="background:#222; outline:none" />
+   <script>
+      cs.load({
+         core: '../../engine',
+         canvas: document.querySelector('canvas'),
+         objects: {
+            touch: {
+               create: function() {
+                  this.touch = cs.touch.observer()
+               },
+               draw: function() {
+                  this.touch.check({
+                     x: this.x,
+                     y: this.y,
+                     width: this.width,
+                     height: this.height
+                  })
 
-								y+= 25
-							}
-						}
-					}
-				},
-				start: function() {
-					// displays touchs
-					cs.obj.create({ type: 'display' })
+                  if (this.touch.isHeld()) {
+                     var pointerSize = 60
+                     cs.draw.setColor(this.color)
+                     cs.draw.fillRect({
+                        x: this.touch.x - pointerSize / 2,
+                        y: this.touch.y - pointerSize / 2,
+                        width: pointerSize,
+                        height: pointerSize
+                     })
+                  }
+               }
+            },
+            display: {
+               zIndex: 100,
+               draw: function() {
+                  var x = 25
+                  var y = 25
+                  for (var touch of cs.touch.list) {
+                     cs.draw.setColor('#fff')
+                     cs.draw.text({
+                        x: x,
+                        y: y,
+                        text: 'x: ' + Math.round(touch.x) + ' y: ' + Math.round(touch.y) + ' id: ' + touch.id + ' used: ' + touch.used
+                     })
 
-					var touchColors = ['#465', '#d55', '#888', '#646']
-					for(var color of touchColors) {
-						cs.obj.create({
-							type: 'touch',
-							attr: {
-								x: 0,
-								y: 0,
-								width: cs.room.width,
-								height: cs.room.height,
-								color: color,
-							}
-						})
-					}
-				}
-			})
-		</script>
-	</body>
+                     y += 25
+                  }
+               }
+            }
+         },
+         start: function() {
+            // displays touchs
+            cs.obj.create({
+               type: 'display'
+            })
+
+            var touchColors = ['#465', '#d55', '#888', '#646']
+            for (var color of touchColors) {
+               cs.obj.create({
+                  type: 'touch',
+                  attr: {
+                     x: 0,
+                     y: 0,
+                     width: cs.room.width,
+                     height: cs.room.height,
+                     color: color,
+                  }
+               })
+            }
+         }
+      })
+   </script>
+</body>
 <html>

@@ -1,92 +1,96 @@
 <!doctype html>
 <html>
-	<head>
-		<style>
-			html,
-			body {
-				width: 100%;
-				height: 100%;
-				padding: 0;
-				margin: 0;
-			}
 
-			body {
-				display: flex;
-			}
+<head>
+   <style>
+      html,
+      body {
+         width: 100%;
+         height: 100%;
+         padding: 0;
+         margin: 0;
+      }
 
-			canvas {
-				margin: auto;
-				width: 400px;
-				height: 200px;
-				background: #222;
-			}
-		</style>
-		<script id="cs-core" src="../../engine/core.js"></script>
-	</head>
-	<body>
-		<canvas width=400 height=200 />
+      body {
+         display: flex;
+      }
 
-		<script>
-			cs.load({
-				core: '../../engine',
-				canvas: document.querySelector('canvas'),
-				assets: {
-					scripts: [
-						{ path: 'scripts/particles' }
-					]
-				},
-				objects: {
-					player: {
-						create: function() {
-							this.particleSystem = cs.script.particles.createSystem({
-								"shape": "square",
-								"colorStart": "#ffffff",
-								"colorEnd": "#0fff0f",
-								"size": 10,
-								"grow": -5,
-								"alpha": 1,
-								"fade": -6,
-								"speedMin": 43,
-								"speedMax": 43,
-								"dirMin": 0,
-								"dirMax": 360,
-								"wobbleX": 0,
-								"wobbleY": 0,
-								"lifeMin": 152,
-								"lifeMax": 152,
-								"accel": -5,
-								"gravity": 0,
-								"particlesPerStep": 2
-							})
-						},
-						step: function() {},
-						draw: function() {
-							cs.script.particles.burst({
-								system: this.particleSystem,
-								x: cs.room.width / 2,
-								y: cs.room.height / 2,
-								w: 5, h: 5,
-								qty: 5
-							})
+      canvas {
+         margin: auto;
+         width: 400px;
+         height: 200px;
+         background: #222;
+      }
+   </style>
+   <script id="cs-core" src="../../engine/core.js"></script>
+</head>
 
-							cs.script.particles.step({
-								system: this.particleSystem
-							})
-						}
-					}
-				},
-				start: function() {
-					console.log('starting')
+<body>
+   <canvas width=400 height=200 />
 
-					cs.obj.create({
-						type: 'player',
-						attr: {
-							x: 50,
-							y: 50
-						}
-					})
-				}
-			})
-		</script>
-	</body>
+   <script>
+      cs.load({
+         core: '../../engine',
+         canvas: document.querySelector('canvas'),
+         assets: {
+            scripts: [{
+               path: 'scripts/particles'
+            }]
+         },
+         objects: {
+            player: {
+               create: function() {
+                  this.particleSystem = cs.script.particles.createSystem({
+                     "shape": "square",
+                     "colorStart": "#ffffff",
+                     "colorEnd": "#0fff0f",
+                     "size": 10,
+                     "grow": -5,
+                     "alpha": 1,
+                     "fade": -6,
+                     "speedMin": 43,
+                     "speedMax": 43,
+                     "dirMin": 0,
+                     "dirMax": 360,
+                     "wobbleX": 0,
+                     "wobbleY": 0,
+                     "lifeMin": 152,
+                     "lifeMax": 152,
+                     "accel": -5,
+                     "gravity": 0,
+                     "particlesPerStep": 2
+                  })
+               },
+               step: function() {},
+               draw: function() {
+                  cs.script.particles.burst({
+                     system: this.particleSystem,
+                     x: cs.room.width / 2,
+                     y: cs.room.height / 2,
+                     w: 5,
+                     h: 5,
+                     qty: 5
+                  })
+
+                  cs.script.particles.step({
+                     system: this.particleSystem
+                  })
+               }
+            }
+         },
+         start: function() {
+            console.log('starting')
+
+            cs.obj.create({
+               type: 'player',
+               attr: {
+                  x: 50,
+                  y: 50
+               }
+            })
+         }
+      })
+   </script>
+</body>
+
 </html>

@@ -3,8 +3,8 @@
 //----------------------------------------------------------------------------//
 cs.storage = {
    data: {},
-   init: function(){
-      for(var storage of cs.storages){
+   init: function() {
+      for (var storage of cs.storages) {
          this.write(storage)
       }
    },
@@ -14,17 +14,17 @@ cs.storage = {
    write: function(options) {
       this.data[options.location] = JSON.stringify(options.data)
    },
-	ls: function(location) {
-		// reminds me of bash ls command
-		var list = []
-		for(var storageName of Object.keys(this.data)){
-			if(storageName.startsWith(location)){
-				list.push(storageName)
-			}
-		}
-		return list
-	},
-	cache: function() {
+   ls: function(location) {
+      // reminds me of bash ls command
+      var list = []
+      for (var storageName of Object.keys(this.data)) {
+         if (storageName.startsWith(location)) {
+            list.push(storageName)
+         }
+      }
+      return list
+   },
+   cache: function() {
       // local storage
    }
 }

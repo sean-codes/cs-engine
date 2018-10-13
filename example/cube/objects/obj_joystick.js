@@ -1,6 +1,6 @@
 cs.objects['obj_joystick'] = {
    create: function() {
-		this.touch = cs.touch.observer()
+      this.touch = cs.touch.observer()
       this.width = 64;
       this.height = 64;
       this.core.surface = 'gui';

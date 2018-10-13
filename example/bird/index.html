@@ -1,84 +1,145 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>cs-engine</title>
-		<!-- View Setup -->
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-		<link rel="stylesheet" type="text/css" href="../../engine/pixelart.css?v=1" />
-		<link rel="stylesheet" type="text/css" href="../../engine/fullscreen.css?v=1" />
-		<style>
-			body { background:#28c; }
-		</style>
-		<!-- Game Engine -->
-		<script src='../../engine/core.js' id="cs-core"></script>
-	</head>
-	<body>
-		<!--Game Area-->
-		<canvas class="cs-canvas"></canvas>
-		<script>
-			//Initialize
-			cs.load({
-				core: '../../engine',
-				canvas: document.querySelector('canvas'),
-				assets: {
-					scripts: [
-						{ path: 'objects/obj_bird' },
-						{ path: 'objects/obj_pipe' },
-						{ path: 'objects/obj_score' },
-						{ path: 'objects/obj_interface' },
-						{ path: 'objects/obj_background' },
-						{ path: 'scripts/scr_collide' },
-						{ path: 'scripts/scr_interface' }
-					],
-					sprites: [
-						{ path: 'sprites/bird', xoff:8, yoff:7},
-						{ path: 'sprites/bird2', xoff:8, yoff:7},
-						{ path: 'sprites/pipe_down' },
-						{ path: 'sprites/pipe_up' },
-						{ path: 'sprites/cloud1' },
-						{ path: 'sprites/cloud2' },
-						{ path: 'sprites/cloud3' },
-						{ path: 'sprites/mountain1' },
-						{ path: 'sprites/mountain2' },
-						{ path: 'sprites/sound_on' },
-						{ path: 'sprites/sound_off' }
-					],
-					sounds: [
-						{ path: 'sounds/flap' },
-						{ path: 'sounds/background' },
-						{ path: 'sounds/score' }
-					]
-				},
-				start: function(){
-					//Room Setup
-					cs.room.setup({
-						width: 800,
-						height: 256,
-						background: '#87cefa'
-					})
 
-					cs.camera.setup({
-						maxWidth:800,
-						maxHeight:256,
-						smoothing: 5
-					})
+<head>
+   <title>cs-engine</title>
+   <!-- View Setup -->
+   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+   <link rel="stylesheet" type="text/css" href="../../engine/pixelart.css?v=1" />
+   <link rel="stylesheet" type="text/css" href="../../engine/fullscreen.css?v=1" />
+   <style>
+      body {
+         background: #28c;
+      }
+   </style>
+   <!-- Game Engine -->
+   <script src='../../engine/core.js' id="cs-core"></script>
+</head>
 
-					//Start game
-		         cs.save = { topScore: 0, state: 'START' }
-					//Globals
-	            cs.global = {
-	               live: true,
-	               score: 0,
-	               flap: false,
-	               start: false,
-	               speed: 1
-	            }
+<body>
+   <!--Game Area-->
+   <canvas class="cs-canvas"></canvas>
+   <script>
+      //Initialize
+      cs.load({
+         core: '../../engine',
+         canvas: document.querySelector('canvas'),
+         assets: {
+            scripts: [{
+                  path: 'objects/obj_bird'
+               },
+               {
+                  path: 'objects/obj_pipe'
+               },
+               {
+                  path: 'objects/obj_score'
+               },
+               {
+                  path: 'objects/obj_interface'
+               },
+               {
+                  path: 'objects/obj_background'
+               },
+               {
+                  path: 'scripts/scr_collide'
+               },
+               {
+                  path: 'scripts/scr_interface'
+               }
+            ],
+            sprites: [{
+                  path: 'sprites/bird',
+                  xoff: 8,
+                  yoff: 7
+               },
+               {
+                  path: 'sprites/bird2',
+                  xoff: 8,
+                  yoff: 7
+               },
+               {
+                  path: 'sprites/pipe_down'
+               },
+               {
+                  path: 'sprites/pipe_up'
+               },
+               {
+                  path: 'sprites/cloud1'
+               },
+               {
+                  path: 'sprites/cloud2'
+               },
+               {
+                  path: 'sprites/cloud3'
+               },
+               {
+                  path: 'sprites/mountain1'
+               },
+               {
+                  path: 'sprites/mountain2'
+               },
+               {
+                  path: 'sprites/sound_on'
+               },
+               {
+                  path: 'sprites/sound_off'
+               }
+            ],
+            sounds: [{
+                  path: 'sounds/flap'
+               },
+               {
+                  path: 'sounds/background'
+               },
+               {
+                  path: 'sounds/score'
+               }
+            ]
+         },
+         start: function() {
+            //Room Setup
+            cs.room.setup({
+               width: 800,
+               height: 256,
+               background: '#87cefa'
+            })
 
-					cs.obj.create({ type:'obj_bird', attr: { x:(cs.room.width/2), y:cs.room.height/2 }})
-					cs.obj.create({ type:'obj_interface' })
-					cs.obj.create({ type:'obj_background'})
-				}
-			})
-		</script>
-	</body>
+            cs.camera.setup({
+               maxWidth: 800,
+               maxHeight: 256,
+               smoothing: 5
+            })
+
+            //Start game
+            cs.save = {
+               topScore: 0,
+               state: 'START'
+            }
+            //Globals
+            cs.global = {
+               live: true,
+               score: 0,
+               flap: false,
+               start: false,
+               speed: 1
+            }
+
+            cs.obj.create({
+               type: 'obj_bird',
+               attr: {
+                  x: (cs.room.width / 2),
+                  y: cs.room.height / 2
+               }
+            })
+            cs.obj.create({
+               type: 'obj_interface'
+            })
+            cs.obj.create({
+               type: 'obj_background'
+            })
+         }
+      })
+   </script>
+</body>
+
 </html>

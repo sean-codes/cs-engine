@@ -1,78 +1,176 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Cube-Script</title>
-		<!-- View Setup -->
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 
-		<!-- Game Engine -->
-		<link rel="stylesheet" type="text/css" href="../../engine/fullscreen.css?v=1" />
-		<link rel="stylesheet" type="text/css" href="../../engine/pixelart.css?v=1" />
-		<script src='../../engine/core.js' id="cs-core"></script>
-	</head>
-	<body>
-		<!--Game Area-->
-		<canvas class="cs-canvas"></canvas>
-		<script>
-			// Wait for the core to load
-			cs.load({
-				core: '../../engine',
-				canvas: document.querySelector('canvas'),
-				assets: {
-					scripts: [
-						// Objects
-						{ path: 'objects/obj_block' },
-						{ path: 'objects/obj_buttons' },
-						{ path: 'objects/obj_crate' },
-						{ path: 'objects/obj_fire' },
-						{ path: 'objects/obj_inventory' },
-						{ path: 'objects/obj_joystick' },
-						{ path: 'objects/obj_light' },
-						{ path: 'objects/obj_otherplayer' },
-						{ path: 'objects/obj_player' },
-						// Scripts
-						{ path: 'scripts/compareObj' },
-						{ path: 'scripts/lightAdd' },
-						{ path: 'scripts/networkRecievedMessage' },
-						{ path: 'scripts/networkSendMovement' },
-						{ path: 'scripts/scr_collide' },
-						{ path: '../particles/scripts/particles' },
-						// Events
-						{ path: 'events/network' }
-					],
-					sprites: [
-						{ path: 'sprites/spr_block' },
-						{ path: 'sprites/spr_crate' },
-						{ path: 'sprites/spr_inventory' },
-						{ path: 'sprites/spr_item_rupee' },
-						{ path: 'sprites/spr_player', frames: 2, fwidth:16, fheight:16 }
-					]
-				},
-				start: function(){
-					cs.camera.setup({
-						width:600,
-						height:400,
-						smoothing: 5
-					})
-					cs.global.networkControl = { id: -1, list: {} }
-					cs.network.connect({ host:'cube-script.net', port:9999, ssl: false })
+<head>
+   <title>Cube-Script</title>
+   <!-- View Setup -->
+   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 
-					cs.obj.create({ type: 'obj_light' })
-					cs.obj.create({ type: 'obj_buttons', attr:{ x:100, y:100 }})
-					cs.obj.create({ type: 'obj_crate', attr:{ x:100, y:0 }})
-					cs.obj.create({ type: 'obj_player', attr:{ x:40, y:40 }})
+   <!-- Game Engine -->
+   <link rel="stylesheet" type="text/css" href="../../engine/fullscreen.css?v=1" />
+   <link rel="stylesheet" type="text/css" href="../../engine/pixelart.css?v=1" />
+   <script src='../../engine/core.js' id="cs-core"></script>
+</head>
 
-					var tx = 0;
-					while(tx < cs.room.width){
-						cs.obj.create({ type:'obj_block', attr: { x:tx, y:cs.room.height-16 }})
-						tx += 16
-					}
+<body>
+   <!--Game Area-->
+   <canvas class="cs-canvas"></canvas>
+   <script>
+      // Wait for the core to load
+      cs.load({
+         core: '../../engine',
+         canvas: document.querySelector('canvas'),
+         assets: {
+            scripts: [
+               // Objects
+               {
+                  path: 'objects/obj_block'
+               },
+               {
+                  path: 'objects/obj_buttons'
+               },
+               {
+                  path: 'objects/obj_crate'
+               },
+               {
+                  path: 'objects/obj_fire'
+               },
+               {
+                  path: 'objects/obj_inventory'
+               },
+               {
+                  path: 'objects/obj_joystick'
+               },
+               {
+                  path: 'objects/obj_light'
+               },
+               {
+                  path: 'objects/obj_otherplayer'
+               },
+               {
+                  path: 'objects/obj_player'
+               },
+               // Scripts
+               {
+                  path: 'scripts/compareObj'
+               },
+               {
+                  path: 'scripts/lightAdd'
+               },
+               {
+                  path: 'scripts/networkRecievedMessage'
+               },
+               {
+                  path: 'scripts/networkSendMovement'
+               },
+               {
+                  path: 'scripts/scr_collide'
+               },
+               {
+                  path: '../particles/scripts/particles'
+               },
+               // Events
+               {
+                  path: 'events/network'
+               }
+            ],
+            sprites: [{
+                  path: 'sprites/spr_block'
+               },
+               {
+                  path: 'sprites/spr_crate'
+               },
+               {
+                  path: 'sprites/spr_inventory'
+               },
+               {
+                  path: 'sprites/spr_item_rupee'
+               },
+               {
+                  path: 'sprites/spr_player',
+                  frames: 2,
+                  fwidth: 16,
+                  fheight: 16
+               }
+            ]
+         },
+         start: function() {
+            cs.camera.setup({
+               width: 600,
+               height: 400,
+               smoothing: 5
+            })
+            cs.global.networkControl = {
+               id: -1,
+               list: {}
+            }
+            cs.network.connect({
+               host: 'cube-script.net',
+               port: 9999,
+               ssl: false
+            })
 
-					cs.obj.create({ type: 'obj_joystick', attr: { x:100, y:100 }})
-					cs.obj.create({ type: 'obj_inventory', attr: { x:100, y:100 }})
-					cs.obj.create({ type: 'obj_fire', attr: { x:150, y:375 }})
-				}
-			})
-		</script>
-	</body>
+            cs.obj.create({
+               type: 'obj_light'
+            })
+            cs.obj.create({
+               type: 'obj_buttons',
+               attr: {
+                  x: 100,
+                  y: 100
+               }
+            })
+            cs.obj.create({
+               type: 'obj_crate',
+               attr: {
+                  x: 100,
+                  y: 0
+               }
+            })
+            cs.obj.create({
+               type: 'obj_player',
+               attr: {
+                  x: 40,
+                  y: 40
+               }
+            })
+
+            var tx = 0;
+            while (tx < cs.room.width) {
+               cs.obj.create({
+                  type: 'obj_block',
+                  attr: {
+                     x: tx,
+                     y: cs.room.height - 16
+                  }
+               })
+               tx += 16
+            }
+
+            cs.obj.create({
+               type: 'obj_joystick',
+               attr: {
+                  x: 100,
+                  y: 100
+               }
+            })
+            cs.obj.create({
+               type: 'obj_inventory',
+               attr: {
+                  x: 100,
+                  y: 100
+               }
+            })
+            cs.obj.create({
+               type: 'obj_fire',
+               attr: {
+                  x: 150,
+                  y: 375
+               }
+            })
+         }
+      })
+   </script>
+</body>
+
 </html>
