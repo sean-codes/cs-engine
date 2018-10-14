@@ -31,7 +31,9 @@
    <script>
       var tests = [
          './parts/math.js',
-         './parts/camera.js'
+         './parts/camera.js',
+         './parts/fps.js',
+         './parts/loop.js'
       ]
 
       // fake testing framework :]
@@ -40,31 +42,37 @@
             console.log(`%c${message}`, `color: ${color}`)
          },
          test: function(testGroup) {
-
-            var results = {
+            var testResults = {
                passed: 0,
                failed: 0,
                executed: 0,
                tests: []
             }
 
-            for (var test of testGroup.tests) {
-               var pass = test.pass()
-               results[pass ? 'passed' : 'failed'] += 1
-               results.executed += 1
-
-               results.tests.push({
-                  message: `${test.name} - ${test.should}`,
-                  pass: pass
+            var run = (testFunctionToRun, message) => {
+               return new Promise((resolve, reject) => {
+                  testResults.executed += 1
+                  testFunctionToRun(resolve, reject)
+               }).then(() => {
+                  testResults.passed += 1
+                  return { pass: true, message }
+               }).catch(() => {
+                  testResults.failed += 1
+                  return { pass: false, message }
                })
+            }
 
-            }
-            var groupStyle = results.failed ? 'group' : 'groupCollapsed'
-            console[groupStyle](`${testGroup.title} | ${results.executed} tests | ${results.passed} passed | ${results.failed} failed`)
-            for (var test of results.tests) {
-               testUtility.log(test.message, test.pass ? '#495' : '#f22')
-            }
-            console.groupEnd()
+            Promise.all(testGroup.tests.map((test) => {
+               var message = `${test.name} - ${test.should}`
+               return run(test.pass, message)
+            })).then((results) => {
+               var groupStyle = testResults.failed ? 'group' : 'groupCollapsed'
+               console[groupStyle](`${testGroup.title} | ${testResults.executed} tests | ${testResults.passed} passed | ${testResults.failed} failed`)
+               for (var result of results) {
+                  testUtility.log(result.message, result.pass ? '#495' : '#f22')
+               }
+               console.groupEnd()
+            })
          }
       }
 

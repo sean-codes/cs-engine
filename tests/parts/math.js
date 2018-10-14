@@ -3,20 +3,20 @@ testUtility.test({
    tests: [{
          name: 'sign',
          should: 'return a numbers sign -1, 0, or 1',
-         pass: function() {
+         pass: function(pass, fail) {
             return (
                cs.math.sign(-1) == -1 &&
                cs.math.sign(-100) == -1 &&
                cs.math.sign(1) == 1 &&
                cs.math.sign(100) == 1 &&
                cs.math.sign(0) == 0
-            ) ? true : false
+            ) ? pass() : fail()
          }
       },
       {
          name: 'outside',
          should: 'returns if num is outside two numbers',
-         pass: function() {
+         pass: function(pass, fail) {
             return (
                cs.math.outside(1, 0, 0) &&
                !cs.math.outside(1, 0, 1) &&
@@ -24,26 +24,26 @@ testUtility.test({
                !cs.math.outside(-1, -10, 0) &&
                cs.math.outside(100, 0, 99) &&
                cs.math.outside(-10, 0, 99)
-            ) ? true : false
+            ) ? pass() : fail()
          }
       },
       {
          name: 'between',
          should: 'returns num is between two numbers',
-         pass: function() {
+         pass: function(pass, fail) {
             return (!cs.math.between(1, 0, 0) &&
                cs.math.between(1, 0, 1) &&
                cs.math.between(100, 100, 0) &&
                cs.math.between(-1, -10, 0) &&
                !cs.math.between(100, 0, 99) &&
                !cs.math.between(-10, 0, 99)
-            ) ? true : false
+            ) ? pass() : fail()
          }
       },
       {
          name: 'iRandomRange',
          should: 'returns a random integer between a min and max',
-         pass: function() {
+         pass: function(pass, fail) {
             var checks = [
                { min: 10, max: 20 },
                { min: -10, max: 20 },
@@ -56,18 +56,17 @@ testUtility.test({
 
                }
                if (checkRange < check.min || checkRange > check.max) {
-                  return false
+                  return fail()
                }
             }
 
-            return true
-            var pass = true
+            return pass()
          }
       },
       {
          name: 'choose',
          should: 'return a random choice from an array',
-         pass: function() {
+         pass: function(pass, fail) {
             var choices = ['one', 'two', 'three']
             var choosen = []
 
@@ -78,13 +77,13 @@ testUtility.test({
             }
 
             // then make sure all choices have been made
-            return choices.length == choosen.length
+            return choices.length == choosen.length ? pass() : fail()
          }
       },
       {
          name: 'brakingDistance',
          should: 'return amount of distance it would take to stop a speed by a friction',
-         pass: function() {
+         pass: function(pass, fail) {
             var checks = [
                { speed: 10, friction: 0.9, distanceShouldBe: 90.00000000000001 },
                { speed: 10, friction: 0.5, distanceShouldBe: 10 },
@@ -94,16 +93,16 @@ testUtility.test({
             ]
 
             for (var check of checks) {
-               if (cs.math.brakingDistance(check) != check.distanceShouldBe) return false
+               if (cs.math.brakingDistance(check) != check.distanceShouldBe) return fail()
             }
 
-            return true
+            return pass()
          }
       },
       {
          name: 'requiredSpeed',
          should: 'return the required speed to get through friction to go a distance',
-         pass: function() {
+         pass: function(pass, fail) {
             var checks = [
                { distance: 10, friction: 0.9, distanceShouldBe: 4.242640687119285 },
                { distance: 10, friction: 0.5, distanceShouldBe: 3.1622776601683795 },
@@ -113,16 +112,16 @@ testUtility.test({
             ]
 
             for (var check of checks) {
-               if (cs.math.requiredSpeed(check) != check.distanceShouldBe) return false
+               if (cs.math.requiredSpeed(check) != check.distanceShouldBe) return fail()
             }
 
-            return true
+            return pass()
          }
       },
       {
          name: 'inRange',
          should: 'return true/false is number is between a range',
-         pass: function() {
+         pass: function(pass, fail) {
             var checks = [
                { min: 0, max: 10, num: 1, shouldBe: true },
                { min: -10, max: 10, num: 1, shouldBe: true },
@@ -131,10 +130,10 @@ testUtility.test({
             ]
 
             for (var check of checks) {
-               if (cs.math.inRange(check) != check.shouldBe) return false
+               if (cs.math.inRange(check) != check.shouldBe) return fail()
             }
 
-            return true
+            return pass()
          }
       }
    ]
