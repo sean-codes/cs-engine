@@ -1,9 +1,11 @@
 cs.loop = {
    run: true,
    endSteps: [],
-   nextSteps: [],
+   beforeSteps: [],
    speed: 1000 / 60,
+   id: 0,
    step: function() {
+      this.id += 1
       if (cs.loop.run)
          setTimeout(function() { cs.loop.step() }, this.speed)
 
@@ -13,6 +15,12 @@ cs.loop = {
       cs.camera.update()
       cs.surface.clearAll()
       cs.obj.addNewObjects()
+
+      // Execute before steps
+      // disconnect to allow adding within a beforestep
+      var temporaryBeforeSteps = []
+      while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
+      while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
 
       var i = cs.obj.list.length;
       while (i--) {
@@ -48,5 +56,8 @@ cs.loop = {
    },
    endStep: function(func) {
       this.endSteps.push(func)
+   },
+   beforeStep: function(func) {
+      this.beforeSteps.push(func)
    }
 }

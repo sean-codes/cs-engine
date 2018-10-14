@@ -40,13 +40,13 @@ cs.key = {
          cs.key.upList[tmp] = false
       }
    },
-   updateDown: function(keyEvent) {
+   eventDown: function(keyEvent) {
       keyEvent.preventDefault();
       if (!keyEvent.repeat) {
          cs.key.virtualDown(keyEvent.keyCode);
       }
    },
-   updateUp: function(keyEvent) {
+   eventUp: function(keyEvent) {
       cs.key.virtualUp(keyEvent.keyCode);
    },
    virtualDown: function(keyCode) {

@@ -33,7 +33,8 @@
          './parts/math.js',
          './parts/camera.js',
          './parts/fps.js',
-         './parts/loop.js'
+         './parts/loop.js',
+         './parts/keys.js'
       ]
 
       // fake testing framework :]
@@ -56,9 +57,9 @@
                }).then(() => {
                   testResults.passed += 1
                   return { pass: true, message }
-               }).catch(() => {
+               }).catch((e) => {
                   testResults.failed += 1
-                  return { pass: false, message }
+                  return { pass: false, message: message, error: e}
                })
             }
 
@@ -70,8 +71,11 @@
                console[groupStyle](`${testGroup.title} | ${testResults.executed} tests | ${testResults.passed} passed | ${testResults.failed} failed`)
                for (var result of results) {
                   testUtility.log(result.message, result.pass ? '#495' : '#f22')
+                  if(!result.pass && result.error) console.log(result.error)
                }
                console.groupEnd()
+            }).catch((e) => {
+               console.log('hi', e)
             })
          }
       }

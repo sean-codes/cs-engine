@@ -5,8 +5,8 @@ cs.setup = function() {
    // Initiate Inputs
    cs.ctx = this.canvas.getContext('2d')
    cs.canvas.tabIndex = 1000
-   cs.canvas.addEventListener('keydown', cs.key.updateDown)
-   cs.canvas.addEventListener('keyup', cs.key.updateUp)
+   cs.canvas.addEventListener('keydown', cs.key.eventDown)
+   cs.canvas.addEventListener('keyup', cs.key.eventUp)
    cs.canvas.addEventListener('mousemove', cs.mouse.eventMove)
    cs.canvas.addEventListener('mousedown', function(e) { cs.mouse.eventDown(e);
       cs.sound.enable() })
