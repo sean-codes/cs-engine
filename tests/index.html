@@ -5,27 +5,10 @@
    <link rel="stylesheet" href="style.css">
    <!-- include engine -->
    <script src="../engine/core.js"></script>
-   <style>
-      html,
-      body {
-         background: #222;
-         color: #FFF;
-      }
-
-      h1 {
-         font-family: monospace;
-      }
-
-      canvas {
-         display: hidden;
-         width: 200px;
-         height: 100px;
-      }
-   </style>
 </head>
 
 <body>
-   <h1>Open Console</h1>
+   <p>Open Console</p>
    <canvas width=200 height=100></canvas>
    <!-- tests -->
    <script>
@@ -75,7 +58,7 @@
                }
                console.groupEnd()
             }).catch((e) => {
-               console.log('hi', e)
+               console.log('its broken :<', e)
             })
          }
       }

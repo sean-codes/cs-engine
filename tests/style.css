@@ -1,0 +1,13 @@
+html,
+body {
+   font-family: monospace;
+   font-weight: 600;
+   background: #222;
+   color: #FFF;
+}
+
+canvas {
+   display: hidden;
+   width: 200px;
+   height: 100px;
+}
