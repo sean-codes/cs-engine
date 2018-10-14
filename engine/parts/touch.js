@@ -40,7 +40,7 @@ cs.touch = {
    },
    touchUnuse: function(id) {
       var touch = cs.touch.list.find(function(t) { return t.id == id })
-      if (!touch) return
+      if (!touch || !touch.used) return
 
       touch.used = false
       touch.held = false

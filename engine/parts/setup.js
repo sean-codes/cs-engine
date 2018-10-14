@@ -8,12 +8,16 @@ cs.setup = function() {
    cs.canvas.addEventListener('keydown', cs.key.eventDown)
    cs.canvas.addEventListener('keyup', cs.key.eventUp)
    cs.canvas.addEventListener('mousemove', cs.mouse.eventMove)
-   cs.canvas.addEventListener('mousedown', function(e) { cs.mouse.eventDown(e);
-      cs.sound.enable() })
+   cs.canvas.addEventListener('mousedown', function(e) {
+      cs.mouse.eventDown(e);
+      cs.sound.enable()
+   })
    cs.canvas.addEventListener('mouseup', cs.mouse.eventUp)
    cs.canvas.addEventListener('mouseout', cs.mouse.eventUp)
-   cs.canvas.addEventListener("touchstart", function(e) { cs.touch.eventDown(e);
-      cs.sound.enable() }, false)
+   cs.canvas.addEventListener("touchstart", function(e) {
+      cs.touch.eventDown(e);
+      cs.sound.enable()
+   }, false)
    cs.canvas.addEventListener("touchend", cs.touch.eventUp, false)
    cs.canvas.addEventListener("touchcancel", cs.touch.eventUp, false)
    cs.canvas.addEventListener("touchmove", cs.touch.eventMove, false)

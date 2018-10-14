@@ -6,8 +6,8 @@ cs.loop = {
    id: 0,
    step: function() {
       this.id += 1
-      if (cs.loop.run)
-         setTimeout(function() { cs.loop.step() }, this.speed)
+      if (!cs.loop.run) return
+      setTimeout(function() { cs.loop.step() }, this.speed)
 
       cs.fps.update()
       cs.key.execute()
@@ -59,5 +59,8 @@ cs.loop = {
    },
    beforeStep: function(func) {
       this.beforeSteps.push(func)
+   },
+   stop: function() {
+      this.run = false
    }
 }
