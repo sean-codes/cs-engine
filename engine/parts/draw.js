@@ -45,7 +45,6 @@ cs.draw = {
       }
    },
    sprite: function(options) {
-      this.debug.spritesDrawnCount += 1
 
       sprite = cs.sprite.list[options.spr]
       var info = cs.sprite.info(options)
@@ -71,7 +70,7 @@ cs.draw = {
       // Sean.. We will talk about this later. Not sure you know what you are doing.
       // I want to overlap on a single pixel when flipping
       if (info.scaleX < 0 && xoff) options.x++
-         if (info.scaleY < 0 && yoff) options.y++
+      if (info.scaleY < 0 && yoff) options.y++
 
             if (options.angle || options.scaleX != 1 || options.scaleY != 1) {
                this.ctx.save()
@@ -84,6 +83,7 @@ cs.draw = {
                this.ctx.drawImage(info.frames[info.frame || 0], Math.ceil(options.x - xoff), Math.ceil(options.y - yoff))
             }
 
+      this.debug.spritesDrawnCount += 1
       cs.draw.settingsDefault()
    },
    textInfo: function(options) {

@@ -39,10 +39,17 @@
                   testFunctionToRun(resolve, reject)
                }).then(() => {
                   testResults.passed += 1
-                  return { pass: true, message }
+                  return {
+                     pass: true,
+                     message
+                  }
                }).catch((e) => {
                   testResults.failed += 1
-                  return { pass: false, message: message, error: e}
+                  return {
+                     pass: false,
+                     message: message,
+                     error: e
+                  }
                })
             }
 
@@ -54,7 +61,7 @@
                console[groupStyle](`${testGroup.title} | ${testResults.executed} tests | ${testResults.passed} passed | ${testResults.failed} failed`)
                for (var result of results) {
                   testUtility.log(result.message, result.pass ? '#495' : '#f22')
-                  if(!result.pass && result.error) console.log(result.error)
+                  if (!result.pass && result.error) console.log(result.error)
                }
                console.groupEnd()
             }).catch((e) => {

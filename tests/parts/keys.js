@@ -3,6 +3,11 @@ var exampleKeyBoardEvent = {
    preventDefault: () => {}
 }
 
+var exampleKeyBoardEvent2 = {
+   keyCode: '40',
+   preventDefault: () => {}
+}
+
 testUtility.test({
    title: "cs.keys",
    tests: [
@@ -42,6 +47,17 @@ testUtility.test({
                   var notTwice = !keyDownTwice && ! keyUpTwice
                   once && notTwice ? pass() : fail()
                })
+            })
+         }
+      },
+      {
+         name: 'virtual keyup not called if key isnt down',
+         should: 'virtual keyup not called if key isnt down/held',
+         pass: function(pass, fail) {
+            cs.key.virtualUp(exampleKeyBoardEvent2.keyCode)
+            cs.loop.beforeStep(() => {
+               var keyUp = cs.key.up(exampleKeyBoardEvent2.keyCode)
+               keyUp ? fail() : pass()
             })
          }
       }

@@ -23,6 +23,7 @@ cs.key = {
    },
    processEvent: function(keyCode, type) {
       if (type == 'up') {
+         if(!cs.key.heldList[keyCode]) return
          cs.key.upList[keyCode] = true
          return
       }
