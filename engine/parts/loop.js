@@ -8,7 +8,7 @@ cs.loop = {
       this.id += 1
       if (!cs.loop.run) return
       setTimeout(function() { cs.loop.step() }, this.speed)
-
+      // requestAnimationFrame(cs.loop.step.bind(this))
       cs.fps.update()
       cs.key.execute()
       cs.draw.debugReset()
@@ -35,7 +35,7 @@ cs.loop = {
          var obj = cs.obj.list[i]
          var draw = cs.objects[obj.core.type].draw
          cs.draw.setSurface(obj.core.surface)
-         obj.core.live && draw && draw.call(obj, obj)
+         obj.core.live && obj.core.active && draw && draw.call(obj, obj)
       }
 
       // Touch / Keyboard

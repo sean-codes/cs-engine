@@ -17,6 +17,7 @@ cs.obj = {
          core: {
             zIndex: zIndex,
             live: true,
+            active: true,
             type: options.type,
             id: this.unique,
             surface: 'game'

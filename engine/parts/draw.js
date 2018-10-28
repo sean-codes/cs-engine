@@ -199,25 +199,32 @@ cs.draw = {
       return { x: x, y: y, width: width, height: height }
    },
    setColor: function(color) {
+      if(this.ctx.fillStyle === color && this.ctx.strokeStyle === color) return
       this.ctx.fillStyle = color;
       this.ctx.strokeStyle = color;
    },
    setAlpha: function(alpha) {
+      if(this.ctx.globalAlpha === alpha) return
       this.ctx.globalAlpha = alpha;
    },
    setWidth: function(width) {
+      if(this.ctx.lineWidth === width) return
       this.ctx.lineWidth = width;
    },
    setFont: function(font) {
+      if(this.ctx.font === font) return
       this.ctx.font = font;
    },
    setLineHeight: function(height) {
+      if(this.ctx.lineHeight === height) return
       this.ctx.lineHeight = height
    },
    setTextAlign: function(alignment) {
+      if(this.ctx.textAlign === alignment) return
       this.ctx.textAlign = alignment;
    },
    setTextBaseline: function(alignment) {
+      if(this.ctx.textBaseline === alignment) return
       this.ctx.textBaseline = alignment;
    },
    setTextCenter: function() {
@@ -225,6 +232,7 @@ cs.draw = {
       this.setTextBaseline('middle');
    },
    setOperation: function(operation) {
+      if(this.ctx.globalCompositeOperation === operation) return
       this.ctx.globalCompositeOperation = operation;
    },
    set: function(settings) {
@@ -246,7 +254,6 @@ cs.draw = {
       cs.draw.setTextAlign(this.settings.current.textAlign)
       cs.draw.setLineHeight(this.settings.current.lineHeight)
       cs.draw.setTextBaseline(this.settings.current.textBaseline)
-      cs.draw.setColor(this.settings.current.color)
       cs.draw.setColor(this.settings.current.color)
       cs.draw.setOperation(this.settings.current.operation)
    },
