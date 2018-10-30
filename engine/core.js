@@ -9,7 +9,7 @@ cs.load = function(options) {
 
    // Core Path and Parts
    this.path = options.core
-
+   this.progress = options.progress || function() {}
    // Resources
    this.sounds = []
    this.sprites = []
@@ -137,7 +137,21 @@ cs.load = function(options) {
    this.onload = function(type, loaded) {
       this.loading.total.item += loaded
       this.loading[type].item += loaded
-      console.log('loaded ' + type + ' ' + this.loading[type].item + '/' + this.loading[type].required + ' - total: ' + Math.floor(this.loading.total.item / this.loading.total.required * 100) + '%')
+
+      var loadInfo = {
+         percent: Math.floor(this.loading.total.item / this.loading.total.required * 100),
+         finished: this.loading.total.item === this.loading.total.required,
+         type: type,
+         file: this[type][this.loading.total.item],
+         current: this.loading.total.item,
+         totalRequired: this.loading.total.required,
+         totalType: this.loading[type].required
+      } 
+      
+      this.progress(cs.clone(loadInfo))
+
+      var loadMessage = 'loaded ' + loadInfo.type + ' ' + loadInfo.current + '/' + loadInfo.totalRequired + ' - total: ' + loadInfo.percent + '%'
+      console.log(loadMessage)
 
       if (this.loading[type].item < this.loading[type].required) {
          return this['load' + type]()
