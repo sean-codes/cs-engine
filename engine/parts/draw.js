@@ -56,8 +56,8 @@ cs.draw = {
 
          if (x + sprite.fwidth < cs.camera.x ||
             x > cs.camera.x + cs.camera.width ||
-            y + sprite.fheight < cs.camera.y ||
-            y > cs.camera.y + cs.camera.height) {
+            y + sprite.fheight - sprite.yoff < cs.camera.y ||
+            y - sprite.yoff > cs.camera.y + cs.camera.height) {
 
             this.debug.spritesSkippedCount += 1
             return
