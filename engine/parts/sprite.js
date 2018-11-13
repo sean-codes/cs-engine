@@ -25,8 +25,6 @@ cs.sprite = {
          xoff: options.xoff || 0,
          yoff: options.yoff || 0,
          mask: {
-            x: options.mask ? (options.mask.x || options.mask.left || 0) : 0,
-            y: options.mask ? (options.mask.y || options.mask.top || 0) : 0,
             width: options.mask ? (options.mask.width || width - (options.mask.left || 0) - (options.mask.right || 0)) : width,
             height: options.mask ? (options.mask.height || height - (options.mask.top || 0) - (options.mask.bottom || 0)) : height
          },
@@ -111,8 +109,6 @@ cs.sprite = {
          frames: options.texture ? [sprite.texture] : sprite.frames,
          frame: options.frame,
          mask: {
-            x: sprite.mask.x,
-            y: sprite.mask.y,
             width: sprite.mask.width,
             height: sprite.mask.height
          }
