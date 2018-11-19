@@ -10,7 +10,7 @@ cs.camera = {
    maxWidth: 500,
    height: 200,
    maxHeight: 400,
-   smoothing: 1,
+   smoothing: 1, // 1 means 1:1 movement
    setup: function(options) {
       this.width = options.width
       this.height = options.height
@@ -40,15 +40,21 @@ cs.camera = {
       this.height = Math.ceil(nh)
       this.scale = w / nw
    },
+   snap: function(pos) {
+      this.follow(pos)
+      this.update(1)
+   },
    follow: function(pos) {
       this.followPos = { x: pos.x, y: pos.y }
    },
-   update: function() {
+   update: function(smoothing) {
+      smoothing = cs.default(smoothing, this.smoothing)
+      if(smoothing == 0) console.log('wtf')
       var differenceX = this.followPos.x - (this.x + this.width / 2)
       var differenceY = this.followPos.y - (this.y + this.height / 2)
 
-      this.x += Math.floor(differenceX / this.smoothing)
-      this.y += Math.floor(differenceY / this.smoothing)
+      this.x += Math.floor(differenceX / smoothing)
+      this.y += Math.floor(differenceY / smoothing)
 
       if (this.x < 0) this.x = 0
       if (this.y < 0) this.y = 0

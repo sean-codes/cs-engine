@@ -108,7 +108,7 @@ cs.obj = {
    },
 
    id: function(id) {
-      return this.references[id]
+      return this.list.find(function(obj) { return obj.core.id === id })
    },
 
    count: function(type) {
