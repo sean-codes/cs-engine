@@ -2,17 +2,19 @@
 //-----------------------------------| Object Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.obj = {
-   list: [],
+   list: [], // all objects
+   new: [], // newly added objects
+   order: [], // order for objects to be called
    types: {},
    objGroups: {},
    unique: 0,
-   newObjects: [],
+
    create: function(options) {
       var attr = options.attr
       var object = cs.objects[options.type]
       var zIndex = cs.objects[options.type].zIndex || 0
 
-      //Create the object
+      // create the object
       var newObj = {
          core: {
             zIndex: zIndex,
@@ -24,29 +26,41 @@ cs.obj = {
          }
       }
 
-      //Predefined and Custom Attr
+      // predefined / custom Attr
       for (var name in object.attr) { newObj[name] = object.attr[name] }
       for (var name in attr) { newObj[name] = attr[name] }
 
-      //Run Create event
+      // run create event
       object.create && object.create.call(newObj);
 
-      //Add the object to the list
-      this.newObjects.push({ obj: newObj, zIndex: zIndex }) //this.list.splice(pos, 0, newObj))
+      // add to list
+      this.new.push({ obj: newObj, zIndex: zIndex })
       this.unique += 1
 
-      //Object Grouping
+      // grouping
       if (!this.objGroups[options.type]) this.objGroups[options.type] = []
       this.objGroups[options.type].push(newObj)
+
+
       return newObj
    },
+
    addNewObjects: function() {
-      while (this.newObjects.length) {
-         var obj = this.newObjects.shift()
+      while (this.new.length) {
+         var obj = this.new.shift()
          var pos = this.findPosition(obj.zIndex)
          this.list.splice(pos, 0, obj.obj)
       }
    },
+
+   findPosition: function(zIndex) {
+      for (var i = 0; i < this.list.length; i++) {
+         if (zIndex >= this.list[i].core.zIndex)
+         return i
+      }
+      return i
+   },
+
    destroy: function(destroyObj) {
       var type = destroyObj.core.type
       if (typeof destroyObj === 'object') {
@@ -63,40 +77,40 @@ cs.obj = {
       if (cs.objects[type].destroy) cs.objects[type].destroy.call(destroyObj)
       this.objGroups[type] = this.objGroups[type].filter(function(obj) { return obj.core.live })
    },
-   findPosition: function(zIndex) {
-      for (var i = 0; i < this.list.length; i++) {
-         if (zIndex >= this.list[i].core.zIndex)
-            return i
-      }
-      return i
-   },
+
    undefined: function(type) {
       return typeof cs.objects[type] === 'undefined' ? true : false
    },
+
    every: function() {
-      return this.list.concat(this.newObjects.map((obj) => obj.obj)).reduce(function(sum, num) {
+      return this.list.concat(this.new.map((obj) => obj.obj)).reduce(function(sum, num) {
          num.core.live && sum.push(num)
          return sum
       }, [])
    },
+
    all: function(type) {
       return this.objGroups[type] || []
    },
+
    find: function(type) {
       if (!this.objGroups[type]) {
          return undefined
       }
       return this.objGroups[type][0]
    },
+
    search: function(call) {
       return this.list.find(function(obj) {
          if (!obj.core.live) return false
          return call(obj)
       })
    },
+
    id: function(id) {
-      return this.list.find(function(e) { return e.core.id == id })
+      return this.references[id]
    },
+
    count: function(type) {
       return this.objGroups[type] ? this.objGroups[type].length : 0
    }
