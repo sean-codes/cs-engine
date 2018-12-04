@@ -24,12 +24,12 @@ cs.key = {
    processEvent: function(keyCode, type) {
       if (type == 'up') {
          if(!cs.key.heldList[keyCode]) return
-         cs.key.upList[keyCode] = true
+         cs.key.upList[keyCode] = performance.now()
          return
       }
 
-      cs.key.downList[keyCode] = true;
-      cs.key.heldList[keyCode] = true;
+      cs.key.downList[keyCode] = performance.now()
+      cs.key.heldList[keyCode] = performance.now()
    },
    reset: function() {
       for (var tmp in cs.key.downList) {
