@@ -92,7 +92,7 @@ cs.draw = {
       var curLine = []
       var y = 0,
          x = 0
-      var textArr = options.text.split('')
+      var textArr = (options.text.toString()).split('')
 
       // Setup the lines
       for (var pos in textArr) {
