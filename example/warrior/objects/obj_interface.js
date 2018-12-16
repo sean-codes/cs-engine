@@ -1,7 +1,7 @@
 cs.objects['obj_interface'] = {
    create: function() {
-      cs.obj.create({ type: 'obj_joystick', x: 0, y: 0 })
-      cs.obj.create({ type: 'obj_buttons', x: 0, y: 0 })
+      cs.object.create({ type: 'obj_joystick', x: 0, y: 0 })
+      cs.object.create({ type: 'obj_buttons', x: 0, y: 0 })
    },
    step: function() {
 

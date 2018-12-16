@@ -44,7 +44,7 @@ cs.objects['obj_bird'] = {
          cs.global.flap = false;
          if (this.diving > 24) {
             cs.global.score += 1;
-            cs.obj.create({ type: 'obj_score_text', attr: { x: this.x, y: this.y } })
+            cs.object.create({ type: 'obj_score_text', attr: { x: this.x, y: this.y } })
             cs.sound.play('score');
          }
          this.diving = 0;
@@ -60,11 +60,11 @@ cs.objects['obj_bird'] = {
             var space = 40;
             var roomCenterVertical = cs.room.height / 2;
             var randomY = roomCenterVertical - cs.math.iRandomRange(-80, 80);
-            var down = cs.obj.create({ type: 'obj_pipe', attr: { x: cs.room.width, y: randomY - space } })
+            var down = cs.object.create({ type: 'obj_pipe', attr: { x: cs.room.width, y: randomY - space } })
             down.y -= down.mask.height;
             down.pipe = 'down';
-            var up = cs.obj.create({ type: 'obj_pipe', attr: { x: cs.room.width, y: randomY + space } })
-            cs.obj.create({
+            var up = cs.object.create({ type: 'obj_pipe', attr: { x: cs.room.width, y: randomY + space } })
+            cs.object.create({
                type: 'obj_score',
                x: cs.room.width + down.mask.width,
                y: randomY - space / 2
@@ -80,7 +80,7 @@ cs.objects['obj_bird'] = {
          cs.save.state = 'WRECKED';
       }
       if (collisionScore) {
-         cs.obj.destroy(collisionScore);
+         cs.object.destroy(collisionScore);
          cs.global.score += 1;
          cs.sound.play('score');
       }

@@ -9,9 +9,9 @@ cs.script.collide = function(that, objtype, options) {
    var obj1left = (options.x || that.x) + hspeed;
    var obj1right = obj1left + (options.width ? options.width : that.mask.width);
 
-   var i = cs.obj.list.length;
+   var i = cs.object.list.length;
    while (i--) {
-      var obj2 = cs.obj.list[i];
+      var obj2 = cs.object.list[i];
       if (obj2.core.live === true && i !== that.core.id && obj2.core.type == objtype) {
          var obj2top = obj2.y;
          var obj2bottum = obj2.y + obj2.mask.height;

@@ -9,7 +9,7 @@ cs.room = {
       this.restarting = true
    },
    reset: function() {
-      cs.obj.list = []
+      cs.object.list = []
       cs.global = {}
       cs.start()
       cs.sound.reset()

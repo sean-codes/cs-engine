@@ -12,7 +12,7 @@ cs.objects['obj_pipe'] = {
       this.x -= this.hspeed;
 
       if (this.x < -this.mask.width) {
-         cs.obj.destroy(this);
+         cs.object.destroy(this);
       }
    }
 }

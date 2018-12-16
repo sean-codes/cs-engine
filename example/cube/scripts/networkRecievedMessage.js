@@ -12,7 +12,7 @@ cs.script.networkReceivedMessage = function(message) {
       case 'newPlayers':
          console.log(message);
          message.list.forEach(function(player) {
-            var newPlayer = cs.obj.create('obj_otherplayer', player.x, player.y);
+            var newPlayer = cs.object.create('obj_otherplayer', player.x, player.y);
             cs.global.networkControl.list[player.id] = {
                id: player.id,
                obj: newPlayer
@@ -22,7 +22,7 @@ cs.script.networkReceivedMessage = function(message) {
 
       case 'endPlayers':
          message.list.forEach(function(player) {
-            cs.obj.destroy(cs.global.networkControl.list[player.id].obj.id);
+            cs.object.destroy(cs.global.networkControl.list[player.id].obj.id);
          });
          break;
 

@@ -6,12 +6,12 @@ cs.objects['obj_background'] = {
       this.timer -= 1;
       if (this.timer == -1) {
          for (var i = 0; i < 10; i++) {
-            cs.obj.create({ type: 'obj_bgPart', attr: { x: cs.math.iRandomRange(0, cs.room.width), y: 0 } })
+            cs.object.create({ type: 'obj_bgPart', attr: { x: cs.math.iRandomRange(0, cs.room.width), y: 0 } })
          }
          this.timer = 0;
       }
       if (this.timer == 0) {
-         cs.obj.create({ type: 'obj_bgPart', attr: { x: cs.room.width, y: 0 } })
+         cs.object.create({ type: 'obj_bgPart', attr: { x: cs.room.width, y: 0 } })
          this.timer = cs.math.iRandomRange(40, 120);
       }
    }
@@ -47,7 +47,7 @@ cs.objects['obj_bgPart'] = {
          this.x -= this.hspeed;
 
       if (this.x < -this.mask.width) {
-         cs.obj.destroy(this);
+         cs.object.destroy(this);
       }
 
       cs.draw.sprite({ spr: this.sprite, x: this.x, y: this.y });

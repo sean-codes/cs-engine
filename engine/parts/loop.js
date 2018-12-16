@@ -14,7 +14,7 @@ cs.loop = {
       cs.draw.debugReset()
       cs.camera.update()
       cs.surface.clearAll()
-      cs.obj.addNewObjects()
+      cs.object.addNewObjects()
 
       // Execute before steps
       // disconnect to allow adding within a beforestep
@@ -22,17 +22,17 @@ cs.loop = {
       while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
       while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
 
-      var i = cs.obj.list.length;
+      var i = cs.object.list.length;
       while (i--) {
-         var obj = cs.obj.list[i];
+         var obj = cs.object.list[i];
          var step = cs.objects[obj.core.type].step
          cs.draw.setSurface(obj.core.surface)
          obj.core.live && step && step.call(obj, obj);
       }
 
-      var i = cs.obj.list.length;
+      var i = cs.object.list.length;
       while (i--) {
-         var obj = cs.obj.list[i]
+         var obj = cs.object.list[i]
          var draw = cs.objects[obj.core.type].draw
          cs.draw.setSurface(obj.core.surface)
          obj.core.live && obj.core.active && draw && draw.call(obj, obj)

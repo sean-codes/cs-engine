@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------------------//
 //-----------------------------------| Object Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.obj = {
+cs.object = {
    list: [], // all objects
    new: [], // newly added objects
    order: [], // order for objects to be called
@@ -66,7 +66,7 @@ cs.obj = {
       if (typeof destroyObj === 'object') {
          destroyObj.core.live = false
       } else {
-         for (var obj of cs.obj.list) {
+         for (var obj of cs.object.list) {
             if (obj.core.id === destroyObj) {
                obj.core.live = false
                var type = obj.core.type

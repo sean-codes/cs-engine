@@ -29,7 +29,7 @@ cs.objects['obj_score_text'] = {
       cs.draw.text({ x: this.x, y: this.y, text: this.text })
 
       if (this.timer == 0) {
-         cs.obj.destroy(this);
+         cs.object.destroy(this);
       }
    }
 }

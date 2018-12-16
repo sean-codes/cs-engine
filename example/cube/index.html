@@ -110,24 +110,24 @@
                ssl: false
             })
 
-            cs.obj.create({
+            cs.object.create({
                type: 'obj_light'
             })
-            cs.obj.create({
+            cs.object.create({
                type: 'obj_buttons',
                attr: {
                   x: 100,
                   y: 100
                }
             })
-            cs.obj.create({
+            cs.object.create({
                type: 'obj_crate',
                attr: {
                   x: 100,
                   y: 0
                }
             })
-            cs.obj.create({
+            cs.object.create({
                type: 'obj_player',
                attr: {
                   x: 40,
@@ -137,7 +137,7 @@
 
             var tx = 0;
             while (tx < cs.room.width) {
-               cs.obj.create({
+               cs.object.create({
                   type: 'obj_block',
                   attr: {
                      x: tx,
@@ -147,21 +147,21 @@
                tx += 16
             }
 
-            cs.obj.create({
+            cs.object.create({
                type: 'obj_joystick',
                attr: {
                   x: 100,
                   y: 100
                }
             })
-            cs.obj.create({
+            cs.object.create({
                type: 'obj_inventory',
                attr: {
                   x: 100,
                   y: 100
                }
             })
-            cs.obj.create({
+            cs.object.create({
                type: 'obj_fire',
                attr: {
                   x: 150,

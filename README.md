@@ -65,7 +65,7 @@ engine for building 2D games
           }
         },
         start: function(){
-          cs.obj.create({ type:'player', x:10, y:10 })
+          cs.object.create({ type:'player', x:10, y:10 })
         }
       })
 
@@ -192,9 +192,9 @@ cs.objects.myObjName = {
 ```
 
 
-Create an object using `cs.obj.create()`
+Create an object using `cs.object.create()`
 ```js
-cs.obj.create({
+cs.object.create({
    type: 'obj_name',
    attr: {
       // Attributes to add to the game object example x/y

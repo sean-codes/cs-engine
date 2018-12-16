@@ -17,6 +17,6 @@ cs.objects['obj_text'] = {
 
       this.timer.time -= 1
       if (this.timer.time == 0)
-         cs.obj.destroy(this)
+         cs.object.destroy(this)
    }
 }
