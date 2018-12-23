@@ -53,6 +53,7 @@ cs.loop = {
       }
 
       // could clearup !live objects here
+      cs.object.clean()
    },
    endStep: function(func) {
       this.endSteps.push(func)

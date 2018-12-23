@@ -6,6 +6,7 @@ cs.object = {
    new: [], // newly added objects
    order: [], // order for objects to be called
    types: {},
+   shouldClean: false,
    objGroups: {},
    unique: 0,
 
@@ -62,6 +63,7 @@ cs.object = {
    },
 
    destroy: function(destroyObj) {
+      this.shouldClean = true
       var type = destroyObj.core.type
       if (typeof destroyObj === 'object') {
          destroyObj.core.live = false
@@ -76,6 +78,14 @@ cs.object = {
       }
       if (cs.objects[type].destroy) cs.objects[type].destroy.call(destroyObj)
       this.objGroups[type] = this.objGroups[type].filter(function(obj) { return obj.core.live })
+   },
+
+   clean: function() {
+      if(!this.shouldClean) return
+      this.list = this.list.reduce(function(sum, num) {
+         if(num.core.live) sum.push(num)
+         return sum
+      }, [])
    },
 
    undefined: function(type) {
