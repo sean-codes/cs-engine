@@ -32,8 +32,15 @@ cs.setup = function() {
 
    // Sound
    //cs.sound.active = cs.sound.init();
-   window.onfocus = function() { cs.sound.toggleActive(true) }
-   window.onblur = function() { cs.sound.toggleActive(false) }
+   window.onfocus = function() {
+      cs.focus(true)
+      cs.sound.toggleActive(true)
+   }
+
+   window.onblur = function() {
+      cs.focus(false)
+      cs.sound.toggleActive(false)
+   }
 
    // watch for resizing
    window.onresize = function() {

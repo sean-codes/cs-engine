@@ -6,9 +6,11 @@ cs.loop = {
    id: 0,
    step: function() {
       this.id += 1
-      if (!cs.loop.run) return
+
       setTimeout(function() { cs.loop.step() }, this.speed)
       // requestAnimationFrame(cs.loop.step.bind(this))
+      if (!this.run) return
+
       cs.fps.update()
       cs.key.execute()
       cs.draw.debugReset()
@@ -63,5 +65,8 @@ cs.loop = {
    },
    stop: function() {
       this.run = false
+   },
+   start: function() {
+      this.run = true
    }
 }

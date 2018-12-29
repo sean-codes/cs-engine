@@ -10,6 +10,8 @@ cs.load = function(options) {
    // Core Path and Parts
    this.path = options.core
    this.progress = options.progress || function() {}
+   this.focus = options.focus || function() {}
+   
    // Resources
    this.sounds = []
    this.sprites = []
@@ -146,8 +148,8 @@ cs.load = function(options) {
          current: this.loading.total.item,
          totalRequired: this.loading.total.required,
          totalType: this.loading[type].required
-      } 
-      
+      }
+
       this.progress(cs.clone(loadInfo))
 
       var loadMessage = 'loaded ' + loadInfo.type + ' ' + loadInfo.current + '/' + loadInfo.totalRequired + ' - total: ' + loadInfo.percent + '%'
