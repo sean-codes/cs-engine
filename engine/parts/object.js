@@ -32,7 +32,7 @@ cs.object = {
       for (var name in attr) { newObj[name] = attr[name] }
 
       // run create event
-      object.create && object.create.call(newObj);
+      object.create && object.create.call(newObj, newObj);
 
       // add to list
       this.new.push({ obj: newObj, zIndex: zIndex })

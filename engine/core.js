@@ -11,7 +11,7 @@ cs.load = function(options) {
    this.path = options.core
    this.progress = options.progress || function() {}
    this.focus = options.focus || function() {}
-   
+
    // Resources
    this.sounds = []
    this.sprites = []
@@ -34,7 +34,8 @@ cs.load = function(options) {
       { path: this.path + '/parts/surface' },
       //{ path: this.path + '/parts/text' },
       //{ path: this.path + '/parts/input' },
-      { path: this.path + '/parts/touch' }
+      { path: this.path + '/parts/touch' },
+      { path: this.path + '/parts/timer' },
    ]
 
    // Globals / For user

@@ -37,10 +37,13 @@ cs.loop = {
          var obj = cs.object.list[i]
          var drawEvent = cs.objects[obj.core.type].draw
          var shouldDraw = drawEvent && obj.core.live && obj.core.active
-         
+
          shouldDraw && cs.draw.setSurface(obj.core.surface)
          shouldDraw && drawEvent.call(obj, obj)
       }
+
+      // timers
+      cs.timer.loop()
 
       // Touch / Keyboard
       cs.key.reset()
