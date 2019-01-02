@@ -62,20 +62,17 @@ cs.object = {
       return i
    },
 
-   destroy: function(destroyObj) {
+   destroy: function(destroyObjOrID, fadeTimer) {
       this.shouldClean = true
+      var destroyObj = (typeof destroyObjOrID === 'number')
+         ? this.id(destroyObjOrID)
+         : destroyObjOrID
+
+      destroyObj.core.live = false
+      destroyObj.core.fadeTimer = fadeTimer || 0
+
+      // remove from objGroup
       var type = destroyObj.core.type
-      if (typeof destroyObj === 'object') {
-         destroyObj.core.live = false
-      } else {
-         for (var obj of cs.object.list) {
-            if (obj.core.id === destroyObj) {
-               obj.core.live = false
-               var type = obj.core.type
-               destroyObj = obj
-            }
-         }
-      }
       if (cs.objects[type].destroy) cs.objects[type].destroy.call(destroyObj)
       this.objGroups[type] = this.objGroups[type].filter(function(obj) { return obj.core.live })
    },

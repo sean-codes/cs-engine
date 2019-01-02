@@ -35,9 +35,11 @@ cs.loop = {
       var i = cs.object.list.length;
       while (i--) {
          var obj = cs.object.list[i]
-         var draw = cs.objects[obj.core.type].draw
-         cs.draw.setSurface(obj.core.surface)
-         obj.core.live && obj.core.active && draw && draw.call(obj, obj)
+         var drawEvent = cs.objects[obj.core.type].draw
+         var shouldDraw = drawEvent && obj.core.live && obj.core.active
+         
+         shouldDraw && cs.draw.setSurface(obj.core.surface)
+         shouldDraw && drawEvent.call(obj, obj)
       }
 
       // Touch / Keyboard
