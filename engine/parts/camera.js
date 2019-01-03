@@ -49,7 +49,7 @@ cs.camera = {
    },
    update: function(smoothing) {
       smoothing = cs.default(smoothing, this.smoothing)
-      if(smoothing == 0) console.log('wtf')
+
       var differenceX = this.followPos.x - (this.x + this.width / 2)
       var differenceY = this.followPos.y - (this.y + this.height / 2)
 

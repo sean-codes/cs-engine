@@ -48,8 +48,8 @@ cs.draw = {
       sprite = cs.sprite.list[options.spr]
       var info = cs.sprite.info(options)
 
-      if (!this.raw && !this.surface.noskip && !options.noskip) {
-         //If outside camera skip
+      // if outside camera skip
+      if (!this.raw && !this.surface.drawOutside && !options.drawOutside) {
          var x = options.x - (options.scaleX < 0 ? sprite.fwidth : 0)
          var y = options.y - (options.scaleY < 0 ? sprite.fheight : 0)
 

@@ -15,7 +15,7 @@ cs.loop = {
       cs.key.execute()
       cs.draw.debugReset()
       cs.surface.clearAll()
-
+      cs.object.addNewObjects()
 
       // Execute before steps
       // disconnect to allow adding within a beforestep
@@ -43,7 +43,6 @@ cs.loop = {
 
       // camera
       cs.camera.update()
-      cs.object.addNewObjects()
 
       // timers
       cs.timer.loop()

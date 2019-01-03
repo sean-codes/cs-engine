@@ -100,6 +100,7 @@ cs.sprite = {
          options.scaleX = options.scaleY
 
       return {
+         name: options.spr,
          width: (options.texture ? sprite.texture.fwidth : sprite.fwidth) * options.scaleX,
          height: (options.texture ? sprite.texture.fheight : sprite.fheight) * options.scaleY,
          scaleX: options.scaleX,
