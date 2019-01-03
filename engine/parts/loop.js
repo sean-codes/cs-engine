@@ -14,9 +14,8 @@ cs.loop = {
       cs.fps.update()
       cs.key.execute()
       cs.draw.debugReset()
-      cs.camera.update()
       cs.surface.clearAll()
-      cs.object.addNewObjects()
+
 
       // Execute before steps
       // disconnect to allow adding within a beforestep
@@ -41,6 +40,10 @@ cs.loop = {
          shouldDraw && cs.draw.setSurface(obj.core.surface)
          shouldDraw && drawEvent.call(obj, obj)
       }
+
+      // camera
+      cs.camera.update()
+      cs.object.addNewObjects()
 
       // timers
       cs.timer.loop()
