@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <!-- Game Engine -->
+   <script src='../../engine/core.js'></script>
+
+   <!-- helpers -->
+   <link rel="stylesheet" href="../../engine/fullscreen.css"></link>
+</head>
+
+<body style="background: #000">
+   <!--Game Area-->
+   <canvas class="cs-canvas" style="background:#999"></canvas>
+
+   <script>
+      cs.load({
+         core: '../../engine',
+         canvas: document.querySelector('canvas'),
+         assets: {
+            sprites: [
+               { path: './sprites/ship' },
+               { path: './sprites/background' },
+               { path: './sprites/bullet' },
+            ],
+            scripts: [
+               { path: './objects/ship' },
+               { path: './objects/background' },
+               { path: './objects/bullet' },
+            ]
+         },
+
+         start: function() {
+            cs.room.setup({
+               width: 500,
+               height: 500
+            })
+
+            cs.camera.setup({
+               maxWidth: 200,
+               maxHeight: 200,
+               smoothing: 1
+            })
+
+            cs.surface.create({
+               name: 'background',
+               drawOutside: true,
+               manualClear: true,
+               depth: 100
+            })
+
+            cs.object.create({ type: 'background' })
+            cs.object.create({ type: 'ship' })
+         }
+      })
+   </script>
+</body>
+
+</html>
