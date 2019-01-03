@@ -10,7 +10,7 @@ cs.objects.ship = {
 
       this.speed = 2
 
-      this.timerFire = cs.timer.add({
+      this.timerFire = cs.timer.create({
          duration: 30,
          start: function() {
             cs.object.create({

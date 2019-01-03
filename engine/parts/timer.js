@@ -16,7 +16,7 @@ cs.timer = {
       }
    },
 
-   add: function(options) {
+   create: function(options) {
       var timer = options.timer
       if(!timer) {
          this.count += 1
