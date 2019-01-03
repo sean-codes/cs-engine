@@ -4,12 +4,14 @@ cs.timer = {
    loop: function() {
       for (var timer of this.list) {
          if(timer.time) timer.time += 1
-         if(!timer.time && timer.start()) timer.time = 1
+
          timer.percent = timer.time / timer.duration
 
          if(timer.percent == 1) {
-            timer.end()
-            this.remove(timer)
+            timer.running = false
+
+            this.unWatch(timer)
+            timer.end && timer.end()
          }
       }
    },
@@ -18,10 +20,6 @@ cs.timer = {
       var timer = options.timer
       if(!timer) {
          this.count += 1
-
-         if(!options.start) {
-            return console.error('cs.timer: need way to start timer')
-         }
 
          timer = {
             id: this.count,
@@ -34,11 +32,24 @@ cs.timer = {
       }
 
 
-      this.list.push(timer)
+      //this.list.push(timer)
       return timer
    },
 
-   remove: function(timer) {
+   start: function(timer) {
+      if (timer.running) return
+
+      this.watch(timer)
+      timer.start && timer.start()
+      timer.running = true
+      timer.time = 1
+   },
+
+   watch: function(timer) {
+      this.list.push(timer)
+   },
+
+   unWatch: function(timer) {
       this.list = this.list.filter(function(num) {
          return num.id !== timer.id
       })
