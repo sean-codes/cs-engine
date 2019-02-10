@@ -4,13 +4,24 @@
 cs.object = {
    list: [], // all objects
    new: [], // newly added objects
-   order: [], // order for objects to be called
    types: {},
    shouldClean: false,
    objGroups: {},
    unique: 0,
 
+   loop: function(call) {
+      var i = cs.object.list.length;
+      while (i--) {
+         var object = cs.object.list[i]
+         call(object)
+      }
+   },
+
    create: function(options) {
+      if (!cs.objects[options.type]) {
+         return 'object type "' + options.type + '" does not exist'
+      }
+
       var attr = options.attr
       var object = cs.objects[options.type]
       var zIndex = cs.objects[options.type].zIndex || 0
@@ -42,24 +53,32 @@ cs.object = {
       if (!this.objGroups[options.type]) this.objGroups[options.type] = []
       this.objGroups[options.type].push(newObj)
 
-
       return newObj
    },
 
    addNewObjects: function() {
       while (this.new.length) {
-         var obj = this.new.shift()
-         var pos = this.findPosition(obj.zIndex)
-         this.list.splice(pos, 0, obj.obj)
+         var obj = this.new.shift().obj
+         this.list.push(obj)
       }
+
+      this.orderObjectsByZIndex()
    },
 
-   findPosition: function(zIndex) {
-      for (var i = 0; i < this.list.length; i++) {
-         if (zIndex >= this.list[i].core.zIndex)
-         return i
-      }
-      return i
+   orderObjectsByZIndex: function() {
+      this.order = this.list.sort(function(a, b) {
+         return b.core.zIndex - a.core.zIndex
+      })
+   },
+
+   changeZIndex: function(object, zIndex) {
+      var listObject = object.list.find(function(listObject) {
+         return listObject.obj.core.id == object.core.id
+      })
+
+      listObject.core.zIndex = zIndex
+
+      this.orderObjectsByZIndex()
    },
 
    destroy: function(destroyObjOrID, fadeTimer) {
@@ -90,10 +109,7 @@ cs.object = {
    },
 
    every: function() {
-      return this.list.concat(this.new.map((obj) => obj.obj)).reduce(function(sum, num) {
-         num.core.live && sum.push(num)
-         return sum
-      }, [])
+      return this.list.concat(this.new.map((obj) => obj.obj))
    },
 
    all: function(type) {
@@ -120,5 +136,12 @@ cs.object = {
 
    count: function(type) {
       return this.objGroups[type] ? this.objGroups[type].length : 0
+   },
+
+   reset: function() {
+      this.list = []
+      this.new = []
+      this.objGroups = {}
+      this.unique = 0
    }
 }

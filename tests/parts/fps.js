@@ -6,7 +6,7 @@ testUtility.test({
          should: 'frame rate is around 60',
          pass: function(pass, fail) {
             setTimeout(() => {
-               cs.fps.rate > 55 && cs.fps.rate < 65 ? pass() : fail()
+               cs.fps.rate > 50 && cs.fps.rate < 65 ? pass() : fail()
             }, 1000)
          }
       }

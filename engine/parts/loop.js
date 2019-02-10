@@ -23,23 +23,18 @@ cs.loop = {
       while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
       while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
 
-      var i = cs.object.list.length;
-      while (i--) {
-         var obj = cs.object.list[i];
-         var step = cs.objects[obj.core.type].step
-         cs.draw.setSurface(obj.core.surface)
-         obj.core.live && step && step.call(obj, obj);
-      }
+      cs.object.loop(function(object) {
+         var stepEvent = cs.objects[object.core.type].step
+         cs.draw.setSurface(object.core.surface)
+         object.core.live && stepEvent && stepEvent.call(object, object);
+      })
 
-      var i = cs.object.list.length;
-      while (i--) {
-         var obj = cs.object.list[i]
-         var drawEvent = cs.objects[obj.core.type].draw
-         var shouldDraw = drawEvent && obj.core.live && obj.core.active
-
-         shouldDraw && cs.draw.setSurface(obj.core.surface)
-         shouldDraw && drawEvent.call(obj, obj)
-      }
+      cs.object.loop(function(object) {
+         var drawEvent = cs.objects[object.core.type].draw
+         var shouldDraw = drawEvent && object.core.live && object.core.active
+         shouldDraw && cs.draw.setSurface(object.core.surface)
+         shouldDraw && drawEvent.call(object, object)
+      })
 
       // camera
       cs.camera.update()
