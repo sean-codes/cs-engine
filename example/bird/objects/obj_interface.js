@@ -10,7 +10,7 @@ cs.objects['obj_interface'] = {
    },
    step: function() {
       //Handling Touch
-      this.touch.check({ x: 0, y: 0, width: cs.draw.canvas.width, height: cs.draw.canvas.height })
+      this.touch.check({ x: 0, y: 0, width: cs.draw.surface.width, height: cs.draw.surface.height })
       //Sound
       if (this.touch.isDown() && this.touch.isWithin({ x: 0, y: 0, width: 14 * 3, height: 14 * 3 })) {
          cs.sound.toggleMute(!cs.sound.mute)
@@ -30,7 +30,7 @@ cs.objects['obj_interface'] = {
       var btnHeightMin = 50;
       var btnSpace = 20;
       var bw = 300;
-      var bx = cs.draw.canvas.width / 2 - bw / 2
+      var bx = cs.draw.surface.width / 2 - bw / 2
 
       switch (cs.save.state) {
          case 'START':
@@ -53,7 +53,7 @@ cs.objects['obj_interface'] = {
             cs.draw.setFont("20px Arial")
             var tw = cs.draw.textWidth(text);
             cs.draw.setAlpha(0.5);
-            var rect = { x: cs.draw.canvas.width - tw - 20, y: 0, width: tw + 20, height: 60 }
+            var rect = { x: cs.draw.surface.width - tw - 20, y: 0, width: tw + 20, height: 60 }
             cs.draw.fillRect(rect);
             cs.draw.setColor('#FFFFFF');
             cs.draw.strokeRect(rect);
@@ -61,7 +61,7 @@ cs.objects['obj_interface'] = {
             cs.draw.setFont("20px Arial")
             cs.draw.setTextAlign('end')
             cs.draw.text({
-               x: cs.draw.canvas.width - 10,
+               x: cs.draw.surface.width - 10,
                y: 5,
                text: text
             })
@@ -69,7 +69,7 @@ cs.objects['obj_interface'] = {
             cs.draw.setFont("20px Arial")
             cs.draw.setTextAlign('end')
             cs.draw.text({
-               x: cs.draw.canvas.width - 10,
+               x: cs.draw.surface.width - 10,
                y: 30,
                text: 'Best: ' + cs.save.topScore
             })

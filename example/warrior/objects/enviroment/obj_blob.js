@@ -1,4 +1,5 @@
 cs.objects['obj_blob'] = {
+   zIndex: 1,
    create: function() {
       this.sprite = 'spr_blob'
       this.mask = cs.sprite.info({ spr: this.sprite }).mask

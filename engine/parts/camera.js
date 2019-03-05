@@ -11,6 +11,7 @@ cs.camera = {
    height: 200,
    maxHeight: 400,
    smoothing: 1, // 1 means 1:1 movement
+
    setup: function(options) {
       this.width = options.width
       this.height = options.height
@@ -21,6 +22,7 @@ cs.camera = {
       this.resize()
       //cs.surface.resize();
    },
+
    resize: function() {
       var viewSize = cs.canvas.getBoundingClientRect()
 
@@ -40,13 +42,16 @@ cs.camera = {
       this.height = Math.ceil(nh)
       this.scale = w / nw
    },
+
    snap: function(pos) {
       this.follow(pos)
       this.update(1)
    },
+
    follow: function(pos) {
       this.followPos = { x: pos.x, y: pos.y }
    },
+
    update: function(smoothing) {
       smoothing = cs.default(smoothing, this.smoothing)
 
@@ -65,8 +70,10 @@ cs.camera = {
       if (this.y + this.height > cs.room.height)
          this.y = (cs.room.height - this.height) / (cs.room.height < this.height ? 2 : 1)
    },
+
    zoomOut: function() {},
    zoomIn: function() {},
+
    outside: function(rect) {
       if (rect.x + rect.width < this.x || rect.x > this.x + this.width ||
          rect.y + rect.height < this.y || rect.y > this.y + this.height) {

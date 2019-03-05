@@ -6,6 +6,7 @@ cs.surface = {
    order: [],
    imageSmoothing: false,
    maxRes: 10000,
+
    create: function(info) {
       var num = this.list.length
       var canvas = document.createElement("canvas")
@@ -20,6 +21,7 @@ cs.surface = {
          width: canvas.width,
          height: canvas.height,
          raw: cs.default(info.raw, false),
+         scale: true,
          draw: true,
          drawOutside: cs.default(info.drawOutside, false),
          manualClear: cs.default(info.manualClear, false),
@@ -35,6 +37,7 @@ cs.surface = {
       // Return the element
       return this.list[info.name]
    },
+
    addToOrder: function(surface) {
       // Find Place to put it!
       for (var i = 0; i < this.order.length; i++) {
@@ -43,6 +46,7 @@ cs.surface = {
       }
       this.order.splice(i, 0, surface)
    },
+
    clearAll: function() {
       cs.ctx.clearRect(0, 0, cs.canvas.width, cs.canvas.height)
       for (var surface of this.order) {
@@ -65,6 +69,7 @@ cs.surface = {
          surface.clear = false
       }
    },
+
    clear: function(options) {
       var surface = this.list[options.name]
       surface.clearRequest = {
@@ -73,13 +78,16 @@ cs.surface = {
          width: options.width || surface.canvas.width,
          height: options.height || surface.canvas.height
       }
+
    },
+
    displayAll: function() {
       var i = this.order.length;
       while (i--) {
          this.display(this.order[i].name)
       }
    },
+
    display: function(surfaceName) {
       var surface = this.list[surfaceName]
       sx = surface.raw ? 0 : cs.camera.x,
@@ -108,6 +116,7 @@ cs.surface = {
          sx, sy, sWidth, sHeight,
          dx, dy, dWidth, dHeight)
    },
+
    resize: function() {
       var viewSize = cs.canvas.getBoundingClientRect()
 
@@ -131,12 +140,14 @@ cs.surface = {
          this.ctxImageSmoothing(surface.ctx)
       }
    },
+
    ctxImageSmoothing: function(ctx) {
       ctx.webkitImageSmoothingEnabled = this.imageSmoothing
       ctx.mozImageSmoothingEnabled = this.imageSmoothing
       ctx.msImageSmoothingEnabled = this.imageSmoothing
       ctx.imageSmoothingEnabled = this.imageSmoothing
    },
+
    info: function(surfaceName) {
       return {
          width: this.list[surfaceName].width,

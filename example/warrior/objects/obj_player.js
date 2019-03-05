@@ -1,4 +1,5 @@
 cs.objects['obj_player'] = {
+   zIndex: 10,
    create: function() {
       this.mask = { x: 0, y: 0, width: 8, height: 15 }
       this.hspeed = 0;

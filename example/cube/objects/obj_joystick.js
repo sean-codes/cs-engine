@@ -15,7 +15,7 @@ cs.objects['obj_joystick'] = {
          return
 
       this.x = 10;
-      this.y = cs.draw.canvas.height - this.height - 10;
+      this.y = cs.draw.surface.height - this.height - 10;
 
       this.touch.check({
          x: this.x,

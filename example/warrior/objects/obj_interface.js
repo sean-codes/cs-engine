@@ -19,8 +19,8 @@ cs.objects['obj_buttons'] = {
    },
    step: function() {
       var btnRect = {
-         x: cs.draw.canvas.width - 50,
-         y: cs.draw.canvas.height - 50,
+         x: cs.draw.surface.width - 50,
+         y: cs.draw.surface.height - 50,
          width: this.width,
          height: this.height
       }
@@ -51,7 +51,7 @@ cs.objects['obj_joystick'] = {
    },
    step: function() {
       this.x = 10;
-      this.y = cs.draw.canvas.height - this.height - 10;
+      this.y = cs.draw.surface.height - this.height - 10;
       this.touch.check({ x: this.x, y: this.y, width: this.width, height: this.height });
 
       this.tx = this.x + (this.width / 2) - (this.jw / 2);
@@ -102,6 +102,6 @@ cs.objects['obj_joystick'] = {
       cs.draw.text({ x: 1, y: 30, text: 'Scale: ' + cs.camera.scale });
 
 
-      //cs.draw.fillRect({ x: 0, y: cs.draw.canvas.height-this.height, width: 50, height: 50})
+      //cs.draw.fillRect({ x: 0, y: cs.draw.surface.height-this.height, width: 50, height: 50})
    }
 }

@@ -9,8 +9,8 @@ cs.objects['obj_buttons'] = {
    },
    step: function() {
       var btnRect = {
-         x: cs.draw.canvas.width - 50,
-         y: cs.draw.canvas.height - 50,
+         x: cs.draw.surface.width - 50,
+         y: cs.draw.surface.height - 50,
          width: this.width,
          height: this.height
       }

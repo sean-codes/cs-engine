@@ -4,6 +4,7 @@ cs.loop = {
    beforeSteps: [],
    speed: 1000 / 60,
    id: 0,
+
    step: function() {
       this.id += 1
 
@@ -14,6 +15,9 @@ cs.loop = {
       cs.fps.update()
       cs.key.execute()
       cs.draw.debugReset()
+
+      // move camera before clear
+      cs.camera.update()
       cs.surface.clearAll()
       cs.object.addNewObjects()
 
@@ -36,8 +40,7 @@ cs.loop = {
          shouldDraw && drawEvent.call(object, object)
       })
 
-      // camera
-      cs.camera.update()
+
 
       // timers
       cs.timer.loop()
@@ -59,15 +62,19 @@ cs.loop = {
       // could clearup !live objects here
       cs.object.clean()
    },
+
    endStep: function(func) {
       this.endSteps.push(func)
    },
+
    beforeStep: function(func) {
       this.beforeSteps.push(func)
    },
+
    stop: function() {
       this.run = false
    },
+
    start: function() {
       this.run = true
    }

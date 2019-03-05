@@ -6,32 +6,42 @@
    <script src='../../engine/core.js'></script>
 </head>
 
-<body>
+<body style="background: #111">
    <!--Game Area-->
-   <canvas style="background:#FFF"></canvas>
+   <canvas id="myCanvas" style="background:#222; width: 300px; height: 300px;"></canvas>
 
    <script>
       cs.load({
          core: '../../engine',
-         canvas: document.querySelector('canvas'),
+         canvas: myCanvas,
          objects: {
-            player: {
+            box: {
+               create: function() {
+                  this.x = 20
+                  this.y = 0
+                  this.xSpeed = 3
+                  this.ySpeed = 4
+                  this.size = 40
+               },
                draw: function() {
+                  cs.draw.settings({ color: '#FFF' })
+
                   cs.draw.fillRect({
-                     x: 0,
-                     y: 0,
-                     width: 50,
-                     height: 50
+                     x: this.x,
+                     y: this.y,
+                     width: this.size,
+                     height: this.size
                   })
+
+                  this.x += this.xSpeed
+                  this.y += this.ySpeed
+                  if (this.x < 0 || this.x + this.size > cs.room.width) this.xSpeed *= -1
+                  if (this.y < 0 || this.y + this.size > cs.room.height) this.ySpeed *= -1
                }
             }
          },
          start: function() {
-            cs.object.create({
-               type: 'player',
-               x: 10,
-               y: 10
-            })
+            cs.object.create({ type: 'box' })
          }
       })
    </script>
