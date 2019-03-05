@@ -8,6 +8,7 @@ cs.room = {
    restart: function() {
       this.restarting = true
    },
+   
    reset: function() {
       cs.object.list = []
       cs.global = {}
@@ -15,6 +16,7 @@ cs.room = {
       cs.sound.reset()
       this.restarting = false
    },
+
    setup: function(info) {
       this.width = info.width
       this.height = info.height
@@ -22,6 +24,7 @@ cs.room = {
       this.rect = { x: 0, y: 0, width: this.width, height: this.height }
       cs.surface.resize()
    },
+
    outside(rect) {
       if (typeof rect.width == 'undefined') rect.width = 0
       if (typeof rect.height == 'undefined') rect.height = 0

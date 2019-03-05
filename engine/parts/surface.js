@@ -5,7 +5,6 @@ cs.surface = {
    list: [],
    order: [],
    imageSmoothing: false,
-   maxRes: 10000,
 
    create: function(info) {
       var num = this.list.length
@@ -41,9 +40,11 @@ cs.surface = {
    addToOrder: function(surface) {
       // Find Place to put it!
       for (var i = 0; i < this.order.length; i++) {
-         if (this.order[i].depth > surface.depth)
+         if (this.order[i].depth > surface.depth) {
             break
+         }
       }
+
       this.order.splice(i, 0, surface)
    },
 
@@ -78,7 +79,6 @@ cs.surface = {
          width: options.width || surface.canvas.width,
          height: options.height || surface.canvas.height
       }
-
    },
 
    displayAll: function() {
@@ -118,26 +118,29 @@ cs.surface = {
    },
 
    resize: function() {
-      var viewSize = cs.canvas.getBoundingClientRect()
+      // parent canvas info
+      var w = cs.canvas.clientWidth
+      var h = cs.canvas.clientHeight
 
-      var w = viewSize.width
-      var h = viewSize.height
-      var ratioHeight = w / h //How many h = w
-      var ratioWidth = h / w //how man w = a h
-
-
+      // set main canvas
       cs.canvas.width = w
       cs.canvas.height = h
       this.ctxImageSmoothing(cs.ctx)
 
+      // loop over the surfaces to match
+      // a surface can be raw (screen coordinates) or not (the size of the room)
       for (var surface of this.order) {
-         var img = surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
-         surface.canvas.width = surface.raw ? w : cs.room.width
-         surface.canvas.height = surface.raw ? h : cs.room.height
+         var saveSurfaceData = cs.loop.run
+            ? surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
+            : undefined
+
+         surface.canvas.width = surface.raw ? w : (cs.room.width)
+         surface.canvas.height = surface.raw ? h : (cs.room.height)
          surface.width = surface.canvas.width
          surface.height = surface.canvas.height
-         surface.ctx.putImageData(img, 0, 0)
          this.ctxImageSmoothing(surface.ctx)
+
+         if (saveSurfaceData) surface.ctx.putImageData(saveSurfaceData, 0, 0)
       }
    },
 

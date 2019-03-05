@@ -67,4 +67,5 @@ cs.setup = function() {
    // Start your engines!
    cs.start()
    cs.loop.step()
+   cs.loop.run = true
 }
