@@ -9,9 +9,8 @@ cs.loop = {
       this.id += 1
 
       setTimeout(function() { cs.loop.step() }, this.speed)
-      // requestAnimationFrame(cs.loop.step.bind(this))
       if (!this.run) return
-
+      
       cs.fps.update()
       cs.key.execute()
       cs.draw.debugReset()

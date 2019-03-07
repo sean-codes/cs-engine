@@ -53,10 +53,10 @@ cs.surface = {
       for (var surface of this.order) {
          if (!surface.manualClear || surface.clearRequest) {
             clearRect = {
-               x: surface.raw ? 0 : Math.floor(cs.camera.x),
-               y: surface.raw ? 0 : Math.floor(cs.camera.y),
-               width: surface.raw ? surface.canvas.width : cs.camera.width,
-               height: surface.raw ? surface.canvas.height : cs.camera.height,
+               x: surface.raw ? 0 : Math.floor(cs.camera.x * cs.camera.scale),
+               y: surface.raw ? 0 : Math.floor(cs.camera.y * cs.camera.scale),
+               width: surface.raw ? surface.canvas.width : cs.camera.width * cs.camera.scale,
+               height: surface.raw ? surface.canvas.height : cs.camera.height * cs.camera.scale,
             }
 
             if (surface.clearRequest)
@@ -90,31 +90,39 @@ cs.surface = {
 
    display: function(surfaceName) {
       var surface = this.list[surfaceName]
-      sx = surface.raw ? 0 : cs.camera.x,
-         sy = surface.raw ? 0 : cs.camera.y,
-         sWidth = surface.raw ? surface.canvas.width : cs.camera.width,
-         sHeight = surface.raw ? surface.canvas.height : cs.camera.height,
 
-         //We will have to scale the X over becuse safari doesnt act like chrome
-         dx = sx < 0 ? Math.floor(cs.camera.scale * (cs.camera.x * -1)) : 0,
-         dy = sy < 0 ? Math.floor(cs.camera.scale * (cs.camera.y * -1)) : 0,
-         dWidth = sWidth <= surface.canvas.width ?
-         cs.canvas.width :
-         cs.canvas.width - Math.floor(cs.camera.scale * ((cs.camera.width) - surface.canvas.width)),
-         dHeight = sHeight <= surface.canvas.height ?
-         cs.canvas.height :
-         cs.canvas.height - Math.floor(cs.camera.scale * ((cs.camera.height) - surface.canvas.height))
+      // source
+      var sx = surface.raw ? 0 : cs.camera.x * cs.camera.scale
+      var sy = surface.raw ? 0 : cs.camera.y * cs.camera.scale
+      var sWidth = surface.raw ? surface.canvas.width : cs.camera.width * cs.camera.scale
+      var sHeight = surface.raw ? surface.canvas.height : cs.camera.height * cs.camera.scale
 
-      if (sx < 0) { sx = 0;
-         sWidth += sx * -1 }
-      if (sy < 0) { sy = 0;
-         sHeight += sy * -1 }
+      if (sx < 0) { sx = 0; sWidth += sx * -cs.camera.scale }
+      if (sy < 0) { sy = 0; sHeight += sy * -cs.camera.scale }
       if (sWidth > surface.canvas.width) sWidth = surface.canvas.width
       if (sHeight > surface.canvas.height) sHeight = surface.canvas.height
 
+      // destination
+      var dx = sx < 0 ? (cs.camera.width / 2 - sWidth / 2) * cs.camera.scale : 0
+      var dy = sy < 0 ? (cs.camera.height / 2 - sheight / 2) * cs.camera.scale : 0
+      var dWidth = sWidth <= surface.canvas.width
+         ? cs.canvas.width
+         : cs.canvas.width - Math.floor(cs.camera.scale * ((cs.camera.width) - surface.canvas.width))
+      var dHeight = sHeight <= surface.canvas.height
+         ? cs.canvas.height
+         : cs.canvas.height - Math.floor(cs.camera.scale * ((cs.camera.height) - surface.canvas.height))
+
+      // console.log(
+      //    surfaceName,
+      //    { sx, sy, sWidth, sHeight },
+      //    { dx, dy, dWidth, dHeight }
+      // )
+      //
+      // cs.loop.stop()
       cs.ctx.drawImage(surface.canvas,
          sx, sy, sWidth, sHeight,
-         dx, dy, dWidth, dHeight)
+         dx, dy, dWidth, dHeight
+      )
    },
 
    resize: function() {
@@ -134,8 +142,8 @@ cs.surface = {
             ? surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
             : undefined
 
-         surface.canvas.width = surface.raw ? w : (cs.room.width)
-         surface.canvas.height = surface.raw ? h : (cs.room.height)
+         surface.canvas.width = surface.raw ? w : (cs.room.width * cs.camera.scale)
+         surface.canvas.height = surface.raw ? h : (cs.room.height * cs.camera.scale)
          surface.width = surface.canvas.width
          surface.height = surface.canvas.height
          this.ctxImageSmoothing(surface.ctx)

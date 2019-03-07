@@ -3,16 +3,19 @@
 //---------------------------------------------------------------------------------------------//
 cs.sprite = {
    list: {},
+
    init: function(sprites) {
       for (var sprite of cs.sprites) {
          this.initSprite(sprite)
       }
    },
+
    exists: function(name) {
       return this.list[name] ? true : false
    },
+
    initSprite: function(options) {
-      // Create Sprite
+      // create Sprite
       var width = options.fwidth || options.html.width
       var height = options.fheight || options.html.height
       var newSprite = {
@@ -31,7 +34,7 @@ cs.sprite = {
          frames: []
       }
 
-      // Handle Frames
+      // handle Frames
       var dx = 0,
          dy = 0
       while (dx < newSprite.html.width && dy < newSprite.html.height) {
@@ -54,6 +57,7 @@ cs.sprite = {
 
       cs.sprite.list[newSprite.name] = newSprite
    },
+
    texture: function(spriteName, width, height) {
       var sprite = cs.sprite.list[spriteName]
       sprite.texture = document.createElement('canvas')
@@ -73,8 +77,9 @@ cs.sprite = {
          x += sprite.html.width
       }
    },
+
    info: function(options) {
-      // We need something to return info on sprites based on scale etc
+      // we need something to return info on sprites based on scale etc
       if (typeof options.frame == 'undefined') options.frame = 0
       if (typeof options.scaleX == 'undefined') options.scaleX = 1
       if (typeof options.scaleY == 'undefined') options.scaleY = 1
@@ -87,24 +92,27 @@ cs.sprite = {
          options.scaleX = options.scale
          options.scaleY = options.scale
       }
-      // Scaling with width/height
+
+      // scaling with width/height
       if (options.width || options.size)
          options.scaleX = (options.width || options.size) / sprite.fwidth * hRatio
       if (options.height || options.size)
          options.scaleY = (options.height || options.size) / sprite.fheight * vRatio
 
       // Locking aspect ratio
-      if (options.aspectLock)
-         (options.scaleX !== 1) ?
-         options.scaleY = options.scaleX :
-         options.scaleX = options.scaleY
+      if (options.aspectLock) {
+         options.scaleX !== 1
+            ? options.scaleY = options.scaleX
+            : options.scaleX = options.scaleY
+      }
 
       return {
          name: options.spr,
-         width: (options.texture ? sprite.texture.fwidth : sprite.fwidth) * options.scaleX,
-         height: (options.texture ? sprite.texture.fheight : sprite.fheight) * options.scaleY,
+         width: (options.texture ? sprite.texture.fwidth : sprite.fwidth),
+         height: (options.texture ? sprite.texture.fheight : sprite.fheight),
          scaleX: options.scaleX,
          scaleY: options.scaleY,
+         angle: options.angle,
          xoff: sprite.xoff,
          yoff: sprite.yoff,
          frames: options.texture ? [sprite.texture] : sprite.frames,

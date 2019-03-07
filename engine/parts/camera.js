@@ -20,14 +20,11 @@ cs.camera = {
       this.smoothing = options.smoothing || this.smoothing
 
       this.resize()
-      //cs.surface.resize();
    },
 
    resize: function() {
-      var viewSize = cs.canvas.getBoundingClientRect()
-
-      var w = viewSize.width
-      var h = viewSize.height
+      var w = cs.canvas.clientWidth
+      var h = cs.canvas.clientHeight
       var ratioHeight = w / h //How many h = w
       var ratioWidth = h / w //how man w = a h
 
@@ -38,9 +35,9 @@ cs.camera = {
          nw = nh * ratioHeight;
       }
 
-      this.width = Math.ceil(nw)
-      this.height = Math.ceil(nh)
-      this.scale = w / nw
+      this.width = nw
+      this.height = nh
+      this.scale = w / this.width
    },
 
    snap: function(pos) {
@@ -75,8 +72,10 @@ cs.camera = {
    zoomIn: function() {},
 
    outside: function(rect) {
-      if (rect.x + rect.width < this.x || rect.x > this.x + this.width ||
-         rect.y + rect.height < this.y || rect.y > this.y + this.height) {
+      if (
+         rect.x + rect.width < this.x || rect.x > this.x + this.width
+         || rect.y + rect.height < this.y || rect.y > this.y + this.height
+      ) {
          return true;
       }
       return false

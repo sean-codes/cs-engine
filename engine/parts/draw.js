@@ -34,43 +34,63 @@ cs.draw = {
    },
 
    sprite: function(options) {
-      sprite = cs.sprite.list[options.spr]
+      var scale = this.surface.raw ? 1 : cs.camera.scale
+      var sprite = cs.sprite.list[options.spr]
       var info = cs.sprite.info(options)
 
+      var frame = info.frames[info.frame || 0]
+      var frameWidth = info.width
+      var frameHeight = info.height
+      var x = options.x
+      var y = options.y
+      var xoff = options.center || options.centerX ? frameWidth / 2 : cs.default(options.xoff, info.xoff)
+      var yoff = options.center || options.centerY ? frameHeight / 2 : cs.default(options.yoff, info.yoff)
+
       // if outside camera skip
-      if (!this.surface.raw && !this.surface.drawOutside && !options.drawOutside) {
-         var x = options.x - (options.scaleX < 0 ? sprite.fwidth : 0)
-         var y = options.y - (options.scaleY < 0 ? sprite.fheight : 0)
+      if (!this.surface.raw && !this.surface.drawOutside) {
+         var cx = cs.camera.x
+         var cy = cs.camera.y
+         var cw = cs.camera.width
+         var ch = cs.camera.height
 
-         if (x + sprite.fwidth < cs.camera.x ||
-            x > cs.camera.x + cs.camera.width ||
-            x > cs.camera.x + cs.camera.width ||
-            y + sprite.fheight - sprite.yoff < cs.camera.y ||
-            y - sprite.yoff > cs.camera.y + cs.camera.height) {
-
+         if (
+            x - xoff > cx + cw || x - xoff + frameWidth < cx
+            || y - yoff > cy + ch || y - yoff + frameHeight < cy
+         ) {
             this.debug.spritesSkippedCount += 1
             return
          }
       }
 
-      var xoff = options.center || options.centerX ? sprite.fwidth / 2 : cs.default(options.xoff, sprite.xoff)
-      var yoff = options.center || options.centerY ? sprite.fheight / 2 : cs.default(options.yoff, sprite.yoff)
-
       // Sean.. We will talk about this later. Not sure you know what you are doing.
       // I want to overlap on a single pixel when flipping
-      if (info.scaleX < 0 && xoff) options.x++
-      if (info.scaleY < 0 && yoff) options.y++
+      // if (info.scaleX < 0 && xoff) x++
+      // if (info.scaleY < 0 && yoff) y++
 
-            if (options.angle || options.scaleX != 1 || options.scaleY != 1) {
-               this.surface.ctx.save()
-               this.surface.ctx.translate(Math.ceil(options.x), Math.ceil(options.y))
-               this.surface.ctx.scale(info.scaleX, info.scaleY)
-               this.surface.ctx.rotate(options.angle * Math.PI / 180 * Math.sign(info.scaleX))
-               this.surface.ctx.drawImage(info.frames[info.frame || 0], -xoff, -yoff)
-               this.surface.ctx.restore()
-            } else {
-               this.surface.ctx.drawImage(info.frames[info.frame || 0], Math.ceil(options.x - xoff), Math.ceil(options.y - yoff))
-            }
+      if (info.scaleX < 0 || info.scaleY < 0 || info.angle) {
+         this.surface.ctx.save()
+         this.surface.ctx.translate(x * scale, y * scale)
+         this.surface.ctx.rotate(options.angle * Math.PI / 180)
+         this.surface.ctx.scale(info.scaleX, info.scaleY)
+
+         this.surface.ctx.drawImage(
+            frame,
+            -xoff * scale,
+            -yoff * scale,
+            frameWidth * scale,
+            frameHeight * scale
+         )
+
+         this.surface.ctx.restore()
+      } else {
+         this.surface.ctx.drawImage(
+            frame,
+            x * scale - xoff * scale - 1/scale,
+            y * scale - yoff * scale - 1/scale,
+            frameWidth * scale + 1/scale,
+            frameHeight * scale + 1/scale
+         )
+      }
 
       this.debug.spritesDrawnCount += 1
       cs.draw.settingsDefault()
