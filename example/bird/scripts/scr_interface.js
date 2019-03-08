@@ -7,7 +7,7 @@ cs.script.interface.drawButton = function(bx, by, bw, bh, text) {
 
    cs.draw.setColor('#FFFFFF');
    cs.draw.setTextCenter();
-   cs.draw.setFont('18px Arial')
+   cs.draw.setFont({ size: 18, family: 'Arial' })
    cs.draw.text(cs.draw.surface.width / 2, by + bh / 2, text);
 }
 
@@ -34,12 +34,12 @@ cs.script.interface.drawButtons = function(btns) {
       cs.draw.setColor('#000')
       cs.draw.setAlpha(0.75)
       cs.draw.fillRect(btnRect)
-      cs.draw.setColor('#FFF')
       cs.draw.setWidth(3)
+      cs.draw.setColor('#FFF')
       cs.draw.strokeRect(btnRect)
       cs.draw.setTextCenter()
       cs.draw.setColor('#FFF')
-      cs.draw.setFont('20px Arial')
+      cs.draw.setFont({ size: 20, family: 'monospace', effect: 'bold' })
       cs.draw.text({
          x: dx + btnWidth / 2,
          y: dy + btnHeight / 2,

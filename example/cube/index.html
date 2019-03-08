@@ -100,6 +100,12 @@
                height: 400,
                smoothing: 5
             })
+
+            cs.room.setup({
+               width: 600,
+               height: 400
+            })
+
             cs.global.networkControl = {
                id: -1,
                list: {}
@@ -113,6 +119,7 @@
             cs.object.create({
                type: 'obj_light'
             })
+            
             cs.object.create({
                type: 'obj_buttons',
                attr: {

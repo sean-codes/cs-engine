@@ -78,39 +78,32 @@
             ]
          },
          start: function() {
-            cs.room.setup({
-               width: 192,
-               height: 192,
-               background: "#222"
-            })
             cs.camera.setup({
                maxWidth: 300,
                maxHeight: 200,
                smoothing: 10
             })
 
-            //Create Objects
+            cs.room.setup({
+               width: 192,
+               height: 192,
+               background: "#222"
+            })
+
+            // create objects
             cs.object.create({
                type: 'obj_player',
-               attr: {
-                  x: 50,
-                  y: 50
-               }
+               attr: { x: 50, y: 50 }
             })
             cs.object.create({
                type: 'obj_blob',
-               attr: {
-                  x: 50,
-                  y: 1
-               }
+               attr: { x: 50, y: 1 }
             })
             cs.object.create({
                type: 'obj_interface',
-               attr: {
-                  x: 50,
-                  y: 1
-               }
+               attr: { x: 50, y: 1 }
             })
+
             for (var i = 0; i < 12; i++)
                cs.object.create({
                   type: 'obj_block',

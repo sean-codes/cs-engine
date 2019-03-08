@@ -9,7 +9,7 @@ cs.objects['obj_score'] = {
 }
 
 cs.objects['obj_score_text'] = {
-   zIndex: 10,
+   zIndex: 21,
    create: function() {
       this.text = cs.math.choose([
          '+1 Nice dive!',
@@ -25,7 +25,8 @@ cs.objects['obj_score_text'] = {
       this.timer -= 1;
 
       cs.draw.setTextCenter();
-      cs.draw.setColor('#FFFFFF');
+      cs.draw.setColor('#FFF38E');
+      cs.draw.setFont({ effect: 'bold', size: 8, family: 'monospace'})
       cs.draw.text({ x: this.x, y: this.y, text: this.text })
 
       if (this.timer == 0) {

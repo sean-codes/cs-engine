@@ -23,7 +23,7 @@ cs.objects['obj_interface'] = {
          spr: soundSprite,
          x: 0,
          y: 0,
-         scale: 3
+         size: 40
       })
 
       var btnHeightMax = 200;
@@ -50,15 +50,16 @@ cs.objects['obj_interface'] = {
 
          case 'PLAYING':
             var text = 'Score: ' + cs.global.score;
-            cs.draw.setFont("20px Arial")
-            var tw = cs.draw.textWidth(text);
+            cs.draw.setFont({ size: 20, family: 'monospace', effect: 'bold' })
+            var tw = Math.floor(cs.draw.textWidth(text));
             cs.draw.setAlpha(0.5);
             var rect = { x: cs.draw.surface.width - tw - 20, y: 0, width: tw + 20, height: 60 }
             cs.draw.fillRect(rect);
             cs.draw.setColor('#FFFFFF');
+            cs.draw.setWidth(3)
             cs.draw.strokeRect(rect);
             cs.draw.setColor('#FFFFFF');
-            cs.draw.setFont("20px Arial")
+            cs.draw.setFont({ size: 20, family: 'monospace', effect: 'bold' })
             cs.draw.setTextAlign('end')
             cs.draw.text({
                x: cs.draw.surface.width - 10,
@@ -66,7 +67,7 @@ cs.objects['obj_interface'] = {
                text: text
             })
             cs.draw.setColor('#FFFFFF');
-            cs.draw.setFont("20px Arial")
+            cs.draw.setFont({ size: 20, family: 'monospace', effect: 'bold' })
             cs.draw.setTextAlign('end')
             cs.draw.text({
                x: cs.draw.surface.width - 10,

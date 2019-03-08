@@ -4,7 +4,7 @@ cs.objects['obj_fire'] = {
       this.height = 48;
       this.vspeed = 0;
       this.gravity = 8;
-      cs.script.lightAdd(this, '#0ed604', 200, 8, 8);
+      cs.script.lightAdd(this, '#FFF', 200, 8, 8);
       this.particleSystem = cs.script.particles.createSystem({
          "shape": "circle",
          "colorStart": "#ffffff",

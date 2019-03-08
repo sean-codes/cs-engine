@@ -34,7 +34,6 @@ cs.objects['obj_buttons'] = {
       if (this.touch.isHeld()) cs.draw.setAlpha(0.5)
       cs.draw.fillRect(btnRect);
       cs.draw.setColor("white");
-      //cs.draw.strokeRect(btnRect);
    }
 }
 
@@ -98,8 +97,11 @@ cs.objects['obj_joystick'] = {
       cs.draw.setColor('#fff');
       cs.draw.strokeRect({ x: this.tx, y: this.ty, width: this.jw, height: this.jh });
 
+      cs.draw.setColor('#fff');
       cs.draw.text({ x: 1, y: 0, text: 'FPS Step: ' + cs.fps.rate });
-      cs.draw.text({ x: 1, y: 30, text: 'Scale: ' + cs.camera.scale });
+
+      cs.draw.setColor('#fff');
+      cs.draw.text({ x: 1, y: 20, text: 'Scale: ' + cs.camera.scale });
 
 
       //cs.draw.fillRect({ x: 0, y: cs.draw.surface.height-this.height, width: 50, height: 50})

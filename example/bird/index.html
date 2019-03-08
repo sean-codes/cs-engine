@@ -124,7 +124,7 @@
                speed: 1
             }
 
-            cs.object.create({
+            var bird = cs.object.create({
                type: 'obj_bird',
                attr: {
                   x: (cs.room.width / 2),
@@ -136,6 +136,11 @@
             })
             cs.object.create({
                type: 'obj_background'
+            })
+
+            cs.camera.snap({
+               x: bird.x + bird.mask.width/2,
+               y: bird.y + bird.mask.height/2
             })
          }
       })
