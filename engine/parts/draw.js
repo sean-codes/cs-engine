@@ -9,7 +9,7 @@ cs.draw = {
       defaults: {
          alpha: 1,
          width: 1,
-         font: '12px Arial',
+         font: { size: 12, family: 'Arial' },
          textAlign: 'start',
          textBaseline: 'top',
          color: '#000',
@@ -21,6 +21,7 @@ cs.draw = {
 
    setSurface: function(name) {
       this.surface = cs.surface.list[name]
+      this.scale = this.surface.raw ? 1 : cs.camera.scale
       this.settingsDefault()
    },
 
@@ -34,17 +35,16 @@ cs.draw = {
    },
 
    sprite: function(options) {
-      var scale = this.surface.raw ? 1 : cs.camera.scale
-      var sprite = cs.sprite.list[options.spr]
       var info = cs.sprite.info(options)
 
-      var frame = info.frames[info.frame || 0]
-      var frameWidth = info.width
-      var frameHeight = info.height
       var x = options.x
       var y = options.y
-      var xoff = options.center || options.centerX ? frameWidth / 2 : cs.default(options.xoff, info.xoff)
-      var yoff = options.center || options.centerY ? frameHeight / 2 : cs.default(options.yoff, info.yoff)
+      var frame = info.frame
+      var frameWidth = info.width
+      var frameHeight = info.height
+      var xoff = info.xoff
+      var yoff = info.yoff
+      var scale = this.scale
 
       // if outside camera skip
       if (!this.surface.raw && !this.surface.drawOutside) {
@@ -64,8 +64,8 @@ cs.draw = {
 
       // Sean.. We will talk about this later. Not sure you know what you are doing.
       // I want to overlap on a single pixel when flipping
-      // if (info.scaleX < 0 && xoff) x++
-      // if (info.scaleY < 0 && yoff) y++
+      if (info.scaleX < 0 && xoff) x++
+      if (info.scaleY < 0 && yoff) y++
 
       if (info.scaleX < 0 || info.scaleY < 0 || info.angle) {
          this.surface.ctx.save()
@@ -138,12 +138,14 @@ cs.draw = {
    },
 
    text: function(options) {
+      var x = options.x * this.scale
+      var y = options.y * this.scale
       if (options.lines) {
          for (var line in options.lines) {
-            this.surface.ctx.fillText(options.lines[line], options.x, options.y + (line * (options.lineHeight || this.surface.ctx.lineHeight)))
+            this.surface.ctx.fillText(options.lines[line], x, y + (line * (options.lineHeight || this.surface.ctx.lineHeight)))
          }
       } else {
-         this.surface.ctx.fillText(options.text, options.x, options.y)
+         this.surface.ctx.fillText(options.text, x, y)
       }
       this.settingsDefault()
    },
@@ -153,12 +155,16 @@ cs.draw = {
    },
 
    line: function(options) {
-      var cx = 0 - ((this.surface.ctx.lineWidth % 2 == 0) ? 0 : 0.50)
-      var cy = 0 - ((this.surface.ctx.lineWidth % 2 == 0) ? 0 : 0.50)
-
+      var lineWidth = this.surface.ctx.lineWidth / this.scale
+      var lineWidthAdjust = lineWidth / 2
+      var x1 = options.x1 + lineWidthAdjust
+      var x2 = options.x2 + lineWidthAdjust
+      var y1 = options.y1 + lineWidthAdjust
+      var y2 = options.y2 + lineWidthAdjust
+      
       this.surface.ctx.beginPath();
-      this.surface.ctx.moveTo(options.x1 - cx, options.y1 - cy);
-      this.surface.ctx.lineTo(options.x2 - cx, options.y2 - cy);
+      this.surface.ctx.moveTo(x1 * this.scale, y1 * this.scale);
+      this.surface.ctx.lineTo(x2 * this.scale, y2 * this.scale);
       this.surface.ctx.stroke()
       this.settingsDefault()
    },
@@ -167,12 +173,17 @@ cs.draw = {
       if (typeof args.width == 'undefined') args.width = args.size || 1
       if (typeof args.height == 'undefined') args.height = args.size || 1
 
-      this.surface.ctx.fillRect(Math.floor(args.x), Math.floor(args.y), args.width, args.height)
+      this.surface.ctx.fillRect(
+         Math.floor(args.x * this.scale),
+         Math.floor(args.y * this.scale),
+         args.width * this.scale,
+         args.height * this.scale
+      )
       this.settingsDefault()
    },
 
    strokeRect: function(args) {
-      var lineWidth = this.surface.ctx.lineWidth
+      var lineWidth = this.surface.ctx.lineWidth / this.scale
       var lineWidthAdjust = lineWidth / 2
       var rect = {
          x: args.x + lineWidthAdjust,
@@ -180,14 +191,20 @@ cs.draw = {
          width: (args.width ? args.width : args.size) - lineWidth,
          height: (args.height ? args.height : args.size) - lineWidth
       }
-      this.surface.ctx.strokeRect(rect.x, rect.y, rect.width, rect.height)
+
+      this.surface.ctx.strokeRect(
+         rect.x * this.scale,
+         rect.y * this.scale,
+         rect.width * this.scale,
+         rect.height * this.scale
+      )
       this.settingsDefault()
    },
 
    circle: function(x, y, rad, fill) {
       if (typeof fill == 'undefined') fill = true
       this.surface.ctx.beginPath();
-      this.surface.ctx.arc(x, y, rad, 0, Math.PI * 2, true);
+      this.surface.ctx.arc(x * this.scale, y * this.scale, rad * this.scale, 0, Math.PI * 2, true);
       this.surface.ctx.closePath();
       (fill) ?
       this.surface.ctx.fill(): cs.draw.ctx.stroke()
@@ -195,15 +212,15 @@ cs.draw = {
    },
 
    circleGradient: function(x, y, radius, c1, c2) {
-      //Draw a circle
-      var g = this.surface.ctx.createRadialGradient(x, y, 0, x, y, radius)
+      var g = this.surface.ctx.createRadialGradient(
+         x * this.scale, y * this.scale, 0, x * this.scale, y * this.scale, radius * this.scale)
       g.addColorStop(1, c2)
       g.addColorStop(0, c1)
       this.surface.ctx.fillStyle = g
       this.surface.ctx.beginPath()
-      this.surface.ctx.arc(x, y, radius, 0, Math.PI * 2, true)
+      this.surface.ctx.arc(x * this.scale, y * this.scale, radius * this.scale, 0, Math.PI * 2, true)
       this.surface.ctx.closePath()
-      //Fill
+      // fill
       this.surface.ctx.fill()
       this.settingsDefault()
    },
@@ -229,13 +246,15 @@ cs.draw = {
    },
 
    setWidth: function(width) {
-      if(this.surface.ctx.lineWidth === width) return
-      this.surface.ctx.lineWidth = width;
+      if(this.surface.ctx.lineWidth === width * this.scale) return
+      this.surface.ctx.lineWidth = width * this.scale;
    },
 
-   setFont: function(font) {
-      if(this.surface.ctx.font === font) return
-      this.surface.ctx.font = font;
+   setFont: function(options) {
+      if(this.surface.ctx.fontSize === options.size * this.scale && this.surface.ctx.fontFamily === options.family) return
+      this.surface.ctx.fontSize = options.size * this.scale
+      this.surface.ctx.fontFamily = options.family
+      this.surface.ctx.font = (options.effect ? options.effect + ' ' : '') + options.size * this.scale + 'px ' + options.family;
    },
 
    setLineHeight: function(height) {

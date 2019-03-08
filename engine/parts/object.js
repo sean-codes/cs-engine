@@ -67,7 +67,10 @@ cs.object = {
 
    orderObjectsByZIndex: function() {
       this.order = this.list.sort(function(a, b) {
-         return b.core.zIndex - a.core.zIndex
+
+         return b.core.zIndex === a.core.zIndex
+            ? b.core.id - a.core.id
+            : b.core.zIndex - a.core.zIndex
       })
    },
 

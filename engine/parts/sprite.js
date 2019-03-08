@@ -80,43 +80,42 @@ cs.sprite = {
 
    info: function(options) {
       // we need something to return info on sprites based on scale etc
-      if (typeof options.frame == 'undefined') options.frame = 0
-      if (typeof options.scaleX == 'undefined') options.scaleX = 1
-      if (typeof options.scaleY == 'undefined') options.scaleY = 1
       var sprite = this.list[options.spr]
-      var tallSprite = sprite.fheight > sprite.fwidth
-      var hRatio = tallSprite ? sprite.fwidth / sprite.fheight : 1
-      var vRatio = tallSprite ? 1 : sprite.fheight / sprite.fwidth
+      var frame = cs.default(options.frame, 0)
+      var scaleX = cs.default(options.scaleX, 1)
+      var scaleY = cs.default(options.scaleY, 1)
+      var width = cs.default(options.width, sprite.fwidth)
+      var height = cs.default(options.height, sprite.fheight)
+      var angle = cs.default(options.angle, 0)
+      var xoff = cs.default(options.xoff, sprite.xoff)
+      var yoff = cs.default(options.yoff, sprite.yoff)
 
-      if (options.scale) {
-         options.scaleX = options.scale
-         options.scaleY = options.scale
+      if (options.size) {
+         var tall = height > width
+         var ratio = height / width
+
+         width = tall ? options.size / ratio : options.size
+         height = tall ? options.size : options.size * ratio
       }
 
-      // scaling with width/height
-      if (options.width || options.size)
-         options.scaleX = (options.width || options.size) / sprite.fwidth * hRatio
-      if (options.height || options.size)
-         options.scaleY = (options.height || options.size) / sprite.fheight * vRatio
-
-      // Locking aspect ratio
-      if (options.aspectLock) {
-         options.scaleX !== 1
-            ? options.scaleY = options.scaleX
-            : options.scaleX = options.scaleY
+      if (options.xCenter) xoff = width / 2
+      if (options.yCenter) yoff = height / 2
+      if (options.center) {
+         xoff = width / 2
+         yoff = height / 2
       }
 
       return {
          name: options.spr,
-         width: (options.texture ? sprite.texture.fwidth : sprite.fwidth),
-         height: (options.texture ? sprite.texture.fheight : sprite.fheight),
-         scaleX: options.scaleX,
-         scaleY: options.scaleY,
-         angle: options.angle,
-         xoff: sprite.xoff,
-         yoff: sprite.yoff,
+         width: (options.texture ? sprite.texture.fwidth : width),
+         height: (options.texture ? sprite.texture.fheight : height),
+         scaleX: scaleX,
+         scaleY: scaleY,
+         angle: angle,
+         xoff: xoff,
+         yoff: yoff,
          frames: options.texture ? [sprite.texture] : sprite.frames,
-         frame: options.frame,
+         frame: sprite.frames[frame],
          mask: {
             width: sprite.mask.width,
             height: sprite.mask.height

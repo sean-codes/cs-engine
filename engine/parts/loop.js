@@ -5,12 +5,12 @@ cs.loop = {
    speed: 1000 / 60,
    id: 0,
 
-   step: function() {
+   step: function(once) {
       this.id += 1
 
       setTimeout(function() { cs.loop.step() }, this.speed)
-      if (!this.run) return
-      
+      if (!this.run && !once) return
+
       cs.fps.update()
       cs.key.execute()
       cs.draw.debugReset()
@@ -38,8 +38,6 @@ cs.loop = {
          shouldDraw && cs.draw.setSurface(object.core.surface)
          shouldDraw && drawEvent.call(object, object)
       })
-
-
 
       // timers
       cs.timer.loop()

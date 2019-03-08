@@ -27,8 +27,7 @@ cs.setup = function() {
    cs.surface.create({ name: 'game', raw: false, depth: 10 })
 
    // Camera/View Size
-   cs.surface.resize()
-   cs.camera.resize()
+
 
    // Sound
    //cs.sound.active = cs.sound.init();
@@ -66,6 +65,8 @@ cs.setup = function() {
 
    // Start your engines!
    cs.start()
+   cs.surface.resize()
+   cs.camera.resize()
    cs.loop.step()
    cs.loop.run = true
 }

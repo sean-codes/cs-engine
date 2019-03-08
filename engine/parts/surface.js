@@ -53,8 +53,8 @@ cs.surface = {
       for (var surface of this.order) {
          if (!surface.manualClear || surface.clearRequest) {
             clearRect = {
-               x: surface.raw ? 0 : Math.floor(cs.camera.x * cs.camera.scale),
-               y: surface.raw ? 0 : Math.floor(cs.camera.y * cs.camera.scale),
+               x: surface.raw ? 0 : cs.camera.x * cs.camera.scale,
+               y: surface.raw ? 0 : cs.camera.y * cs.camera.scale,
                width: surface.raw ? surface.canvas.width : cs.camera.width * cs.camera.scale,
                height: surface.raw ? surface.canvas.height : cs.camera.height * cs.camera.scale,
             }
@@ -67,6 +67,7 @@ cs.surface = {
             surface.clear = true
             continue
          }
+
          surface.clear = false
       }
    },
@@ -97,31 +98,47 @@ cs.surface = {
       var sWidth = surface.raw ? surface.canvas.width : cs.camera.width * cs.camera.scale
       var sHeight = surface.raw ? surface.canvas.height : cs.camera.height * cs.camera.scale
 
-      if (sx < 0) { sx = 0; sWidth += sx * -cs.camera.scale }
-      if (sy < 0) { sy = 0; sHeight += sy * -cs.camera.scale }
-      if (sWidth > surface.canvas.width) sWidth = surface.canvas.width
-      if (sHeight > surface.canvas.height) sHeight = surface.canvas.height
-
       // destination
-      var dx = sx < 0 ? (cs.camera.width / 2 - sWidth / 2) * cs.camera.scale : 0
-      var dy = sy < 0 ? (cs.camera.height / 2 - sheight / 2) * cs.camera.scale : 0
-      var dWidth = sWidth <= surface.canvas.width
-         ? cs.canvas.width
-         : cs.canvas.width - Math.floor(cs.camera.scale * ((cs.camera.width) - surface.canvas.width))
-      var dHeight = sHeight <= surface.canvas.height
-         ? cs.canvas.height
-         : cs.canvas.height - Math.floor(cs.camera.scale * ((cs.camera.height) - surface.canvas.height))
+      var dx = 0
+      var dy = 0
+      var dWidth = cs.canvas.width
+      var dHeight = cs.canvas.height
 
+      // if (sx < 0) { sWidth -= sx * -cs.camera.scale; sx = 0; }
+      // if (sy < 0) { sHeight -= sy * -cs.camera.scale; sy = 0; }
+      // if (sWidth > surface.canvas.width) sWidth = surface.canvas.width
+      // if (sHeight > surface.canvas.height) sHeight = surface.canvas.height
+
+
+
+      if (sWidth < surface.canvas.width) {
+         dx = dWidth/2 - sWidth/2
+         dWidth = cs.camera.width * cs.camera.scale
+      }
+
+      if (sHeight < surface.canvas.height) {
+         dy = dHeight/2 - sHeight/2
+         dHeight = cs.camera.height * cs.camera.scale
+      }
+
+      // var dWidth = sWidth <= surface.canvas.width
+      //    ? surface.canvas.width
+      //    : cs.canvas.width - Math.floor(cs.camera.scale * (cs.camera.width - surface.canvas.width))
+      // var dHeight = sHeight <= surface.canvas.height
+      //    ? cs.canvas.height
+      //    : cs.canvas.height - Math.floor(cs.camera.scale * (cs.camera.height - surface.canvas.height))
+      // 
       // console.log(
       //    surfaceName,
       //    { sx, sy, sWidth, sHeight },
       //    { dx, dy, dWidth, dHeight }
       // )
-      //
+
       // cs.loop.stop()
+
       cs.ctx.drawImage(surface.canvas,
-         sx, sy, sWidth, sHeight,
-         dx, dy, dWidth, dHeight
+         Math.floor(sx), Math.floor(sy), Math.round(sWidth), Math.round(sHeight),
+         Math.round(dx), Math.round(dy), Math.round(dWidth), Math.round(dHeight)
       )
    },
 
@@ -138,17 +155,17 @@ cs.surface = {
       // loop over the surfaces to match
       // a surface can be raw (screen coordinates) or not (the size of the room)
       for (var surface of this.order) {
-         var saveSurfaceData = cs.loop.run
-            ? surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
-            : undefined
-
+         if (cs.loop.run) {
+            var save = surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
+         }
          surface.canvas.width = surface.raw ? w : (cs.room.width * cs.camera.scale)
          surface.canvas.height = surface.raw ? h : (cs.room.height * cs.camera.scale)
          surface.width = surface.canvas.width
          surface.height = surface.canvas.height
+         this.clear({ name: surface.name })
          this.ctxImageSmoothing(surface.ctx)
 
-         if (saveSurfaceData) surface.ctx.putImageData(saveSurfaceData, 0, 0)
+         if (cs.loop.run) surface.ctx.putImageData(save, 0, 0)
       }
    },
 
