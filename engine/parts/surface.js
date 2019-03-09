@@ -93,10 +93,17 @@ cs.surface = {
       var surface = this.list[surfaceName]
 
       // source
-      var sx = surface.raw ? 0 : cs.camera.x * cs.camera.scale
-      var sy = surface.raw ? 0 : cs.camera.y * cs.camera.scale
-      var sWidth = surface.raw ? surface.canvas.width : cs.camera.width * cs.camera.scale
-      var sHeight = surface.raw ? surface.canvas.height : cs.camera.height * cs.camera.scale
+      var sx = 0
+      var sy = 0
+      var sWidth = surface.canvas.width
+      var sHeight = surface.canvas.height
+
+      if (!surface.raw) {
+         sx = Math.max(cs.camera.x * cs.camera.scale, 0)
+         sy = Math.max(cs.camera.y * cs.camera.scale, 0)
+         sWidth = Math.min(cs.camera.width * cs.camera.scale, surface.width - sx)
+         sHeight = Math.min(cs.camera.height * cs.camera.scale, surface.height - sy)
+      }
 
       // destination
       var dx = 0
@@ -104,21 +111,14 @@ cs.surface = {
       var dWidth = cs.canvas.width
       var dHeight = cs.canvas.height
 
-      // if (sx < 0) { sWidth -= sx * -cs.camera.scale; sx = 0; }
-      // if (sy < 0) { sHeight -= sy * -cs.camera.scale; sy = 0; }
-      // if (sWidth > surface.canvas.width) sWidth = surface.canvas.width
-      // if (sHeight > surface.canvas.height) sHeight = surface.canvas.height
-
-
-
-      if (sWidth < surface.canvas.width) {
-         dx = dWidth/2 - sWidth/2
-         dWidth = cs.camera.width * cs.camera.scale
+      if (sWidth < dWidth) {
+         dWidth = sWidth
+         dx = cs.canvas.width/2 - sWidth/2
       }
 
-      if (sHeight < surface.canvas.height) {
-         dy = dHeight/2 - sHeight/2
-         dHeight = cs.camera.height * cs.camera.scale
+      if (sHeight < dHeight) {
+         dHeight = sHeight
+         dy = cs.canvas.height/2 - sHeight/2
       }
 
       // var dWidth = sWidth <= surface.canvas.width
@@ -127,13 +127,13 @@ cs.surface = {
       // var dHeight = sHeight <= surface.canvas.height
       //    ? cs.canvas.height
       //    : cs.canvas.height - Math.floor(cs.camera.scale * (cs.camera.height - surface.canvas.height))
-      // 
+      //
       // console.log(
       //    surfaceName,
       //    { sx, sy, sWidth, sHeight },
       //    { dx, dy, dWidth, dHeight }
       // )
-
+      //
       // cs.loop.stop()
 
       cs.ctx.drawImage(surface.canvas,
