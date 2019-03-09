@@ -121,13 +121,6 @@ cs.surface = {
          dy = cs.canvas.height/2 - sHeight/2
       }
 
-      // var dWidth = sWidth <= surface.canvas.width
-      //    ? surface.canvas.width
-      //    : cs.canvas.width - Math.floor(cs.camera.scale * (cs.camera.width - surface.canvas.width))
-      // var dHeight = sHeight <= surface.canvas.height
-      //    ? cs.canvas.height
-      //    : cs.canvas.height - Math.floor(cs.camera.scale * (cs.camera.height - surface.canvas.height))
-      //
       // console.log(
       //    surfaceName,
       //    { sx, sy, sWidth, sHeight },
@@ -138,7 +131,7 @@ cs.surface = {
 
       cs.ctx.drawImage(surface.canvas,
          Math.floor(sx), Math.floor(sy), Math.round(sWidth), Math.round(sHeight),
-         Math.round(dx), Math.round(dy), Math.round(dWidth), Math.round(dHeight)
+         Math.round(dx), Math.round(dy), Math.ceil(dWidth), Math.ceil(dHeight)
       )
    },
 
