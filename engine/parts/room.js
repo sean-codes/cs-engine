@@ -15,10 +15,10 @@ cs.room = {
    },
 
    outside: function(rect) {
-      if (typeof rect.width == 'undefined') rect.width = 0
-      if (typeof rect.height == 'undefined') rect.height = 0
+      var width = cs.default(rect.width, 0)
+      var height = cs.default(rect.height, 0)
 
-      return (rect.x < 0 || rect.x + rect.width > this.width ||
-         rect.y < 0 || rect.y + rect.height > this.height)
+      return (rect.x < 0 || rect.x + width > this.width ||
+         rect.y < 0 || rect.y + height > this.height)
    }
 }

@@ -85,10 +85,10 @@ cs.draw = {
       } else {
          this.surface.ctx.drawImage(
             frame,
-            x * scale - xoff * scale - 1/scale,
-            y * scale - yoff * scale - 1/scale,
-            frameWidth * scale + 1/scale,
-            frameHeight * scale + 1/scale
+            x * scale - xoff * scale,
+            y * scale - yoff * scale,
+            frameWidth * scale,
+            frameHeight * scale
          )
       }
 
@@ -159,9 +159,9 @@ cs.draw = {
       var lineWidthAdjust = lineWidth / 2
       var x1 = options.x1 + lineWidthAdjust
       var x2 = options.x2 + lineWidthAdjust
-      var y1 = options.y1 + lineWidthAdjust
-      var y2 = options.y2 + lineWidthAdjust
-      
+      var y1 = options.y1 - lineWidthAdjust
+      var y2 = options.y2 - lineWidthAdjust
+
       this.surface.ctx.beginPath();
       this.surface.ctx.moveTo(x1 * this.scale, y1 * this.scale);
       this.surface.ctx.lineTo(x2 * this.scale, y2 * this.scale);
@@ -174,10 +174,10 @@ cs.draw = {
       if (typeof args.height == 'undefined') args.height = args.size || 1
 
       this.surface.ctx.fillRect(
-         Math.floor(args.x * this.scale),
-         Math.floor(args.y * this.scale),
+         args.x * this.scale,
+         args.y * this.scale,
          args.width * this.scale,
-         args.height * this.scale
+         args.height * this.scale,
       )
       this.settingsDefault()
    },
@@ -189,7 +189,7 @@ cs.draw = {
          x: args.x + lineWidthAdjust,
          y: args.y + lineWidthAdjust,
          width: (args.width ? args.width : args.size) - lineWidth,
-         height: (args.height ? args.height : args.size) - lineWidth
+         height: (args.height ? args.height : args.size) - lineWidth,
       }
 
       this.surface.ctx.strokeRect(
