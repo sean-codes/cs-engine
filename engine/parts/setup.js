@@ -27,9 +27,6 @@ cs.setup = function() {
    cs.surface.create({ name: 'gui', raw: true, depth: 0 })
    cs.surface.create({ name: 'game', raw: false, depth: 10 })
 
-   // Camera/View Size
-
-
    // Sound
    //cs.sound.active = cs.sound.init();
    window.onfocus = function() {
@@ -44,6 +41,9 @@ cs.setup = function() {
 
    // watch for resizing
    window.onresize = function() {
+      cs.canvas.width = window.innerWidth
+      cs.canvas.height = window.innerHeight
+
       cs.camera.resize()
       cs.surface.resize()
    }
@@ -64,10 +64,9 @@ cs.setup = function() {
       height: cs.canvas.getBoundingClientRect().height
    })
 
-   // Start your engines!
+   // bootstrapping
+   window.onresize()
    cs.start()
-   cs.surface.resize()
-   cs.camera.resize()
    cs.loop.step()
    cs.loop.run = true
 }

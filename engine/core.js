@@ -107,7 +107,7 @@ cs.load = function(options) {
             that.onload('storages', 1)
          }
       }
-      storage.request.open("POST", `./${storage.path}.json?v=` + Math.random(), true)
+      storage.request.open("POST", './' + storage.path + '.json?v=' + Math.random(), true)
       storage.request.send()
    }
 

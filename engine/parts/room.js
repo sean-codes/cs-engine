@@ -8,7 +8,7 @@ cs.room = {
    restart: function() {
       this.restarting = true
    },
-   
+
    reset: function() {
       cs.object.list = []
       cs.global = {}
@@ -25,7 +25,7 @@ cs.room = {
       cs.surface.resize()
    },
 
-   outside(rect) {
+   outside: function(rect) {
       if (typeof rect.width == 'undefined') rect.width = 0
       if (typeof rect.height == 'undefined') rect.height = 0
 

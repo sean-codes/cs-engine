@@ -23,8 +23,8 @@ cs.camera = {
    },
 
    resize: function() {
-      var w = cs.canvas.clientWidth
-      var h = cs.canvas.clientHeight
+      var w = cs.canvas.width
+      var h = cs.canvas.height
       var ratioHeight = w / h //How many h = w
       var ratioWidth = h / w //how man w = a h
 

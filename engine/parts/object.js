@@ -112,7 +112,7 @@ cs.object = {
    },
 
    every: function() {
-      return this.list.concat(this.new.map((obj) => obj.obj))
+      return this.list.concat(this.new.map(function(obj) { return obj.obj }))
    },
 
    all: function(type) {

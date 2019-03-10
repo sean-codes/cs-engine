@@ -121,14 +121,6 @@ cs.surface = {
          dy = cs.canvas.height/2 - sHeight/2
       }
 
-      // console.log(
-      //    surfaceName,
-      //    { sx, sy, sWidth, sHeight },
-      //    { dx, dy, dWidth, dHeight }
-      // )
-      //
-      // cs.loop.stop()
-
       cs.ctx.drawImage(surface.canvas,
          Math.floor(sx), Math.floor(sy), Math.round(sWidth), Math.round(sHeight),
          Math.round(dx), Math.round(dy), Math.ceil(dWidth), Math.ceil(dHeight)
@@ -137,8 +129,8 @@ cs.surface = {
 
    resize: function() {
       // parent canvas info
-      var w = cs.canvas.clientWidth
-      var h = cs.canvas.clientHeight
+      var w = cs.canvas.width
+      var h = cs.canvas.height
 
       // set main canvas
       cs.canvas.width = w
