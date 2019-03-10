@@ -40,9 +40,9 @@ cs.setup = function() {
    }
 
    // watch for resizing
-   window.onresize = function() {
-      cs.canvas.width = window.innerWidth
-      cs.canvas.height = window.innerHeight
+   cs.resize = function() {
+      cs.canvas.width = cs.fullscreen ? window.innerWidth : cs.canvas.clientWidth
+      cs.canvas.height = cs.fullscreen ? window.innerHeight : cs.canvas.clientHeight
 
       cs.camera.resize()
       cs.surface.resize()
@@ -65,8 +65,10 @@ cs.setup = function() {
    })
 
    // bootstrapping
-   window.onresize()
    cs.start()
+   window.onresize = cs.resize
+   cs.resize()
+
    cs.loop.step()
    cs.loop.run = true
 }

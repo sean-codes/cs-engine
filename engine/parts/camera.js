@@ -19,7 +19,7 @@ cs.camera = {
       this.maxHeight = options.maxHeight || this.height
       this.smoothing = options.smoothing || this.smoothing
 
-      this.resize()
+      cs.resize()
    },
 
    resize: function() {

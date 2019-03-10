@@ -5,24 +5,13 @@ cs.room = {
    width: 100,
    height: 100,
    rect: { x: 0, y: 0, width: 100, height: 100 },
-   restart: function() {
-      this.restarting = true
-   },
-
-   reset: function() {
-      cs.object.list = []
-      cs.global = {}
-      cs.start()
-      cs.sound.reset()
-      this.restarting = false
-   },
 
    setup: function(info) {
       this.width = info.width
       this.height = info.height
       if (info.background) cs.canvas.style.background = info.background
       this.rect = { x: 0, y: 0, width: this.width, height: this.height }
-      cs.surface.resize()
+      cs.resize()
    },
 
    outside: function(rect) {
