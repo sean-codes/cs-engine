@@ -53,10 +53,10 @@ cs.surface = {
       for (var surface of this.order) {
          if (!surface.manualClear || surface.clearRequest) {
             clearRect = {
-               x: surface.raw ? 0 : cs.camera.x * cs.camera.scale,
-               y: surface.raw ? 0 : cs.camera.y * cs.camera.scale,
-               width: surface.raw ? surface.canvas.width : cs.camera.width * cs.camera.scale,
-               height: surface.raw ? surface.canvas.height : cs.camera.height * cs.camera.scale,
+               x: surface.raw ? 0 : Math.floor(cs.camera.x * cs.camera.scale),
+               y: surface.raw ? 0 : Math.floor(cs.camera.y * cs.camera.scale),
+               width: surface.raw ? surface.canvas.width : Math.ceil(cs.camera.width * cs.camera.scale),
+               height: surface.raw ? surface.canvas.height : Math.ceil(cs.camera.height * cs.camera.scale),
             }
 
             if (surface.clearRequest)

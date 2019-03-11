@@ -34,7 +34,7 @@ cs.object = {
             active: true,
             type: options.type,
             id: this.unique,
-            surface: 'game'
+            surface: cs.default(object.surface, 'game')
          }
       }
 

@@ -33,10 +33,18 @@ cs.loop = {
       })
 
       cs.object.loop(function(object) {
-         var drawEvent = cs.objects[object.core.type].draw
-         var shouldDraw = drawEvent && object.core.live && object.core.active
-         shouldDraw && cs.draw.setSurface(object.core.surface)
-         shouldDraw && drawEvent.call(object, object)
+         var objectType = cs.objects[object.core.type]
+         var drawOnceEvent = objectType.drawOnce
+         var drawEvent = objectType.draw
+         var shouldDraw = object.core.live && object.core.active
+
+         if (shouldDraw) {
+            cs.draw.setSurface(object.core.surface)
+            if (cs.surface.list[object.core.surface].clear) {
+               drawOnceEvent && drawOnceEvent.call(object, object)
+            }
+            drawEvent && drawEvent.call(object, object)
+         }
       })
 
       // timers
