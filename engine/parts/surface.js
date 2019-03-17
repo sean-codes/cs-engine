@@ -11,7 +11,6 @@ cs.surface = {
       var canvas = document.createElement("canvas")
       canvas.width = cs.canvas.width
       canvas.height = cs.canvas.height
-
       this.list[info.name] = {
          name: info.name,
          canvas: canvas,
@@ -53,10 +52,10 @@ cs.surface = {
       for (var surface of this.order) {
          if (!surface.manualClear || surface.clearRequest) {
             clearRect = {
-               x: surface.raw ? 0 : Math.floor(cs.camera.x * cs.camera.scale),
-               y: surface.raw ? 0 : Math.floor(cs.camera.y * cs.camera.scale),
-               width: surface.raw ? surface.canvas.width : Math.ceil(cs.camera.width * cs.camera.scale),
-               height: surface.raw ? surface.canvas.height : Math.ceil(cs.camera.height * cs.camera.scale),
+               x: surface.raw ? 0 : Math.floor(cs.camera.x * cs.camera.scale) - cs.camera.scale,
+               y: surface.raw ? 0 : Math.floor(cs.camera.y * cs.camera.scale) - cs.camera.scale,
+               width: surface.raw ? surface.canvas.width : Math.ceil(cs.camera.width * cs.camera.scale) + cs.camera.scale * 2,
+               height: surface.raw ? surface.canvas.height : Math.ceil(cs.camera.height * cs.camera.scale) + cs.camera.scale * 2,
             }
 
             if (surface.clearRequest)
@@ -122,8 +121,8 @@ cs.surface = {
       }
 
       cs.ctx.drawImage(surface.canvas,
-         Math.floor(sx), Math.floor(sy), Math.round(sWidth), Math.round(sHeight),
-         Math.round(dx), Math.round(dy), Math.ceil(dWidth), Math.ceil(dHeight)
+         Math.floor(sx), Math.floor(sy), Math.ceil(sWidth), Math.ceil(sHeight),
+         Math.floor(dx), Math.floor(dy), Math.ceil(dWidth), Math.ceil(dHeight)
       )
    },
 
@@ -163,6 +162,7 @@ cs.surface = {
 
    info: function(surfaceName) {
       return {
+         canvas: this.list[surfaceName].canvas,
          width: this.list[surfaceName].width,
          height: this.list[surfaceName].height
       }

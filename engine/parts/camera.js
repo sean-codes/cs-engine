@@ -28,11 +28,11 @@ cs.camera = {
       var ratioHeight = w / h //How many h = w
       var ratioWidth = h / w //how man w = a h
 
-      var nw = cs.camera.maxWidth - (cs.camera.maxWidth % ratioWidth);
-      var nh = nw * ratioWidth;
+      var nw = cs.camera.maxWidth
+      var nh = nw * ratioWidth
       if (nh >= cs.camera.maxHeight) {
-         nh = cs.camera.maxHeight - (cs.camera.maxHeight % ratioHeight);
-         nw = nh * ratioHeight;
+         nh = cs.camera.maxHeight
+         nw = nh * ratioHeight
       }
 
       this.width = nw
@@ -55,8 +55,8 @@ cs.camera = {
       var differenceX = this.followPos.x - (this.x + this.width / 2)
       var differenceY = this.followPos.y - (this.y + this.height / 2)
 
-      this.x += Math.floor(differenceX / smoothing)
-      this.y += Math.floor(differenceY / smoothing)
+      this.x += (differenceX / smoothing)
+      this.y += (differenceY / smoothing)
 
       if (this.x < 0) this.x = 0
       if (this.y < 0) this.y = 0
@@ -76,7 +76,7 @@ cs.camera = {
          rect.x + rect.width < this.x || rect.x > this.x + this.width
          || rect.y + rect.height < this.y || rect.y > this.y + this.height
       ) {
-         return true;
+         return true
       }
       return false
    }

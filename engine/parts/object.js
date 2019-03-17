@@ -24,8 +24,8 @@ cs.object = {
 
       var attr = options.attr
       var object = cs.objects[options.type]
-      var zIndex = cs.objects[options.type].zIndex || 0
-
+      var zIndex = options.zIndex || cs.objects[options.type].zIndex || 0
+      
       // create the object
       var newObj = {
          core: {
