@@ -20,12 +20,7 @@ cs.objects['obj_light'] = {
 
          var obj = light.obj;
          cs.draw.setOperation('xor');
-
          cs.draw.circleGradient(obj.x + light.xoff, obj.y + light.yoff, light.size, '#FFF', 'rgba(255, 255, 255, 0)');
-
-         cs.draw.setAlpha(0.075);
-         cs.draw.setColor(cs.global.lightList[i].color);
-         cs.draw.circle(obj.x + light.xoff, obj.y + light.yoff, light.size);
       }
    }
 }
