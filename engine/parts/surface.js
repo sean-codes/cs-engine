@@ -90,6 +90,12 @@ cs.surface = {
 
    display: function(surfaceName) {
       var surface = this.list[surfaceName]
+      // destination
+      var dx = 0
+      var dy = 0
+      var dWidth = cs.canvas.width
+      var dHeight = cs.canvas.height
+
       // source
       var sx = 0
       var sy = 0
@@ -98,28 +104,26 @@ cs.surface = {
 
 
       if (!surface.raw) {
-         var cameraRect = cs.camera.rect()
+         var cameraRect = cs.camera.rectScaled()
+         var zoom = cs.camera.zoom
+         
          sx = Math.max(cameraRect.x, 0)
          sy = Math.max(cameraRect.y, 0)
          sWidth = Math.min(cameraRect.width, surface.width - sx)
          sHeight = Math.min(cameraRect.height, surface.height - sy)
+
+         if (sWidth * zoom < dWidth) {
+            dWidth = sWidth * zoom
+            dx = cs.canvas.width/2 - sWidth * zoom/2
+         }
+
+         if (sHeight * zoom < dHeight) {
+            dHeight = sHeight * zoom
+            dy = cs.canvas.height/2 - sHeight * zoom/2
+         }
       }
 
-      // destination
-      var dx = 0
-      var dy = 0
-      var dWidth = cs.canvas.width
-      var dHeight = cs.canvas.height
 
-      if (sWidth < dWidth) {
-         dWidth = sWidth
-         dx = cs.canvas.width/2 - sWidth/2
-      }
-
-      if (sHeight < dHeight) {
-         dHeight = sHeight
-         dy = cs.canvas.height/2 - sHeight/2
-      }
 
       // console.log(Math.floor(sx) - Math.ceil(sWidth), Math.floor(dx) - Math.ceil(dWidth))
       // surface.name == 'game' && console.log({

@@ -147,12 +147,13 @@ cs.touch = {
    convertToGameCords(x, y) {
       var rect = cs.canvas.getBoundingClientRect();
 
-      var physicalViewWidth = (rect.right - rect.left)
-      var physicalViewHeight = (rect.bottom - rect.top)
+      var physicalViewWidth = rect.width
+      var physicalViewHeight = rect.height
       var hortPercent = (x - rect.left) / physicalViewWidth
       var vertPercent = (y - rect.top) / physicalViewHeight
-      var gamex = Math.round(hortPercent * cs.camera.width)
-      var gamey = Math.round(vertPercent * cs.camera.height)
+
+      var gamex = Math.round(hortPercent * (cs.camera.width / cs.camera.zoom))
+      var gamey = Math.round(vertPercent * (cs.camera.height / cs.camera.zoom))
       gamex = (gamex) + cs.camera.x
       gamey = (gamey) + cs.camera.y
       return { x: gamex, y: gamey }

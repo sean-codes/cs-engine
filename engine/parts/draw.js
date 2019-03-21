@@ -211,7 +211,6 @@ cs.draw = {
    },
 
    circleGradient: function(x, y, radius, c1, c2) {
-      console.log(this.scale)
       var g = this.surface.ctx.createRadialGradient(
          x * this.scale,
          y * this.scale,

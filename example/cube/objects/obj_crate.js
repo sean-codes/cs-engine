@@ -9,7 +9,6 @@ cs.objects['obj_crate'] = {
    step: function() {
       this.touch.check({ x: this.x, y: this.y, width: this.mask.width, height: this.mask.height });
       if (this.touch.isHeld()) {
-         console.log(this.touch.off_x)
          this.x = this.touch.x - this.touch.offsetX;
          this.y = this.touch.y - this.touch.offsetY;
       } else {
