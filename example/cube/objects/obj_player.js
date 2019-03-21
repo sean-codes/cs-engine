@@ -20,6 +20,8 @@ cs.objects['obj_player'] = {
       //cs.script.lightAdd(this.id, 100, 8, 8);
    },
    step: function() {
+      cs.camera.follow({ x: this.x + this.mask.width / 2, y: this.y + this.mask.height / 2 });
+      
       var keys = {
          left: cs.key.held(37),
          right: cs.key.held(39),
@@ -61,7 +63,6 @@ cs.objects['obj_player'] = {
       }
       this.y += this.vspeed;
 
-      cs.camera.follow({ x: this.x + this.mask.width / 2, y: this.y + this.mask.height / 2 });
 
       cs.draw.sprite({ spr: 'spr_player', x: this.x, y: this.y, frame: this.dir })
 

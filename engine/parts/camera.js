@@ -2,22 +2,32 @@
 //----------------------------------| Camera Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.camera = {
-   scale: 1,
    x: 0,
    y: 0,
    followPos: { x: 0, y: 0 },
-   width: 500,
-   maxWidth: 500,
-   height: 200,
-   maxHeight: 400,
-   smoothing: 1, // 1 means 1:1 movement
+   scale: 1,
+   width: 0,
+   height: 0,
+   maxWidth: 0,
+   maxHeight: 0,
+   smoothing: 1,
+   config: {
+      maxWidth: 0,
+      maxHeight: 0,
+      scale: 1,
+      smoothing: 1 // 1 means 1:1 movement
+   },
 
    setup: function(options) {
-      this.width = options.width
-      this.height = options.height
-      this.maxWidth = options.maxWidth || this.width
-      this.maxHeight = options.maxHeight || this.height
-      this.smoothing = options.smoothing || this.smoothing
+      // use scale
+      for (var option in options) {
+         this.config[option] = options[option]
+      }
+
+      this.maxWidth = this.config.maxWidth
+      this.maxHeight = this.config.maxHeight
+      this.smoothing = this.config.smoothing
+      this.scale = this.config.scale
 
       cs.resize()
    },
@@ -25,19 +35,16 @@ cs.camera = {
    resize: function() {
       var w = cs.canvas.width
       var h = cs.canvas.height
-      var ratioHeight = w / h //How many h = w
-      var ratioWidth = h / w //how man w = a h
 
-      var nw = cs.camera.maxWidth
-      var nh = nw * ratioWidth
-      if (nh >= cs.camera.maxHeight) {
-         nh = cs.camera.maxHeight
-         nw = nh * ratioHeight
+      if (this.maxWidth && this.maxHeight) {
+         this.scale = Math.ceil(w / this.maxWidth)
+         if (this.scale < h / this.maxHeight) {
+            this.scale = Math.ceil(h / this.maxHeight)
+         }
       }
 
-      this.width = nw
-      this.height = nh
-      this.scale = w / this.width
+      this.width = w / this.scale
+      this.height = h / this.scale
    },
 
    snap: function(pos) {
@@ -46,7 +53,10 @@ cs.camera = {
    },
 
    follow: function(pos) {
-      this.followPos = { x: pos.x, y: pos.y }
+      this.followPos = {
+         x: pos.x,
+         y: pos.y
+      }
    },
 
    update: function(smoothing) {
@@ -55,8 +65,8 @@ cs.camera = {
       var differenceX = this.followPos.x - (this.x + this.width / 2)
       var differenceY = this.followPos.y - (this.y + this.height / 2)
 
-      this.x += (differenceX / smoothing)
-      this.y += (differenceY / smoothing)
+      this.x = this.x + differenceX / smoothing
+      this.y = this.y + differenceY / smoothing
 
       if (this.x < 0) this.x = 0
       if (this.y < 0) this.y = 0
@@ -79,5 +89,14 @@ cs.camera = {
          return true
       }
       return false
+   },
+
+   rect: function() {
+      return {
+         x: Math.floor(this.x * this.scale),
+         y: Math.floor(this.y * this.scale),
+         width: this.width * this.scale,
+         height: this.height * this.scale
+      }
    }
 }

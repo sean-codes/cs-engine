@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+
+<head>
+   <script src="../../engine/core.js"></script>
+   <style>
+      html,
+      body {
+         margin: 0;
+         padding: 0;
+         height: 100%;
+         background: #444;
+      }
+
+      body {
+         display: flex;
+      }
+
+      canvas {
+         margin: auto;
+         background: #222;
+         width: 400px;
+         height: 300px;
+      }
+   </style>
+</head>
+
+<body>
+   <canvas></canvas>
+   <script>
+      cs.load({
+         canvas: document.querySelector('canvas'),
+         core: '../../engine',
+         assets: {
+            sprites: [{
+                  path: './spr_arrow'
+               },
+               {
+                  path: './spr_center',
+                  xoff: 7
+               }
+            ]
+         },
+         objects: {
+            box: {
+               create: function() {
+                  this.x = 0
+                  this.y = cs.room.height / 2
+                  this.xSpeed = 1.1
+                  this.ySpeed = 0
+
+                  var spriteInfo = cs.sprite.info({spr: 'spr_arrow'})
+                  this.width = spriteInfo.width
+                  this.height = spriteInfo.height
+               },
+               draw: function() {
+                  // drawing a sprite with an off
+                  cs.draw.sprite({
+                     spr: 'spr_arrow',
+                     x: this.x,
+                     y: this.y
+                  })
+
+                  cs.draw.setColor('#fff')
+                  cs.draw.setFont({
+                     family: 'monospace',
+                     size: 6
+                  })
+
+                  cs.draw.text({
+                     x: this.x - 10,
+                     y: this.y - 20,
+                     lineHeight: 32,
+                     lines: [
+                        'camera.x: ' + cs.camera.x,
+                        'this.x: ' + this.x,
+                     ]
+                  })
+
+                  this.x += this.xSpeed
+                  if (this.x + this.width > cs.room.width) this.xSpeed *= -1
+                  if (this.x < 0) this.xSpeed *= -1
+
+                  // console.log(this.x + this.width/2, this.y + this.height/2)
+                  cs.camera.follow({
+                     x: this.x + this.width/2,
+                     y: this.y + this.height/2
+                  })
+               }
+            }
+         },
+         start: function() {
+            cs.loop.speed = 1000/60
+            // scaling up x4
+            cs.room.setup({
+               width: 400,
+               height: 150
+            })
+
+            cs.camera.setup({
+               scale: 4,
+               smoothing: 1
+            })
+
+            // create demo object
+            cs.object.create({ type: 'box' })
+
+            var gameSurface = cs.surface.info('game')
+            document.body.appendChild(gameSurface.canvas)
+         }
+      })
+   </script>
+</body>
+
+</html>

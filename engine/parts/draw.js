@@ -75,20 +75,20 @@ cs.draw = {
 
          this.surface.ctx.drawImage(
             frame,
-            -xoff * scale,
-            -yoff * scale,
-            frameWidth * scale,
-            frameHeight * scale
+            Math.floor(-xoff * scale),
+            Math.floor(-yoff * scale),
+            Math.floor(frameWidth * scale),
+            Math.floor(frameHeight * scale)
          )
 
          this.surface.ctx.restore()
       } else {
          this.surface.ctx.drawImage(
             frame,
-            x * scale - xoff * scale,
-            y * scale - yoff * scale,
-            frameWidth * scale,
-            frameHeight * scale
+            Math.floor(x * scale - xoff * scale),
+            Math.floor(y * scale - yoff * scale),
+            Math.floor(frameWidth * scale),
+            Math.floor(frameHeight * scale)
          )
       }
 
@@ -203,17 +203,23 @@ cs.draw = {
 
    circle: function(x, y, rad, fill) {
       if (typeof fill == 'undefined') fill = true
-      this.surface.ctx.beginPath();
-      this.surface.ctx.arc(x * this.scale, y * this.scale, rad * this.scale, 0, Math.PI * 2, true);
-      this.surface.ctx.closePath();
-      (fill) ?
-      this.surface.ctx.fill(): cs.draw.ctx.stroke()
+      this.surface.ctx.beginPath()
+      this.surface.ctx.arc(x * this.scale, y * this.scale, rad * this.scale, 0, Math.PI * 2, true)
+      this.surface.ctx.closePath()
+      fill ? this.surface.ctx.fill() : cs.draw.ctx.stroke()
       this.settingsDefault()
    },
 
    circleGradient: function(x, y, radius, c1, c2) {
+      console.log(this.scale)
       var g = this.surface.ctx.createRadialGradient(
-         x * this.scale, y * this.scale, 0, x * this.scale, y * this.scale, radius * this.scale)
+         x * this.scale,
+         y * this.scale,
+         0,
+         x * this.scale,
+         y * this.scale,
+         radius * this.scale
+      )
       g.addColorStop(1, c2)
       g.addColorStop(0, c1)
       this.surface.ctx.fillStyle = g

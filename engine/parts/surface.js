@@ -90,18 +90,19 @@ cs.surface = {
 
    display: function(surfaceName) {
       var surface = this.list[surfaceName]
-
       // source
       var sx = 0
       var sy = 0
       var sWidth = surface.canvas.width
       var sHeight = surface.canvas.height
 
+
       if (!surface.raw) {
-         sx = Math.max(cs.camera.x * cs.camera.scale, 0)
-         sy = Math.max(cs.camera.y * cs.camera.scale, 0)
-         sWidth = Math.min(cs.camera.width * cs.camera.scale, surface.width - sx)
-         sHeight = Math.min(cs.camera.height * cs.camera.scale, surface.height - sy)
+         var cameraRect = cs.camera.rect()
+         sx = Math.max(cameraRect.x, 0)
+         sy = Math.max(cameraRect.y, 0)
+         sWidth = Math.min(cameraRect.width, surface.width - sx)
+         sHeight = Math.min(cameraRect.height, surface.height - sy)
       }
 
       // destination
@@ -120,9 +121,21 @@ cs.surface = {
          dy = cs.canvas.height/2 - sHeight/2
       }
 
+      // console.log(Math.floor(sx) - Math.ceil(sWidth), Math.floor(dx) - Math.ceil(dWidth))
+      // surface.name == 'game' && console.log({
+      //    name: surface.name,
+      //    width: { s: sWidth, d: dWidth },
+      //    height: { s: sHeight, d: dHeight }
+      // })
+
+      // cs.ctx.drawImage(surface.canvas,
+      //    Math.floor(sx), Math.floor(sy), Math.ceil(sWidth), Math.ceil(sHeight),
+      //    Math.floor(dx), Math.floor(dy), Math.ceil(dWidth), Math.ceil(dHeight)
+      // )
+
       cs.ctx.drawImage(surface.canvas,
-         Math.floor(sx), Math.floor(sy), Math.ceil(sWidth), Math.ceil(sHeight),
-         Math.floor(dx), Math.floor(dy), Math.ceil(dWidth), Math.ceil(dHeight)
+         sx, sy, sWidth, sHeight,
+         dx, dy, dWidth, dHeight
       )
    },
 
