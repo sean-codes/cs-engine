@@ -106,7 +106,7 @@ cs.surface = {
       if (!surface.raw) {
          var cameraRect = cs.camera.rectScaled()
          var zoom = cs.camera.zoom
-         
+
          sx = Math.max(cameraRect.x, 0)
          sy = Math.max(cameraRect.y, 0)
          sWidth = Math.min(cameraRect.width, surface.width - sx)

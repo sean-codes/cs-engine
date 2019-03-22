@@ -47,7 +47,7 @@ cs.objects['obj_bgPart'] = {
          ])
          this.mask = cs.sprite.info({ spr: this.sprite }).mask
          this.hspeed = cs.global.speed
-         this.y = cs.room.height - this.mask.height
+         this.y = cs.room.height - this.mask.height + 1
       }
    },
    step: function() {

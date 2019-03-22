@@ -21,7 +21,8 @@ cs.camera = {
       scale: 1,
       zoom: 1,
       smoothing: 1, // 1 means 1:1 movement
-      smoothingZoom: 1
+      smoothingZoom: 1,
+      fixedScaling: true
    },
 
    // should only change once
@@ -39,7 +40,6 @@ cs.camera = {
          this.config[option] = options[option]
       }
 
-      this.targetZoom = this.config.zoom
       this.smoothing = this.config.smoothing
       this.smoothingZoom = this.config.smoothingZoom
    },
@@ -49,10 +49,14 @@ cs.camera = {
       var h = cs.canvas.height
 
       if (this.maxWidth && this.maxHeight) {
-         this.scale = Math.max(1, Math.ceil(w / this.maxWidth))
-         if (this.scale < h / this.maxHeight) {
-            console.log('camera using height')
-            this.scale = Math.max(1, Math.ceil(h / this.maxHeight))
+         this.scale = this.config.fixedScaling
+            ? Math.max(1, Math.ceil(h / this.maxHeight))
+            : h / this.maxHeight
+
+         if (this.scale < w / this.maxWidth) {
+            this.scale = this.config.fixedScaling
+               ? Math.max(1, Math.ceil(w / this.maxWidth))
+               : w / this.maxWidth
          }
       }
 
@@ -76,7 +80,7 @@ cs.camera = {
       smoothing = cs.default(smoothing, this.smoothing)
 
       // zooming
-      var differenceZoom = this.targetZoom - this.zoom
+      var differenceZoom = this.config.zoom - this.zoom
       this.zoom += differenceZoom / this.smoothingZoom
 
       if (differenceZoom) smoothing = 1
@@ -101,11 +105,11 @@ cs.camera = {
    },
 
    zoomOut: function() {
-      if(this.targetZoom >= 2) this.targetZoom -= 1
+      if(this.config.zoom >= 2) this.config.zoom -= 1
    },
 
    zoomIn: function() {
-      this.targetZoom += 1
+      this.config.zoom += 1
    },
 
    outside: function(rect) {
