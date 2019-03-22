@@ -7,15 +7,15 @@ engine for building 2D games
 
 ## Examples
 
-- [bird](http://sean-codes.github.io/cs-engine/example/bird)
+- [bird](http://sean-codes.github.io/cs-engine/example/bird/index.html)
    - flappy bird clone
    - sound demo
-- [cube](http://sean-codes.github.io/cs-engine/example/cube)
+- [cube](http://sean-codes.github.io/cs-engine/example/cube/index.html)
    - surfaces for fake lighting
    - GUI surface for interface
    - touch reachable within the game surface
       - drag the crate
-- [multitouch](http://sean-codes.github.io/cs-engine/example/multitouch)
+- [multitouch](http://sean-codes.github.io/cs-engine/example/multitouch/index.html)
    - multiple touch points
    - mouse and touch events can be combined
 
