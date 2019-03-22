@@ -11,7 +11,7 @@
       body { background: #28c; }
    </style>
    <!-- engine -->
-   <script src='../../engine/core.js' id="cs-core"></script>
+   <script src='../../engine/core.js?v=2' id="cs-core"></script>
 </head>
 
 <body>
@@ -54,13 +54,13 @@
          start: function() {
             // setup room / camera
             cs.room.setup({
-               width: 800,
+               width: 500,
                height: 256,
                background: '#87cefa'
             })
 
             cs.camera.setup({
-               maxWidth: 800,
+               maxWidth: 500,
                maxHeight: 256,
                smoothing: 5,
                fixedScaling: false

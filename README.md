@@ -157,13 +157,13 @@ cs.camera.setup({ maxWidth:300, maxHeight:200 })
 * @arg {object} options - the options
 * @arg {number} [options.maxWidth] - The max width of the camera
 * @arg {number} [options.maxHeight] - The max height of the camera
-* @arg {number} [options.smoothing=1] - Amount of smoothing when updating follow position 
+* @arg {number} [options.smoothing=1] - Amount of smoothing when updating follow position
 **/
 
 ```
 
 ## Game Objects
-Game objects have a create, step, and draw function. The are stored in `cs.objects` array. Add them in the init or external script file.
+Game objects have a create, step, and draw function. The are stored in `cs.objects` array. Add them in the init or as external script files.
 
 > in the init
 
