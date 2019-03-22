@@ -3,59 +3,43 @@ engine for building 2D games
 
 > a love story
 
-## What's included
+![example image](./example.gif)
 
-    cs-engine/
-    ├── engine/
-    │   ├── style.css
-    │   ├── core.js
-    │   ├── template.html
-    │   └── parts/
-    │       ├── camera.js
-    │       ├── draw.js
-    │       ├── fps.js
-    │       ├── input.js
-    │       ├── keys.js
-    │       ├── loop.js
-    │       ├── math.js
-    │       ├── mouse.js
-    │       ├── network.js
-    │       ├── object.js
-    │       ├── room.js
-    │       ├── setup.js
-    │       ├── setup.js
-    │       ├── sound.js
-    │       ├── sprite.js
-    │       ├── storage.js
-    │       ├── surface.js
-    │       ├── text.js
-    │       └── touch.js
-    └── example/
-        ├── bird
-        ├── cube
-        ├── particles
-        └── warrior
+## Examples
 
-## Setup
-- [ ] include `core.js`
-- [ ] add a canvas
-- [ ] run cs.init with configuration
+- [bird](http://sean-codes.github.io/cs-engine/example/bird)
+   - flappy bird clone
+   - sound demo
+- [cube](http://sean-codes.github.io/cs-engine/example/cube)
+   - surfaces for fake lighting
+   - GUI surface for interface
+   - touch reachable within the game surface
+      - drag the crate
+- [multitouch](http://sean-codes.github.io/cs-engine/example/multitouch)
+   - multiple touch points
+   - mouse and touch events can be combined
+
+## Boilerplate
+- include `core.js`
+- add a canvas element
+- run `cs.load` with configuration
 
 ```html
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- include -->
-    <script src='../../engine/core.js'></script>
+    <!-- include core -->
+    <script id="cs-engine" src='../../engine/core.js'></script>
   </head>
   <body>
     <!-- canvas -->
-    <canvas style="background:#FFF"></canvas>
+    <canvas></canvas>
 
+    <!-- run cs.load with config -->
     <script>
 
       cs.load({
-        core: '../../engine', // path to parts/core
+        parts: '../../engine', // path to parts
         canvas: document.querySelector('canvas'),
         objects: {
           player: {
@@ -65,7 +49,7 @@ engine for building 2D games
           }
         },
         start: function(){
-          cs.object.create({ type:'player', x:10, y:10 })
+          cs.object.create({ type:'player' })
         }
       })
 
@@ -81,6 +65,7 @@ The cs.load function loads the assets and initializes a canvas
 /**
 * load function
 * @arg {object} options - the options
+* @arg {string} options.parts - path to cs-engine parts
 * @arg {string} options.canvas - the id of the canvas to use
 * @arg {array of objects} options.sprites - the list of sprites to load
 * @arg {array of objects} options.scripts - the list of sprites to load
@@ -105,29 +90,41 @@ When loading sprites we can specify some options. Only path is required
 * @arg {number} [options.height=calculated] - The height of a frame
 * @arg {number} [options.xoff=0] - The horizontal offset when drawing
 * @arg {number} [options.yoff=0] - The vertical offset when drawing
-* @arg {object} [options.mask=calculated] - And object with { x, y, width, height }
+* @arg {object} [options.mask=calculated] - And object with { width, height }
 **/
+
+
+cs.load({
+   ...
+   sprites: [
+      { path: 'sprites/spr_player' },
+   ]
+})
 ```
 
 ## Script Loading Options
-Scripts are any `.js` files that are required for the project
+Any `.js` files that are required for the project
 ```js
 /**
 * script load
 * @arg {object} options - the options
 * @arg {string} options.path - the id of the canvas to use
 **/
+
+cs.load({
+   ...
+   scripts: [
+      { path: './objects/obj_player.js' }
+   ]
+})
 ```
 
 ## Room
 In the start function define the room size.
 
-> note: This can be changed at any time
+> note: this can be changed at any time
 
 ```js
-// example room 192px by 192px and a grey background
-cs.room.setup({ width: 192, height: 192, background: "#222" })
-
 /**
 * room setup
 * @arg {object} options - the options
@@ -136,13 +133,16 @@ cs.room.setup({ width: 192, height: 192, background: "#222" })
 * @arg {string} [options.background] - The background of the room
 **/
 
+// example room 192px by 192px and a grey background
+cs.room.setup({ width: 192, height: 192, background: "#222" })
 ```
 
 
 ## Camera
-The camera is the area the game and GUI is drawn to. The game/gui surfaces are drawn to hidden canvases separately then drawn to the view/camera canvas. There are a couple settings that can be tweaked to change the view.
+The camera defines the area of a non GUI canvas (the game canvas) that should be displayed at anytime.
 
-The maxWidth and maxHeight set the maximum literal pixel size of the canvas. The engine will then try to get the closest aspect ratio to the size you set. Then it will be stretched with CSS to fill the entire screen.
+Experiment with maxWidth and maxHeight and the engine will setup the best scale
+to work with those values.
 
 In the start function define the camera settings.
 
@@ -157,6 +157,7 @@ cs.camera.setup({ maxWidth:300, maxHeight:200 })
 * @arg {object} options - the options
 * @arg {number} [options.maxWidth] - The max width of the camera
 * @arg {number} [options.maxHeight] - The max height of the camera
+* @arg {number} [options.smoothing=1] - Amount of smoothing when updating follow position 
 **/
 
 ```

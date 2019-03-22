@@ -8,7 +8,7 @@ cs.load = function(options) {
    this.default = function(want, ifnot) { return want != null ? want : ifnot }
 
    // Core Path and Parts
-   this.path = options.core
+   this.path = options.parts
    this.progress = options.progress || function() {}
    this.focus = options.focus || function() {}
 
