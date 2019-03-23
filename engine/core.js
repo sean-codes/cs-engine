@@ -47,6 +47,8 @@ cs.load = function(options) {
    // Setup core info
    this.canvas = options.canvas
    this.start = options.start
+   this.userStep = options.step
+   this.userDraw = options.draw
 
    // Initialize: Load Scripts and Sprites. Setup canvas
    this.load = function(assets) {

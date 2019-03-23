@@ -26,12 +26,15 @@ cs.loop = {
       while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
       while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
 
+      cs.userStep && cs.userStep()
+
       cs.object.loop(function(object) {
          var stepEvent = cs.objects[object.core.type].step
          cs.draw.setSurface(object.core.surface)
          object.core.live && stepEvent && stepEvent.call(object, object);
       })
 
+      cs.userDraw && cs.userDraw()
       cs.object.loop(function(object) {
          var objectType = cs.objects[object.core.type]
          var drawOnceEvent = objectType.drawOnce
