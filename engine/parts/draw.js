@@ -230,6 +230,21 @@ cs.draw = {
       this.settingsDefault()
    },
 
+   shape: function(options) {
+      var vertices = options.vertices
+      this.surface.ctx.beginPath()
+      this.surface.ctx.moveTo(vertices[0].x, vertices[0].y)
+
+      for (var i = 1; i < vertices.length; i++) {
+         this.surface.ctx.lineTo(vertices[i].x, vertices[i].y)
+      }
+
+      this.surface.ctx.closePath(vertices[0].x, vertices[0].y)
+      !options.fill && this.surface.ctx.stroke()
+      options.fill && this.surface.ctx.fill()
+      this.settingsDefault()
+   },
+
    fixPosition: function(args) {
       x = Math.floor(args.x);
       y = Math.floor(args.y);
