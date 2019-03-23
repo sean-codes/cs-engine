@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+   <head>
+      <script src="../../engine/core.js"></script>
+      <link rel="stylesheet" href="../../engine/fullscreen.css" />
+   </head>
+   <body>
+      <canvas class="cs-canvas" id="canvas" style="background:#222"></canvas>
+      <script>
+         cs.load({
+            parts: '../../engine',
+            canvas: canvas,
+            assets: {
+               scripts: [
+                  { path: './external/matter' },
+                  { path: './objects/box' },
+                  { path: './objects/ground' },
+                  { path: './objects/circle' },
+               ]
+            },
+            start: function() {
+               cs.global = {
+                  matter: {
+                     engine: Matter.Engine.create()
+                  }
+               }
+
+               cs.object.create({ type: 'ground' })
+               for (var i = 0; i < 50; i++) {
+                  cs.object.create({
+                     type: 'box',
+                     attr: {
+                        x: cs.room.width * Math.random(),
+                        y: cs.room.height * Math.random() - 300,
+                        color: cs.math.choose(['#f22', '#46a', '#729']),
+                        size: 20 + Math.random() * 30
+                     }
+                  })
+               }
+
+               for (var i = 0; i < 50; i++) {
+                  cs.object.create({
+                     type: 'circle',
+                     attr: {
+                        x: cs.room.width * Math.random(),
+                        y: cs.room.height * Math.random() - 300,
+                        color: cs.math.choose(['#f12', '#a6a', '#7b9']),
+                        radius: 20 + Math.random() * 20
+                     }
+                  })
+               }
+            },
+            step: function() {
+               Matter.Engine.update(cs.global.matter.engine, 1000 / 60);
+            },
+
+            draw: function() {
+               cs.draw.setColor('#FFF')
+               cs.draw.settings({
+                  color: '#FFF',
+                  font: { family: 'monospace', size: 20, effect: 'bold' }
+               })
+               cs.draw.text({
+                  x: 10,
+                  y: 10,
+                  text: 'MatterJS: brm.io/matter-js/'
+               })
+            }
+         })
+      </script>
+   </body>
+</html>

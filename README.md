@@ -19,6 +19,8 @@ engine for building 2D games
 - [multitouch](http://sean-codes.github.io/cs-engine/example/multitouch/index.html)
    - multiple touch points
    - mouse and touch events can be combined
+- [matterjs](https://sean-codes.github.io/cs-engine/example/matterjs/index.html)
+   - integrating a 3rd party physics engine
 
 ## Boilerplate
 - include `core.js`
