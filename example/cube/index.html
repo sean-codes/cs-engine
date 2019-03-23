@@ -23,102 +23,40 @@
          assets: {
             scripts: [
                // Objects
-               {
-                  path: 'objects/obj_block'
-               },
-               {
-                  path: 'objects/obj_buttons'
-               },
-               {
-                  path: 'objects/obj_crate'
-               },
-               {
-                  path: 'objects/obj_fire'
-               },
-               {
-                  path: 'objects/obj_inventory'
-               },
-               {
-                  path: 'objects/obj_joystick'
-               },
-               {
-                  path: 'objects/obj_light'
-               },
-               {
-                  path: 'objects/obj_otherplayer'
-               },
-               {
-                  path: 'objects/obj_player'
-               },
+               { path: 'objects/obj_block' },
+               { path: 'objects/obj_buttons' },
+               { path: 'objects/obj_crate' },
+               { path: 'objects/obj_fire' },
+               { path: 'objects/obj_inventory' },
+               { path: 'objects/obj_joystick' },
+               { path: 'objects/obj_light' },
+               { path: 'objects/obj_otherplayer' },
+               { path: 'objects/obj_player' },
                // Scripts
-               {
-                  path: 'scripts/compareObj'
-               },
-               {
-                  path: 'scripts/lightAdd'
-               },
-               {
-                  path: 'scripts/networkRecievedMessage'
-               },
-               {
-                  path: 'scripts/networkSendMovement'
-               },
-               {
-                  path: 'scripts/scr_collide'
-               },
-               {
-                  path: '../particles/scripts/particles'
-               },
+               { path: 'scripts/compareObj' },
+               { path: 'scripts/lightAdd' },
+               { path: 'scripts/network' },
+               { path: 'scripts/scr_collide' },
+               { path: '../particles/scripts/particles' },
                // Events
-               {
-                  path: 'events/network'
-               }
+               { path: 'events/network' }
             ],
-            sprites: [{
-                  path: 'sprites/spr_block'
-               },
-               {
-                  path: 'sprites/spr_crate'
-               },
-               {
-                  path: 'sprites/spr_inventory'
-               },
-               {
-                  path: 'sprites/spr_item_rupee'
-               },
-               {
-                  path: 'sprites/spr_player',
-                  frames: 2,
-                  fwidth: 16,
-                  fheight: 16
-               }
+            sprites: [
+                { path: 'sprites/spr_block' },
+                { path: 'sprites/spr_crate' },
+                { path: 'sprites/spr_inventory' },
+                { path: 'sprites/spr_item_rupee' },
+                { path: 'sprites/spr_player', frames: 2, fwidth: 16, fheight: 16 }
             ]
          },
          start: function() {
-            cs.camera.setup({
-               maxWidth: 400,
-               maxHeight: 300,
-               smoothing: 5
-            })
+            cs.camera.setup({ maxWidth: 400, maxHeight: 300, smoothing: 5 })
+            cs.room.setup({ width: 600, height: 400 })
 
-            cs.room.setup({
-               width: 600,
-               height: 400
-            })
+            cs.global.networkControl = { id: -1, list: {} }
+            cs.network.connect({ host: '134.209.212.165', port: 9999, ssl: false })
 
-            cs.global.networkControl = {
-               id: -1,
-               list: {}
-            }
-            cs.network.connect({
-               host: 'cube-script.net',
-               port: 9999,
-               ssl: false
-            })
-
-            cs.object.create({
-               type: 'obj_light'
-            })
+            cs.object.create({ type: 'obj_light' })
 
             cs.object.create({
                type: 'obj_buttons',

@@ -7,5 +7,5 @@ cs.network.ondisconnect = function() {
 }
 
 cs.network.onmessage = function(data) {
-   cs.script.networkReceivedMessage(data);
+   cs.script.network.receivedMessage(data);
 }

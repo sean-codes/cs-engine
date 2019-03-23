@@ -11,17 +11,17 @@ cs.objects['obj_player'] = {
       this.h_col = -1;
       this.touch = cs.touch.observer();
       this.old_keys = {
-         left: false,
-         right: false,
-         up: false,
-         down: false
+         left: true,
+         right: true,
+         up: true,
+         down: true
       }
       //Lighting
       //cs.script.lightAdd(this.id, 100, 8, 8);
    },
    step: function() {
       cs.camera.follow({ x: this.x + this.mask.width / 2, y: this.y + this.mask.height / 2 });
-      
+
       var keys = {
          left: cs.key.held(37),
          right: cs.key.held(39),
@@ -72,7 +72,7 @@ cs.objects['obj_player'] = {
       network.y = this.y;
       if (!cs.script.compareObj(keys, this.old_keys)) {
          this.old_keys = keys;
-         cs.script.networkSendMovement(this);
+         cs.script.network.sendMovement(this);
       }
    }
 }

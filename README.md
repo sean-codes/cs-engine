@@ -15,6 +15,7 @@ engine for building 2D games
    - GUI surface for interface
    - touch reachable within the game surface
       - drag the crate
+   - networking
 - [multitouch](http://sean-codes.github.io/cs-engine/example/multitouch/index.html)
    - multiple touch points
    - mouse and touch events can be combined
