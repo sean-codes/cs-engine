@@ -3,6 +3,7 @@
    <head>
       <script src="../../engine/core.js?v=2"></script>
       <link rel="stylesheet" href="../../engine/fullscreen.css" />
+      <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
    </head>
    <body>
       <canvas class="cs-canvas" id="canvas" style="background:#222"></canvas>
@@ -30,11 +31,11 @@
                }
 
                cs.object.create({ type: 'ground' })
-               for (var i = 0; i < 25; i++) {
+               for (var i = 0; i < 20; i++) {
                   cs.object.create({
                      type: 'box',
                      attr: {
-                        x: cs.room.width * Math.random(),
+                        x: cs.room.width*0.25 + cs.room.width * 0.5 * Math.random(),
                         y: cs.room.height * Math.random() - 300,
                         color: cs.math.choose(['#f22', '#46a', '#729']),
                         size: 10 + Math.random() * 30
@@ -42,7 +43,7 @@
                   })
                }
 
-               for (var i = 0; i < 50; i++) {
+               for (var i = 0; i < 30; i++) {
                   cs.object.create({
                      type: 'circle',
                      attr: {

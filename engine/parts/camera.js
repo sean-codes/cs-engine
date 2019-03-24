@@ -99,12 +99,10 @@ cs.camera = {
 
       if (this.x + width > cs.room.width) {
          this.x = (cs.room.width - width) / (cs.room.width < width ? 2 : 1)
-         cosnole.log('wtf', this.x)
       }
 
       if (this.y + height > cs.room.height) {
          this.y = (cs.room.height - height) / (cs.room.height < height ? 2 : 1)
-         console.log('wtf camera is over', this.y)
       }
    },
 
