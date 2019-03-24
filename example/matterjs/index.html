@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
    <head>
-      <script src="../../engine/core.js"></script>
+      <script src="../../engine/core.js?v=2"></script>
       <link rel="stylesheet" href="../../engine/fullscreen.css" />
    </head>
    <body>
@@ -19,6 +19,10 @@
                ]
             },
             start: function() {
+               cs.camera.setup({ maxWidth: 500, maxHeight: 500, fixedScaling: false })
+               cs.room.setup({ width: 500, height: 500 })
+               cs.camera.snap({ x: 0, y: cs.room.height })
+
                cs.global = {
                   matter: {
                      engine: Matter.Engine.create()
@@ -26,14 +30,14 @@
                }
 
                cs.object.create({ type: 'ground' })
-               for (var i = 0; i < 50; i++) {
+               for (var i = 0; i < 25; i++) {
                   cs.object.create({
                      type: 'box',
                      attr: {
                         x: cs.room.width * Math.random(),
                         y: cs.room.height * Math.random() - 300,
                         color: cs.math.choose(['#f22', '#46a', '#729']),
-                        size: 20 + Math.random() * 30
+                        size: 10 + Math.random() * 30
                      }
                   })
                }
@@ -45,7 +49,7 @@
                         x: cs.room.width * Math.random(),
                         y: cs.room.height * Math.random() - 300,
                         color: cs.math.choose(['#f12', '#a6a', '#7b9']),
-                        radius: 20 + Math.random() * 20
+                        radius: 10 + Math.random() * 20
                      }
                   })
                }
@@ -55,6 +59,7 @@
             },
 
             draw: function() {
+               cs.draw.setSurface('gui')
                cs.draw.setColor('#FFF')
                cs.draw.settings({
                   color: '#FFF',

@@ -233,13 +233,13 @@ cs.draw = {
    shape: function(options) {
       var vertices = options.vertices
       this.surface.ctx.beginPath()
-      this.surface.ctx.moveTo(vertices[0].x, vertices[0].y)
+      this.surface.ctx.moveTo(vertices[0].x * this.scale, vertices[0].y * this.scale)
 
       for (var i = 1; i < vertices.length; i++) {
-         this.surface.ctx.lineTo(vertices[i].x, vertices[i].y)
+         this.surface.ctx.lineTo(vertices[i].x * this.scale, vertices[i].y * this.scale)
       }
 
-      this.surface.ctx.closePath(vertices[0].x, vertices[0].y)
+      this.surface.ctx.closePath(vertices[0].x * this.scale, vertices[0].y * this.scale)
       !options.fill && this.surface.ctx.stroke()
       options.fill && this.surface.ctx.fill()
       this.settingsDefault()

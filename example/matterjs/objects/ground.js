@@ -1,6 +1,6 @@
 cs.objects.ground = {
    create: function() {
-      this.body = Matter.Bodies.rectangle(cs.room.width/2, cs.room.height - 40, cs.room.width, 80, { isStatic: true });
+      this.body = Matter.Bodies.rectangle(cs.room.width/2, cs.room.height - 20, cs.room.width, 40, { isStatic: true });
       Matter.World.add(cs.global.matter.engine.world, [this.body])
    },
 
