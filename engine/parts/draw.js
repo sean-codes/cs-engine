@@ -54,7 +54,7 @@ cs.draw = {
          var ch = cs.camera.height
 
          if (
-            x - xoff > cx + cw || x - xoff + frameWidth < cx
+            x - xoff - frameWidth > cx + cw || x - xoff + frameWidth < cx
             || y - yoff > cy + ch || y - yoff + frameHeight < cy
          ) {
             this.debug.spritesSkippedCount += 1
