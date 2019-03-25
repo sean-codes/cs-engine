@@ -25,13 +25,14 @@ cs.object = {
       var attr = options.attr
       var object = cs.objects[options.type]
       var zIndex = options.zIndex || cs.objects[options.type].zIndex || 0
-      
+
       // create the object
       var newObj = {
          core: {
             zIndex: zIndex,
             live: true,
             active: true,
+            drawn: false,
             type: options.type,
             id: this.unique,
             surface: cs.default(object.surface, 'game')
@@ -67,7 +68,6 @@ cs.object = {
 
    orderObjectsByZIndex: function() {
       this.order = this.list.sort(function(a, b) {
-
          return b.core.zIndex === a.core.zIndex
             ? b.core.id - a.core.id
             : b.core.zIndex - a.core.zIndex

@@ -25,7 +25,7 @@ cs.surface = {
          manualClear: cs.default(info.manualClear, false),
          append: cs.default(info.append, false),
          clearRequest: false,
-         clear: false
+         clear: true
       }
 
       // Add and fix size

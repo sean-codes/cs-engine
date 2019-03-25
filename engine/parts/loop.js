@@ -43,7 +43,8 @@ cs.loop = {
 
          if (shouldDraw) {
             cs.draw.setSurface(object.core.surface)
-            if (cs.surface.list[object.core.surface].clear) {
+            if (cs.surface.list[object.core.surface].clear || !object.core.drawn) {
+               object.core.drawn = true
                drawOnceEvent && drawOnceEvent.call(object, object)
             }
             drawEvent && drawEvent.call(object, object)
