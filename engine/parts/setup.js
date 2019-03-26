@@ -46,6 +46,7 @@ cs.setup = function() {
 
       cs.camera.resize()
       cs.surface.resize()
+      cs.object.resize()
    }
 
    // Sprites/Storage/Sound

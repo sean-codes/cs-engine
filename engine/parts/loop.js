@@ -31,23 +31,21 @@ cs.loop = {
       cs.object.loop(function(object) {
          var stepEvent = cs.objects[object.core.type].step
          cs.draw.setSurface(object.core.surface)
-         object.core.live && stepEvent && stepEvent.call(object, object);
+         stepEvent && stepEvent.call(object  , object);
       })
 
       cs.userDraw && cs.userDraw()
       cs.object.loop(function(object) {
+         if (!object.core.active) return
          var objectType = cs.objects[object.core.type]
-         var drawOnceEvent = objectType.drawOnce
          var drawEvent = objectType.draw
-         var shouldDraw = object.core.live && object.core.active
+         var drawOnceEvent = objectType.drawOnce
 
-         if (shouldDraw) {
-            cs.draw.setSurface(object.core.surface)
-            if (cs.surface.list[object.core.surface].clear || !object.core.drawn) {
-               object.core.drawn = true
-               drawOnceEvent && drawOnceEvent.call(object, object)
-            }
-            drawEvent && drawEvent.call(object, object)
+         cs.draw.setSurface(object.core.surface)
+         drawEvent && drawEvent.call(object, object)
+         if (cs.surface.list[object.core.surface].clear || !object.core.drawn) {
+            object.core.drawn = true
+            drawOnceEvent && drawOnceEvent.call(object, object)
          }
       })
 

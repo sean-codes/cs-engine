@@ -146,5 +146,11 @@ cs.object = {
       this.new = []
       this.objGroups = {}
       this.unique = 0
+   },
+
+   resize: function() {
+      for (var object of this.list) {
+         object.core.drawn = false
+      }
    }
 }
