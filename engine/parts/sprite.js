@@ -37,7 +37,7 @@ cs.sprite = {
       // handle Frames
       var dx = 0
       var dy = 0
-      
+
       while (dx < newSprite.html.width && dy < newSprite.html.height) {
          var frame = {}
          frame.canvas = document.createElement('canvas')
@@ -108,6 +108,8 @@ cs.sprite = {
 
       return {
          name: options.spr,
+         fWidth: sprite.fwidth,
+         fHeight: sprite.fheight,
          width: (options.texture ? sprite.texture.fwidth : width),
          height: (options.texture ? sprite.texture.fheight : height),
          scaleX: scaleX,

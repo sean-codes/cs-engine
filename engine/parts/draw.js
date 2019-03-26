@@ -37,15 +37,27 @@ cs.draw = {
    sprite: function(options) {
       var info = cs.sprite.info(options)
 
-      var x = options.x
-      var y = options.y
       var frame = info.frame
-      var frameWidth = info.width
-      var frameHeight = info.height
+      // dest
+      var dx = options.x
+      var dy = options.y
+      var dWidth = info.width
+      var dHeight = info.height
+
+      // source
+      var sx = 0
+      var sy = 0
+      var sWidth = info.fWidth
+      var sHeight = info.fHeight
+
+      if (options.hTrim) {
+         sHeight -= options.hTrim
+         dHeight -= options.hTrim
+      }
+
       var xoff = info.xoff
       var yoff = info.yoff
       var scale = this.scale
-
       // if outside camera skip
       if (!this.surface.raw && !this.surface.drawOutside) {
          var cx = cs.camera.x
@@ -54,8 +66,8 @@ cs.draw = {
          var ch = cs.camera.height
 
          if (
-            x - xoff - frameWidth > cx + cw || x - xoff + frameWidth < cx
-            || y - yoff > cy + ch || y - yoff + frameHeight < cy
+            dx - xoff - dWidth > cx + cw || dx - xoff + dWidth < cx
+            || dy - yoff > cy + ch || dy - yoff + dHeight < cy
          ) {
             this.debug.spritesSkippedCount += 1
             return
@@ -64,31 +76,33 @@ cs.draw = {
 
       // Sean.. We will talk about this later. Not sure you know what you are doing.
       // I want to overlap on a single pixel when flipping
-      if (info.scaleX < 0 && xoff) x++
-      if (info.scaleY < 0 && yoff) y++
+      if (info.scaleX < 0 && xoff) dx++
+      if (info.scaleY < 0 && yoff) dy++
 
       if (info.scaleX < 0 || info.scaleY < 0 || info.angle) {
          this.surface.ctx.save()
-         this.surface.ctx.translate(x * scale, y * scale)
+         this.surface.ctx.translate(dx * scale, dy * scale)
          this.surface.ctx.rotate(options.angle * Math.PI / 180)
          this.surface.ctx.scale(info.scaleX, info.scaleY)
 
          this.surface.ctx.drawImage(
             frame,
+            sx, sy, sWidth, sHeight,
             Math.floor(-xoff * scale),
             Math.floor(-yoff * scale),
-            Math.floor(frameWidth * scale),
-            Math.floor(frameHeight * scale)
+            Math.floor(dWidth * scale),
+            Math.floor(dHeight * scale)
          )
 
          this.surface.ctx.restore()
       } else {
          this.surface.ctx.drawImage(
             frame,
-            Math.floor(x * scale - xoff * scale),
-            Math.floor(y * scale - yoff * scale),
-            Math.floor(frameWidth * scale),
-            Math.floor(frameHeight * scale)
+            sx, sy, sWidth, sHeight,
+            Math.floor(dx * scale - xoff * scale),
+            Math.floor(dy * scale - yoff * scale),
+            Math.floor(dWidth * scale),
+            Math.floor(dHeight * scale)
          )
       }
 
@@ -145,7 +159,7 @@ cs.draw = {
             this.surface.ctx.fillText(options.lines[line], x, y + (line * (options.lineHeight || this.surface.ctx.lineHeight)))
          }
       } else {
-         this.surface.ctx.fillText(options.text, x, y)
+         this.surface.ctx.fillText(options.text, Math.floor(x), Math.floor(y))
       }
       this.settingsDefault()
    },
