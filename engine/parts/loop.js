@@ -29,6 +29,7 @@ cs.loop = {
       cs.userStep && cs.userStep()
 
       cs.object.loop(function(object) {
+         if (!object.core.active) return
          var stepEvent = cs.objects[object.core.type].step
          cs.draw.setSurface(object.core.surface)
          stepEvent && stepEvent.call(object  , object);
@@ -43,9 +44,11 @@ cs.loop = {
 
          cs.draw.setSurface(object.core.surface)
          drawEvent && drawEvent.call(object, object)
-         if (cs.surface.list[object.core.surface].clear || !object.core.drawn) {
-            object.core.drawn = true
-            drawOnceEvent && drawOnceEvent.call(object, object)
+         if (drawOnceEvent) {
+            if (cs.surface.list[object.core.surface].clear || !object.core.drawn) {
+               object.core.drawn = true
+               drawOnceEvent.call(object, object)
+            }
          }
       })
 
