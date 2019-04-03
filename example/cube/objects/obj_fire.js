@@ -5,39 +5,55 @@ cs.objects['obj_fire'] = {
       this.vspeed = 0;
       this.gravity = 8;
       cs.script.lightAdd(this, '#FFF', 200, 8, 8);
-      this.particleSystem = cs.script.particles.createSystem({
-         "shape": "circle",
-         "colorStart": "#ffffff",
-         "colorEnd": "#0fff0f",
-         "size": 10,
-         "grow": -5,
+      this.particleSystem = cs.script.particles.init({
+         "count": 1,
+         "interval": 1,
+         "gaussian": 1,
+         "life": 120,
+         "colors": [
+            [
+               "#F22",
+               "#FFF"
+            ],
+            [
+               "#F82",
+               "#F22"
+            ]
+         ],
+         "speed": {
+            "min": 0.1,
+            "max": 1
+         },
+         "accel": 0,
+         "size": {
+            "min": 0.1,
+            "max": 3
+         },
+         "grow": 0.1,
+         "shape": "square",
+         "wobble": {
+            "time": 60,
+            "amount": 0.1
+         },
+         "direction": {
+            "min": 270,
+            "max": 270
+         },
          "alpha": 1,
-         "fade": -6,
-         "speedMin": 43,
-         "speedMax": 43,
-         "dirMin": 0,
-         "dirMax": 360,
-         "wobbleX": 0,
-         "wobbleY": 0,
-         "lifeMin": 152,
-         "lifeMax": 152,
-         "accel": -5,
-         "gravity": 0,
-         "particlesPerStep": 2
+         "fade": 0.025
       });
    },
    step: function() {
       cs.script.particles.burst({
          system: this.particleSystem,
-         x: this.x,
-         y: this.y,
-         w: 16,
-         h: 16,
-         qty: -5
+         area: {
+            x: this.x,
+            y: this.y,
+            width: 20,
+            height: 10
+         }
       })
 
-      cs.script.particles.step({
-         system: this.particleSystem
-      })
+      cs.script.particles.step(this.particleSystem)
    }
 }
