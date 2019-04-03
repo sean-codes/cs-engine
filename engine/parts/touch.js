@@ -50,8 +50,9 @@ cs.touch = {
       var touch = cs.touch.list.find(function(t) { return t.id == eTouch.id })
       if (!touch) return
 
-      touch.x = eTouch.x
-      touch.y = eTouch.y
+
+      touch.x = eTouch.x / cs.width * cs.clampWidth
+      touch.y = eTouch.y / cs.height * cs.clampHeight
    },
    observer: function(useGameCords) {
       return {
@@ -93,7 +94,7 @@ cs.touch = {
             for (var touch of cs.touch.list) {
                // this touch is being observed or not available to latch
                if (touch.used || !touch.down) continue
-
+               
                var touchX = touch.x
                var touchY = touch.y
                if (this.useGameCords) {
@@ -103,8 +104,10 @@ cs.touch = {
                }
 
                // check if within
-               if (touchX > area.x && touchX < area.x + area.width &&
-                  touchY > area.y && touchY < area.y + area.height) {
+               if (
+                  touchX > area.x && touchX < area.x + (area.width || area.size) &&
+                  touchY > area.y && touchY < area.y + (area.height || area.size)
+               ) {
                   // observe this touch!
                   touch.used = true
 
@@ -132,8 +135,10 @@ cs.touch = {
             var width = cs.default(rect.width, rect.size || 0)
             var height = cs.default(rect.height, rect.size || 0)
 
-            return (this.x > rect.x) && (this.x < rect.x + width) &&
-               (this.y > rect.y) && (this.y < rect.y + height)
+            return (
+               this.x > rect.x && this.x < rect.x + width &&
+               this.y > rect.y && this.y < rect.y + height
+            )
          }
       }
    },

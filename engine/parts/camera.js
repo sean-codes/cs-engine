@@ -71,25 +71,26 @@ cs.camera = {
 
    follow: function(pos) {
       this.followPos = {
-         x: pos.x,
-         y: pos.y
+         x: Math.round(pos.x),
+         y: Math.round(pos.y)
       }
    },
 
    update: function(smoothing) {
-      smoothing = cs.default(smoothing, this.smoothing)
+      var smoothing = cs.default(smoothing, this.smoothing)
 
-      // zooming
+      // smooth zooming
       var differenceZoom = this.config.zoom - this.zoom
       this.zoom += differenceZoom / this.smoothingZoom
-
+      // if zooming turn smoothing off
       if (differenceZoom) smoothing = 1
 
-      var width = this.width / this.zoom
-      var height = this.height / this.zoom
+      var scale = Math.round(this.scale * this.zoom * 1000) / 1000
+      this.width = cs.canvas.width / scale
+      this.height = cs.canvas.height / scale
 
-      var differenceX = this.followPos.x - (this.x + width/2)
-      var differenceY = this.followPos.y - (this.y + height/2)
+      var differenceX = this.followPos.x - (this.x + this.width/2)
+      var differenceY = this.followPos.y - (this.y + this.height/2)
 
       this.x = this.x + differenceX / smoothing
       this.y = this.y + differenceY / smoothing
@@ -97,12 +98,12 @@ cs.camera = {
       if (this.x < 0) this.x = 0
       if (this.y < 0) this.y = 0
 
-      if (this.x + width > cs.room.width) {
-         this.x = (cs.room.width - width) / (cs.room.width < width ? 2 : 1)
+      if (this.x + this.width > cs.room.width) {
+         this.x = (cs.room.width - this.width) / (cs.room.width < this.width ? 2 : 1)
       }
 
-      if (this.y + height > cs.room.height) {
-         this.y = (cs.room.height - height) / (cs.room.height < height ? 2 : 1)
+      if (this.y + this.height > cs.room.height) {
+         this.y = (cs.room.height - this.height) / (cs.room.height < this.height ? 2 : 1)
       }
    },
 
@@ -116,29 +117,25 @@ cs.camera = {
 
    outside: function(rect) {
       if (
-         rect.x + rect.width < this.x || rect.x > this.x + this.width
-         || rect.y + rect.height < this.y || rect.y > this.y + this.height
+            rect.x + rect.width < this.x
+         || rect.x > this.x + this.width
+         || rect.y + rect.height < this.y
+         || rect.y > this.y + this.height
       ) {
          return true
       }
       return false
    },
 
-   rect: function() {
+   info: function() {
       return {
-         x: this.x,
-         y: this.y,
-         width: this.width,
-         height: this.height
+         zoom: this.zoom,
+         scale: this.scale,
+         zScale: Math.round(this.scale * this.zoom * 1000) / 1000,
+         x: Math.round(this.x * 1000) / 1000,
+         y: Math.round(this.y * 1000) / 1000,
+         width: Math.round(this.width * 1000) / 1000,
+         height: Math.round(this.height * 1000) / 1000
       }
    },
-
-   rectScaled: function() {
-      return {
-         x: Math.floor(this.x * this.scale),
-         y: Math.floor(this.y * this.scale),
-         width: this.width / this.zoom * this.scale,
-         height: this.height / this.zoom * this.scale
-      }
-   }
 }

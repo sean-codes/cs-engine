@@ -21,7 +21,18 @@ cs.draw = {
 
    setSurface: function(name) {
       this.surface = cs.surface.list[name]
-      this.scale = this.surface.raw ? 1 : cs.camera.scale
+      this.scale = 1
+      this.cameraX = 0
+      this.cameraY = 0
+
+      if (this.surface.useCamera && this.surface.oneToOne) {
+         var camera = cs.camera.info()
+
+         this.scale = camera.zScale
+         this.cameraX = camera.x
+         this.cameraY = camera.y
+      }
+
       this.settingsDefault()
    },
 
@@ -35,12 +46,15 @@ cs.draw = {
    },
 
    sprite: function(options) {
+      var scale = this.scale
       var info = cs.sprite.info(options)
-
       var frame = info.frame
+      var xOff = info.xoff
+      var yOff = info.yoff
+
       // dest
-      var dx = options.x
-      var dy = options.y
+      var dx = options.x - this.cameraX
+      var dy = options.y - this.cameraY
       var dWidth = info.width
       var dHeight = info.height
 
@@ -50,36 +64,34 @@ cs.draw = {
       var sWidth = info.fWidth
       var sHeight = info.fHeight
 
+      // trimming
       if (options.hTrim) {
          sHeight -= options.hTrim
          dHeight -= options.hTrim
       }
 
-      var xoff = info.xoff
-      var yoff = info.yoff
-      var scale = this.scale
-      // if outside camera skip
-      if (!this.surface.raw && !this.surface.drawOutside) {
-         var cx = cs.camera.x
-         var cy = cs.camera.y
-         var cw = cs.camera.width
-         var ch = cs.camera.height
+      // when flipping match the pixel
+      if (info.scaleX < 0 && xOff) dx++
+      if (info.scaleY < 0 && yOff) dy++
 
-         if (
-            dx - xoff - dWidth > cx + cw || dx - xoff + dWidth < cx
-            || dy - yoff > cy + ch || dy - yoff + dHeight < cy
-         ) {
-            this.debug.spritesSkippedCount += 1
-            return
-         }
-      }
+      // TODO: culling
+      // if (!this.surface.useCamera && !this.surface.drawOutside) {
+      //    var cx = 0
+      //    var cy = 0
+      //    var cw = cs.camera.width
+      //    var ch = cs.camera.height
+      //
+      //    if (
+      //       dx - xoff - dWidth > cx + cw || dx - xoff + dWidth < cx
+      //       || dy - yoff > cy + ch || dy - yoff + dHeight < cy
+      //    ) {
+      //       this.debug.spritesSkippedCount += 1
+      //       return
+      //    }
+      // }
 
-      // Sean.. We will talk about this later. Not sure you know what you are doing.
-      // I want to overlap on a single pixel when flipping
-      if (info.scaleX < 0 && xoff) dx++
-      if (info.scaleY < 0 && yoff) dy++
-
-      if (info.scaleX < 0 || info.scaleY < 0 || info.angle) {
+      var rotateOrSomething = (info.scaleX < 0 || info.scaleY < 0 || info.angle)
+      if (rotateOrSomething) {
          this.surface.ctx.save()
          this.surface.ctx.translate(dx * scale, dy * scale)
          this.surface.ctx.rotate(options.angle * Math.PI / 180)
@@ -88,10 +100,10 @@ cs.draw = {
          this.surface.ctx.drawImage(
             frame,
             sx, sy, sWidth, sHeight,
-            Math.floor(-xoff * scale),
-            Math.floor(-yoff * scale),
-            Math.floor(dWidth * scale),
-            Math.floor(dHeight * scale)
+            Math.round(-xOff * scale),
+            Math.round(-yOff * scale),
+            Math.ceil(dWidth * scale),
+            Math.ceil(dHeight * scale)
          )
 
          this.surface.ctx.restore()
@@ -99,23 +111,24 @@ cs.draw = {
          this.surface.ctx.drawImage(
             frame,
             sx, sy, sWidth, sHeight,
-            Math.floor(dx * scale - xoff * scale),
-            Math.floor(dy * scale - yoff * scale),
-            Math.floor(dWidth * scale),
-            Math.floor(dHeight * scale)
+            Math.round((dx - xOff) * scale),
+            Math.round((dy - yOff) * scale),
+            Math.ceil(dWidth * scale),
+            Math.ceil(dHeight * scale)
          )
       }
 
       this.debug.spritesDrawnCount += 1
       cs.draw.settingsDefault()
+      return
    },
 
    textInfo: function(options) {
       // Guessing the size
       var lines = []
       var curLine = []
-      var y = 0,
-         x = 0
+      var y = 0
+      var x = 0
       var textArr = (options.text.toString()).split('')
 
       // Setup the lines
@@ -152,14 +165,25 @@ cs.draw = {
    },
 
    text: function(options) {
-      var x = options.x * this.scale
-      var y = options.y * this.scale
+      var x = options.x - this.cameraX
+      var y = options.y - this.cameraY
+      var scale = this.scale
+
       if (options.lines) {
          for (var line in options.lines) {
-            this.surface.ctx.fillText(options.lines[line], x, y + (line * (options.lineHeight || this.surface.ctx.lineHeight)))
+            var lineYOffset = (line * (options.lineHeight || this.surface.ctx.lineHeight))
+            this.surface.ctx.fillText(
+               options.lines[line],
+               x * scale,
+               (y + lineYOffset) * scale
+            )
          }
       } else {
-         this.surface.ctx.fillText(options.text, Math.floor(x), Math.floor(y))
+         this.surface.ctx.fillText(
+            options.text,
+            Math.floor(x * scale),
+            Math.floor(y * scale)
+         )
       }
       this.settingsDefault()
    },
@@ -169,103 +193,133 @@ cs.draw = {
    },
 
    line: function(options) {
-      var lineWidth = this.surface.ctx.lineWidth / this.scale
-      var lineWidthAdjust = lineWidth / 2
-      var x1 = options.x1 + lineWidthAdjust
-      var x2 = options.x2 + lineWidthAdjust
-      var y1 = options.y1 - lineWidthAdjust
-      var y2 = options.y2 - lineWidthAdjust
+      var lineWidth = this.surface.ctx.lineWidth
+      var lineWidthAdjust = lineWidth / 2 / this.scale
+      var scale = this.scale
+
+      var x1 = options.x1 + lineWidthAdjust - this.cameraX
+      var x2 = options.x2 + lineWidthAdjust - this.cameraX
+      var y1 = options.y1 - lineWidthAdjust - this.cameraY
+      var y2 = options.y2 - lineWidthAdjust - this.cameraY
 
       this.surface.ctx.beginPath();
-      this.surface.ctx.moveTo(x1 * this.scale, y1 * this.scale);
-      this.surface.ctx.lineTo(x2 * this.scale, y2 * this.scale);
+      this.surface.ctx.moveTo(x1 * scale, y1 * scale);
+      this.surface.ctx.lineTo(x2 * scale, y2 * scale);
       this.surface.ctx.stroke()
       this.settingsDefault()
    },
 
    fillRect: function(args) {
-      if (typeof args.width == 'undefined') args.width = args.size || 1
-      if (typeof args.height == 'undefined') args.height = args.size || 1
+      var scale = this.scale
+      var x = args.x - this.cameraX
+      var y = args.y - this.cameraY
+      var width = cs.default(args.width, args.size)
+      var height = cs.default(args.height, args.size)
 
       this.surface.ctx.fillRect(
-         args.x * this.scale,
-         args.y * this.scale,
-         args.width * this.scale,
-         args.height * this.scale,
+         x * scale,
+         y * scale,
+         width * scale,
+         height * scale,
       )
       this.settingsDefault()
    },
 
    strokeRect: function(args) {
-      var lineWidth = this.surface.ctx.lineWidth / this.scale
-      var lineWidthAdjust = lineWidth / 2
-      var rect = {
-         x: args.x + lineWidthAdjust,
-         y: args.y + lineWidthAdjust,
-         width: (args.width ? args.width : args.size) - lineWidth,
-         height: (args.height ? args.height : args.size) - lineWidth,
-      }
+      var scale = this.scale
+      var lineWidth = this.surface.ctx.lineWidth
+      var lineWidthAdjust = lineWidth / 2 / scale
+
+      var x = args.x + lineWidthAdjust - this.cameraX
+      var y = args.y + lineWidthAdjust - this.cameraY
+      var width = cs.default(args.width, args.size) - lineWidthAdjust * 2
+      var height = cs.default(args.height, args.size) - lineWidthAdjust * 2
 
       this.surface.ctx.strokeRect(
-         rect.x * this.scale,
-         rect.y * this.scale,
-         rect.width * this.scale,
-         rect.height * this.scale
+         x * scale,
+         y * scale,
+         width * scale,
+         height * scale,
       )
+
       this.settingsDefault()
    },
 
-   circle: function(x, y, rad, fill) {
-      if (typeof fill == 'undefined') fill = true
+   circle: function(options) {
+      var scale = this.scale
+      var x = options.x - this.cameraX
+      var y = options.y - this.cameraY
+      var radius = options.radius
+      var fill = cs.default(options.fill, false)
+
       this.surface.ctx.beginPath()
-      this.surface.ctx.arc(x * this.scale, y * this.scale, rad * this.scale, 0, Math.PI * 2, true)
+      this.surface.ctx.arc(
+         x * scale,
+         y * scale,
+         radius * scale,
+         0, Math.PI * 2, true
+      )
       this.surface.ctx.closePath()
-      fill ? this.surface.ctx.fill() : cs.draw.ctx.stroke()
+      fill ? this.surface.ctx.fill() : this.surface.ctx.stroke()
       this.settingsDefault()
    },
 
-   circleGradient: function(x, y, radius, c1, c2) {
+   circleGradient: function(options) {
+      var scale = this.scale
+      var x = options.x - this.cameraX
+      var y = options.y - this.cameraY
+      var radius = options.radius
+      var colorStart = options.colorStart
+      var colorEnd = options.colorEnd
+
       var g = this.surface.ctx.createRadialGradient(
-         x * this.scale,
-         y * this.scale,
+         x * scale,
+         y * scale,
          0,
-         x * this.scale,
-         y * this.scale,
-         radius * this.scale
+         x * scale,
+         y * scale,
+         radius * scale
       )
-      g.addColorStop(1, c2)
-      g.addColorStop(0, c1)
+      g.addColorStop(1, colorEnd)
+      g.addColorStop(0, colorStart)
       this.surface.ctx.fillStyle = g
       this.surface.ctx.beginPath()
-      this.surface.ctx.arc(x * this.scale, y * this.scale, radius * this.scale, 0, Math.PI * 2, true)
+      this.surface.ctx.arc(
+         x * scale,
+         y * scale,
+         radius * scale,
+         0, Math.PI * 2, true
+      )
       this.surface.ctx.closePath()
-      // fill
       this.surface.ctx.fill()
       this.settingsDefault()
    },
 
    shape: function(options) {
+      var scale = this.scale
       var vertices = options.vertices
+
       this.surface.ctx.beginPath()
-      this.surface.ctx.moveTo(vertices[0].x * this.scale, vertices[0].y * this.scale)
+      this.surface.ctx.moveTo(
+         (vertices[0].x - this.cameraX) * scale,
+         (vertices[0].y - this.cameraY) * scale
+      )
 
       for (var i = 1; i < vertices.length; i++) {
-         this.surface.ctx.lineTo(vertices[i].x * this.scale, vertices[i].y * this.scale)
+         this.surface.ctx.lineTo(
+            (vertices[i].x - this.cameraX) * scale,
+            (vertices[i].y - this.cameraY) * scale
+         )
       }
 
-      this.surface.ctx.closePath(vertices[0].x * this.scale, vertices[0].y * this.scale)
+      this.surface.ctx.closePath(
+         (vertices[0].x - this.cameraX) * scale,
+         (vertices[0].y - this.cameraY) * scale
+      )
+
       !options.fill && this.surface.ctx.stroke()
       options.fill && this.surface.ctx.fill()
       this.settingsDefault()
-   },
-
-   fixPosition: function(args) {
-      x = Math.floor(args.x);
-      y = Math.floor(args.y);
-      width = Math.floor(args.width);
-      height = Math.floor(args.height);
-
-      return { x: x, y: y, width: width, height: height }
    },
 
    setColor: function(color) {

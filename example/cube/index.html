@@ -57,28 +57,12 @@
             cs.network.connect({ host: '134.209.212.165', port: 9999, ssl: false })
 
             cs.object.create({ type: 'obj_light' })
-
-            cs.object.create({
-               type: 'obj_buttons',
-               attr: {
-                  x: 100,
-                  y: 100
-               }
-            })
-            cs.object.create({
-               type: 'obj_crate',
-               attr: {
-                  x: 100,
-                  y: 0
-               }
-            })
-            cs.object.create({
-               type: 'obj_player',
-               attr: {
-                  x: 40,
-                  y: 40
-               }
-            })
+            cs.object.create({ type: 'obj_buttons' })
+            cs.object.create({ type: 'obj_crate', attr: { x: 100, y: 0 } })
+            cs.object.create({ type: 'obj_player', attr: { x: 40, y: 40 } })
+            cs.object.create({ type: 'obj_joystick' })
+            cs.object.create({ type: 'obj_inventory' })
+            cs.object.create({ type: 'obj_fire', attr: { x: 150, y: 375 } })
 
             var tx = 0;
             while (tx < cs.room.width) {
@@ -91,28 +75,6 @@
                })
                tx += 16
             }
-
-            cs.object.create({
-               type: 'obj_joystick',
-               attr: {
-                  x: 100,
-                  y: 100
-               }
-            })
-            cs.object.create({
-               type: 'obj_inventory',
-               attr: {
-                  x: 100,
-                  y: 100
-               }
-            })
-            cs.object.create({
-               type: 'obj_fire',
-               attr: {
-                  x: 150,
-                  y: 375
-               }
-            })
          }
       })
    </script>

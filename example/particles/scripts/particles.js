@@ -115,7 +115,12 @@ cs.script.particles = {
                   height: particle.size
                });
             } else {
-               cs.draw.circle(cx, cy, particle.size);
+               cs.draw.circle({
+                  x: cx,
+                  y: cy,
+                  radius: particle.size,
+                  fill: true
+               })
             }
             tempParticles[tempParticles.length] = particle;
          }

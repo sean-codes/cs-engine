@@ -1,12 +1,12 @@
 cs.objects['obj_buttons'] = {
+   surface: 'gui',
+   
    create: function() {
       this.width = 30;
       this.height = 30;
-      this.surface = 'gui';
-      this.cx = 0;
-      this.cy = 0;
       this.touch = cs.touch.observer()
    },
+
    step: function() {
       var btnRect = {
          x: cs.draw.surface.width - 50,
@@ -17,19 +17,13 @@ cs.objects['obj_buttons'] = {
 
       this.touch.check(btnRect);
       if (this.touch.isDown()) {
-         //console.log('open');
          cs.key.virtualPress(38);
-      }
-
-      //var text = cs.input.return(this.id);
-      text = ''
-      if (text !== '') {
-         console.log('Button 1 Says: ' + text);
       }
 
       if (this.touch.isHeld()) {
          cs.draw.setAlpha(0.5);
       }
+
       cs.draw.fillRect(btnRect)
       cs.draw.setColor("white")
       cs.draw.strokeRect(btnRect)

@@ -91,6 +91,7 @@ cs.object = {
          : destroyObjOrID
 
       destroyObj.core.live = false
+      destroyObj.core.active = false
       destroyObj.core.fadeTimer = fadeTimer || 0
 
       // remove from objGroup

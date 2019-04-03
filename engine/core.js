@@ -45,6 +45,7 @@ cs.load = function(options) {
    this.global = options.global || {}
 
    // Setup core info
+   this.maxSize = options.maxSize || 2000
    this.canvas = options.canvas
    this.start = options.start
    this.userStep = options.step

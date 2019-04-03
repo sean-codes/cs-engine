@@ -24,8 +24,8 @@ cs.setup = function() {
    cs.canvas.addEventListener("touchmove", cs.touch.eventMove, false)
 
    // View, Game and GUI surfaces
-   cs.surface.create({ name: 'gui', raw: true, depth: 0 })
-   cs.surface.create({ name: 'game', raw: false, depth: 10 })
+   cs.surface.create({ name: 'gui', oneToOne: true, useCamera: false, depth: 0 })
+   cs.surface.create({ name: 'game', oneToOne: true, useCamera: true,  depth: 10 })
 
    // Sound
    //cs.sound.active = cs.sound.init();
@@ -41,9 +41,28 @@ cs.setup = function() {
 
    // watch for resizing
    cs.resize = function() {
-      cs.canvas.width = cs.fullscreen ? window.innerWidth : cs.canvas.clientWidth
-      cs.canvas.height = cs.fullscreen ? window.innerHeight : cs.canvas.clientHeight
+      var maxSize = cs.maxSize
+      cs.width = cs.canvas.clientWidth
+      cs.height = cs.canvas.clientHeight
+      cs.clampWidth = cs.width
+      cs.clampHeight = cs.height
 
+      if (cs.clampWidth > maxSize) {
+         cs.clampHeight = cs.clampHeight / cs.clampWidth * maxSize
+         cs.clampWidth = maxSize
+      }
+
+      if (cs.clampHeight > maxSize) {
+         cs.clampWidth = cs.clampWidth / cs.clampHeight * maxSize
+         cs.clampHeight = maxSize
+      }
+
+      cs.clampWidth = Math.ceil(cs.clampWidth)
+      cs.clampHeight = Math.ceil(cs.clampHeight)
+
+      cs.canvas.width = cs.clampWidth
+      cs.canvas.height = cs.clampHeight
+      
       cs.camera.resize()
       cs.surface.resize()
       cs.object.resize()

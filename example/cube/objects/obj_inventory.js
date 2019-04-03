@@ -40,7 +40,7 @@ cs.objects['obj_inventory'] = {
 
       if (!this.show) {
          //Draw open button
-         var openSize = 20;
+         var openSize = 40;
          var openRect = {
             x: cs.draw.surface.width - 10 - openSize,
             y: 10,

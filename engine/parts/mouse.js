@@ -6,9 +6,9 @@ cs.mouse = {
    y: undefined,
    pos: function() {
       var convert = cs.touch.convertToGameCords(cs.mouse.x, cs.mouse.y)
-      return (cs.draw.raw) ?
-         { x: cs.mouse.x, y: cs.mouse.y } :
-         { x: convert.x, y: convert.y }
+      return (cs.draw.raw)
+         ? { x: cs.mouse.x, y: cs.mouse.y }
+         : { x: convert.x, y: convert.y }
    },
    eventMove: function(e) {
       cs.mouse.x = e.clientX
