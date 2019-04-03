@@ -44,7 +44,7 @@ cs.objects['obj_player'] = {
       }
 
       this.h_col = cs.script.collide(this, 'obj_block', { vspeed: 0 })
-      if (this.h_col || (this.x + this.hspeed) <= 0 || (this.x + this.hspeed) + this.width >= cs.room.width) {
+      if (this.h_col || (this.x + this.hspeed) <= 0 || (this.x + this.hspeed) + this.mask.width >= cs.room.width) {
          this.hspeed = 0;
       }
       this.x += this.hspeed;
