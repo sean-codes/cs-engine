@@ -85,8 +85,7 @@ cs.camera = {
       // if zooming turn smoothing off
       if (differenceZoom) smoothing = 1
 
-      var scale = this.info().scale
-      // var scale = Math.round(this.scale * this.zoom * 1000) / 1000
+      var scale = this.info().zScale
       this.width = cs.canvas.width / scale
       this.height = cs.canvas.height / scale
 
@@ -132,10 +131,11 @@ cs.camera = {
       return {
          zoom: Math.round(this.zoom * 1000) / 1000,
          scale: Math.round(this.scale * 1000) / 1000,
-         x: Math.round(this.x * 10) / 10 + 0.005, // prevent 0.5 artifacts
-         y: Math.round(this.y * 10) / 10 + 0.005,
-         width: Math.round(this.width * 10) / 10,
-         height: Math.round(this.height * 10) / 10
+         zScale: Math.round(this.scale * this.zoom * 1000) / 1000,
+         x: Math.round(this.x * 1000 + 0.005) / 1000, // prevent 0.5 artifacts
+         y: Math.round(this.y * 1000 + 0.005) / 1000,
+         width: Math.round(this.width * 1000 - 0.010) / 1000,
+         height: Math.round(this.height * 1000 - 0.010) / 1000
       }
    },
 }

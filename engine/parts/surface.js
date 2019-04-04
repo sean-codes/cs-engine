@@ -121,36 +121,17 @@ cs.surface = {
 
          // safari does not allow negative source
          if (sy < 0) {
-            dy -= sy * cameraRect.scale
+            dy -= sy * cameraRect.zScale
             sy = 0
             sHeight = surface.height
-            dHeight = sHeight * cameraRect.scale
+            dHeight = sHeight * cameraRect.zScale
          }
 
          if (sx < 0) {
-            dx -= sx * cameraRect.scale
+            dx -= sx * cameraRect.zScale
             sx = 0
             sWidth = surface.width
-            dWidth = sWidth * cameraRect.scale
-         }
-      }
-
-      // zooming (what a hack)
-      if (surface.useCamera) {
-         var camera = cs.camera.info()
-         if (camera.zoom > 1) {
-            var expand = camera.zoom * dWidth - dWidth
-            dx -= expand
-            dWidth += expand * 2
-
-            var expand = camera.zoom * dHeight - dHeight
-            dy -= expand
-            dHeight += expand * 2
-
-            // helps sync up scaled surfaces with unscaled
-            if (surface.oneToOne && camera.scale > 1) {
-               dy += 1
-            }
+            dWidth = sWidth * cameraRect.zScale
          }
       }
 

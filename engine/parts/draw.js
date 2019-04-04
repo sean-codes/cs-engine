@@ -24,13 +24,19 @@ cs.draw = {
       this.scale = 1
       this.cameraX = 0
       this.cameraY = 0
+      this.zScaleHack = 0
 
       if (this.surface.useCamera && this.surface.oneToOne) {
          var camera = cs.camera.info()
 
-         this.scale = camera.scale
+         this.scale = camera.zScale
          this.cameraX = camera.x
          this.cameraY = camera.y
+
+         // helps sync up scaled surfaces with unscaled
+         if (this.surface.oneToOne && camera.scale > 1) {
+            this.zScaleHack = 1
+         }
       }
 
       this.settingsDefault()
@@ -74,6 +80,8 @@ cs.draw = {
       if (info.scaleX < 0 && xOff) dx++
       if (info.scaleY < 0 && yOff) dy++
 
+
+
       var rotateOrSomething = (info.scaleX < 0 || info.scaleY < 0 || info.angle)
       if (rotateOrSomething) {
          this.surface.ctx.save()
@@ -85,7 +93,7 @@ cs.draw = {
             frame,
             sx, sy, sWidth, sHeight,
             (-xOff * scale),
-            (-yOff * scale),
+            (-yOff * scale + this.zScaleHack),
             (dWidth * scale),
             (dHeight * scale)
          )
@@ -96,7 +104,7 @@ cs.draw = {
             frame,
             sx, sy, sWidth, sHeight,
             ((dx - xOff) * scale),
-            ((dy - yOff) * scale),
+            ((dy - yOff) * scale) + this.zScaleHack,
             (dWidth * scale),
             (dHeight * scale)
          )
