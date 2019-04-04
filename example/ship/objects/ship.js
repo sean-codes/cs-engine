@@ -51,8 +51,12 @@ cs.objects.ship = {
          this.forward = true
          this.xSpeed += cs.math.cos(this.direction) * 0.25
          this.ySpeed += cs.math.sin(this.direction) * 0.25
-         this.xSpeed = Math.min(Math.abs(this.xSpeed), this.maxSpeed) * Math.sign(this.xSpeed)
-         this.ySpeed = Math.min(Math.abs(this.ySpeed), this.maxSpeed) * Math.sign(this.ySpeed)
+
+         var maxXSpeed = Math.abs(cs.math.cos(this.direction) * this.maxSpeed)
+         var maxYSpeed = Math.abs(cs.math.sin(this.direction) * this.maxSpeed)
+
+         this.xSpeed = Math.min(Math.abs(this.xSpeed), maxXSpeed) * Math.sign(this.xSpeed)
+         this.ySpeed = Math.min(Math.abs(this.ySpeed), maxYSpeed) * Math.sign(this.ySpeed)
       } else {
          this.xSpeed -= (this.xSpeed/30)
          this.ySpeed -= (this.ySpeed/30)
@@ -77,8 +81,8 @@ cs.objects.ship = {
 
       // camera follow
       cs.camera.follow({
-         x: this.x + this.width/2,
-         y: this.y + this.height/2
+         x: this.x,
+         y: this.y
       })
    },
 
