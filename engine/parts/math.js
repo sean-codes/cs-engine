@@ -48,5 +48,13 @@ cs.math = {
 
    inRange: function(options) {
       return options.num > options.min && options.num < options.max
+   },
+
+   sin: function(angleInDegrees) {
+      return Math.sin((angleInDegrees-90) * Math.PI/180)
+   },
+
+   cos: function(angleInDegrees) {
+      return Math.cos((angleInDegrees-90) * Math.PI/180)
    }
 }

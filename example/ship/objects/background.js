@@ -12,10 +12,12 @@ cs.objects.background = {
       var y = 0
       while (x < cs.room.width) {
          while( y < cs.room.height) {
+            var frameID = cs.math.iRandomRange(0, this.spriteInfo.frames.length - 1)
             cs.draw.sprite({
                x: x,
                y: y,
-               spr: this.sprite
+               spr: this.sprite,
+               frame: frameID
             })
             y += this.spriteInfo.height
          }

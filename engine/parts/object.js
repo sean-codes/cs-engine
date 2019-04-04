@@ -19,7 +19,8 @@ cs.object = {
 
    create: function(options) {
       if (!cs.objects[options.type]) {
-         return 'object type "' + options.type + '" does not exist'
+         console.log('object type "' + options.type + '" does not exist')
+         return undefined
       }
 
       var attr = options.attr

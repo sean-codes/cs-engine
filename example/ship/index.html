@@ -2,6 +2,9 @@
 <html>
 
 <head>
+   <!-- View Setup -->
+   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+
    <!-- Game Engine -->
    <script src='../../engine/core.js'></script>
 
@@ -20,13 +23,16 @@
          assets: {
             sprites: [
                { path: './sprites/ship' },
-               { path: './sprites/background' },
+               { path: './sprites/background', fwidth: 48 },
                { path: './sprites/bullet' },
+               { path: './sprites/burst' },
+               { path: './sprites/arrow' },
             ],
             scripts: [
                { path: './objects/ship' },
                { path: './objects/background' },
                { path: './objects/bullet' },
+               { path: './objects/controller' },
             ]
          },
 
@@ -37,8 +43,8 @@
             })
 
             cs.camera.setup({
-               maxWidth: 200,
-               maxHeight: 200,
+               maxWidth: 300,
+               maxHeight: 300,
                smoothing: 1
             })
 
@@ -46,11 +52,14 @@
                name: 'background',
                drawOutside: true,
                manualClear: true,
+               oneToOne: false,
+               useCamera: true,
                depth: 100
             })
 
             cs.object.create({ type: 'background' })
             cs.object.create({ type: 'ship' })
+            cs.object.create({ type: 'controller' })
          }
       })
    </script>
