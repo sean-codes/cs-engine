@@ -71,8 +71,8 @@ cs.camera = {
 
    follow: function(pos) {
       this.followPos = {
-         x: Math.round(pos.x),
-         y: Math.round(pos.y)
+         x: pos.x,
+         y: pos.y
       }
    },
 
@@ -85,7 +85,8 @@ cs.camera = {
       // if zooming turn smoothing off
       if (differenceZoom) smoothing = 1
 
-      var scale = Math.round(this.scale * this.zoom * 1000) / 1000
+      var scale = this.info().scale
+      // var scale = Math.round(this.scale * this.zoom * 1000) / 1000
       this.width = cs.canvas.width / scale
       this.height = cs.canvas.height / scale
 
@@ -129,13 +130,12 @@ cs.camera = {
 
    info: function() {
       return {
-         zoom: this.zoom,
-         scale: this.scale,
-         zScale: Math.round(this.scale * this.zoom * 1000) / 1000,
-         x: Math.round(this.x * 1000) / 1000,
-         y: Math.round(this.y * 1000) / 1000,
-         width: Math.round(this.width * 1000) / 1000,
-         height: Math.round(this.height * 1000) / 1000
+         zoom: Math.round(this.zoom * 1000) / 1000,
+         scale: Math.round(this.scale * 1000) / 1000,
+         x: Math.round(this.x * 10) / 10 + 0.005, // prevent 0.5 artifacts
+         y: Math.round(this.y * 10) / 10 + 0.005,
+         width: Math.round(this.width * 10) / 10,
+         height: Math.round(this.height * 10) / 10
       }
    },
 }

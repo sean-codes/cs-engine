@@ -28,7 +28,7 @@ cs.draw = {
       if (this.surface.useCamera && this.surface.oneToOne) {
          var camera = cs.camera.info()
 
-         this.scale = camera.zScale
+         this.scale = camera.scale
          this.cameraX = camera.x
          this.cameraY = camera.y
       }
@@ -74,36 +74,20 @@ cs.draw = {
       if (info.scaleX < 0 && xOff) dx++
       if (info.scaleY < 0 && yOff) dy++
 
-      // TODO: culling
-      // if (!this.surface.useCamera && !this.surface.drawOutside) {
-      //    var cx = 0
-      //    var cy = 0
-      //    var cw = cs.camera.width
-      //    var ch = cs.camera.height
-      //
-      //    if (
-      //       dx - xoff - dWidth > cx + cw || dx - xoff + dWidth < cx
-      //       || dy - yoff > cy + ch || dy - yoff + dHeight < cy
-      //    ) {
-      //       this.debug.spritesSkippedCount += 1
-      //       return
-      //    }
-      // }
-
       var rotateOrSomething = (info.scaleX < 0 || info.scaleY < 0 || info.angle)
       if (rotateOrSomething) {
          this.surface.ctx.save()
-         this.surface.ctx.translate(dx * scale, dy * scale)
+         this.surface.ctx.translate((dx * scale), (dy * scale))
          this.surface.ctx.rotate(options.angle * Math.PI / 180)
          this.surface.ctx.scale(info.scaleX, info.scaleY)
 
          this.surface.ctx.drawImage(
             frame,
             sx, sy, sWidth, sHeight,
-            Math.round(-xOff * scale),
-            Math.round(-yOff * scale),
-            Math.ceil(dWidth * scale),
-            Math.ceil(dHeight * scale)
+            (-xOff * scale),
+            (-yOff * scale),
+            (dWidth * scale),
+            (dHeight * scale)
          )
 
          this.surface.ctx.restore()
@@ -111,10 +95,10 @@ cs.draw = {
          this.surface.ctx.drawImage(
             frame,
             sx, sy, sWidth, sHeight,
-            Math.round((dx - xOff) * scale),
-            Math.round((dy - yOff) * scale),
-            Math.ceil(dWidth * scale),
-            Math.ceil(dHeight * scale)
+            ((dx - xOff) * scale),
+            ((dy - yOff) * scale),
+            (dWidth * scale),
+            (dHeight * scale)
          )
       }
 
