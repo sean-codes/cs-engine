@@ -5,6 +5,7 @@ cs.objects.controller = {
       this.buttonSize = 60
       this.touchLeftRight = cs.touch.observer()
       this.touchForward = cs.touch.observer()
+      this.touchFire = cs.touch.observer()
    },
 
    step: function() {
@@ -22,6 +23,12 @@ cs.objects.controller = {
 
       this.rectForwardButton = {
          x: cs.draw.surface.width - this.margin - this.buttonSize,
+         y : this.rectLeftButton.y,
+         size: this.buttonSize
+      }
+
+      this.rectFireButton = {
+         x: cs.draw.surface.width - this.margin*2 - this.buttonSize*2,
          y : this.rectLeftButton.y,
          size: this.buttonSize
       }
@@ -68,10 +75,20 @@ cs.objects.controller = {
             cs.key.virtualUp(38)
          }
       }
+
+      this.touchFire.check(this.rectFireButton)
+      if (this.touchFire.isHeld()) {
+         cs.key.virtualDown(32)
+      } else {
+         if (this.touchFire.isUp()) {
+            cs.key.virtualUp(32)
+         }
+      }
    },
 
    draw: function() {
       // left button
+      cs.draw.setAlpha(0.5)
       cs.draw.fillRect({
          x: this.rectLeftButton.x,
          y: this.rectLeftButton.y,
@@ -87,7 +104,7 @@ cs.objects.controller = {
       })
 
       cs.draw.sprite({
-         spr: 'arrow',
+         spr: 'icon_arrow',
          x: this.rectLeftButton.x + this.rectLeftButton.size/2,
          y: this.rectLeftButton.y + this.rectLeftButton.size/2,
          size: this.rectLeftButton.size,
@@ -96,6 +113,7 @@ cs.objects.controller = {
       })
 
       // right button
+      cs.draw.setAlpha(0.5)
       cs.draw.fillRect({
          x: this.rectRightButton.x,
          y: this.rectRightButton.y,
@@ -111,7 +129,7 @@ cs.objects.controller = {
       })
 
       cs.draw.sprite({
-         spr: 'arrow',
+         spr: 'icon_arrow',
          x: this.rectRightButton.x + this.rectRightButton.size/2,
          y: this.rectRightButton.y + this.rectRightButton.size/2,
          size: this.rectRightButton.size,
@@ -121,6 +139,7 @@ cs.objects.controller = {
 
 
       // forward
+      cs.draw.setAlpha(0.5)
       cs.draw.fillRect({
          x: this.rectForwardButton.x,
          y: this.rectForwardButton.y,
@@ -136,10 +155,35 @@ cs.objects.controller = {
       })
 
       cs.draw.sprite({
-         spr: 'arrow',
+         spr: 'icon_arrow',
          x: this.rectForwardButton.x + this.rectForwardButton.size/2,
          y: this.rectForwardButton.y + this.rectForwardButton.size/2,
          size: this.rectForwardButton.size,
+         center: true,
+         angle: 0
+      })
+
+      // fire
+      cs.draw.setAlpha(0.5)
+      cs.draw.fillRect({
+         x: this.rectFireButton.x,
+         y: this.rectFireButton.y,
+         size: this.rectFireButton.size
+      })
+
+      cs.draw.setColor('#FFF')
+      cs.draw.setWidth(4)
+      cs.draw.strokeRect({
+         x: this.rectFireButton.x,
+         y: this.rectFireButton.y,
+         size: this.rectFireButton.size
+      })
+
+      cs.draw.sprite({
+         spr: 'icon_shoot',
+         x: this.rectFireButton.x + this.rectFireButton.size/2,
+         y: this.rectFireButton.y + this.rectFireButton.size/2,
+         size: this.rectFireButton.size,
          center: true,
          angle: 0
       })

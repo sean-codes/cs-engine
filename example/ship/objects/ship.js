@@ -19,10 +19,12 @@ cs.objects.ship = {
          start: function() {
             cs.object.create({
                type: 'bullet',
-               attr: { x: object.x + object.width/2, y: object.y }
+               attr: { x: object.x, y: object.y, direction: object.direction }
             })
          }
       })
+
+      cs.camera.snap({ x: this.x, y: this.y })
    },
 
    step: function() {

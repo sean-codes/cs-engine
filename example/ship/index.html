@@ -26,7 +26,8 @@
                { path: './sprites/background', fwidth: 48 },
                { path: './sprites/bullet' },
                { path: './sprites/burst' },
-               { path: './sprites/arrow' },
+               { path: './sprites/icon_arrow' },
+               { path: './sprites/icon_shoot' },
             ],
             scripts: [
                { path: './objects/ship' },
@@ -45,7 +46,7 @@
             cs.camera.setup({
                maxWidth: 300,
                maxHeight: 300,
-               smoothing: 1
+               smoothing: 10
             })
 
             cs.surface.create({
