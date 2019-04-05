@@ -132,10 +132,10 @@ cs.camera = {
          zoom: Math.round(this.zoom * 1000) / 1000,
          scale: Math.round(this.scale * 1000) / 1000,
          zScale: Math.round(this.scale * this.zoom * 1000) / 1000,
-         x: Math.round(this.x * 1000 + 0.005) / 1000, // prevent 0.5 artifacts
-         y: Math.round(this.y * 1000 + 0.005) / 1000,
-         width: Math.round(this.width * 1000 - 0.010) / 1000,
-         height: Math.round(this.height * 1000 - 0.010) / 1000
+         x: Math.round(this.x * 1000) / 1000 - 0.005, // prevent 0.5 artifacts
+         y: Math.round(this.y * 1000) / 1000 - 0.005,
+         width: Math.round(this.width * 1000 + 0.010) / 1000,
+         height: Math.round(this.height * 1000 + 0.010) / 1000
       }
    },
 }
