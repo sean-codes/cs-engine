@@ -1,0 +1,48 @@
+.form-container {
+   position: fixed;
+   width: 100%;
+   height: 100%;
+   top: 0;
+   left: 0;
+   background: rgba(0, 0, 0, 0.5);
+   font-family: monospace;
+   display: flex;
+   font-size: 16px;
+}
+
+.form-container .form {
+   margin: auto;
+}
+
+.form-container .form label,
+.form-container .form button,
+.form-container .form input {
+   display: block;
+}
+
+.form-container .form label {
+   color: #FFF;
+   font-size: 2em;
+}
+
+.form-container .form input {
+   margin-top: 0.5em;
+   width: 300px;
+   max-width: 100%;
+   font-size: 1em;
+   padding: 0.5em;
+}
+.form-container .form input.error {
+   border: 3px solid #F22;
+}
+
+.form-container .form button {
+   border-radius: 0;
+   background: #45a;
+   padding: 0.5em 1em;
+   color: #FFF;
+   border: none;
+   font-size: 1em;
+   text-transform: uppercase;
+   margin-top: 0.5em;
+}

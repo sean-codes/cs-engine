@@ -1,7 +1,5 @@
 cs.objects.ship = {
    create: function(object) {
-
-
       this.x = cs.room.width / 2
       this.y = cs.room.height / 2
       this.width = 16
@@ -89,7 +87,6 @@ cs.objects.ship = {
    },
 
    draw: function() {
-
       var burstDistance = Math.max(7, Math.random() * 10)
       var burstX = this.x - cs.math.cos(this.direction) * burstDistance
       var burstY = this.y - cs.math.sin(this.direction) * burstDistance
@@ -110,5 +107,16 @@ cs.objects.ship = {
          angle: this.direction,
          center: true
       })
+
+      if (cs.global.name) {
+         cs.draw.setTextCenter()
+         cs.draw.setColor('#FFF')
+         cs.draw.setFont({ size: 6, family: 'monospace' })
+         cs.draw.text({
+            text: cs.global.name,
+            x: this.x,
+            y: this.y - 15
+         })
+      }
    }
 }
