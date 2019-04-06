@@ -1,16 +1,17 @@
 cs.objects.ship = {
    create: function(object) {
-      this.x = cs.room.width / 2
-      this.y = cs.room.height / 2
-      this.width = 16
-      this.height = 16
+      this.x = cs.default(this.x, cs.room.width / 2)
+      this.y = cs.default(this.y, cs.room.height / 2)
+
+      this.xFix = 0
+      this.yFix = 0
 
       this.xSpeed = 0
       this.ySpeed = 0
       this.turnSpeed = 0
       this.maxTurnSpeed = 15
       this.maxSpeed = 2
-      this.direction = 0
+      this.direction = cs.default(this.direction, 0)
 
       this.timerFire = cs.timer.create({
          duration: 30,
@@ -22,32 +23,25 @@ cs.objects.ship = {
          }
       })
 
-      cs.camera.snap({ x: this.x, y: this.y })
+      this.keys = { left: false, right: false, forward: false }
    },
 
    step: function() {
       this.forward = false
 
-      // right
-      var keys = {
-         left: cs.key.held(39),
-         right: cs.key.held(37),
-         forward: cs.key.held(38)
-      }
-
-      if (keys.left || keys.right) {
-         if (keys.left) {
+      if (this.keys.left || this.keys.right) {
+         if (this.keys.left) {
             this.turnSpeed += 0.25
          }
 
-         if (keys.right) {
+         if (this.keys.right) {
             this.turnSpeed -= 0.25
          }
       } else {
          this.turnSpeed -= (this.turnSpeed/10)
       }
 
-      if (keys.forward) {
+      if (this.keys.forward) {
          this.forward = true
          this.xSpeed += cs.math.cos(this.direction) * 0.25
          this.ySpeed += cs.math.sin(this.direction) * 0.25
@@ -80,10 +74,22 @@ cs.objects.ship = {
       if(this.y > cs.room.height) this.y = cs.room.height
 
       // camera follow
-      cs.camera.follow({
+      cs.global.id == this.id && cs.camera.follow({
          x: this.x,
          y: this.y
       })
+
+      if (this.xFix) {
+         this.x -= Math.sign(this.xFix) * 0.1
+         this.xFix -= Math.sign(this.xFix) * 0.1
+         if (Math.abs(this.xFix) < 0.2) this.xFix = 0
+      }
+
+      if (this.yFix) {
+         this.y -= Math.sign(this.yFix) * 0.1
+         this.yFix -= Math.sign(this.yFix) * 0.1
+         if (Math.abs(this.yFix) < 0.2) this.yFix = 0
+      }
    },
 
    draw: function() {
@@ -118,5 +124,14 @@ cs.objects.ship = {
             y: this.y - 15
          })
       }
+
+      // cs.draw.setTextCenter()
+      // cs.draw.setColor('#FFF')
+      // cs.draw.setFont({ size: 6, family: 'monospace' })
+      // cs.draw.text({
+      //    text: 'xFix: ' + Math.round(this.xFix*100)/100 + ' yFix:' + Math.round(this.yFix*100)/100,
+      //    x: this.x,
+      //    y: this.y - 15,
+      // })
    }
 }

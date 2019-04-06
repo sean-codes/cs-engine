@@ -68,5 +68,14 @@ cs.key = {
    },
    held: function(keyID) {
       return cs.key.heldList[keyID] || false
+   },
+   isUp: function(keyID) {
+      return cs.key.upList[keyID] ? true : false
+   },
+   isDown: function(keyID) {
+      return cs.key.downList[keyID] ? true : false
+   },
+   isHeld: function(keyID) {
+      return cs.key.heldList[keyID] ? true : false
    }
 }

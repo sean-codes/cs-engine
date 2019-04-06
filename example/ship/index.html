@@ -27,27 +27,27 @@
 <body style="background: #000">
    <!--Game Area-->
    <canvas class="cs-canvas" style="background:#999"></canvas>
-   <div class="form-container">
+   <!-- <div class="form-container">
       <div class="form">
          <label>Ship Name</label>
          <input id="username" type="text" maxlength="10"/>
          <button onclick="start()">start</button>
       </div>
-   </div>
+   </div> -->
 
    <script>
-      function start() {
-         var htmlFormContainer = document.querySelector('.form-container')
-         var htmlName = document.querySelector('#username')
-         var name = htmlName.value
-
-         if (name.length > 3 && name.length < 10) {
-            cs.global.name = name
-            htmlFormContainer.style.display = 'none'
-         } else {
-            htmlName.classList.add('error')
-         }
-      }
+      // function start() {
+      //    var htmlFormContainer = document.querySelector('.form-container')
+      //    var htmlName = document.querySelector('#username')
+      //    var name = htmlName.value
+      //
+      //    if (name.length > 3 && name.length < 10) {
+      //       cs.global.name = name
+      //       htmlFormContainer.style.display = 'none'
+      //    } else {
+      //       htmlName.classList.add('error')
+      //    }
+      // }
 
       cs.load({
          parts: '../../engine',
@@ -62,10 +62,14 @@
                { path: './sprites/icon_shoot' },
             ],
             scripts: [
+               // objects
                { path: './objects/ship' },
                { path: './objects/background' },
                { path: './objects/bullet' },
+               { path: './objects/gui' },
                { path: './objects/controller' },
+               // scripts
+               { path: './scripts/network' },
             ]
          },
 
@@ -90,12 +94,20 @@
                depth: 100
             })
 
-            cs.global.name = undefined
+            cs.global.name = 'test'
             cs.global.start = false
 
             cs.object.create({ type: 'background' })
-            cs.object.create({ type: 'ship' })
+            cs.object.create({ type: 'gui' })
             cs.object.create({ type: 'controller' })
+            cs.camera.snap({ x: cs.room.width/2, y: cs.room.height/2 })
+            
+            // network overrides
+            cs.network.setup({
+               connect: cs.script.network.onConnect,
+               disconnect: cs.script.network.onDisconnect,
+               message: cs.script.network.onMessage,
+            })
          },
 
          step: function() {
@@ -104,7 +116,10 @@
                   cs.global.start = true
 
                   // connect
-
+                  cs.network.connect({
+                     host: '127.0.0.1',
+                     port: 8080
+                  })
                }
             }
          }

@@ -4,17 +4,25 @@
 cs.network = {
    ws: {},
    status: false,
+   overrides: {
+      connect: function() {},
+      disconnect: function() {},
+      message: function() {}
+   },
    connect: function(options) {
+      console.log('cs.network.connect', options)
       try {
-         var host = options.host || window.location.host;
+         var host = options.host || window.location.host
          if (options.ssl == undefined || options.ssl == false) {
-            var url = "ws://" + host + ":" + options.port;
+            var url = "ws://" + host + ":" + options.port
          } else {
-            var url = "wss://" + host + ":" + options.port;
+            var url = "wss://" + host + ":" + options.port
          }
          var ws = new WebSocket(url);
-         ws.onopen = function() { cs.network.onconnect();
-            cs.network.status = true; }
+         ws.onopen = function() {
+            cs.network.onconnect()
+            cs.network.status = true
+         }
          ws.onclose = function() { cs.network.ondisconnect() }
          ws.onmessage = function(event) { cs.network.onmessage(event.data) }
          cs.network.ws = ws;
@@ -23,12 +31,24 @@ cs.network = {
       }
    },
    send: function(data) {
+      if (!this.status) return
       if (typeof data !== 'string') {
-         data = JSON.stringify(data);
+         data = JSON.stringify(data)
       }
-      cs.network.ws.send(data);
+      cs.network.ws.send(data)
    },
-   onconnect: function() {},
-   ondisconnect: function() {},
-   onmessage: function(message) {}
+   onconnect: function() {
+      this.overrides.connect()
+   },
+   ondisconnect: function() {
+      this.overrides.disconnect()
+   },
+   onmessage: function(message) {
+      this.overrides.message(message)
+   },
+   setup: function(options) {
+      for (var optionName in options) {
+         cs.network.overrides[optionName] = options[optionName]
+      }
+   }
 }
