@@ -1,6 +1,8 @@
 cs.objects.bullet = {
+   zIndex: 1,
    create: function() {
-      this.spriteInfo = cs.sprite.info({ spr: 'bullet' })
+      this.x = cs.default(this.x, 0)
+      this.y = cs.default(this.y, 0)
       this.direction = cs.default(this.direction, 0)
       this.speed = 3
    },
@@ -12,7 +14,7 @@ cs.objects.bullet = {
 
    draw: function() {
       cs.draw.sprite({
-         spr: this.spriteInfo.name,
+         spr: 'bullet',
          x: this.x,
          y: this.y,
          angle: this.direction,

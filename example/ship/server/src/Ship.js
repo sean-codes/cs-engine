@@ -1,19 +1,29 @@
+const {
+   sin,
+   cos
+} = require('./math')
+
 module.exports = class Ship {
-   constructor(id, ws, room) {
+   constructor(ws, room) {
       // network
-      this.id = id
+      this.id = Math.round(Date.now() * Math.random() * 100000)
       this.ws = ws
       this.ws.on('message', (data) => this.message(data))
       this.ws.on('close', (data) => this.close(data))
 
       // game
+      this.start = false
       this.room = room
+      this.score = 0
+      this.name = 'test'
+      this.respawnTime = 0
       this.x = room.width/2
       this.y = room.height/2
       this.keys = {
          left: false,
          right: false,
-         forward: false
+         forward: false,
+         shoot: false
       }
 
       this.xSpeed = 0
@@ -22,6 +32,10 @@ module.exports = class Ship {
       this.maxTurnSpeed = 15
       this.maxSpeed = 2
       this.direction = 0
+      this.shoot = {
+         delay: 30,
+         wait: 0
+      }
 
       this.send({
          func: 'id',
@@ -34,19 +48,63 @@ module.exports = class Ship {
    message(jsonMessage) {
       try {
          console.log('received', jsonMessage)
-         const data = JSON.parse(jsonMessage)
-         const updatedKeys = {
-            left: data.keys.left ? true : false,
-            right: data.keys.right ? true : false,
-            forward: data.keys.forward ? true : false
-         }
+         const parsedMessage = JSON.parse(jsonMessage)
+         const {
+            func,
+            data
+         } = parsedMessage
 
-         this.keys = updatedKeys
-         this.room.change()
+         switch(func) {
+            case 'control':
+               // pls dont hack :]
+               // should validate before using
+               this.keys = data.keys
+               this.x = data.x
+               this.y = data.y
+               this.xSpeed = data.xSpeed
+               this.ySpeed = data.ySpeed
+               this.direction = data.direction
+               this.turnSpeed = data.turnSpeed
+
+               this.room.broadcast({
+                  func: 'change',
+                  data: {
+                     id: this.id,
+                     name: this.name,
+                     keys: this.keys,
+                     x: this.x,
+                     y: this.y,
+                     direction: this.direction,
+                     turnSpeed: this.turnSpeed,
+                     xSpeed: this.xSpeed,
+                     ySpeed: this.ySpeed,
+                     sent: Date.now()
+                  }
+               })
+               break
+
+            case 'start':
+               this.name = this.fixName(data.name)
+               this.start = true
+               this.room.shipStart(this)
+               break
+         }
       } catch(e) {
          console.log('could not parse message', e)
       }
+   }
 
+   fixName(name) {
+      var fixedName = name.toString().slice(0, 10)
+      if (!fixedName.length) {
+         fixedName = ''
+         var characters = 'abcdefghijklmnopqrstuvwxyz'
+         for (var i = 0; i < 5; i++) {
+            fixedName += characters[Math.floor(characters.length*Math.random())]
+         }
+      }
+
+      return fixedName
    }
 
    send(message) {
@@ -57,7 +115,49 @@ module.exports = class Ship {
       this.room.destroyShip(this)
    }
 
+   start() {
+
+      this.respawn()
+   }
+
+   respawn() {
+      this.x = Math.random() * this.room.width
+      this.y = Math.random() * this.room.height
+
+      this.room.broadcast({
+         func: 'respawn',
+         data: {
+            id: this.id,
+            x: this.x,
+            y: this.y
+         }
+      })
+   }
+
    update() {
+      if (!this.start) return
+
+      if (this.respawnTime) {
+         this.respawnTime -= 1
+
+         if (!this.respawnTime) {
+            this.respawn()
+         }
+         return
+      }
+
+      // shoot timer
+      if (this.shoot.wait) {
+         this.shoot.wait -= 1
+      }
+
+      if (this.keys.shoot && !this.shoot.wait) {
+         this.shoot.wait = this.shoot.delay
+         this.room.addBullet(this)
+         console.log('fire')
+      }
+
+
       if (this.keys.left || this.keys.right) {
          if (this.keys.left) {
             this.turnSpeed += 0.25
@@ -72,11 +172,11 @@ module.exports = class Ship {
 
       if (this.keys.forward) {
          this.forward = true
-         this.xSpeed += this.cos(this.direction) * 0.25
-         this.ySpeed += this.sin(this.direction) * 0.25
+         this.xSpeed += cos(this.direction) * 0.25
+         this.ySpeed += sin(this.direction) * 0.25
 
-         var maxXSpeed = Math.abs(this.cos(this.direction) * this.maxSpeed)
-         var maxYSpeed = Math.abs(this.sin(this.direction) * this.maxSpeed)
+         var maxXSpeed = Math.abs(cos(this.direction) * this.maxSpeed)
+         var maxYSpeed = Math.abs(sin(this.direction) * this.maxSpeed)
 
          this.xSpeed = Math.min(Math.abs(this.xSpeed), maxXSpeed) * Math.sign(this.xSpeed)
          this.ySpeed = Math.min(Math.abs(this.ySpeed), maxYSpeed) * Math.sign(this.ySpeed)
@@ -95,13 +195,5 @@ module.exports = class Ship {
       if(this.x > this.room.width) this.x = this.room.width
       if(this.y < 0) this.y = 0
       if(this.y > this.room.height) this.y = this.room.height
-   }
-
-   cos(angleInDegrees) {
-      return Math.cos((angleInDegrees-90) * Math.PI/180)
-   }
-
-   sin(angleInDegrees) {
-      return Math.sin((angleInDegrees-90) * Math.PI/180)
    }
 }

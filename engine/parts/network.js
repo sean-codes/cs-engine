@@ -21,7 +21,6 @@ cs.network = {
          var ws = new WebSocket(url);
          ws.onopen = function() {
             cs.network.onconnect()
-            cs.network.status = true
          }
          ws.onclose = function() { cs.network.ondisconnect() }
          ws.onmessage = function(event) { cs.network.onmessage(event.data) }
@@ -38,9 +37,11 @@ cs.network = {
       cs.network.ws.send(data)
    },
    onconnect: function() {
+      cs.network.status = true
       this.overrides.connect()
    },
    ondisconnect: function() {
+      cs.network.status = false
       this.overrides.disconnect()
    },
    onmessage: function(message) {

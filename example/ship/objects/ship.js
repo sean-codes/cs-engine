@@ -1,4 +1,5 @@
 cs.objects.ship = {
+   zIndex: 2,
    create: function(object) {
       this.x = cs.default(this.x, cs.room.width / 2)
       this.y = cs.default(this.y, cs.room.height / 2)
@@ -13,20 +14,14 @@ cs.objects.ship = {
       this.maxSpeed = 2
       this.direction = cs.default(this.direction, 0)
 
-      this.timerFire = cs.timer.create({
-         duration: 30,
-         start: function() {
-            cs.object.create({
-               type: 'bullet',
-               attr: { x: object.x, y: object.y, direction: object.direction }
-            })
-         }
-      })
-
-      this.keys = { left: false, right: false, forward: false }
+      this.keys = { left: false, right: false, forward: false, shoot: false }
    },
 
    step: function() {
+      if (this.id == cs.global.id) {
+         this.keys = cs.global.keys
+      }
+
       this.forward = false
 
       if (this.keys.left || this.keys.right) {
@@ -61,12 +56,6 @@ cs.objects.ship = {
       this.x += this.xSpeed
       this.y += this.ySpeed
 
-
-      //spacebar
-      if (cs.key.held(32)) {
-         cs.timer.start(this.timerFire)
-      }
-
       // prevent going off edges
       if(this.x < 0) this.x = 0
       if(this.x > cs.room.width) this.x = cs.room.width
@@ -93,6 +82,8 @@ cs.objects.ship = {
    },
 
    draw: function() {
+      if (this.respawning) return
+
       var burstDistance = Math.max(7, Math.random() * 10)
       var burstX = this.x - cs.math.cos(this.direction) * burstDistance
       var burstY = this.y - cs.math.sin(this.direction) * burstDistance
@@ -114,16 +105,16 @@ cs.objects.ship = {
          center: true
       })
 
-      if (cs.global.name) {
-         cs.draw.setTextCenter()
-         cs.draw.setColor('#FFF')
-         cs.draw.setFont({ size: 6, family: 'monospace' })
-         cs.draw.text({
-            text: cs.global.name,
-            x: this.x,
-            y: this.y - 15
-         })
-      }
+
+      cs.draw.setTextCenter()
+      cs.draw.setColor('#FFF')
+      cs.draw.setFont({ size: 6, family: 'monospace' })
+      cs.draw.text({
+         text: this.name,
+         x: this.x,
+         y: this.y - 15
+      })
+
 
       // cs.draw.setTextCenter()
       // cs.draw.setColor('#FFF')

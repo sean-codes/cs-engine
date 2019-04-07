@@ -87,7 +87,42 @@ cs.objects.gui = {
    },
 
    draw: function() {
-      // left button
+      if (!cs.global.start) return
+      
+      // disconnected
+      if (!cs.network.status) {
+         cs.draw.setColor('#000')
+         cs.draw.setAlpha(0.1)
+         cs.draw.fillRect({
+            x: 0,
+            y: 0,
+            width: cs.draw.surface.width,
+            height: cs.draw.surface.height,
+         })
+
+         cs.draw.setColor('#000')
+         cs.draw.setAlpha(0.75)
+         cs.draw.fillRect({
+            x: 0,
+            y: cs.draw.surface.height/2 - 100,
+            width: cs.draw.surface.width,
+            height: 200,
+         })
+
+
+         cs.draw.setColor('#FFF')
+         cs.draw.setFont({ size: 24, family: 'monospace', effect: 'bold'})
+         cs.draw.setTextCenter()
+         cs.draw.text({
+            x: cs.draw.surface.width/2,
+            y: cs.draw.surface.height/2,
+            text: 'No Connection'
+         })
+
+         return
+      }
+
+      // on screen button
       cs.draw.setAlpha(0.5)
       cs.draw.fillRect({
          x: this.rectLeftButton.x,
@@ -192,5 +227,100 @@ cs.objects.gui = {
       cs.draw.setColor('#FFF')
       cs.draw.setFont({ family: 'monospace', size: 16, effect: 'bold' })
       cs.draw.text({ text: 'players: ' + cs.object.count('ship'), x: this.margin, y: this.margin })
+
+      cs.draw.setColor('#FFF')
+      cs.draw.setFont({ family: 'monospace', size: 16, effect: 'bold' })
+      cs.draw.text({ text: 'time left: ' + Math.round(cs.global.timeLeft / (60)) + 's', x: this.margin, y: this.margin + 20 })
+
+      // respawning
+      if (cs.global.respawning) {
+         cs.draw.setColor('#000')
+         cs.draw.setAlpha(0.1)
+         cs.draw.fillRect({
+            x: 0,
+            y: 0,
+            width: cs.draw.surface.width,
+            height: cs.draw.surface.height,
+         })
+
+         cs.draw.setColor('#000')
+         cs.draw.setAlpha(0.75)
+         cs.draw.fillRect({
+            x: 0,
+            y: cs.draw.surface.height/2 - 100,
+            width: cs.draw.surface.width,
+            height: 200,
+         })
+
+
+         cs.draw.setColor('#FFF')
+         cs.draw.setFont({ size: 24, family: 'monospace', effect: 'bold'})
+         cs.draw.setTextCenter()
+         cs.draw.text({
+            x: cs.draw.surface.width/2,
+            y: cs.draw.surface.height/2,
+            text: 'Respawning In: ' + Math.round(cs.global.respawnTime / 60) + 's'
+         })
+      }
+
+      // new game
+      if (cs.global.timeNewGame) {
+         cs.draw.setColor('#000')
+         cs.draw.setAlpha(0.1)
+         cs.draw.fillRect({
+            x: 0,
+            y: 0,
+            width: cs.draw.surface.width,
+            height: cs.draw.surface.height,
+         })
+
+         cs.draw.setColor('#000')
+         cs.draw.setAlpha(0.75)
+         cs.draw.fillRect({
+            x: 0,
+            y: cs.draw.surface.height/2 - 100,
+            width: cs.draw.surface.width,
+            height: 200,
+         })
+
+         cs.draw.setColor('#FFF')
+         cs.draw.setFont({ size: 32, family: 'monospace', effect: 'bold'})
+         cs.draw.setTextCenter()
+         cs.draw.text({
+            x: cs.draw.surface.width/2,
+            y: cs.draw.surface.height/2 - 30,
+            text: 'Winner: ' + cs.global.score[0].name
+         })
+
+         cs.draw.setColor('#FFF')
+         cs.draw.setFont({ size: 20, family: 'monospace', effect: 'bold'})
+         cs.draw.setTextCenter()
+         cs.draw.text({
+            x: cs.draw.surface.width/2,
+            y: cs.draw.surface.height/2 + 20,
+            text: 'Game Starting In: ' + Math.round(cs.global.timeNewGame / 60) + 's'
+         })
+      }
+
+      // score
+      for (var i = 0; i < cs.global.score.length; i++) {
+         var isSelf = cs.global.id == cs.global.score[i].id
+         cs.draw.setColor(isSelf ? '#FF0' : '#FFF')
+         cs.draw.setFont({ family: 'monospace', size: 16, effect: 'bold' })
+         cs.draw.text({
+            text: cs.global.score[i].name,
+            x: cs.draw.surface.width - 150,
+            y: this.margin + (i*20)
+         })
+
+         cs.draw.setColor(isSelf ? '#FF0' : '#FFF')
+         cs.draw.setFont({ family: 'monospace', size: 16, effect: 'bold' })
+         cs.draw.setTextAlign('right')
+         cs.draw.text({
+            text: cs.global.score[i].score,
+            x: cs.draw.surface.width - this.margin,
+            y: this.margin + (i*20)
+         })
+      }
    }
 }
