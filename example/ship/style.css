@@ -23,7 +23,6 @@
 .form-container .form label {
    color: #FFF;
    font-size: 2em;
-   font-weight: 600;
 }
 
 .form-container .form input {
@@ -45,6 +44,5 @@
    border: none;
    font-size: 1em;
    text-transform: uppercase;
-   margin-top: 0.75em;
-   font-weight: 600;
+   margin-top: 0.5em;
 }

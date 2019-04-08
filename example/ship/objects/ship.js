@@ -1,42 +1,55 @@
 cs.objects.ship = {
-   zIndex: 2,
+   zIndex: 10,
+   
    create: function(object) {
-      this.x = cs.default(this.x, cs.room.width / 2)
-      this.y = cs.default(this.y, cs.room.height / 2)
-
-      this.xFix = 0
-      this.yFix = 0
+      this.x = cs.room.width / 2
+      this.y = cs.room.height / 2
+      this.width = 16
+      this.height = 16
 
       this.xSpeed = 0
       this.ySpeed = 0
       this.turnSpeed = 0
       this.maxTurnSpeed = 15
       this.maxSpeed = 2
-      this.direction = cs.default(this.direction, 0)
+      this.direction = 0
 
-      this.keys = { left: false, right: false, forward: false, shoot: false }
+      this.timerFire = cs.timer.create({
+         duration: 30,
+         start: function() {
+            cs.object.create({
+               type: 'bullet',
+               attr: { x: object.x, y: object.y, direction: object.direction }
+            })
+         }
+      })
+
+      cs.camera.snap({ x: this.x, y: this.y })
    },
 
    step: function() {
-      if (this.id == cs.global.id) {
-         this.keys = cs.global.keys
-      }
-
       this.forward = false
 
-      if (this.keys.left || this.keys.right) {
-         if (this.keys.left) {
+      // right
+      var keys = {
+         left: cs.key.held(39),
+         right: cs.key.held(37),
+         forward: cs.key.held(38)
+      }
+
+      if (keys.left || keys.right) {
+         if (keys.left) {
             this.turnSpeed += 0.25
          }
 
-         if (this.keys.right) {
+         if (keys.right) {
             this.turnSpeed -= 0.25
          }
       } else {
          this.turnSpeed -= (this.turnSpeed/10)
       }
 
-      if (this.keys.forward) {
+      if (keys.forward) {
          this.forward = true
          this.xSpeed += cs.math.cos(this.direction) * 0.25
          this.ySpeed += cs.math.sin(this.direction) * 0.25
@@ -56,6 +69,12 @@ cs.objects.ship = {
       this.x += this.xSpeed
       this.y += this.ySpeed
 
+
+      //spacebar
+      if (cs.key.held(32)) {
+         cs.timer.start(this.timerFire)
+      }
+
       // prevent going off edges
       if(this.x < 0) this.x = 0
       if(this.x > cs.room.width) this.x = cs.room.width
@@ -63,27 +82,13 @@ cs.objects.ship = {
       if(this.y > cs.room.height) this.y = cs.room.height
 
       // camera follow
-      cs.global.id == this.id && cs.camera.follow({
+      cs.camera.follow({
          x: this.x,
          y: this.y
       })
-
-      if (this.xFix) {
-         this.x -= Math.sign(this.xFix) * 0.1
-         this.xFix -= Math.sign(this.xFix) * 0.1
-         if (Math.abs(this.xFix) < 0.2) this.xFix = 0
-      }
-
-      if (this.yFix) {
-         this.y -= Math.sign(this.yFix) * 0.1
-         this.yFix -= Math.sign(this.yFix) * 0.1
-         if (Math.abs(this.yFix) < 0.2) this.yFix = 0
-      }
    },
 
    draw: function() {
-      if (this.respawning) return
-
       var burstDistance = Math.max(7, Math.random() * 10)
       var burstX = this.x - cs.math.cos(this.direction) * burstDistance
       var burstY = this.y - cs.math.sin(this.direction) * burstDistance
@@ -105,24 +110,15 @@ cs.objects.ship = {
          center: true
       })
 
-
-      cs.draw.setTextCenter()
-      cs.draw.setColor('#FFF')
-      cs.draw.setFont({ size: 6, family: 'monospace' })
-      cs.draw.text({
-         text: this.name,
-         x: this.x,
-         y: this.y - 15
-      })
-
-
-      // cs.draw.setTextCenter()
-      // cs.draw.setColor('#FFF')
-      // cs.draw.setFont({ size: 6, family: 'monospace' })
-      // cs.draw.text({
-      //    text: 'xFix: ' + Math.round(this.xFix*100)/100 + ' yFix:' + Math.round(this.yFix*100)/100,
-      //    x: this.x,
-      //    y: this.y - 15,
-      // })
+      if (cs.global.name) {
+         cs.draw.setTextCenter()
+         cs.draw.setColor('#FFF')
+         cs.draw.setFont({ size: 6, family: 'monospace' })
+         cs.draw.text({
+            text: cs.global.name,
+            x: this.x,
+            y: this.y - 15
+         })
+      }
    }
 }
