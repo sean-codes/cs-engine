@@ -129,7 +129,7 @@ cs.object = {
    },
 
    search: function(call) {
-      return this.list.find(function(obj) {
+      return this.every().find(function(obj) {
          if (!obj.core.live) return false
          return call(obj)
       })
