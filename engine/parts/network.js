@@ -4,11 +4,13 @@
 cs.network = {
    ws: {},
    status: false,
+   buffer: [],
    overrides: {
       connect: function() {},
       disconnect: function() {},
       message: function() {}
    },
+
    connect: function(options) {
       console.log('cs.network.connect', options)
       try {
@@ -29,6 +31,7 @@ cs.network = {
          console.log(e);
       }
    },
+
    send: function(data) {
       if (!this.status) return
       if (typeof data !== 'string') {
@@ -36,17 +39,27 @@ cs.network = {
       }
       cs.network.ws.send(data)
    },
+
+   read: function() {
+      while(this.buffer.length) {
+         this.overrides.message(this.buffer.shift())
+      }
+   },
+
    onconnect: function() {
       cs.network.status = true
       this.overrides.connect()
    },
+
    ondisconnect: function() {
       cs.network.status = false
       this.overrides.disconnect()
    },
+
    onmessage: function(message) {
-      this.overrides.message(message)
+      this.buffer.push(message)
    },
+
    setup: function(options) {
       for (var optionName in options) {
          cs.network.overrides[optionName] = options[optionName]

@@ -15,6 +15,9 @@ cs.loop = {
       cs.key.execute()
       cs.draw.debugReset()
 
+      // network
+      cs.network.read()
+
       // move camera before clear
       cs.camera.update()
       cs.surface.clearAll()
