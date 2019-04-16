@@ -20,7 +20,7 @@ cs.sprite = {
       var height = options.fheight || options.html.height
       var newSprite = {
          html: options.html,
-         name: options.path.split('/').pop(),
+         name: options.name || options.path.split('/').pop(),
          texture: document.createElement('canvas'),
          frames: options.frames || 1,
          fwidth: width,
