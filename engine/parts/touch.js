@@ -6,17 +6,21 @@ cs.touch = {
       { id: -1, x: undefined, y: undefined, used: false } // mouse
    ],
    eventDown: function(e) {
-      cs.touch.touchUse(e.changedTouches[0].identifier)
-      cs.touch.eventMove(e)
+      for (var touch of e.changedTouches) {
+         cs.touch.touchUse(touch.identifier)
+         cs.touch.eventMove(e)
+      }
    },
    eventUp: function(e) {
-      var id = e.changedTouches[0].identifier;
-      cs.touch.touchUnuse(id);
+      for (var touch of e.changedTouches) {
+         var id = touch.identifier;
+         cs.touch.touchUnuse(id);
+      }
    },
    eventMove: function(e) {
       e.preventDefault();
       for (var touch of e.changedTouches) {
-         cs.touch.updatePos({
+         cs.touch.touchUpdate({
             id: touch.identifier,
             x: touch.clientX,
             y: touch.clientY
@@ -40,13 +44,13 @@ cs.touch = {
    },
    touchUnuse: function(id) {
       var touch = cs.touch.list.find(function(t) { return t.id == id })
-      if (!touch || !touch.used) return
+      if (!touch) return
 
       touch.used = false
       touch.held = false
       touch.up = true
    },
-   updatePos: function(eTouch) {
+   touchUpdate: function(eTouch) {
       var touch = cs.touch.list.find(function(t) { return t.id == eTouch.id })
       if (!touch) return
 
@@ -94,7 +98,7 @@ cs.touch = {
             for (var touch of cs.touch.list) {
                // this touch is being observed or not available to latch
                if (touch.used || !touch.down) continue
-               
+
                var touchX = touch.x
                var touchY = touch.y
                if (this.useGameCords) {
