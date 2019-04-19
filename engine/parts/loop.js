@@ -3,10 +3,16 @@ cs.loop = {
    endSteps: [],
    beforeSteps: [],
    speed: 1000 / 60,
+   last: Date.now(),
    id: 0,
 
    step: function(once) {
       this.id += 1
+
+      // delta fixing
+      var now = Date.now()
+      this.delta = (now - this.last) / this.speed
+      this.last = now
 
       setTimeout(function() { cs.loop.step() }, this.speed)
       if (!this.run && !once) return
