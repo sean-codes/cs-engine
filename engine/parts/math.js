@@ -56,5 +56,11 @@ cs.math = {
 
    cos: function(angleInDegrees) {
       return Math.cos((angleInDegrees-90) * Math.PI/180)
+   },
+
+   distance: function(p1, p2) {
+      var a2 = (p1.x - p2.x) * (p1.x - p2.x)
+      var b2 = (p1.y - p2.y) * (p1.y - p2.y)
+      return Math.sqrt(a2 - b2)
    }
 }

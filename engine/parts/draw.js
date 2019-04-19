@@ -208,6 +208,11 @@ cs.draw = {
       var width = cs.default(args.width, args.size)
       var height = cs.default(args.height, args.size)
 
+      if (args.center) {
+         x -= width / 2
+         y -= height / 2
+      }
+
       this.surface.ctx.fillRect(
          x * scale,
          y * scale,
@@ -226,6 +231,11 @@ cs.draw = {
       var y = args.y + lineWidthAdjust - this.cameraY
       var width = cs.default(args.width, args.size) - lineWidthAdjust * 2
       var height = cs.default(args.height, args.size) - lineWidthAdjust * 2
+
+      if (args.center) {
+         x -= width / 2
+         y -= height / 2
+      }
 
       this.surface.ctx.strokeRect(
          x * scale,
