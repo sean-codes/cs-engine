@@ -58,9 +58,24 @@ cs.math = {
       return Math.cos((angleInDegrees-90) * Math.PI/180)
    },
 
+   degrees: function(radians) {
+      return radians * (180/Math.PI)
+   },
+
    distance: function(p1, p2) {
       var a2 = (p1.x - p2.x) * (p1.x - p2.x)
       var b2 = (p1.y - p2.y) * (p1.y - p2.y)
       return Math.sqrt(a2 - b2)
+   },
+
+   direction: function(p1, p2) {
+      var xOff = p2.x - p1.x
+      var yOff = p2.y - p1.y
+      var beforeTurn = cs.math.degrees(Math.atan2(xOff, -yOff)) + 180
+      var afterTurn = beforeTurn + 180
+      if (afterTurn > 360) {
+         afterTurn -= 360
+      }
+      return afterTurn
    }
 }
