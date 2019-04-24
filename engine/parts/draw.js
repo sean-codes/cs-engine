@@ -160,6 +160,9 @@ cs.draw = {
       var x = options.x - this.cameraX
       var y = options.y - this.cameraY
       var scale = this.scale
+      
+      options.center && cs.draw.setTextCenter()
+      
 
       if (options.lines) {
          for (var line in options.lines) {
