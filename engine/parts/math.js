@@ -77,5 +77,9 @@ cs.math = {
          afterTurn -= 360
       }
       return afterTurn
+   },
+
+   stepsToSeconds: function(steps) {
+      return Math.round(steps / (60)) + 's'
    }
 }
