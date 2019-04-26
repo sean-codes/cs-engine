@@ -79,7 +79,8 @@ cs.math = {
       return afterTurn
    },
 
-   stepsToSeconds: function(steps) {
-      return Math.round(steps / (60)) + 's'
+   stepsToSeconds: function(steps, decimals) {
+      var decimals = cs.default(decimals, 1)
+      return Math.ceil(steps / (60) * decimals) / decimals
    }
 }
