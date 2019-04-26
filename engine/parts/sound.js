@@ -4,20 +4,27 @@
 cs.sound = {
    list: {},
    playList: [],
+   initiated: false,
    context: undefined,
    canPlayAudio: false,
    mute: false,
    active: true,
    volume: undefined,
-   enable: function() {
-      if (this.canPlayAudio === true || !this.context) return;
 
+   enable: function() {
+      if (!this.initiated) this.init()
+      if (this.initiated && !this.canPlayAudio) return
+      if (!this.context) return
+
+      cs.sound.toggleActive(true)
       var source = this.context.createBufferSource();
       source.buffer = this.context.createBuffer(1, 1, 22050);
       source.connect(this.context.destination);
       source.start(0);
    },
+
    init: function() {
+      this.initiated = true
       this.list = {};
       window.AudioContext = window.AudioContext || window.webkitAudioContext
       if (window.AudioContext) {
@@ -26,12 +33,14 @@ cs.sound = {
       }
       this.loadSounds()
    },
+
    loadSounds: function() {
       for (var sound of cs.sounds) {
          var name = sound.path.split('/').pop()
          this.list[name] = sound
       }
    },
+
    play: function(audioName, options) {
       var sound = this.list[audioName]
       if (this.canPlayAudio && sound) {
@@ -54,6 +63,7 @@ cs.sound = {
       }
       return undefined;
    },
+
    reset: function() {
       for (var sound in this.playList) {
          //TODO there is an error here take a look in a second I got to go wash my cloths~!!!
@@ -62,10 +72,12 @@ cs.sound = {
          this.playList[sound].disconnect();
       }
    },
+
    toggleMute: function(bool) {
       this.mute = bool;
       (bool) ? this.setGain(0): this.setGain(1);
    },
+
    setGain: function(gainValue) {
       console.log('GainValue: ' + gainValue);
       for (var audioObj in this.playList) {
@@ -73,8 +85,14 @@ cs.sound = {
          this.playList[audioObj].gainNode.gain.value = gainValue;
       }
    },
+
    toggleActive: function(bool) {
-      if (this.context)
-         (bool) ? this.context.resume() : this.context.suspend();
+      if (bool && !this.initiated) {
+         this.init()
+      }
+
+      if (this.context) {
+         this.context[bool ? 'resume' : 'suspend']()
+      }
    }
 }

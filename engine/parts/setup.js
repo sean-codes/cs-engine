@@ -29,14 +29,13 @@ cs.setup = function() {
 
    // Sound
    //cs.sound.active = cs.sound.init();
-   window.onfocus = function() {
+   window.onfocus = function(e) {
       cs.focus(true)
-      cs.sound.toggleActive(true)
    }
 
-   window.onblur = function() {
+   window.onblur = function(e) {
       cs.focus(false)
-      cs.sound.toggleActive(false)
+      cs.sound.toggleActive(false, e)
    }
 
    // watch for resizing
@@ -71,7 +70,6 @@ cs.setup = function() {
    // Sprites/Storage/Sound
    cs.sprite.init()
    cs.storage.init()
-   cs.sound.init()
 
    // room/camera
    cs.room.setup({
