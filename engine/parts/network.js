@@ -12,7 +12,7 @@ cs.network = {
    },
 
    connect: function(options) {
-      console.log('cs.network.connect', options)
+      // console.log('cs.network.connect', options)
       try {
          var host = options.host || window.location.host
          if (options.ssl == undefined || options.ssl == false) {
