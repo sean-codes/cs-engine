@@ -69,6 +69,11 @@ cs.math = {
    },
 
    direction: function(p1, p2) {
+      if (p2 == undefined) {
+         p2 = p1
+         p1 = { x: 0, y: 0 }
+      }
+
       var xOff = p2.x - p1.x
       var yOff = p2.y - p1.y
       var beforeTurn = cs.math.degrees(Math.atan2(xOff, -yOff)) + 180
@@ -77,6 +82,20 @@ cs.math = {
          afterTurn -= 360
       }
       return afterTurn
+   },
+
+   shortestDirection: function(d1, d2) {
+       var right = d2 - d1
+       if (right < 0) {
+           right = 360 + right
+       }
+
+       var left = d1 - d2
+       if (left < 0) {
+           left = 360 + left
+       }
+
+       return right > left ? -left : right
    },
 
    stepsToSeconds: function(steps, decimals) {
