@@ -1,27 +1,32 @@
 cs.setup = function() {
    // Listen for Errors
    window.onerror = function(errorMsg, url, lineNumber) { cs.loop.run = false }
-
    // Initiate Inputs
    cs.ctx = this.canvas.getContext('2d')
    cs.canvas.tabIndex = 1000
    cs.canvas.style.outline = 'none'
+   // cs.canvas.style.touchAction = 'none'
+   cs.canvas.addEventListener('click', function() {
+      cs.sound.enable.bind(cs.sound)
+      cs.canvas.focus()
+   })
+   
    cs.canvas.addEventListener('keydown', cs.key.eventDown)
    cs.canvas.addEventListener('keyup', cs.key.eventUp)
+   cs.canvas.addEventListener('mousedown', cs.mouse.eventDown)
    cs.canvas.addEventListener('mousemove', cs.mouse.eventMove)
-   cs.canvas.addEventListener('mousedown', function(e) {
-      cs.mouse.eventDown(e);
-      cs.sound.enable()
-   })
    cs.canvas.addEventListener('mouseup', cs.mouse.eventUp)
    cs.canvas.addEventListener('mouseout', cs.mouse.eventUp)
-   cs.canvas.addEventListener("touchstart", function(e) {
-      cs.touch.eventDown(e);
-      cs.sound.enable()
-   }, false)
-   cs.canvas.addEventListener("touchend", cs.touch.eventUp, false)
-   cs.canvas.addEventListener("touchcancel", cs.touch.eventUp, false)
-   cs.canvas.addEventListener("touchmove", cs.touch.eventMove, false)
+
+   if (cs.canvas.setPointerCapture) {
+      cs.canvas.addEventListener("pointerdown", cs.touch.eventPointerDown)
+      cs.canvas.addEventListener("pointermove", cs.touch.eventPointerMove)
+      cs.canvas.addEventListener("pointerup", cs.touch.eventPointerUp)
+   } else {
+      cs.canvas.addEventListener("touchstart", cs.touch.eventTouchDown)
+      cs.canvas.addEventListener("touchmove", cs.touch.eventTouchMove)
+      cs.canvas.addEventListener("touchend", cs.touch.eventTouchUp)
+   }
 
    // View, Game and GUI surfaces
    cs.surface.create({ name: 'gui', oneToOne: true, useCamera: false, depth: 0 })
@@ -61,7 +66,7 @@ cs.setup = function() {
 
       cs.canvas.width = cs.clampWidth
       cs.canvas.height = cs.clampHeight
-      
+
       cs.camera.resize()
       cs.surface.resize()
       cs.object.resize()
