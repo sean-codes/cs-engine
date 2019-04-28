@@ -43,8 +43,8 @@ cs.touch = {
 
    // modern pointers
    eventPointerDown: function(e) {
-      console.log('pointer down')
       e.preventDefault()
+
       cs.touch.eventsDownMove.push({
          type: 'down',
          id: e.pointerId,
@@ -56,7 +56,7 @@ cs.touch = {
    },
 
    eventPointerMove: function(e) {
-      e.preventDefault();
+      e.preventDefault()
 
       cs.touch.eventsDownMove.push({
          type: 'move',
