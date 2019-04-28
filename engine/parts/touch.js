@@ -25,11 +25,10 @@ cs.touch = {
 
    eventFunc: {
       down: function(vEvent) {
-         console.log('down', vEvent.id)
          cs.touch.touchUse(vEvent.id)
       },
 
-      move: function(vEvent) {        
+      move: function(vEvent) {
          cs.touch.touchUpdate({
             id: vEvent.id,
             x: vEvent.x,
@@ -42,7 +41,9 @@ cs.touch = {
       }
    },
 
-   eventDown: function(e) {
+   // modern pointers
+   eventPointerDown: function(e) {
+      console.log('pointer down')
       e.preventDefault()
       cs.touch.eventsDownMove.push({
          type: 'down',
@@ -51,10 +52,10 @@ cs.touch = {
          y: e.clientY
       })
 
-      cs.touch.eventMove(e)
+      cs.touch.eventPointerMove(e)
    },
 
-   eventMove: function(e) {
+   eventPointerMove: function(e) {
       e.preventDefault();
 
       cs.touch.eventsDownMove.push({
@@ -65,7 +66,7 @@ cs.touch = {
       })
    },
 
-   eventUp: function(e) {
+   eventPointerUp: function(e) {
       e.preventDefault()
       cs.touch.eventsUp.push({
          type: 'up',
@@ -73,6 +74,48 @@ cs.touch = {
          x: e.clientX,
          y: e.clientY
       })
+   },
+
+   // old touch
+   eventTouchDown: function(e) {
+      console.log('touch down')
+      e.preventDefault()
+      for (var touch of e.changedTouches) {
+         cs.touch.eventsDownMove.push({
+            type: 'down',
+            id: touch.identifier,
+            x: touch.clientX,
+            y: touch.clientY
+         })
+
+         cs.touch.eventTouchMove(e)
+      }
+   },
+
+   eventTouchMove: function(e) {
+      e.preventDefault();
+
+      for (var touch of e.changedTouches) {
+         cs.touch.eventsDownMove.push({
+            type: 'move',
+            id: touch.identifier,
+            x: touch.clientX,
+            y: touch.clientY
+         })
+      }
+   },
+
+   eventTouchUp: function(e) {
+      e.preventDefault()
+
+      for (var touch of e.changedTouches) {
+         cs.touch.eventsUp.push({
+            type: 'up',
+            id: touch.identifier,
+            x: touch.clientX,
+            y: touch.clientY
+         })
+      }
    },
 
    touchUse: function(id) {
@@ -96,11 +139,8 @@ cs.touch = {
    touchUnuse: function(id) {
       var touch = cs.touch.list.find(function(t) { return t.id == id })
       if (!touch) {
-         console.log('not found')
          return
       }
-
-      console.log('unusing', id)
 
       touch.used = false
       touch.held = false

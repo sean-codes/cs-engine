@@ -16,14 +16,18 @@ cs.setup = function() {
    })
    cs.canvas.addEventListener('mouseup', cs.mouse.eventUp)
    cs.canvas.addEventListener('mouseout', cs.mouse.eventUp)
-   cs.canvas.addEventListener("pointerdown", cs.touch.eventDown)
-   cs.canvas.addEventListener("pointermove", cs.touch.eventMove)
-   cs.canvas.addEventListener("pointerup", cs.touch.eventUp)
+   cs.canvas.addEventListener("pointerdown", cs.touch.eventPointerDown)
+   cs.canvas.addEventListener("pointermove", cs.touch.eventPointerMove)
+   cs.canvas.addEventListener("pointerup", cs.touch.eventPointerUp)
+
+   cs.canvas.addEventListener("touchstart", cs.touch.eventTouchDown)
+   cs.canvas.addEventListener("touchmove", cs.touch.eventTouchMove)
+   cs.canvas.addEventListener("touchend", cs.touch.eventTouchUp)
 
    // cs.canvas.addEventListener("pointerdown", cs.touch.eventDown)
    // cs.canvas.addEventListener("pointermove", cs.touch.eventMove)
    // cs.canvas.addEventListener("pointerup", cs.touch.eventUp)
-   
+
    // cs.canvas.addEventListener("pointercancel", cs.touch.eventUp, false)
 
    // View, Game and GUI surfaces
@@ -64,7 +68,7 @@ cs.setup = function() {
 
       cs.canvas.width = cs.clampWidth
       cs.canvas.height = cs.clampHeight
-      
+
       cs.camera.resize()
       cs.surface.resize()
       cs.object.resize()
