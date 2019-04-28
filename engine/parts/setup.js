@@ -6,14 +6,15 @@ cs.setup = function() {
    cs.canvas.tabIndex = 1000
    cs.canvas.style.outline = 'none'
    // cs.canvas.style.touchAction = 'none'
-   cs.canvas.addEventListener('click', cs.sound.enable.bind(cs.sound))
+   cs.canvas.addEventListener('click', function() {
+      cs.sound.enable.bind(cs.sound)
+      cs.canvas.focus()
+   })
+   
    cs.canvas.addEventListener('keydown', cs.key.eventDown)
    cs.canvas.addEventListener('keyup', cs.key.eventUp)
+   cs.canvas.addEventListener('mousedown', cs.mouse.eventDown)
    cs.canvas.addEventListener('mousemove', cs.mouse.eventMove)
-   cs.canvas.addEventListener('mousedown', function(e) {
-      cs.mouse.eventDown(e);
-      cs.sound.enable()
-   })
    cs.canvas.addEventListener('mouseup', cs.mouse.eventUp)
    cs.canvas.addEventListener('mouseout', cs.mouse.eventUp)
 
