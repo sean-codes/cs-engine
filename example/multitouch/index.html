@@ -8,7 +8,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
    <!-- example -->
-   <canvas class="cs-canvas" style="background:#222; outline:none" />
+   <canvas class="cs-canvas" style="background: #000; -ms-touch-action: none; touch-action: none" oncontextmenu="return false;"/>
    <script>
       cs.load({
          parts: '../../engine',
@@ -27,13 +27,13 @@
                   })
 
                   if (this.touch.isHeld()) {
-                     var pointerSize = 60
+                     var pointerSize = 100
                      cs.draw.setColor(this.color)
-                     cs.draw.fillRect({
-                        x: this.touch.x - pointerSize / 2,
-                        y: this.touch.y - pointerSize / 2,
-                        width: pointerSize,
-                        height: pointerSize
+                     cs.draw.circle({
+                        fill: true,
+                        x: this.touch.x,
+                        y: this.touch.y,
+                        radius: pointerSize
                      })
                   }
                }
@@ -43,12 +43,23 @@
                draw: function() {
                   var x = 25
                   var y = 25
+
                   for (var touch of cs.touch.list) {
+                     var text = [
+                        'x: ' + Math.round(touch.x),
+                        'y: ' + Math.round(touch.y),
+                        'id: ' + touch.id,
+                        'up: ' + touch.up,
+                        'down: ' + touch.down,
+                        'held: ' + touch.held,
+                        'used: ' + touch.used,
+                     ].join(' ')
+                     
                      cs.draw.setColor('#fff')
                      cs.draw.text({
                         x: x,
                         y: y,
-                        text: 'x: ' + Math.round(touch.x) + ' y: ' + Math.round(touch.y) + ' id: ' + touch.id + ' used: ' + touch.used
+                        text: text
                      })
 
                      y += 25
@@ -62,7 +73,7 @@
                type: 'display'
             })
 
-            var touchColors = ['#465', '#d55', '#888', '#646']
+            var touchColors = ['#465', '#d55', '#888', '#646', '#465', '#d55']
             for (var color of touchColors) {
                cs.object.create({
                   type: 'touch',

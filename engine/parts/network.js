@@ -32,6 +32,10 @@ cs.network = {
       }
    },
 
+   isConnected() {
+      return cs.network.ws.readyState !== cs.network.ws.CLOSED
+   },
+
    send: function(data) {
       if (!this.status) return
       if (typeof data !== 'string') {

@@ -1,11 +1,12 @@
 cs.setup = function() {
    // Listen for Errors
    window.onerror = function(errorMsg, url, lineNumber) { cs.loop.run = false }
-
    // Initiate Inputs
    cs.ctx = this.canvas.getContext('2d')
    cs.canvas.tabIndex = 1000
    cs.canvas.style.outline = 'none'
+   // cs.canvas.style.touchAction = 'none'
+   cs.canvas.addEventListener('click', cs.sound.enable.bind(cs.sound))
    cs.canvas.addEventListener('keydown', cs.key.eventDown)
    cs.canvas.addEventListener('keyup', cs.key.eventUp)
    cs.canvas.addEventListener('mousemove', cs.mouse.eventMove)
@@ -15,13 +16,15 @@ cs.setup = function() {
    })
    cs.canvas.addEventListener('mouseup', cs.mouse.eventUp)
    cs.canvas.addEventListener('mouseout', cs.mouse.eventUp)
-   cs.canvas.addEventListener("touchstart", function(e) {
-      cs.touch.eventDown(e);
-      cs.sound.enable()
-   }, false)
-   cs.canvas.addEventListener("touchend", cs.touch.eventUp, false)
-   cs.canvas.addEventListener("touchcancel", cs.touch.eventUp, false)
-   cs.canvas.addEventListener("touchmove", cs.touch.eventMove, false)
+   cs.canvas.addEventListener("pointerdown", cs.touch.eventDown)
+   cs.canvas.addEventListener("pointermove", cs.touch.eventMove)
+   cs.canvas.addEventListener("pointerup", cs.touch.eventUp)
+
+   // cs.canvas.addEventListener("pointerdown", cs.touch.eventDown)
+   // cs.canvas.addEventListener("pointermove", cs.touch.eventMove)
+   // cs.canvas.addEventListener("pointerup", cs.touch.eventUp)
+   
+   // cs.canvas.addEventListener("pointercancel", cs.touch.eventUp, false)
 
    // View, Game and GUI surfaces
    cs.surface.create({ name: 'gui', oneToOne: true, useCamera: false, depth: 0 })

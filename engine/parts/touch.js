@@ -5,36 +5,87 @@ cs.touch = {
    list: [
       { id: -1, x: undefined, y: undefined, used: false } // mouse
    ],
+
+   eventsDownMove: [],
+   eventsUp: [],
+
+   batchDownMove: function() {
+      while(this.eventsDownMove.length) {
+         var event = this.eventsDownMove.shift()
+         this.eventFunc[event.type](event)
+      }
+   },
+
+   batchUp: function() {
+      while(this.eventsUp.length) {
+         var event = this.eventsUp.shift()
+         this.eventFunc[event.type](event)
+      }
+   },
+
+   eventFunc: {
+      down: function(vEvent) {
+         console.log('down', vEvent.id)
+         cs.touch.touchUse(vEvent.id)
+      },
+
+      move: function(vEvent) {        
+         cs.touch.touchUpdate({
+            id: vEvent.id,
+            x: vEvent.x,
+            y: vEvent.y
+         })
+      },
+
+      up: function(vEvent) {
+         cs.touch.touchUnuse(vEvent.id)
+      }
+   },
+
    eventDown: function(e) {
-      for (var touch of e.changedTouches) {
-         cs.touch.touchUse(touch.identifier)
-         cs.touch.eventMove(e)
-      }
+      e.preventDefault()
+      cs.touch.eventsDownMove.push({
+         type: 'down',
+         id: e.pointerId,
+         x: e.clientX,
+         y: e.clientY
+      })
+
+      cs.touch.eventMove(e)
    },
-   eventUp: function(e) {
-      for (var touch of e.changedTouches) {
-         var id = touch.identifier;
-         cs.touch.touchUnuse(id);
-      }
-   },
+
    eventMove: function(e) {
       e.preventDefault();
-      for (var touch of e.changedTouches) {
-         cs.touch.touchUpdate({
-            id: touch.identifier,
-            x: touch.clientX,
-            y: touch.clientY
-         })
-      }
+
+      cs.touch.eventsDownMove.push({
+         type: 'move',
+         id: e.pointerId,
+         x: e.clientX,
+         y: e.clientY
+      })
    },
+
+   eventUp: function(e) {
+      e.preventDefault()
+      cs.touch.eventsUp.push({
+         type: 'up',
+         id: e.pointerId,
+         x: e.clientX,
+         y: e.clientY
+      })
+   },
+
    touchUse: function(id) {
       // reuse from list or add to end
-      for (var i = 0; i < cs.touch.list.length; i++)
-         if (cs.touch.list[i].used === false) break
+      for (var i = 0; i < cs.touch.list.length; i++) {
+         var touch = cs.touch.list[i]
+         if (!touch.used && !touch.new) break
+      }
 
       cs.touch.list[i] = {
          id: id,
          used: false,
+         new: true,
          down: true,
          held: true,
          up: false,
@@ -44,7 +95,12 @@ cs.touch = {
    },
    touchUnuse: function(id) {
       var touch = cs.touch.list.find(function(t) { return t.id == id })
-      if (!touch) return
+      if (!touch) {
+         console.log('not found')
+         return
+      }
+
+      console.log('unusing', id)
 
       touch.used = false
       touch.held = false
@@ -123,6 +179,7 @@ cs.touch = {
                   this.offsetY = touchY - area.y
 
                   this.observe()
+                  break
                }
             }
          },
@@ -151,6 +208,7 @@ cs.touch = {
       for (var touch of cs.touch.list) {
          touch.down = false
          touch.up = false
+         touch.new = false
       }
    },
    convertToGameCords(x, y) {

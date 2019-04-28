@@ -4,9 +4,11 @@ html, body {
    width: 100%;
    height: 100%;
    overflow: hidden;
+   user-select: none;
 }
 
 canvas.cs-canvas {
    width: 100%;
    height: 100%;
+   user-select: none;
 }

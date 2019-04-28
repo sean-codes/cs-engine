@@ -29,6 +29,9 @@ cs.loop = {
       cs.surface.clearAll()
       cs.object.addNewObjects()
 
+      // touch / mouse events
+      cs.touch.batchDownMove()
+
       // Execute before steps
       // disconnect to allow adding within a beforestep
       var temporaryBeforeSteps = []
@@ -68,6 +71,7 @@ cs.loop = {
       // Touch / Keyboard
       cs.key.reset()
       cs.touch.reset()
+      cs.touch.batchUp()
 
       // Resize Canvas
       cs.surface.displayAll()
