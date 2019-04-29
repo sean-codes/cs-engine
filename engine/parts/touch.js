@@ -170,6 +170,9 @@ cs.touch = {
                this.observe() :
                this.findTouchToObserve(area)
          },
+         uncheck: function() {
+            this.observing = false
+         },
          observe: function() {
             // im observing. lets update my values
             if (this.observing) {

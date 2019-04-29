@@ -3,6 +3,10 @@ cs.fullscreen = {
       return this.normalize('possible')
    },
 
+   is: function() {
+      return this.normalize('element') ? true : false
+   },
+
    toggle: function() {
       if (this.possible) {
          this.normalize('element')
