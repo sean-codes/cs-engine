@@ -20,6 +20,7 @@ cs.load = function(options) {
       { path: this.path + '/parts/camera' },
       { path: this.path + '/parts/draw' },
       { path: this.path + '/parts/fps' },
+      { path: this.path + '/parts/fullscreen' },
       { path: this.path + '/parts/keys' },
       { path: this.path + '/parts/loop' },
       { path: this.path + '/parts/math' },
