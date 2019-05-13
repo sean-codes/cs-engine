@@ -41,6 +41,7 @@ cs.setup = function() {
    window.onblur = function(e) {
       cs.focus(false)
       cs.sound.toggleActive(false, e)
+      cs.key.blur()
    }
 
    // watch for resizing

@@ -41,6 +41,15 @@ cs.key = {
          cs.key.upList[tmp] = false
       }
    },
+   blur: function() {
+      for (var keyId in cs.key.downList) {
+         cs.key.downList[keyId] = false
+         cs.key.heldList[keyId] = false
+         cs.key.upList[keyId] = false
+      }
+
+      cs.key.events = []
+   },
    eventDown: function(keyEvent) {
       keyEvent.preventDefault();
       if (!keyEvent.repeat) {
