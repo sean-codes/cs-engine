@@ -302,23 +302,24 @@ cs.draw = {
    shape: function(options) {
       var scale = this.scale
       var vertices = options.vertices
+      var relative = cs.default(options.relative, { x: 0, y: 0 })
 
       this.surface.ctx.beginPath()
       this.surface.ctx.moveTo(
-         (vertices[0].x - this.cameraX) * scale,
-         (vertices[0].y - this.cameraY) * scale
+         (relative.x + vertices[0].x - this.cameraX) * scale,
+         (relative.y + vertices[0].y - this.cameraY) * scale
       )
 
       for (var i = 1; i < vertices.length; i++) {
          this.surface.ctx.lineTo(
-            (vertices[i].x - this.cameraX) * scale,
-            (vertices[i].y - this.cameraY) * scale
+            (relative.x + vertices[i].x - this.cameraX) * scale,
+            (relative.y + vertices[i].y - this.cameraY) * scale
          )
       }
 
       this.surface.ctx.closePath(
-         (vertices[0].x - this.cameraX) * scale,
-         (vertices[0].y - this.cameraY) * scale
+         (relative.x + vertices[0].x - this.cameraX) * scale,
+         (relative.y + vertices[0].y - this.cameraY) * scale
       )
 
       !options.fill && this.surface.ctx.stroke()
