@@ -34,7 +34,7 @@ engine for building 2D games
     <!-- include core -->
     <script id="cs-engine" src='../../engine/core.js'></script>
   </head>
-  <body>
+  <body style="-ms-touch-action: none; touch-action: none">
     <!-- canvas -->
     <canvas></canvas>
 

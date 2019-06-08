@@ -37,6 +37,7 @@ cs.load = function(options) {
       //{ path: this.path + '/parts/input' },
       { path: this.path + '/parts/touch' },
       { path: this.path + '/parts/timer' },
+      { path: this.path + '/parts/vector' },
    ]
 
    // Globals / For user
@@ -174,5 +175,6 @@ cs.load = function(options) {
       this['load' + loadOrder[loadOrder.indexOf(type) + 1]]()
    }
 
+   // load them! :]
    this.load(options.assets)
 }

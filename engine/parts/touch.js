@@ -2,12 +2,11 @@
 //-------------------------------| Touch Input Functions |-------------------------------------//
 //---------------------------------------------------------------------------------------------//
 cs.touch = {
+   eventsDownMove: [],
+   eventsUp: [],
    list: [
       { id: -1, x: undefined, y: undefined, used: false } // mouse
    ],
-
-   eventsDownMove: [],
-   eventsUp: [],
 
    batchDownMove: function() {
       while(this.eventsDownMove.length) {
@@ -68,6 +67,7 @@ cs.touch = {
 
    eventPointerUp: function(e) {
       e.preventDefault()
+
       cs.touch.eventsUp.push({
          type: 'up',
          id: e.pointerId,
@@ -78,8 +78,8 @@ cs.touch = {
 
    // old touch
    eventTouchDown: function(e) {
-      console.log('touch down')
       e.preventDefault()
+
       for (var touch of e.changedTouches) {
          cs.touch.eventsDownMove.push({
             type: 'down',
@@ -93,7 +93,7 @@ cs.touch = {
    },
 
    eventTouchMove: function(e) {
-      e.preventDefault();
+      e.preventDefault()
 
       for (var touch of e.changedTouches) {
          cs.touch.eventsDownMove.push({
@@ -136,6 +136,7 @@ cs.touch = {
          y: undefined
       }
    },
+
    touchUnuse: function(id) {
       var touch = cs.touch.list.find(function(t) { return t.id == id })
       if (!touch) {
@@ -146,6 +147,7 @@ cs.touch = {
       touch.held = false
       touch.up = true
    },
+
    touchUpdate: function(eTouch) {
       var touch = cs.touch.list.find(function(t) { return t.id == eTouch.id })
       if (!touch) return
@@ -154,6 +156,7 @@ cs.touch = {
       touch.x = eTouch.x / cs.width * cs.clampWidth
       touch.y = eTouch.y / cs.height * cs.clampHeight
    },
+
    observer: function(useGameCords) {
       return {
          observing: false,
@@ -246,6 +249,7 @@ cs.touch = {
          }
       }
    },
+
    reset: function() {
       // up and down state only last one step
       for (var touch of cs.touch.list) {
@@ -254,7 +258,8 @@ cs.touch = {
          touch.new = false
       }
    },
-   convertToGameCords(x, y) {
+
+   convertToGameCords: function(x, y) {
       var rect = cs.canvas.getBoundingClientRect();
 
       var physicalViewWidth = rect.width
