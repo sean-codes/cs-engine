@@ -7,32 +7,48 @@ cs.vector = {
       return cs.vector.create(v.x, v.y)
    },
 
-   add: function(v1, v2) {
-      v1.x += v2.x
-      v1.y += v2.y
-
-      return v1
+   add: function(v0, v1) {
+      return cs.vector.create(
+         v0.x + v1.x,
+         v0.y + v1.y
+      )
    },
 
-   min: function(v1, v2) {
-      v1.x -= v2.x
-      v1.y -= v2.y
-
-      return v1
+   min: function(v0, v1) {
+      return cs.vector.create(
+         v0.x - v1.x,
+         v0.y - v1.y
+      )
    },
 
-   scale: function(v1, s) {
-      v1.x *= s
-      v1.y *= s
-
-      return v1
+   scale: function(v, s) {
+      return cs.vector.create(
+         v.x * s,
+         v.y * s
+      )
    },
 
-   length: function(v1) {
-      return Math.sqrt(v1.x * v1.x + v1.y * v1.y)
+   dot: function(v0, v1) {
+      return v0.x * v1.x + v0.y * v1.y
    },
 
-   normalize: function(v1) {
-      return cs.vector.scale(v1, 1/cs.vector.length(v1))
+   length: function(v) {
+      return Math.sqrt(v.x * v.x + v.y * v.y)
+   },
+
+   unit: function(v) {
+      return cs.vector.scale(v, 1/cs.vector.length(v))
+   },
+
+   distance: function(v0, v1) {
+      return cs.vector.length(cs.vector.min(v0, v1))
+   },
+
+   cross: function(v) {
+      return cs.vector.create(-v.y, v.x)
+   },
+
+   direction: function(v0, v1) {
+      return cs.vector.unit(cs.vector.min(v1, v0))
    }
 }
