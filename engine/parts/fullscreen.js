@@ -8,11 +8,19 @@ cs.fullscreen = {
    },
 
    toggle: function() {
-      if (this.possible) {
+      if (this.possible()) {
          this.normalize('element')
-            ? this.normalize('exit')
-            : this.normalize('request')
+            ? this.exit()
+            : this.enter()
       }
+   },
+
+   enter: function() {
+      this.possible() && this.normalize('request')
+   },
+
+   exit: function() {
+      this.possible() && this.normalize('exit')
    },
 
    normalize: function(func) {
@@ -34,7 +42,7 @@ cs.fullscreen = {
             if (func == 'element') return document[fullscreenElement]
             if (func == 'exit') return document[exitFullscreen]()
             if (func == 'request') return document.documentElement[requestFullscreen]()
-            if (func == 'enabled') return document[fullscreenEnabled] 
+            if (func == 'enabled') return document[fullscreenEnabled]
          }
       }
 
