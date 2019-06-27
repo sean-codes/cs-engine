@@ -191,10 +191,10 @@ cs.draw = {
       var lineWidthAdjust = lineWidth / 2 / this.scale
       var scale = this.scale
 
-      var x1 = options.x1 + lineWidthAdjust - this.cameraX
-      var x2 = options.x2 + lineWidthAdjust - this.cameraX
-      var y1 = options.y1 - lineWidthAdjust - this.cameraY
-      var y2 = options.y2 - lineWidthAdjust - this.cameraY
+      var x1 = options.points[0].x + lineWidthAdjust - this.cameraX
+      var x2 = options.points[1].x + lineWidthAdjust - this.cameraX
+      var y1 = options.points[0].y - lineWidthAdjust - this.cameraY
+      var y2 = options.points[1].y - lineWidthAdjust - this.cameraY
 
       this.surface.ctx.beginPath();
       this.surface.ctx.moveTo(x1 * scale, y1 * scale);
@@ -251,8 +251,8 @@ cs.draw = {
 
    circle: function(options) {
       var scale = this.scale
-      var x = options.x - this.cameraX
-      var y = options.y - this.cameraY
+      var x = (options.pos ? options.pos.x : options.x) - this.cameraX
+      var y = (options.pos ? options.pos.y : options.y) - this.cameraY
       var radius = options.radius
       var fill = cs.default(options.fill, false)
 

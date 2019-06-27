@@ -88,12 +88,11 @@
                   })
 
                   // drawing a line
-                  cs.draw.line({
-                     x1: 75,
-                     x2: 75,
-                     y1: 0,
-                     y2: 100
-                  })
+                  cs.draw.line({ points: [
+                     { x: 75, y: 0 },
+                     { x: 75, y: 100 },
+                  ] })
+
                   // xoff can be set on during the draw event. example wrapping a sprite around a line
                   cs.draw.sprite({
                      spr: 'spr_arrow',

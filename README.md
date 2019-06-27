@@ -274,7 +274,7 @@ cs.draw.strokeRect({ x:0, y:0, width:50, height: 50 })
 ###### Line
 ```js
 // example of a line starting in top left corner to (50, 50)
-cs.draw.line({ x1:0, y1:0, x2:50, y2: 50 })
+cs.draw.line({ points: [ {x:0, y:0}, {x:50, y:50} ] })
 
 /**
 * @arg {object} options - the options
