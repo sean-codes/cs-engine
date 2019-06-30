@@ -57,6 +57,9 @@ cs.touch = {
    eventPointerMove: function(e) {
       e.preventDefault()
 
+      cs.mouse.x = e.clientX
+      cs.mouse.y = e.clientY
+
       cs.touch.eventsDownMove.push({
          type: 'move',
          id: e.pointerId,

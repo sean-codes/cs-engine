@@ -10,22 +10,24 @@ cs.setup = function() {
       cs.sound.enable.bind(cs.sound)
       cs.canvas.focus()
    })
-   
+
    cs.canvas.addEventListener('keydown', cs.key.eventDown)
    cs.canvas.addEventListener('keyup', cs.key.eventUp)
-   cs.canvas.addEventListener('mousedown', cs.mouse.eventDown)
-   cs.canvas.addEventListener('mousemove', cs.mouse.eventMove)
-   cs.canvas.addEventListener('mouseup', cs.mouse.eventUp)
-   cs.canvas.addEventListener('mouseout', cs.mouse.eventUp)
 
    if (cs.canvas.setPointerCapture) {
       cs.canvas.addEventListener("pointerdown", cs.touch.eventPointerDown)
       cs.canvas.addEventListener("pointermove", cs.touch.eventPointerMove)
       cs.canvas.addEventListener("pointerup", cs.touch.eventPointerUp)
+      cs.canvas.addEventListener("pointerout", cs.touch.eventPointerUp)
    } else {
       cs.canvas.addEventListener("touchstart", cs.touch.eventTouchDown)
       cs.canvas.addEventListener("touchmove", cs.touch.eventTouchMove)
       cs.canvas.addEventListener("touchend", cs.touch.eventTouchUp)
+
+      cs.canvas.addEventListener('mousedown', cs.mouse.eventDown)
+      cs.canvas.addEventListener('mousemove', cs.mouse.eventMove)
+      cs.canvas.addEventListener('mouseup', cs.mouse.eventUp)
+      cs.canvas.addEventListener('mouseout', cs.mouse.eventUp)
    }
 
    // View, Game and GUI surfaces

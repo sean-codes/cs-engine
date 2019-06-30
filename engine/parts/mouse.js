@@ -28,7 +28,7 @@ cs.mouse = {
    eventMove: function(e) {
       cs.mouse.x = e.clientX
       cs.mouse.y = e.clientY
-
+      
       cs.touch.eventsDownMove.push({
          type: 'move',
          id: -1,
