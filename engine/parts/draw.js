@@ -14,6 +14,7 @@ cs.draw = {
          textBaseline: 'top',
          color: '#000',
          lineHeight: 10,
+         lineDash: [],
          operation: 'source-over'
       },
       current: {} // will clone on settingsDefault()
@@ -355,6 +356,10 @@ cs.draw = {
       this.surface.ctx.lineHeight = height
    },
 
+   setLineDash: function(lineDash) {
+      this.surface.ctx.setLineDash(lineDash)
+   },
+
    setTextAlign: function(alignment) {
       if(this.surface.ctx.textAlign === alignment) return
       this.surface.ctx.textAlign = alignment;
@@ -398,6 +403,7 @@ cs.draw = {
       cs.draw.setTextBaseline(this.config.current.textBaseline)
       cs.draw.setColor(this.config.current.color)
       cs.draw.setOperation(this.config.current.operation)
+      cs.draw.setLineDash(this.config.current.lineDash)
    },
 
    settingsDefault: function() {
