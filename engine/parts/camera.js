@@ -4,6 +4,8 @@
 cs.camera = {
    x: 0,
    y: 0,
+   centerX: 0,
+   centerY: 0,
    followPos: { x: 0, y: 0 },
    zoom: 1,
    targetZoom: 1,
@@ -105,6 +107,9 @@ cs.camera = {
       if (this.y + this.height > cs.room.height) {
          this.y = (cs.room.height - this.height) / (cs.room.height < this.height ? 2 : 1)
       }
+
+      this.centerX = this.x + this.width/2
+      this.centerY = this.y + this.height/2
    },
 
    zoomOut: function() {
