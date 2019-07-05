@@ -102,18 +102,28 @@ cs.load = function(options) {
    this.loadstorages = function() {
       if (!this.storages.length) return this.onload('storages', 0)
       var storage = this.storages[this.loading.storages.item]
-      var that = this
       storage.data = {}
-      storage.request = new XMLHttpRequest()
-      storage.request.onreadystatechange = function() {
-         if (this.readyState == 4) {
-            var data = JSON.parse(this.responseText)
-            storage.data = data
-            that.onload('storages', 1)
-         }
+
+      // attempt to use localstorage
+      if (!storage.path) {
+         storage.data = JSON.parse(window.localStorage.getItem(storage.location))
+         this.onload('storages', 1)
       }
-      storage.request.open("GET", './' + storage.path + '.json?v=' + Math.random(), true)
-      storage.request.send()
+
+      // fetch the storage .json
+      if (storage.path) {
+         var that = this
+         storage.request = new XMLHttpRequest()
+         storage.request.onreadystatechange = function() {
+            if (this.readyState == 4) {
+               var data = JSON.parse(this.responseText)
+               storage.data = data
+               that.onload('storages', 1)
+            }
+         }
+         storage.request.open("GET", './' + storage.path + '.json?v=' + Math.random(), true)
+         storage.request.send()
+      }
    }
 
    this.loadsounds = function(sound) {
