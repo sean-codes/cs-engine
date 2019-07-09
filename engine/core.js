@@ -7,6 +7,10 @@ cs.load = function(options) {
    this.clone = function(object) { return JSON.parse(JSON.stringify(object)) }
    this.default = function(want, ifnot) { return want != null ? want : ifnot }
 
+
+   // Code version
+   this.version = options.version || Math.random()
+
    // Core Path and Parts
    this.path = options.parts
    this.progress = options.progress || function() {}
@@ -85,7 +89,7 @@ cs.load = function(options) {
       var that = this
 
       script.html = document.createElement('script')
-      script.html.src = script.path + '.js?v=' + Math.random()
+      script.html.src = script.path + '.js?v=' + this.version
       script.html.onload = function() { that.onload('scripts', 1) }
       document.head.appendChild(script.html)
    }
@@ -95,7 +99,7 @@ cs.load = function(options) {
       var sprite = this.sprites[this.loading.sprites.item]
       var that = this
       sprite.html = document.createElement('img')
-      sprite.html.src = sprite.path + '.png?v=' + Math.random()
+      sprite.html.src = sprite.path + '.png?v=' + this.version
       sprite.html.onload = function() { that.onload('sprites', 1) }
    }
 
@@ -121,7 +125,7 @@ cs.load = function(options) {
                that.onload('storages', 1)
             }
          }
-         storage.request.open("GET", './' + storage.path + '.json?v=' + Math.random(), true)
+         storage.request.open("GET", './' + storage.path + '.json?v=' + this.version, true)
          storage.request.send()
       }
    }
@@ -129,16 +133,16 @@ cs.load = function(options) {
    this.loadsounds = function(sound) {
       if (!this.sounds.length) return this.onload('sounds', 0)
       var sound = this.sounds[this.loading.sounds.item]
-      var that = this
 
       sound.loaded = false
-      sound.src = sound.path + '.wav?v=' + Math.random()
+      sound.src = sound.path + '.wav?v=' + this.version
       sound.buffer = null
       sound.request = new XMLHttpRequest()
 
       sound.request.open('GET', sound.src, true);
       sound.request.responseType = 'arraybuffer';
 
+      var that = this
       sound.request.onload = function() {
          window.AudioContext = window.AudioContext || window.webkitAudioContext
          if (window.AudioContext) {
