@@ -25,6 +25,8 @@ cs.draw = {
       this.scale = 1
       this.cameraX = 0
       this.cameraY = 0
+      this.cameraWidth = this.surface.width
+      this.cameraHeight = this.surface.height
       this.zScaleHack = 0
 
       if (this.surface.useCamera && this.surface.oneToOne) {
@@ -33,6 +35,8 @@ cs.draw = {
          this.scale = camera.zScale
          this.cameraX = camera.x
          this.cameraY = camera.y
+         this.cameraWidth = camera.width
+         this.cameraHeight = camera.height
 
          // helps sync up scaled surfaces with unscaled
          if (this.surface.oneToOne && camera.scale > 1) {
@@ -47,9 +51,30 @@ cs.draw = {
       this.debug = {
          spritesSkipped: this.debug.spritesSkippedCount,
          spritesDrawn: this.debug.spritesDrawnCount,
+         rectanglesSkipped: this.debug.rectanglesSkippedCount,
+         rectanglesDrawn: this.debug.rectanglesDrawnCount,
+         shapesSkipped: this.debug.shapesSkippedCount,
+         shapesDrawn: this.debug.shapesDrawnCount,
+         circlesSkipped: this.debug.circlesSkippedCount,
+         circlesDrawn: this.debug.circlesDrawnCount,
          spritesSkippedCount: 0,
-         spritesDrawnCount: 0
+         spritesDrawnCount: 0,
+         rectanglesSkippedCount: 0,
+         rectanglesDrawnCount: 0,
+         shapesSkippedCount: 0,
+         shapesDrawnCount: 0,
+         circlesSkippedCount: 0,
+         circlesDrawnCount: 0,
       }
+   },
+
+   outside: function(o) {
+      return (
+         o.x + o.width < this.cameraX ||
+         o.x > this.cameraX + this.cameraWidth ||
+         o.y + o.height < this.cameraY ||
+         o.y > this.cameraY + this.cameraHeight
+      )
    },
 
    sprite: function(options) {
@@ -80,8 +105,6 @@ cs.draw = {
       // when flipping match the pixel
       if (info.scaleX < 0 && xOff) dx++
       if (info.scaleY < 0 && yOff) dy++
-
-
 
       var rotateOrSomething = (info.scaleX < 0 || info.scaleY < 0 || info.angle)
       if (rotateOrSomething) {
@@ -206,8 +229,8 @@ cs.draw = {
 
    fillRect: function(args) {
       var scale = this.scale
-      var x = args.x - this.cameraX
-      var y = args.y - this.cameraY
+      var x = args.x
+      var y = args.y
       var width = cs.default(args.width, args.size)
       var height = cs.default(args.height, args.size)
 
@@ -216,9 +239,17 @@ cs.draw = {
          y -= height / 2
       }
 
+      if (this.outside({ x: x, y: y, width: width, height: height })) {
+         this.debug.rectanglesSkippedCount += 1
+         this.settingsDefault()
+         return
+      } else {
+         this.debug.rectanglesDrawnCount += 1
+      }
+
       this.surface.ctx.fillRect(
-         x * scale,
-         y * scale,
+         (x - this.cameraX) * scale,
+         (y - this.cameraY) * scale,
          width * scale,
          height * scale,
       )
@@ -230,8 +261,8 @@ cs.draw = {
       var lineWidth = this.surface.ctx.lineWidth
       var lineWidthAdjust = lineWidth / 2 / scale
 
-      var x = args.x + lineWidthAdjust - this.cameraX
-      var y = args.y + lineWidthAdjust - this.cameraY
+      var x = args.x + lineWidthAdjust
+      var y = args.y + lineWidthAdjust
       var width = cs.default(args.width, args.size) - lineWidthAdjust * 2
       var height = cs.default(args.height, args.size) - lineWidthAdjust * 2
 
@@ -240,9 +271,17 @@ cs.draw = {
          y -= height / 2
       }
 
+      if (this.outside({ x: x, y: y, width: width, height: height })) {
+         this.debug.rectanglesSkippedCount += 1
+         this.settingsDefault()
+         return
+      } else {
+         this.debug.rectanglesDrawnCount += 1
+      }
+
       this.surface.ctx.strokeRect(
-         x * scale,
-         y * scale,
+         (x - this.cameraX) * scale,
+         (y - this.cameraY) * scale,
          width * scale,
          height * scale,
       )
@@ -252,15 +291,28 @@ cs.draw = {
 
    circle: function(options) {
       var scale = this.scale
-      var x = (options.pos ? options.pos.x : options.x) - this.cameraX
-      var y = (options.pos ? options.pos.y : options.y) - this.cameraY
+      var x = options.pos ? options.pos.x : options.x
+      var y = options.pos ? options.pos.y : options.y
       var radius = options.radius
-      var fill = cs.default(options.fill, false)
 
+      if (this.outside({
+         x: x - radius,
+         y: y - radius,
+         width: radius * 2,
+         height: radius * 2,
+      })) {
+         this.debug.circlesSkippedCount += 1
+         this.settingsDefault()
+         return
+      } else {
+         this.debug.circleDrawnCount += 1
+      }
+
+      var fill = cs.default(options.fill, false)
       this.surface.ctx.beginPath()
       this.surface.ctx.arc(
-         x * scale,
-         y * scale,
+         (x - this.cameraX) * scale,
+         (y - this.cameraY) * scale,
          radius * scale,
          0, Math.PI * 2, true
       )
@@ -304,6 +356,28 @@ cs.draw = {
       var scale = this.scale
       var vertices = options.vertices
       var relative = cs.default(options.relative, { x: 0, y: 0 })
+
+      var bounds = { xmin: 0, ymin: 0, xmax: 0, ymax: 0 }
+      for (var i = 0; i < vertices.length; i++) {
+         bounds.xmin = Math.min(relative.x + vertices[i].x, bounds.xmin)
+         bounds.ymin = Math.min(relative.y + vertices[i].y, bounds.ymin)
+         bounds.xmax = Math.max(relative.x + vertices[i].x, bounds.xmax)
+         bounds.ymax = Math.max(relative.y + vertices[i].y, bounds.ymax)
+      }
+
+      if (this.outside({
+         x: bounds.xmin,
+         y: bounds.ymin,
+         width: bounds.xmax - bounds.xmin,
+         height: bounds.ymax - bounds.ymin
+      })) {
+         this.debug.shapesSkippedCount += 1
+         this.settingsDefault()
+         return
+      } else {
+         this.debug.shapesDrawnCount += 1
+      }
+
 
       this.surface.ctx.beginPath()
       this.surface.ctx.moveTo(
