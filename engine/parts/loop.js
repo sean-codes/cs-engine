@@ -85,6 +85,11 @@ cs.loop = {
 
       // could clearup !live objects here
       cs.object.clean()
+
+      // network metrics
+      if (cs.network.status) {
+         cs.network.updateMetrics()
+      }
    },
 
    endStep: function(func) {

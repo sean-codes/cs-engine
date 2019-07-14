@@ -5,10 +5,42 @@ cs.network = {
    ws: {},
    status: false,
    buffer: [],
+
+   metrics: {
+      upNow: 0,
+      downNow: 0,
+      upAverage: 0,
+      downAverage: 0,
+      upTotal: 0,
+      downTotal: 0,
+      upWatch: 0,
+      downWatch: 0,
+      last: Date.now(),
+      count: 0
+   },
+
    overrides: {
       connect: function() {},
       disconnect: function() {},
       message: function() {}
+   },
+
+   updateMetrics: function() {
+      var metrics = cs.network.metrics
+      var now = Date.now()
+      if (now - metrics.last > 1000) {
+         metrics.count++
+         metrics.last = now
+         metrics.upNow = metrics.upWatch
+         metrics.downNow = metrics.downWatch
+         metrics.upTotal += metrics.upWatch
+         metrics.downTotal += metrics.downWatch
+         metrics.upAverage = metrics.upTotal / metrics.count
+         metrics.downAverage = metrics.downTotal / metrics.count
+
+         metrics.upWatch = 0
+         metrics.downWatch = 0
+      }
    },
 
    connect: function(options) {
@@ -41,12 +73,15 @@ cs.network = {
       if (typeof data !== 'string') {
          data = JSON.stringify(data)
       }
+      cs.network.metrics.upWatch += data.length
       cs.network.ws.send(data)
    },
 
    read: function() {
       while(this.buffer.length) {
-         this.overrides.message(this.buffer.shift())
+         var data = this.buffer.shift()
+         cs.network.metrics.downWatch += data.length
+         this.overrides.message(data)
       }
    },
 
