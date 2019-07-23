@@ -40,7 +40,6 @@ class CSENGINE_SETUP {
       // Sound
       //this.cs.sound.active = this.cs.sound.init();
 
-
       // watch for resizing
       this.cs.resize = () => {
          var maxSize = this.cs.maxSize

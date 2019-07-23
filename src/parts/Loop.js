@@ -26,7 +26,6 @@ class CSENGINE_LOOP {
       this.cs.draw.debugReset()
       this.cs.network.read()
 
-
       // move camera before clear
       this.cs.camera.update()
       this.cs.surface.clearAll()
