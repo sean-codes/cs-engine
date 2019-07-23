@@ -1,7 +1,12 @@
-cs.timer = {
-   list: [],
-   count: 0,
-   loop: function() {
+class CSENGINE_TIMER {
+   constructor(cs) {
+      this.cs = cs
+
+      this.list = []
+      this.count = 0
+   }
+
+   loop() {
       for (var timer of this.list) {
          if(timer.time) timer.time += 1
 
@@ -14,9 +19,9 @@ cs.timer = {
             timer.end && timer.end()
          }
       }
-   },
+   }
 
-   create: function(options) {
+   create(options) {
       var timer = options.timer
       if(!timer) {
          this.count += 1
@@ -34,28 +39,30 @@ cs.timer = {
 
       //this.list.push(timer)
       return timer
-   },
+   }
 
-   start: function(timer) {
+   start(timer) {
       if (timer.running) return
 
       this.watch(timer)
       timer.start && timer.start()
       timer.running = true
       timer.time = 1
-   },
+   }
 
-   watch: function(timer) {
+   watch(timer) {
       this.list.push(timer)
-   },
+   }
 
-   unWatch: function(timer) {
+   unWatch(timer) {
       this.list = this.list.filter(function(num) {
          return num.id !== timer.id
       })
-   },
+   }
 
-   isOn: function(timer) {
+   isOn(timer) {
       return timer.time > 0
    }
 }
+
+if (module) module.exports = CSENGINE_TIMER

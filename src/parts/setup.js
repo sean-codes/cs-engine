@@ -1,100 +1,112 @@
-cs.setup = function() {
-   // Listen for Errors
-   window.onerror = function(errorMsg, url, lineNumber) { cs.loop.run = false }
-   // Initiate Inputs
-   cs.ctx = this.canvas.getContext('2d')
-   cs.canvas.tabIndex = 1000
-   cs.canvas.style.outline = 'none'
-   // cs.canvas.style.touchAction = 'none'
-   cs.canvas.addEventListener('click', function() {
-      cs.sound.enable.bind(cs.sound)
-      cs.canvas.focus()
-   })
-
-   cs.canvas.addEventListener('keydown', cs.key.eventDown)
-   cs.canvas.addEventListener('keyup', cs.key.eventUp)
-
-   if (cs.canvas.setPointerCapture) {
-      cs.canvas.addEventListener("pointerdown", cs.touch.eventPointerDown)
-      cs.canvas.addEventListener("pointermove", cs.touch.eventPointerMove)
-      cs.canvas.addEventListener("pointerup", cs.touch.eventPointerUp)
-      cs.canvas.addEventListener("pointerout", cs.touch.eventPointerUp)
-   } else {
-      cs.canvas.addEventListener("touchstart", cs.touch.eventTouchDown)
-      cs.canvas.addEventListener("touchmove", cs.touch.eventTouchMove)
-      cs.canvas.addEventListener("touchend", cs.touch.eventTouchUp)
-
-      cs.canvas.addEventListener('mousedown', cs.mouse.eventDown)
-      cs.canvas.addEventListener('mousemove', cs.mouse.eventMove)
-      cs.canvas.addEventListener('mouseup', cs.mouse.eventUp)
-      cs.canvas.addEventListener('mouseout', cs.mouse.eventUp)
+class CSENGINE_SETUP {
+   constructor(cs) {
+      this.cs = cs
    }
 
-   // View, Game and GUI surfaces
-   cs.surface.create({ name: 'gui', oneToOne: true, useCamera: false, depth: 0 })
-   cs.surface.create({ name: 'game', oneToOne: true, useCamera: true,  depth: 10 })
+   run() {
+      // Initiate Inputs
+      this.cs.ctx = this.cs.canvas.getContext('2d')
+      this.cs.canvas.tabIndex = 1000
+      this.cs.canvas.style.outline = 'none'
+      // this.cs.canvas.style.touchAction = 'none'
+      this.cs.canvas.addEventListener('click', function() {
+         this.cs.sound.enable.bind(this.cs.sound)
+         this.cs.canvas.focus()
+      })
 
-   // Sound
-   //cs.sound.active = cs.sound.init();
-   window.onfocus = function(e) {
-      cs.focus(true)
-   }
+      this.cs.canvas.addEventListener('keydown', this.cs.inputKeyboard.eventDown)
+      this.cs.canvas.addEventListener('keyup', this.cs.inputKeyboard.eventUp)
 
-   window.onblur = function(e) {
-      cs.focus(false)
-      cs.sound.toggleActive(false, e)
-      cs.key.blur()
-   }
+      if (this.cs.canvas.setPointerCapture) {
+         this.cs.canvas.addEventListener("pointerdown", this.cs.inputTouch.eventPointerDown)
+         this.cs.canvas.addEventListener("pointermove", this.cs.inputTouch.eventPointerMove)
+         this.cs.canvas.addEventListener("pointerup", this.cs.inputTouch.eventPointerUp)
+         this.cs.canvas.addEventListener("pointerout", this.cs.inputTouch.eventPointerUp)
+      } else {
+         this.cs.canvas.addEventListener("touchstart", this.cs.inputTouch.eventTouchDown)
+         this.cs.canvas.addEventListener("touchmove", this.cs.inputTouch.eventTouchMove)
+         this.cs.canvas.addEventListener("touchend", this.cs.inputTouch.eventTouchUp)
 
-   // watch for resizing
-   cs.resize = function() {
-      var maxSize = cs.maxSize
-      cs.width = cs.canvas.clientWidth
-      cs.height = cs.canvas.clientHeight
-      cs.clampWidth = cs.width
-      cs.clampHeight = cs.height
-
-      if (cs.clampWidth > maxSize) {
-         cs.clampHeight = cs.clampHeight / cs.clampWidth * maxSize
-         cs.clampWidth = maxSize
+         this.cs.canvas.addEventListener('mousedown', this.cs.inputMouse.eventDown)
+         this.cs.canvas.addEventListener('mousemove', this.cs.inputMouse.eventMove)
+         this.cs.canvas.addEventListener('mouseup', this.cs.inputMouse.eventUp)
+         this.cs.canvas.addEventListener('mouseout', this.cs.inputMouse.eventUp)
       }
 
-      if (cs.clampHeight > maxSize) {
-         cs.clampWidth = cs.clampWidth / cs.clampHeight * maxSize
-         cs.clampHeight = maxSize
+      // View, Game and GUI surfaces
+      this.cs.surface.create({ name: 'gui', oneToOne: true, useCamera: false, depth: 0 })
+      this.cs.surface.create({ name: 'game', oneToOne: true, useCamera: true,  depth: 10 })
+
+      // Sound
+      //this.cs.sound.active = this.cs.sound.init();
+
+
+      // watch for resizing
+      this.cs.resize = () => {
+         var maxSize = this.cs.maxSize
+         this.cs.width = this.cs.canvas.clientWidth
+         this.cs.height = this.cs.canvas.clientHeight
+         this.cs.clampWidth = this.cs.width
+         this.cs.clampHeight = this.cs.height
+
+         if (this.cs.clampWidth > maxSize) {
+            this.cs.clampHeight = this.cs.clampHeight / this.cs.clampWidth * maxSize
+            this.cs.clampWidth = maxSize
+         }
+
+         if (this.cs.clampHeight > maxSize) {
+            this.cs.clampWidth = this.cs.clampWidth / this.cs.clampHeight * maxSize
+            this.cs.clampHeight = maxSize
+         }
+
+         this.cs.clampWidth = Math.ceil(this.cs.clampWidth)
+         this.cs.clampHeight = Math.ceil(this.cs.clampHeight)
+
+         this.cs.canvas.width = this.cs.clampWidth
+         this.cs.canvas.height = this.cs.clampHeight
+
+         this.cs.camera.resize()
+         this.cs.surface.resize()
+         this.cs.object.resize()
       }
 
-      cs.clampWidth = Math.ceil(cs.clampWidth)
-      cs.clampHeight = Math.ceil(cs.clampHeight)
+      // Sprites/Storage/Sound
+      this.cs.sprite.init()
+      this.cs.storage.init()
 
-      cs.canvas.width = cs.clampWidth
-      cs.canvas.height = cs.clampHeight
+      // room/camera
+      this.cs.room.setup({
+         width: this.cs.canvas.getBoundingClientRect().width,
+         height: this.cs.canvas.getBoundingClientRect().height
+      })
 
-      cs.camera.resize()
-      cs.surface.resize()
-      cs.object.resize()
+      this.cs.camera.setup({
+         width: this.cs.canvas.getBoundingClientRect().width,
+         height: this.cs.canvas.getBoundingClientRect().height
+      })
+
+      // window global functions
+      if (window) {
+         window.onerror = function(errorMsg, url, lineNumber) { this.cs.loop.stop() }
+
+         window.onfocus = function(e) {
+            this.cs.focus(true)
+         }
+
+         window.onblur = function(e) {
+            this.cs.focus(false)
+            this.cs.sound.toggleActive(false, e)
+            this.cs.key.blur()
+         }
+
+         window.onresize = this.cs.resize.bind(this)
+      }
+
+      // bootstrapping
+      this.cs.start({ cs: this.cs })
+      this.cs.resize()
+      this.cs.loop.start()
    }
-
-   // Sprites/Storage/Sound
-   cs.sprite.init()
-   cs.storage.init()
-
-   // room/camera
-   cs.room.setup({
-      width: cs.canvas.getBoundingClientRect().width,
-      height: cs.canvas.getBoundingClientRect().height
-   })
-
-   cs.camera.setup({
-      width: cs.canvas.getBoundingClientRect().width,
-      height: cs.canvas.getBoundingClientRect().height
-   })
-
-   // bootstrapping
-   cs.start()
-   window.onresize = cs.resize
-   cs.resize()
-
-   cs.loop.step()
-   cs.loop.run = true
 }
+
+if (module) module.exports = CSENGINE_SETUP

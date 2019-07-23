@@ -1,134 +1,139 @@
 //---------------------------------------------------------------------------------------------//
 //-------------------------------| Touch Input Functions |-------------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.touch = {
-   eventsDownMove: [],
-   eventsUp: [],
-   list: [
-      { id: -1, x: undefined, y: undefined, used: false } // mouse
-   ],
+class CSENGINE_INPUT_TOUCH {
+   constructor(cs) {
+      this.cs = cs
+      this.eventsDownMove = []
+      this.eventsUp = []
+      this.list = [
+         { id: -1, x: undefined, y: undefined, used: false } // mouse
+      ]
+   }
 
-   batchDownMove: function() {
+   batchDownMove() {
       while(this.eventsDownMove.length) {
          var event = this.eventsDownMove.shift()
          this.eventFunc[event.type](event)
       }
-   },
+   }
 
-   batchUp: function() {
+   batchUp() {
       while(this.eventsUp.length) {
          var event = this.eventsUp.shift()
-         this.eventFunc[event.type](event)
+         this[{
+            down: this.eventFuncDown,
+            up: this.eventFuncUp,
+            move:  this.eventFuncMove,
+         }[event.type]](event) // ok.... -.O
       }
-   },
+   }
 
-   eventFunc: {
-      down: function(vEvent) {
-         cs.touch.touchUse(vEvent.id)
-      },
+   eventFuncDown() {
+      this.touchUse(vEvent.id)
+   }
 
-      move: function(vEvent) {
-         cs.touch.touchUpdate({
-            id: vEvent.id,
-            x: vEvent.x,
-            y: vEvent.y
-         })
-      },
+   eventFuncUp() {
+      this.touchUnuse(vEvent.id)
+   }
 
-      up: function(vEvent) {
-         cs.touch.touchUnuse(vEvent.id)
-      }
-   },
+   eventFuncMove() {
+      this.touchUpdate({
+         id: vEvent.id,
+         x: vEvent.x,
+         y: vEvent.y
+      })
+   }
 
    // modern pointers
-   eventPointerDown: function(e) {
+   eventPointerDown(e) {
       e.preventDefault()
 
-      cs.touch.eventsDownMove.push({
+      this.eventsDownMove.push({
          type: 'down',
          id: e.pointerId,
          x: e.clientX,
          y: e.clientY
       })
 
-      cs.touch.eventPointerMove(e)
-   },
+      this.eventPointerMove(e)
+   }
 
-   eventPointerMove: function(e) {
+   eventPointerMove(e) {
       e.preventDefault()
 
-      cs.mouse.x = e.clientX
-      cs.mouse.y = e.clientY
+      this.cs.mouse.x = e.clientX
+      this.cs.mouse.y = e.clientY
 
-      cs.touch.eventsDownMove.push({
+      this.eventsDownMove.push({
          type: 'move',
          id: e.pointerId,
          x: e.clientX,
          y: e.clientY
       })
-   },
+   }
 
-   eventPointerUp: function(e) {
+   eventPointerUp(e) {
       e.preventDefault()
 
-      cs.touch.eventsUp.push({
+      this.eventsUp.push({
          type: 'up',
          id: e.pointerId,
          x: e.clientX,
          y: e.clientY
       })
-   },
+   }
 
    // old touch
-   eventTouchDown: function(e) {
+   eventTouchDown(e) {
       e.preventDefault()
 
       for (var touch of e.changedTouches) {
-         cs.touch.eventsDownMove.push({
+         this.eventsDownMove.push({
             type: 'down',
             id: touch.identifier,
             x: touch.clientX,
             y: touch.clientY
          })
 
-         cs.touch.eventTouchMove(e)
+         this.eventTouchMove(e)
       }
-   },
+   }
 
-   eventTouchMove: function(e) {
+   eventTouchMove(e) {
       e.preventDefault()
 
       for (var touch of e.changedTouches) {
-         cs.touch.eventsDownMove.push({
+         this.eventsDownMove.push({
             type: 'move',
             id: touch.identifier,
             x: touch.clientX,
             y: touch.clientY
          })
       }
-   },
+   }
 
-   eventTouchUp: function(e) {
+   eventTouchUp(e) {
       e.preventDefault()
 
       for (var touch of e.changedTouches) {
-         cs.touch.eventsUp.push({
+         this.eventsUp.push({
             type: 'up',
             id: touch.identifier,
             x: touch.clientX,
             y: touch.clientY
          })
       }
-   },
+   }
 
-   touchUse: function(id) {
+   touchUse(id) {
       // reuse from list or add to end
-      for (var i = 0; i < cs.touch.list.length; i++) {
-         var touch = cs.touch.list[i]
+      for (var i = 0; i < this.list.length; i++) {
+         var touch = this.list[i]
          if (!touch.used && !touch.new) break
       }
 
-      cs.touch.list[i] = {
+      this.list[i] = {
          id: id,
          used: false,
          new: true,
@@ -138,10 +143,10 @@ cs.touch = {
          x: undefined,
          y: undefined
       }
-   },
+   }
 
-   touchUnuse: function(id) {
-      var touch = cs.touch.list.find(function(t) { return t.id == id })
+   touchUnuse(id) {
+      var touch = this.list.find(function(t) { return t.id == id })
       if (!touch) {
          return
       }
@@ -149,18 +154,18 @@ cs.touch = {
       touch.used = false
       touch.held = false
       touch.up = true
-   },
+   }
 
-   touchUpdate: function(eTouch) {
-      var touch = cs.touch.list.find(function(t) { return t.id == eTouch.id })
+   touchUpdate(eTouch) {
+      var touch = this.list.find(function(t) { return t.id == eTouch.id })
       if (!touch) return
 
 
-      touch.x = eTouch.x / cs.width * cs.clampWidth
-      touch.y = eTouch.y / cs.height * cs.clampHeight
-   },
+      touch.x = eTouch.x / this.cs.width * this.cs.clampWidth
+      touch.y = eTouch.y / this.cs.height * this.cs.clampHeight
+   }
 
-   observer: function(useGameCords) {
+   observer(useGameCords) {
       return {
          observing: false,
          useGameCords: useGameCords,
@@ -185,7 +190,7 @@ cs.touch = {
                this.x = this.touch.x
                this.y = this.touch.y
                if (this.useGameCords) {
-                  var convertedToGameCords = cs.touch.convertToGameCords(this.x, this.y)
+                  var convertedToGameCords = this.convertToGameCords(this.x, this.y)
                   this.x = convertedToGameCords.x
                   this.y = convertedToGameCords.y
                }
@@ -200,14 +205,14 @@ cs.touch = {
          },
          findTouchToObserve(area) {
             // find a touch to observe
-            for (var touch of cs.touch.list) {
+            for (var touch of this.list) {
                // this touch is being observed or not available to latch
                if (touch.used || !touch.down) continue
 
                var touchX = touch.x
                var touchY = touch.y
                if (this.useGameCords) {
-                  var convertedToGameCords = cs.touch.convertToGameCords(touchX, touchY)
+                  var convertedToGameCords = this.convertToGameCords(touchX, touchY)
                   touchX = convertedToGameCords.x
                   touchY = convertedToGameCords.y
                }
@@ -242,8 +247,8 @@ cs.touch = {
             return this.touch && this.touch.held
          },
          isWithin: function(rect) {
-            var width = cs.default(rect.width, rect.size || 0)
-            var height = cs.default(rect.height, rect.size || 0)
+            var width = this.cs.default(rect.width, rect.size || 0)
+            var height = this.cs.default(rect.height, rect.size || 0)
 
             return (
                this.x > rect.x && this.x < rect.x + width &&
@@ -251,29 +256,31 @@ cs.touch = {
             )
          }
       }
-   },
+   }
 
-   reset: function() {
+   reset() {
       // up and down state only last one step
-      for (var touch of cs.touch.list) {
+      for (var touch of this.list) {
          touch.down = false
          touch.up = false
          touch.new = false
       }
-   },
+   }
 
-   convertToGameCords: function(x, y) {
-      var rect = cs.canvas.getBoundingClientRect();
+   convertToGameCords(x, y) {
+      var rect = this.cs.canvas.getBoundingClientRect();
 
       var physicalViewWidth = rect.width
       var physicalViewHeight = rect.height
       var hortPercent = (x - rect.left) / physicalViewWidth
       var vertPercent = (y - rect.top) / physicalViewHeight
 
-      var gamex = Math.round(hortPercent * (cs.camera.width / cs.camera.zoom))
-      var gamey = Math.round(vertPercent * (cs.camera.height / cs.camera.zoom))
-      gamex = (gamex) + cs.camera.x
-      gamey = (gamey) + cs.camera.y
+      var gamex = Math.round(hortPercent * (this.cs.camera.width / this.cs.camera.zoom))
+      var gamey = Math.round(vertPercent * (this.cs.camera.height / this.cs.camera.zoom))
+      gamex = (gamex) + this.cs.camera.x
+      gamey = (gamey) + this.cs.camera.y
       return { x: gamex, y: gamey }
    }
 }
+
+if (module) module.exports = CSENGINE_INPUT_TOUCH

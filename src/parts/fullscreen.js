@@ -1,29 +1,33 @@
-cs.fullscreen = {
-   possible: function() {
+class CSENGINE_FULLSCREEN {
+   constructor(cs) {
+      this.cs = cs
+   }
+
+   possible() {
       return this.normalize('possible')
-   },
+   }
 
-   is: function() {
+   is() {
       return this.normalize('element') ? true : false
-   },
+   }
 
-   toggle: function() {
+   toggle() {
       if (this.possible()) {
          this.normalize('element')
             ? this.exit()
             : this.enter()
       }
-   },
+   }
 
-   enter: function() {
+   enter() {
       this.possible() && this.normalize('request')
-   },
+   }
 
-   exit: function() {
+   exit() {
       this.possible() && this.normalize('exit')
-   },
+   }
 
-   normalize: function(func) {
+   normalize(func) {
       for (var prefix of [undefined, 'moz', 'webkit']) {
          var requestFullscreen = prefix + 'RequestFullscreen'
          var fullscreenElement = prefix + 'FullscreenElement'
@@ -49,3 +53,5 @@ cs.fullscreen = {
       return undefined
    }
 }
+
+if (module) module.exports = CSENGINE_FULLSCREEN

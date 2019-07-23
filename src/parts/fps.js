@@ -1,19 +1,25 @@
-//---------------------------------------------------------------------------------------------//
-//--------------------------------| Performance Monitoring |-----------------------------------//
-//---------------------------------------------------------------------------------------------//
-cs.fps = {
-   rate: 0,
-   frame: 0,
-   check: Date.now(),
-   update: function() {
+class CSENGINE_FPS {
+   constructor(cs) {
+      this.cs = cs
+
+      this.rate = 0
+      this.frame = 0
+      this.check = Date.now()
+   }
+
+   update() {
       this.checkReset() ? this.frame += 1 : this.reset()
-   },
-   checkReset: function() {
+   }
+
+   checkReset() {
       return Date.now() - this.check < 1000
-   },
-   reset: function() {
+   }
+
+   reset() {
       this.check = Date.now()
       this.rate = this.frame
       this.frame = 0
    }
 }
+
+if (module) module.exports = CSENGINE_FPS

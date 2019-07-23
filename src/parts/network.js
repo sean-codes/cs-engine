@@ -1,31 +1,35 @@
 //---------------------------------------------------------------------------------------------//
 //------------------------------------| Networking |-------------------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.network = {
-   ws: {},
-   status: false,
-   buffer: [],
+class CSENGINE_NETWORK {
+   constructor(cs) {
+      this.cs = cs
 
-   metrics: {
-      upNow: 0,
-      downNow: 0,
-      upAverage: 0,
-      downAverage: 0,
-      upTotal: 0,
-      downTotal: 0,
-      upWatch: 0,
-      downWatch: 0,
-      last: Date.now(),
-      count: 0
-   },
+      this.ws = {}
+      this.status = false
+      this.buffer = []
 
-   overrides: {
-      connect: function() {},
-      disconnect: function() {},
-      message: function() {}
-   },
+      this.metrics = {
+         upNow: 0,
+         downNow: 0,
+         upAverage: 0,
+         downAverage: 0,
+         upTotal: 0,
+         downTotal: 0,
+         upWatch: 0,
+         downWatch: 0,
+         last: Date.now(),
+         count: 0
+      }
 
-   updateMetrics: function() {
+      this.overrides = {
+         connect: function() {},
+         disconnect: function() {},
+         message: function() {},
+      }
+   }
+
+   updateMetrics() {
       var metrics = cs.network.metrics
       var now = Date.now()
       if (now - metrics.last > 1000) {
@@ -41,9 +45,9 @@ cs.network = {
          metrics.upWatch = 0
          metrics.downWatch = 0
       }
-   },
+   }
 
-   connect: function(options) {
+   connect(options) {
       // console.log('cs.network.connect', options)
       try {
          var host = options.host || window.location.host
@@ -62,46 +66,48 @@ cs.network = {
       } catch(e) {
          console.log(e);
       }
-   },
+   }
 
    isConnected() {
       return cs.network.ws.readyState !== cs.network.ws.CLOSED
-   },
+   }
 
-   send: function(data) {
+   send(data) {
       if (!this.status) return
       if (typeof data !== 'string') {
          data = JSON.stringify(data)
       }
       cs.network.metrics.upWatch += data.length
       cs.network.ws.send(data)
-   },
+   }
 
-   read: function() {
+   read() {
       while(this.buffer.length) {
          var data = this.buffer.shift()
          cs.network.metrics.downWatch += data.length
          this.overrides.message(data)
       }
-   },
+   }
 
-   onconnect: function() {
+   onconnect() {
       cs.network.status = true
       this.overrides.connect()
-   },
+   }
 
-   ondisconnect: function() {
+   ondisconnect() {
       cs.network.status = false
       this.overrides.disconnect()
-   },
+   }
 
-   onmessage: function(message) {
+   onmessage(message) {
       this.buffer.push(message)
-   },
+   }
 
-   setup: function(options) {
+   setup(options) {
       for (var optionName in options) {
          cs.network.overrides[optionName] = options[optionName]
       }
    }
 }
+
+if (module.exports) module.exports = CSENGINE_NETWORK

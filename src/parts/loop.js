@@ -1,12 +1,17 @@
-cs.loop = {
-   run: false,
-   endSteps: [],
-   beforeSteps: [],
-   speed: 1000 / 60,
-   last: Date.now(),
-   id: 0,
+class CSENGINE_LOOP {
+   constructor(cs) {
+      this.cs = cs
 
-   step: function(once) {
+      this.run = false
+      this.endSteps = []
+      this.beforeSteps = []
+      this.speed = 1000 / 60
+      this.last = Date.now()
+      this.id = 0
+      this.timeout = undefined
+   }
+
+   step(once) {
       this.id += 1
 
       // delta fixing
@@ -14,97 +19,103 @@ cs.loop = {
       this.delta = (now - this.last) / this.speed
       this.last = now
 
-      setTimeout(function() { cs.loop.step() }, this.speed)
       if (!this.run && !once) return
+      this.timeout = setTimeout(() => this.step(), this.speed)
 
-      cs.fps.update()
-      cs.key.execute()
-      cs.draw.debugReset()
+      this.cs.fps.update()
+      this.cs.draw.debugReset()
+      this.cs.network.read()
 
-      // network
-      cs.network.read()
 
       // move camera before clear
-      cs.camera.update()
-      cs.surface.clearAll()
-      cs.object.addNewObjects()
+      this.cs.camera.update()
+      this.cs.surface.clearAll()
+      this.cs.object.addNewObjects()
 
-      // touch / mouse events
-      cs.touch.batchDownMove()
+      // input
+      this.cs.inputKeyboard.execute()
+      this.cs.inputTouch.batchDownMove()
 
-      // Execute before steps
-      // disconnect to allow adding within a beforestep
-      var temporaryBeforeSteps = []
-      while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
-      while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
+      // // Execute before steps
+      // // disconnect to allow adding within a beforestep
+      // var temporaryBeforeSteps = []
+      // while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
+      // while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
 
-      cs.userStep && cs.userStep()
+      this.cs.userStep && this.cs.userStep()
 
-      cs.object.loop(function(object) {
-         if (!object.core.active || !object.core.live) return
-         var stepEvent = cs.objects[object.core.type].step
-         cs.draw.setSurface(object.core.surface)
-         stepEvent && stepEvent.call(object  , object);
-      })
+      // this.cs.object.loop(function(object) {
+      //    if (!object.core.active || !object.core.live) return
+      //    var stepEvent = cs.objects[object.core.type].step
+      //    cs.draw.setSurface(object.core.surface)
+      //    stepEvent && stepEvent.call(object  , object);
+      // })
+      //
+      this.cs.userDraw && this.cs.userDraw()
+      // console.log(this)
+      // this.cs.object.loop((object) => {
+         // console.log('wtf')
+         // if (!object.core.active || !object.core.live) return
+         // var objectType = this.cs.objects[object.core.type]
+         // var drawEvent = objectType.draw
+         // var drawOnceEvent = objectType.drawOnce
+         //
+         // this.cs.draw.setSurface(object.core.surface)
+         // if (drawOnceEvent) {
+         //    if (this.cs.surface.list[object.core.surface].clear || !object.core.drawn) {
+         //       object.core.drawn = true
+         //       drawOnceEvent.call(object, object)
+         //    }
+         // }
+         //
+         // drawEvent && drawEvent.call(object, object)
+      // })
+      //
+      // // timers
+      // this.cs.timer.loop()
+      //
+      // // Touch / Keyboard
+      // this.cs.key.reset()
+      // this.cs.touch.reset()
+      // this.cs.touch.batchUp()
+      //
+      // // Resize Canvas
+      // this.cs.surface.displayAll()
+      // if (this.cs.room.restarting === true)
+      //    this.cs.room.reset()
+      //
+      // // Execute next steps
+      // while (this.endSteps.length) {
+      //    this.endSteps.pop()()
+      // }
+      //
+      // // could clearup !live objects here
+      // this.cs.object.clean()
+      //
+      // // network metrics
+      // if (this.cs.network.status) {
+      //    this.cs.network.updateMetrics()
+      // }
+   }
 
-      cs.userDraw && cs.userDraw()
-      cs.object.loop(function(object) {
-         if (!object.core.active || !object.core.live) return
-         var objectType = cs.objects[object.core.type]
-         var drawEvent = objectType.draw
-         var drawOnceEvent = objectType.drawOnce
-
-         cs.draw.setSurface(object.core.surface)
-         if (drawOnceEvent) {
-            if (cs.surface.list[object.core.surface].clear || !object.core.drawn) {
-               object.core.drawn = true
-               drawOnceEvent.call(object, object)
-            }
-         }
-
-         drawEvent && drawEvent.call(object, object)
-      })
-
-      // timers
-      cs.timer.loop()
-
-      // Touch / Keyboard
-      cs.key.reset()
-      cs.touch.reset()
-      cs.touch.batchUp()
-
-      // Resize Canvas
-      cs.surface.displayAll()
-      if (cs.room.restarting === true)
-         cs.room.reset()
-
-      // Execute next steps
-      while (this.endSteps.length) {
-         this.endSteps.pop()()
-      }
-
-      // could clearup !live objects here
-      cs.object.clean()
-
-      // network metrics
-      if (cs.network.status) {
-         cs.network.updateMetrics()
-      }
-   },
-
-   endStep: function(func) {
-      this.endSteps.push(func)
-   },
-
-   beforeStep: function(func) {
+   beforeStep(func) {
       this.beforeSteps.push(func)
-   },
+   }
 
-   stop: function() {
-      this.run = false
-   },
+   endStep(func) {
+      this.endSteps.push(func)
+   }
 
-   start: function() {
+   start() {
       this.run = true
+      this.step()
+   }
+
+   stop() {
+      this.run = false
+      clearTimeout(this.timeout)
    }
 }
+
+// export node
+if (module) module.exports = CSENGINE_LOOP

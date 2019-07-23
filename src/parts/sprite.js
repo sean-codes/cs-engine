@@ -1,20 +1,21 @@
 //---------------------------------------------------------------------------------------------//
 //-----------------------------------| Sprite Functions |--------------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.sprite = {
-   list: {},
+class CSENGINE_SPRITE {
+   constructor(cs) {
+      this.cs = cs
 
-   init: function(sprites) {
-      for (var sprite of cs.sprites) {
+      this.loaded = []
+      this.list = {}
+   }
+
+   init(sprites) {
+      for (var sprite of this.loaded) {
          this.initSprite(sprite)
       }
-   },
+   }
 
-   exists: function(name) {
-      return this.list[name] ? true : false
-   },
-
-   initSprite: function(options) {
+   initSprite(options) {
       // create Sprite
       var width = options.fwidth || options.html.width
       var height = options.fheight || options.html.height
@@ -56,11 +57,11 @@ cs.sprite = {
          }
       }
 
-      cs.sprite.list[newSprite.name] = newSprite
-   },
+      this.cs.sprite.list[newSprite.name] = newSprite
+   }
 
-   texture: function(spriteName, width, height) {
-      var sprite = cs.sprite.list[spriteName]
+   texture(spriteName, width, height) {
+      var sprite = this.cs.sprite.list[spriteName]
       sprite.texture = document.createElement('canvas')
       sprite.texture.ctx = sprite.texture.getContext('2d')
       sprite.texture.width = width
@@ -77,19 +78,19 @@ cs.sprite = {
          }
          x += sprite.html.width
       }
-   },
+   }
 
-   info: function(options) {
+   info(options) {
       // we need something to return info on sprites based on scale etc
       var sprite = this.list[options.spr]
-      var frame = cs.default(options.frame, 0)
-      var scaleX = cs.default(options.scaleX, 1)
-      var scaleY = cs.default(options.scaleY, 1)
-      var width = cs.default(options.width, sprite.fwidth)
-      var height = cs.default(options.height, sprite.fheight)
-      var angle = cs.default(options.angle, 0)
-      var xoff = cs.default(options.xoff, sprite.xoff)
-      var yoff = cs.default(options.yoff, sprite.yoff)
+      var frame = this.cs.default(options.frame, 0)
+      var scaleX = this.cs.default(options.scaleX, 1)
+      var scaleY = this.cs.default(options.scaleY, 1)
+      var width = this.cs.default(options.width, sprite.fwidth)
+      var height = this.cs.default(options.height, sprite.fheight)
+      var angle = this.cs.default(options.angle, 0)
+      var xoff = this.cs.default(options.xoff, sprite.xoff)
+      var yoff = this.cs.default(options.yoff, sprite.yoff)
 
       if (options.size) {
          var tall = height > width
@@ -125,4 +126,10 @@ cs.sprite = {
          }
       }
    }
+
+   exists(name) {
+      return this.list[name] ? true : false
+   }
 }
+
+if (module) module.exports = CSENGINE_SPRITE

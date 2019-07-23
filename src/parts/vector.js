@@ -1,54 +1,56 @@
-cs.vector = {
-   create: function(x, y) {
+class CSENGINE_VECTOR {
+   create(x, y) {
       return { x: x, y: y }
-   },
+   }
 
-   clone: function(v) {
+   clone(v) {
       return cs.vector.create(v.x, v.y)
-   },
+   }
 
-   add: function(v0, v1) {
+   add(v0, v1) {
       return cs.vector.create(
          v0.x + v1.x,
          v0.y + v1.y
       )
-   },
+   }
 
-   min: function(v0, v1) {
+   min(v0, v1) {
       return cs.vector.create(
          v0.x - v1.x,
          v0.y - v1.y
       )
-   },
+   }
 
-   scale: function(v, s) {
+   scale(v, s) {
       return cs.vector.create(
          v.x * s,
          v.y * s
       )
-   },
+   }
 
-   dot: function(v0, v1) {
+   dot(v0, v1) {
       return v0.x * v1.x + v0.y * v1.y
-   },
+   }
 
-   length: function(v) {
+   length(v) {
       return Math.sqrt(v.x * v.x + v.y * v.y)
-   },
+   }
 
-   unit: function(v) {
+   unit(v) {
       return cs.vector.scale(v, 1/cs.vector.length(v))
-   },
+   }
 
-   distance: function(v0, v1) {
+   distance(v0, v1) {
       return cs.vector.length(cs.vector.min(v0, v1))
-   },
+   }
 
-   cross: function(v) {
+   cross(v) {
       return cs.vector.create(-v.y, v.x)
-   },
+   }
 
-   direction: function(v0, v1) {
+   direction(v0, v1) {
       return cs.vector.unit(cs.vector.min(v1, v0))
    }
 }
+
+if (module) module.exports = CSENGINE_VECTOR

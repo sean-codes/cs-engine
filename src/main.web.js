@@ -38,7 +38,6 @@ cs.load = function(options) {
       { path: this.path + '/parts/storage' },
       { path: this.path + '/parts/surface' },
       //{ path: this.path + '/parts/text' },
-      //{ path: this.path + '/parts/input' },
       { path: this.path + '/parts/touch' },
       { path: this.path + '/parts/timer' },
       { path: this.path + '/parts/vector' },

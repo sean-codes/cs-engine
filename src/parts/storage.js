@@ -1,26 +1,31 @@
 //----------------------------------------------------------------------------//
 //----------------------------------| Storage Functions |---------------------//
 //----------------------------------------------------------------------------//
-cs.storage = {
-   data: {},
+class CSENGINE_STORAGE {
+   constructor(cs) {
+      this.cs = cs
 
-   init: function() {
-      for (var storage of cs.storages) {
+      this.loaded = []
+      this.data = {}
+   }
+
+   init() {
+      for (var storage of this.loaded) {
          this.write(storage)
       }
-   },
+   }
 
-   read: function(location) {
+   read(location) {
       return JSON.parse(this.data[location])
-   },
+   }
 
-   write: function(options) {
+   write(options) {
       this.data[options.location] = JSON.stringify(options.data)
       if (options.save) this.save(options.location)
-   },
+   }
 
    // reminds me of bash ls command
-   ls: function(location) {
+   ls(location) {
       var startsWith = cs.default(location, '')
       var list = []
       for (var storageName of Object.keys(this.data)) {
@@ -29,14 +34,16 @@ cs.storage = {
          }
       }
       return list
-   },
+   }
 
-   save: function(location) {
+   save(location) {
       // local storage
       window.localStorage.setItem(location, this.data[location])
-   },
+   }
 
-   reset: function() {
+   reset() {
 
    }
 }
+
+if (module) module.exports = CSENGINE_STORAGE

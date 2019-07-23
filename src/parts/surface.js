@@ -12,26 +12,29 @@
       - MAP
          - matches room size
 */
+class CSENGINE_SURFACE {
+   constructor(cs) {
+      this.cs = cs
 
-cs.surface = {
-   list: [],
-   order: [],
-   imageSmoothing: false,
+      this.list = []
+      this.order = []
+      this.imageSmoothing = false
+   }
 
-   create: function(config) {
+   create(config) {
       var num = this.list.length
       var canvas = document.createElement("canvas")
 
-      var oneToOne = cs.default(config.oneToOne, true)
-      var useCamera = cs.default(config.useCamera, true)
-      var drawOutside = cs.default(config.drawOutside, false)
-      var manualClear = cs.default(config.manualClear, false)
+      var oneToOne = this.cs.default(config.oneToOne, true)
+      var useCamera = this.cs.default(config.useCamera, true)
+      var drawOutside = this.cs.default(config.drawOutside, false)
+      var manualClear = this.cs.default(config.manualClear, false)
 
       this.list[config.name] = {
          name: config.name,
          canvas: canvas,
          ctx: canvas.getContext('2d'),
-         depth: cs.default(config.depth, 0),
+         depth: this.cs.default(config.depth, 0),
          width: 0,
          height: 0,
          scale: 1,
@@ -49,9 +52,9 @@ cs.surface = {
 
       // Return the element
       return this.list[config.name]
-   },
+   }
 
-   addToOrder: function(surface) {
+   addToOrder(surface) {
       // Find Place to put it!
       for (var i = 0; i < this.order.length; i++) {
          if (this.order[i].depth > surface.depth) {
@@ -60,10 +63,10 @@ cs.surface = {
       }
 
       this.order.splice(i, 0, surface)
-   },
+   }
 
-   clearAll: function() {
-      cs.ctx.clearRect(0, 0, cs.canvas.width, cs.canvas.height)
+   clearAll() {
+      this.cs.ctx.clearRect(0, 0, this.cs.canvas.width, this.cs.canvas.height)
       for (var surface of this.order) {
          if (!surface.manualClear || surface.clearRequest) {
             var clearRect = { x: 0, y: 0, width: surface.canvas.width, height: surface.canvas.height }
@@ -79,9 +82,9 @@ cs.surface = {
 
          surface.clear = false
       }
-   },
+   }
 
-   clear: function(options) {
+   clear(options) {
       var surface = this.list[options.name]
       surface.clearRequest = {
          x: options.x || 0,
@@ -89,22 +92,22 @@ cs.surface = {
          width: options.width || surface.canvas.width,
          height: options.height || surface.canvas.height
       }
-   },
+   }
 
-   displayAll: function() {
+   displayAll() {
       var i = this.order.length;
       while (i--) {
          this.display(this.order[i].name)
       }
-   },
+   }
 
-   display: function(surfaceName) {
+   display(surfaceName) {
       var surface = this.list[surfaceName]
       // destination
       var dx = 0
       var dy = 0
-      var dWidth = cs.canvas.width
-      var dHeight = cs.canvas.height
+      var dWidth = this.cs.canvas.width
+      var dHeight = this.cs.canvas.height
 
       // source
       var sx = dx
@@ -113,7 +116,7 @@ cs.surface = {
       var sHeight = dHeight
 
       if (!surface.oneToOne) {
-         var cameraRect = cs.camera.info()
+         var cameraRect = this.cs.camera.info()
          sx = cameraRect.x
          sy = cameraRect.y
          sWidth = cameraRect.width
@@ -135,54 +138,54 @@ cs.surface = {
          }
       }
 
-      cs.ctx.drawImage(surface.canvas,
+      this.cs.ctx.drawImage(surface.canvas,
          sx, sy, sWidth, sHeight,
          (dx), (dy), (dWidth), (dHeight)
       )
-   },
+   }
 
-   resize: function() {
-      var width = cs.clampWidth
-      var height = cs.clampHeight
+   resize() {
+      var width = this.cs.clampWidth
+      var height = this.cs.clampHeight
 
       // set main canvas
-      this.ctxImageSmoothing(cs.ctx)
+      this.ctxImageSmoothing(this.cs.ctx)
 
       // loop over the surfaces to match
       // a surface can be raw (screen coordinates) or not (the size of the room)
       for (var surface of this.order) {
-         if (cs.loop.run) {
+         if (this.cs.loop.run) {
             var save = surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
          }
 
-         surface.canvas.width = surface.oneToOne ? width : cs.room.width
-         surface.canvas.height = surface.oneToOne ? height : cs.room.height
+         surface.canvas.width = surface.oneToOne ? width : this.cs.room.width
+         surface.canvas.height = surface.oneToOne ? height : this.cs.room.height
          surface.width = surface.canvas.width
          surface.height = surface.canvas.height
          this.clear({ name: surface.name })
          this.ctxImageSmoothing(surface.ctx)
 
-         if (cs.loop.run) surface.ctx.putImageData(save, 0, 0)
+         if (this.cs.loop.run) surface.ctx.putImageData(save, 0, 0)
       }
-   },
+   }
 
-   ctxImageSmoothing: function(ctx) {
+   ctxImageSmoothing(ctx) {
       ctx.webkitImageSmoothingEnabled = this.imageSmoothing
       ctx.mozImageSmoothingEnabled = this.imageSmoothing
       ctx.msImageSmoothingEnabled = this.imageSmoothing
       ctx.imageSmoothingEnabled = this.imageSmoothing
-   },
+   }
 
-   info: function(surfaceName) {
+   info(surfaceName) {
       return {
          canvas: this.list[surfaceName].canvas,
          width: this.list[surfaceName].width,
          height: this.list[surfaceName].height
       }
-   },
+   }
 
-   debug: function(surfaceName) {
-      var canvas = cs.surface.list[surfaceName].canvas
+   debug(surfaceName) {
+      var canvas = this.cs.surface.list[surfaceName].canvas
       canvas.style.position = 'fixed'
       canvas.style.top = '50%'
       canvas.style.left = '50%'
@@ -193,3 +196,5 @@ cs.surface = {
       document.body.appendChild(canvas)
    }
 }
+
+if (module) module.exports = CSENGINE_SURFACE

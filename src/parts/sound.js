@@ -1,17 +1,21 @@
 //---------------------------------------------------------------------------------------------//
 //-----------------------------------| Sound Functions |---------------------------------------//
 //---------------------------------------------------------------------------------------------//
-cs.sound = {
-   list: {},
-   playList: [],
-   initiated: false,
-   context: undefined,
-   canPlayAudio: false,
-   mute: false,
-   active: true,
-   volume: undefined,
+class CSENGINE_SOUND {
+   constructor(cs) {
+      this.cs = cs
 
-   enable: function() {
+      this.list = {}
+      this.playList = []
+      this.initiated = false
+      this.context = undefined
+      this.canPlayAudio = false
+      this.mute = false
+      this.active = true
+      this.volume = undefined
+   }
+
+   enable() {
       if (!this.initiated) this.init()
       if (this.initiated && !this.canPlayAudio) return
       if (!this.context) return
@@ -21,9 +25,9 @@ cs.sound = {
       source.buffer = this.context.createBuffer(1, 1, 22050);
       source.connect(this.context.destination);
       source.start(0);
-   },
+   }
 
-   init: function() {
+   init() {
       this.initiated = true
       this.list = {};
       window.AudioContext = window.AudioContext || window.webkitAudioContext
@@ -32,16 +36,16 @@ cs.sound = {
          this.canPlayAudio = true
       }
       this.loadSounds()
-   },
+   }
 
-   loadSounds: function() {
+   loadSounds() {
       for (var sound of cs.sounds) {
          var name = sound.path.split('/').pop()
          this.list[name] = sound
       }
-   },
+   }
 
-   play: function(audioName, options) {
+   play(audioName, options) {
       var sound = this.list[audioName]
       if (this.canPlayAudio && sound) {
          this.playList.forEach(function(audioObj) {
@@ -62,31 +66,31 @@ cs.sound = {
          return csAudioObj;
       }
       return undefined;
-   },
+   }
 
-   reset: function() {
+   reset() {
       for (var sound in this.playList) {
          //TODO there is an error here take a look in a second I got to go wash my cloths~!!!
          if (!this.playList) return;
          this.playList[sound].stop();
          this.playList[sound].disconnect();
       }
-   },
+   }
 
-   toggleMute: function(bool) {
+   toggleMute(bool) {
       this.mute = bool;
       (bool) ? this.setGain(0): this.setGain(1);
-   },
+   }
 
-   setGain: function(gainValue) {
+   setGain(gainValue) {
       console.log('GainValue: ' + gainValue);
       for (var audioObj in this.playList) {
          console.log('Muting...', audioObj);
          this.playList[audioObj].gainNode.gain.value = gainValue;
       }
-   },
+   }
 
-   toggleActive: function(bool) {
+   toggleActive(bool) {
       if (bool && !this.initiated) {
          this.init()
       }
@@ -96,3 +100,5 @@ cs.sound = {
       }
    }
 }
+
+if (module) module.exports = CSENGINE_SOUND
