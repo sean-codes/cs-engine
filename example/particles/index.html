@@ -22,7 +22,7 @@
          background: #222;
       }
    </style>
-   <script id="cs-core" src="../../engine/core.js"></script>
+   <script id="cs-core" src="../../src/main.web.js"></script>
 </head>
 
 <body>
@@ -30,7 +30,7 @@
 
    <script>
       cs.load({
-         parts: '../../engine',
+         parts: '../../src',
          canvas: document.querySelector('canvas'),
          assets: {
             scripts: [{
@@ -39,7 +39,7 @@
          },
          objects: {
             player: {
-               create: function() {
+               create: ({ object, cs }) => {
                   this.particleSystem = cs.script.particles.createSystem({
                      "shape": "square",
                      "colorStart": "#ffffff",
@@ -61,8 +61,8 @@
                      "particlesPerStep": 2
                   })
                },
-               step: function() {},
-               draw: function() {
+               step: ({ object, cs }) => {},
+               draw: ({ object, cs }) => {
                   cs.script.particles.burst({
                      system: this.particleSystem,
                      x: cs.room.width / 2,

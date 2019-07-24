@@ -2,7 +2,7 @@
 <html>
 
 <head>
-   <script src="../../engine/core.js"></script>
+   <script src="../../src/main.web.js"></script>
    <style>
       html,
       body {
@@ -30,20 +30,16 @@
    <script>
       cs.load({
          canvas: document.querySelector('canvas'),
-         parts: '../../engine',
+         parts: '../../src',
          assets: {
-            sprites: [{
-                  path: './spr_arrow'
-               },
-               {
-                  path: './spr_center',
-                  xoff: 7
-               }
+            sprites: [
+               { path: './spr_arrow' },
+               { path: './spr_center', xoff: 7 },
             ]
          },
          objects: {
             demo: {
-               draw: function() {
+               draw: ({ object, cs }) => {
                   // drawing a filled rectangle
                   cs.draw.fillRect({
                      x: 0,
@@ -110,6 +106,7 @@
                }
             }
          },
+         
          start: function() {
             // scaling up x4
             cs.room.setup({

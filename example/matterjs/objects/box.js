@@ -1,5 +1,5 @@
 cs.objects['box'] = {
-   create: function() {
+   create: ({ object, cs }) => {
       // console.log('wtf')
       this.x = cs.default(this.x, 40)
       this.y = cs.default(this.y, 40)
@@ -10,7 +10,7 @@ cs.objects['box'] = {
       Matter.World.add(cs.global.matter.engine.world, [this.body])
    },
 
-   draw: function() {
+   draw: ({ object, cs }) => {
       cs.draw.setColor(this.color)
       cs.draw.shape({
          vertices: this.body.vertices,

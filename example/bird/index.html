@@ -5,13 +5,13 @@
    <title>cs-engine</title>
    <!-- View Setup -->
    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-   <link rel="stylesheet" type="text/css" href="../../engine/pixelart.css?v=1" />
-   <link rel="stylesheet" type="text/css" href="../../engine/fullscreen.css?v=1" />
+   <link rel="stylesheet" type="text/css" href="../../styles/pixelart.css?v=1" />
+   <link rel="stylesheet" type="text/css" href="../../styles/fullscreen.css?v=1" />
    <style>
       body { background: #28c; }
    </style>
    <!-- engine -->
-   <script src='../../engine/core.js?v=2' id="cs-core"></script>
+   <script src='../../src/main.web.js?v=2' id="cs-core"></script>
 </head>
 
 <body>
@@ -19,7 +19,7 @@
    <canvas class="cs-canvas"></canvas>
    <script>
       cs.load({
-         parts: '../../engine',
+         parts: '../../src',
          canvas: document.querySelector('canvas'),
          assets: {
             scripts: [

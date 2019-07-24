@@ -39,26 +39,25 @@
          this.cs.inputKeyboard.execute()
          this.cs.inputTouch.batchDownMove()
 
-         // // Execute before steps
-         // // disconnect to allow adding within a beforestep
-         // var temporaryBeforeSteps = []
-         // while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
-         // while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
+         // Execute before steps
+         // disconnect to allow adding within a beforestep
+         var temporaryBeforeSteps = []
+         while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
+         while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
 
-         this.cs.userStep && this.cs.userStep()
-
-         // this.cs.object.loop(function(object) {
-         //    if (!object.core.active || !object.core.live) return
-         //    var stepEvent = cs.objects[object.core.type].step
-         //    cs.draw.setSurface(object.core.surface)
-         //    stepEvent && stepEvent.call(object  , object);
-         // })
-         //
-         this.cs.userDraw && this.cs.userDraw()
+         this.cs.userStep && this.cs.userStep({ cs })
 
          this.cs.object.loop((object) => {
             if (!object.core.active || !object.core.live) return
-            var template = this.cs.object.templates[object.core.type]
+            var stepEvent = this.cs.objects[object.core.type].step
+            stepEvent && stepEvent({ object, cs: this.cs })
+         })
+
+         this.cs.userDraw && this.cs.userDraw({ cs })
+
+         this.cs.object.loop((object) => {
+            if (!object.core.active || !object.core.live) return
+            var template = this.cs.objects[object.core.type]
             var drawFunction = template.draw
             var drawOnceFunction = template.drawOnce
 
@@ -68,7 +67,7 @@
             if (drawOnceFunction) {
                if (surface.clear || !object.core.drawn) {
                   object.core.drawn = true
-                  drawOnceEvent.call(object, { object, cs: this.cs })
+                  drawOnceEvent({ object, cs: this.cs })
                }
             }
 
@@ -92,7 +91,7 @@
 
          // could clearup !live objects here
          this.cs.object.clean()
-         
+
          // network metrics
          if (this.cs.network.status) {
             this.cs.network.updateMetrics()

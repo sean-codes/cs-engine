@@ -361,7 +361,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
       sprite(options) {
          var scale = this.scale
-         var info = this.this.cs.sprite.info(options)
+         var info = this.cs.sprite.info(options)
          var frame = info.frame
          var xOff = info.xoff
          var yOff = info.yoff
@@ -417,7 +417,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          }
 
          this.debug.spritesDrawnCount += 1
-         this.cs.draw.settingsDefault()
+         this.settingsDefault()
          return
       }
 
@@ -752,15 +752,15 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       }
 
       settingsUpdate() {
-         this.cs.draw.setAlpha(this.config.current.alpha)
-         this.cs.draw.setWidth(this.config.current.width)
-         this.cs.draw.setFont(this.config.current.font)
-         this.cs.draw.setTextAlign(this.config.current.textAlign)
-         this.cs.draw.setLineHeight(this.config.current.lineHeight)
-         this.cs.draw.setTextBaseline(this.config.current.textBaseline)
-         this.cs.draw.setColor(this.config.current.color)
-         this.cs.draw.setOperation(this.config.current.operation)
-         this.cs.draw.setLineDash(this.config.current.lineDash)
+         this.setAlpha(this.config.current.alpha)
+         this.setWidth(this.config.current.width)
+         this.setFont(this.config.current.font)
+         this.setTextAlign(this.config.current.textAlign)
+         this.setLineHeight(this.config.current.lineHeight)
+         this.setTextBaseline(this.config.current.textBaseline)
+         this.setColor(this.config.current.color)
+         this.setOperation(this.config.current.operation)
+         this.setLineDash(this.config.current.lineDash)
       }
 
       settingsDefault() {
@@ -773,7 +773,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_DRAW : cs.camera = new CSENGINE_DRAW(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_DRAW
+      : cs.draw = new CSENGINE_DRAW(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Fps.js":[function(require,module,exports) {
@@ -806,7 +808,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_FPS : cs.camera = new CSENGINE_FPS(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_FPS
+      : cs.fps = new CSENGINE_FPS(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Fullscreen.js":[function(require,module,exports) {
@@ -871,7 +875,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_FULLSCREEN : cs.camera = new CSENGINE_FULLSCREEN(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_FULLSCREEN
+      : cs.fullscreen = new CSENGINE_FULLSCREEN(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/InputKeyboard.js":[function(require,module,exports) {
@@ -988,7 +994,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_INPUT_KEYBOARD : cs.camera = new CSENGINE_INPUT_KEYBOARD(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_INPUT_KEYBOARD
+      : cs.inputKeyboard = new CSENGINE_INPUT_KEYBOARD(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/InputMouse.js":[function(require,module,exports) {
@@ -1005,18 +1013,18 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       }
 
       pos() {
-         var convert = this.cs.touch.convertToGameCords(this.x, this.y)
+         var convert = this.cs.inputTouch.convertToGameCords(this.x, this.y)
          return (cs.draw.raw)
             ? { x: this.x, y: this.y }
             : { x: convert.x, y: convert.y }
       }
 
       eventDown(e) {
-         this.cs.touch.touchUse(-1)
+         this.cs.inputTouch.touchUse(-1)
          this.x = e.clientX
          this.y = e.clientY
 
-         this.cs.touch.eventsDownMove.push({
+         this.cs.inputTouch.eventsDownMove.push({
             type: 'down',
             id: -1,
             x: this.x,
@@ -1030,7 +1038,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          this.x = e.clientX
          this.y = e.clientY
 
-         this.cs.touch.eventsDownMove.push({
+         this.cs.inputTouch.eventsDownMove.push({
             type: 'move',
             id: -1,
             x: this.x,
@@ -1039,7 +1047,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       }
 
       eventUp(e) {
-         this.cs.touch.eventsUp.push({
+         this.cs.inputTouch.eventsUp.push({
             type: 'up',
             id: -1
          })
@@ -1047,7 +1055,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_INPUT_MOUSE : cs.camera = new CSENGINE_INPUT_MOUSE(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_INPUT_MOUSE
+      : cs.inputMouse = new CSENGINE_INPUT_MOUSE(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/InputTouch.js":[function(require,module,exports) {
@@ -1223,6 +1233,8 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
       observer(useGameCords) {
          return {
+            parent: this,
+            touch: undefined,
             observing: false,
             useGameCords: useGameCords,
             down: false,
@@ -1245,8 +1257,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
                if (this.observing) {
                   this.x = this.touch.x
                   this.y = this.touch.y
+
                   if (this.useGameCords) {
-                     var convertedToGameCords = this.convertToGameCords(this.x, this.y)
+                     var convertedToGameCords = this.parent.convertToGameCords(this.x, this.y)
                      this.x = convertedToGameCords.x
                      this.y = convertedToGameCords.y
                   }
@@ -1261,14 +1274,14 @@ parcelRequire = (function (modules, cache, entry, globalName) {
             },
             findTouchToObserve(area) {
                // find a touch to observe
-               for (var touch of this.list) {
+               for (var touch of this.parent.list) {
                   // this touch is being observed or not available to latch
                   if (touch.used || !touch.down) continue
 
                   var touchX = touch.x
                   var touchY = touch.y
                   if (this.useGameCords) {
-                     var convertedToGameCords = this.convertToGameCords(touchX, touchY)
+                     var convertedToGameCords = this.parent.convertToGameCords(touchX, touchY)
                      touchX = convertedToGameCords.x
                      touchY = convertedToGameCords.y
                   }
@@ -1303,8 +1316,8 @@ parcelRequire = (function (modules, cache, entry, globalName) {
                return this.touch && this.touch.held
             },
             isWithin: function(rect) {
-               var width = this.cs.default(rect.width, rect.size || 0)
-               var height = this.cs.default(rect.height, rect.size || 0)
+               var width = this.parent.cs.default(rect.width, rect.size || 0)
+               var height = this.parent.cs.default(rect.height, rect.size || 0)
 
                return (
                   this.x > rect.x && this.x < rect.x + width &&
@@ -1341,8 +1354,8 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
    // export (node / web)
    typeof module !== 'undefined'
-      ? module.exports = CSENGINE_INPUT_TOUCH 
-      : cs.camera = new CSENGINE_INPUT_TOUCH(cs)
+      ? module.exports = CSENGINE_INPUT_TOUCH
+      : cs.inputTouch = new CSENGINE_INPUT_TOUCH(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Loop.js":[function(require,module,exports) {
@@ -1387,26 +1400,25 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          this.cs.inputKeyboard.execute()
          this.cs.inputTouch.batchDownMove()
 
-         // // Execute before steps
-         // // disconnect to allow adding within a beforestep
-         // var temporaryBeforeSteps = []
-         // while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
-         // while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
+         // Execute before steps
+         // disconnect to allow adding within a beforestep
+         var temporaryBeforeSteps = []
+         while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
+         while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
 
-         this.cs.userStep && this.cs.userStep()
-
-         // this.cs.object.loop(function(object) {
-         //    if (!object.core.active || !object.core.live) return
-         //    var stepEvent = cs.objects[object.core.type].step
-         //    cs.draw.setSurface(object.core.surface)
-         //    stepEvent && stepEvent.call(object  , object);
-         // })
-         //
-         this.cs.userDraw && this.cs.userDraw()
+         this.cs.userStep && this.cs.userStep({ cs })
 
          this.cs.object.loop((object) => {
             if (!object.core.active || !object.core.live) return
-            var template = this.cs.object.templates[object.core.type]
+            var stepEvent = this.cs.objects[object.core.type].step
+            stepEvent && stepEvent({ object, cs: this.cs })
+         })
+
+         this.cs.userDraw && this.cs.userDraw({ cs })
+
+         this.cs.object.loop((object) => {
+            if (!object.core.active || !object.core.live) return
+            var template = this.cs.objects[object.core.type]
             var drawFunction = template.draw
             var drawOnceFunction = template.drawOnce
 
@@ -1416,7 +1428,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
             if (drawOnceFunction) {
                if (surface.clear || !object.core.drawn) {
                   object.core.drawn = true
-                  drawOnceEvent.call(object, { object, cs: this.cs })
+                  drawOnceEvent({ object, cs: this.cs })
                }
             }
 
@@ -1441,11 +1453,10 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          // could clearup !live objects here
          this.cs.object.clean()
 
-         //
-         // // network metrics
-         // if (this.cs.network.status) {
-         //    this.cs.network.updateMetrics()
-         // }
+         // network metrics
+         if (this.cs.network.status) {
+            this.cs.network.updateMetrics()
+         }
       }
 
       beforeStep(func) {
@@ -1468,7 +1479,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_LOOP : cs.camera = new CSENGINE_LOOP(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_LOOP
+      : cs.loop = new CSENGINE_LOOP(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Math.js":[function(require,module,exports) {
@@ -1590,7 +1603,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_MATH : cs.camera = new CSENGINE_MATH(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_MATH
+      : cs.math = new CSENGINE_MATH(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Network.js":[function(require,module,exports) {
@@ -1708,7 +1723,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_NETWORK : cs.camera = new CSENGINE_NETWORK(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_NETWORK
+      : cs.network = new CSENGINE_NETWORK(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Object.js":[function(require,module,exports) {
@@ -1719,18 +1736,12 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    class CSENGINE_OBJECT {
       constructor(cs) {
          this.cs = cs
-
-         this.templates = {}
          this.list = [] // all objects
          this.new = [] // newly added objects
          this.unique = 0
          this.types = {}
          this.objGroups = {}
          this.shouldClean = false
-      }
-
-      addTemplate(type, template) {
-         this.templates[type] = template
       }
 
       loop(call) {
@@ -1742,13 +1753,14 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       }
 
       create(options) {
-         if (!this.templates[options.type]) {
+         console.log('hello wtf', options)
+         if (!this.cs.objects[options.type]) {
             console.log('object type "' + options.type + '" does not exist')
             return undefined
          }
 
          var attr = options.attr
-         var template = this.templates[options.type]
+         var template = this.cs.objects[options.type]
          var zIndex = options.zIndex || template.zIndex || 0
 
          // create the object
@@ -1769,7 +1781,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          for (var name in attr) { newObj[name] = attr[name] }
 
          // run create event
-         template.create && template.create.call(newObj, newObj);
+         template.create && template.create.call(newObj, { object: newObj, cs: this.cs });
 
          // add to list
          this.new.push({ obj: newObj, zIndex: zIndex })
@@ -1878,7 +1890,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_OBJECT : cs.camera = new CSENGINE_OBJECT(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_OBJECT
+      : cs.object = new CSENGINE_OBJECT(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Room.js":[function(require,module,exports) {
@@ -1922,7 +1936,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_ROOM : cs.camera = new CSENGINE_ROOM(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_ROOM
+      : cs.room = new CSENGINE_ROOM(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Setup.js":[function(require,module,exports) {
@@ -2153,7 +2169,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_SOUND : cs.sound = new CSENGINE_SOUND(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_SOUND 
+      : cs.sound = new CSENGINE_SOUND(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Sprite.js":[function(require,module,exports) {
@@ -2164,13 +2182,11 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    class CSENGINE_SPRITE {
       constructor(cs) {
          this.cs = cs
-
-         this.loaded = []
          this.list = {}
       }
 
       init(sprites) {
-         for (var sprite of this.loaded) {
+         for (var sprite of this.cs.sprites) {
             this.initSprite(sprite)
          }
       }
@@ -2293,7 +2309,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_SPRITE : cs.sound = new CSENGINE_SPRITE(cs)
+   typeof module !== 'undefined'
+       ? module.exports = CSENGINE_SPRITE
+       : cs.sprite = new CSENGINE_SPRITE(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Surface.js":[function(require,module,exports) {
@@ -2498,7 +2516,7 @@ Types of surfaces
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_SURFACE : cs.sound = new CSENGINE_SURFACE(cs)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_SURFACE : cs.surface = new CSENGINE_SURFACE(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Storage.js":[function(require,module,exports) {
@@ -2552,7 +2570,9 @@ Types of surfaces
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_STORAGE : cs.sound = new CSENGINE_STORAGE(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_STORAGE
+      : cs.storage = new CSENGINE_STORAGE(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Timer.js":[function(require,module,exports) {
@@ -2628,7 +2648,9 @@ Types of surfaces
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_TIMER : cs.sound = new CSENGINE_TIMER(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_TIMER
+      : cs.timer = new CSENGINE_TIMER(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/parts/Vector.js":[function(require,module,exports) {
@@ -2692,7 +2714,9 @@ Types of surfaces
    }
 
    // export (node / web)
-   typeof module !== 'undefined' ? module.exports = CSENGINE_VECTOR : cs.sound = new CSENGINE_VECTOR(cs)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_VECTOR
+      : cs.vector = new CSENGINE_VECTOR(cs)
 })()
 
 },{}],"../node_modules/cs-engine/src/main.node.js":[function(require,module,exports) {
@@ -2758,14 +2782,14 @@ module.exports = class cs {
       this.vector = new Vector(this)
 
       // 2. load assets
-      const sounds = assets && assets.sounds ? assets.sounds : []
-      const scripts = assets && assets.scripts ? assets.scripts : []
-      const objects = assets && assets.objects ? assets.objects : []
-      const sprites = assets && assets.sprites ? assets.sprites : []
-      const storages = assets && assets.storages ? assets.storages : []
+      this.objects = options.objects || {}
+      this.sprites = options.sprites || []
 
-      for (var object of objects) {
-         this.object.addTemplate(object.type, object.src)
+      this.assets = {
+         sounds: assets && assets.sounds ? assets.sounds : [],
+         scripts: assets && assets.scripts ? assets.scripts : [],
+         sprites: assets && assets.sprites ? assets.sprites : [],
+         storages: assets && assets.storages ? assets.storages : [],
       }
 
       // 3. setup
@@ -2798,11 +2822,8 @@ var CS = require('cs-engine');
 
 window.cs = new CS({
   canvas: canvas,
-  assets: {
-    objects: [{
-      type: 'block',
-      src: require('./objects/block')
-    }]
+  objects: {
+    'block': require('./objects/block')
   },
   start: function start(_ref) {
     var cs = _ref.cs;
@@ -2812,7 +2833,6 @@ window.cs = new CS({
     });
   }
 });
-console.log(cs);
 },{"cs-engine":"../node_modules/cs-engine/src/main.node.js","./objects/block":"objects/block.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -2841,7 +2861,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60597" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57266" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

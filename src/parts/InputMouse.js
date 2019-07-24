@@ -11,18 +11,18 @@
       }
 
       pos() {
-         var convert = this.cs.touch.convertToGameCords(this.x, this.y)
+         var convert = this.cs.inputTouch.convertToGameCords(this.x, this.y)
          return (cs.draw.raw)
             ? { x: this.x, y: this.y }
             : { x: convert.x, y: convert.y }
       }
 
       eventDown(e) {
-         this.cs.touch.touchUse(-1)
+         this.cs.inputTouch.touchUse(-1)
          this.x = e.clientX
          this.y = e.clientY
 
-         this.cs.touch.eventsDownMove.push({
+         this.cs.inputTouch.eventsDownMove.push({
             type: 'down',
             id: -1,
             x: this.x,
@@ -36,7 +36,7 @@
          this.x = e.clientX
          this.y = e.clientY
 
-         this.cs.touch.eventsDownMove.push({
+         this.cs.inputTouch.eventsDownMove.push({
             type: 'move',
             id: -1,
             x: this.x,
@@ -45,7 +45,7 @@
       }
 
       eventUp(e) {
-         this.cs.touch.eventsUp.push({
+         this.cs.inputTouch.eventsUp.push({
             type: 'up',
             id: -1
          })

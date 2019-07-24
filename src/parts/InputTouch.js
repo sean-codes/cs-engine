@@ -253,8 +253,8 @@
                return this.touch && this.touch.held
             },
             isWithin: function(rect) {
-               var width = this.cs.default(rect.width, rect.size || 0)
-               var height = this.cs.default(rect.height, rect.size || 0)
+               var width = this.parent.cs.default(rect.width, rect.size || 0)
+               var height = this.parent.cs.default(rect.height, rect.size || 0)
 
                return (
                   this.x > rect.x && this.x < rect.x + width &&

@@ -5,13 +5,11 @@
    class CSENGINE_SPRITE {
       constructor(cs) {
          this.cs = cs
-
-         this.loaded = []
          this.list = {}
       }
 
       init(sprites) {
-         for (var sprite of this.loaded) {
+         for (var sprite of this.cs.sprites) {
             this.initSprite(sprite)
          }
       }

@@ -138,7 +138,7 @@
          }
 
          this.debug.spritesDrawnCount += 1
-         this.cs.draw.settingsDefault()
+         this.settingsDefault()
          return
       }
 
@@ -473,15 +473,15 @@
       }
 
       settingsUpdate() {
-         this.cs.draw.setAlpha(this.config.current.alpha)
-         this.cs.draw.setWidth(this.config.current.width)
-         this.cs.draw.setFont(this.config.current.font)
-         this.cs.draw.setTextAlign(this.config.current.textAlign)
-         this.cs.draw.setLineHeight(this.config.current.lineHeight)
-         this.cs.draw.setTextBaseline(this.config.current.textBaseline)
-         this.cs.draw.setColor(this.config.current.color)
-         this.cs.draw.setOperation(this.config.current.operation)
-         this.cs.draw.setLineDash(this.config.current.lineDash)
+         this.setAlpha(this.config.current.alpha)
+         this.setWidth(this.config.current.width)
+         this.setFont(this.config.current.font)
+         this.setTextAlign(this.config.current.textAlign)
+         this.setLineHeight(this.config.current.lineHeight)
+         this.setTextBaseline(this.config.current.textBaseline)
+         this.setColor(this.config.current.color)
+         this.setOperation(this.config.current.operation)
+         this.setLineDash(this.config.current.lineDash)
       }
 
       settingsDefault() {

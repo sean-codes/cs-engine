@@ -2,7 +2,7 @@
 <html>
 
 <head>
-   <script src="../../engine/core.js"></script>
+   <script src="../../src/main.web.js"></script>
    <style>
       html,
       body {
@@ -30,7 +30,7 @@
    <script>
       cs.load({
          canvas: document.querySelector('canvas'),
-         parts: '../../engine',
+         parts: '../../src',
          assets: {
             sprites: [{
                   path: './spr_arrow'
@@ -43,7 +43,7 @@
          },
          objects: {
             box: {
-               create: function() {
+               create: ({ object, cs }) => {
                   this.x = 0
                   this.y = cs.room.height / 2
                   this.xSpeed = 1.1
@@ -53,7 +53,7 @@
                   this.width = spriteInfo.width
                   this.height = spriteInfo.height
                },
-               draw: function() {
+               draw: ({ object, cs }) => {
                   // drawing a sprite with an off
                   cs.draw.sprite({
                      spr: 'spr_arrow',

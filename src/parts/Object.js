@@ -5,18 +5,12 @@
    class CSENGINE_OBJECT {
       constructor(cs) {
          this.cs = cs
-
-         this.templates = {}
          this.list = [] // all objects
          this.new = [] // newly added objects
          this.unique = 0
          this.types = {}
          this.objGroups = {}
          this.shouldClean = false
-      }
-
-      addTemplate(template) {
-         this.templates[template.type] = template
       }
 
       loop(call) {
@@ -28,13 +22,13 @@
       }
 
       create(options) {
-         if (!this.templates[options.type]) {
+         if (!this.cs.objects[options.type]) {
             console.log('object type "' + options.type + '" does not exist')
             return undefined
          }
 
          var attr = options.attr
-         var template = this.templates[options.type]
+         var template = this.cs.objects[options.type]
          var zIndex = options.zIndex || template.zIndex || 0
 
          // create the object

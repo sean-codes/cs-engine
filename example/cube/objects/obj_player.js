@@ -1,4 +1,5 @@
-cs.object.templates['obj_player'] = {
+cs.objects['obj_player'] = {
+
    create: ({ object, cs }) => {
       object.mask = { x: 0, y: 0, width: 16, height: 16 }
       object.gravity = 7;
@@ -16,11 +17,13 @@ cs.object.templates['obj_player'] = {
          up: true,
          down: true
       }
-      //Lighting
-      //cs.script.lightAdd(this.id, 100, 8, 8);
    },
+
    draw: function({ object, cs }) {
-      cs.camera.follow({ x: object.x + object.mask.width / 2, y: object.y + object.mask.height / 2 });
+      cs.camera.follow({
+         x: object.x + object.mask.width / 2,
+         y: object.y + object.mask.height / 2
+      })
 
       var keys = {
          left: cs.inputKeyboard.held(37),
@@ -44,7 +47,11 @@ cs.object.templates['obj_player'] = {
       }
 
       object.h_col = cs.script.collide(object, 'obj_block', { vspeed: 0 })
-      if (object.h_col || (object.x + object.hspeed) <= 0 || (object.x + object.hspeed) + object.mask.width >= cs.room.width) {
+      if (
+         object.h_col ||
+         (object.x + object.hspeed) <= 0 ||
+         object.x + object.hspeed + object.mask.width >= cs.room.width
+      ) {
          object.hspeed = 0;
       }
       object.x += object.hspeed;

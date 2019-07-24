@@ -60,14 +60,14 @@ module.exports = class cs {
       this.vector = new Vector(this)
 
       // 2. load assets
-      const sounds = assets && assets.sounds ? assets.sounds : []
-      const scripts = assets && assets.scripts ? assets.scripts : []
-      const objects = assets && assets.objects ? assets.objects : []
-      const sprites = assets && assets.sprites ? assets.sprites : []
-      const storages = assets && assets.storages ? assets.storages : []
+      this.objects = options.objects || {}
+      this.sprites = options.sprites || []
 
-      for (var object of objects) {
-         this.object.addTemplate(object.type, object.src)
+      this.assets = {
+         sounds: assets && assets.sounds ? assets.sounds : [],
+         scripts: assets && assets.scripts ? assets.scripts : [],
+         sprites: assets && assets.sprites ? assets.sprites : [],
+         storages: assets && assets.storages ? assets.storages : [],
       }
 
       // 3. setup

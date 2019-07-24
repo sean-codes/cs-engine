@@ -1,6 +1,5 @@
 module.exports = {
    create({ object, cs }) {
-
    },
 
    draw({ object, cs }) {

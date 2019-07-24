@@ -1,12 +1,11 @@
-cs.object.addTemplate({
-   type: 'obj_fire',
+cs.objects['obj_fire'] = {
 
    create: ({ object, cs }) => {
-      object.width = 32;
-      object.height = 48;
-      object.vspeed = 0;
-      object.gravity = 8;
-      cs.script.lightAdd(object, '#FFF', 200, 8, 8);
+      object.width = 32
+      object.height = 48
+      object.vspeed = 0
+      object.gravity = 8
+      cs.script.lightAdd(object, '#FFF', 200, 8, 8)
       object.particleSystem = cs.script.particles.init({
          "count": 1,
          "interval": 1,
@@ -43,7 +42,7 @@ cs.object.addTemplate({
          },
          "alpha": 1,
          "fade": 0.025
-      });
+      })
    },
 
    draw: ({ object, cs }) => {
@@ -59,4 +58,4 @@ cs.object.addTemplate({
 
       cs.script.particles.step(object.particleSystem)
    }
-})
+}

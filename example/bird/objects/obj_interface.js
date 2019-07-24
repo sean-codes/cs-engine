@@ -1,18 +1,20 @@
 cs.objects['obj_interface'] = {
    zIndex: 30,
-   create: function() {
-      this.width = 30
-      this.height = 30
-      this.backgroundPlaying = undefined
-      this.core.surface = 'gui'
+   surface: 'gui',
+
+   create: ({ object, cs }) => {
+      object.width = 30
+      object.height = 30
+      object.backgroundPlaying = undefined
       cs.sound.toggleMute(true)
-      this.touch = cs.touch.observer()
+      object.touch = cs.inputTouch.observer()
    },
-   step: function() {
-      this.touch.check({ x: 0, y: 0, width: cs.draw.surface.width, height: cs.draw.surface.height })
+
+   draw: ({ object, cs }) => {
+      object.touch.check({ x: 0, y: 0, width: cs.draw.surface.width, height: cs.draw.surface.height })
 
       // sound
-      if (this.touch.isDown() && this.touch.isWithin({ x: 0, y: 0, width: 14 * 3, height: 14 * 3 })) {
+      if (object.touch.isDown() && object.touch.isWithin({ x: 0, y: 0, width: 14 * 3, height: 14 * 3 })) {
          cs.save.mute = !cs.save.mute
          return
       }
@@ -35,15 +37,15 @@ cs.objects['obj_interface'] = {
       switch (cs.save.state) {
          case 'START':
             cs.script.interface.drawButtons(['Please tap to start'])
-            if (this.touch.isDown())
+            if (object.touch.isDown())
                cs.save.state = 'TAPTOFLAP'
-            if (!this.backgroundPlaying)
-               this.backgroundPlaying = cs.sound.play('background', { loop: true })
+            if (!object.backgroundPlaying)
+               object.backgroundPlaying = cs.sound.play('background', { loop: true })
             break
 
          case 'TAPTOFLAP':
             cs.script.interface.drawButtons(['Tap to flap!', 'Your Best Score: ' + cs.save.topScore])
-            if (this.touch.isDown()) {
+            if (object.touch.isDown()) {
                cs.save.state = 'PLAYING'
                cs.global.flap = true
             }
@@ -75,7 +77,7 @@ cs.objects['obj_interface'] = {
                y: 30,
                text: 'Best: ' + cs.save.topScore
             })
-            if (this.touch.isDown())
+            if (object.touch.isDown())
                cs.global.flap = true
             break
 
@@ -84,7 +86,7 @@ cs.objects['obj_interface'] = {
             if (cs.global.score > cs.save.topScore)
                cs.save.topScore = cs.global.score
 
-            if (this.touch.isDown()) {
+            if (object.touch.isDown()) {
                cs.save.state = 'TAPTOFLAP'
                cs.script.reset()
             }

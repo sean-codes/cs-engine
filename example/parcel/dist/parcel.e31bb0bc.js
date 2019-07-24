@@ -143,7 +143,7 @@ class Loop {
 
       console.log('meow')
       // this.cs.fps.update()
-      // this.cs.key.execute()
+      // this.cs.inputKeyboard.execute()
       // this.cs.draw.debugReset()
       //
       // // network
@@ -155,7 +155,7 @@ class Loop {
       // this.cs.object.addNewObjects()
       //
       // // touch / mouse events
-      // this.cs.touch.batchDownMove()
+      // this.cs.inputTouch.batchDownMove()
       //
       // // Execute before steps
       // // disconnect to allow adding within a beforestep
@@ -194,9 +194,9 @@ class Loop {
       // this.cs.timer.loop()
       //
       // // Touch / Keyboard
-      // this.cs.key.reset()
-      // this.cs.touch.reset()
-      // this.cs.touch.batchUp()
+      // this.cs.inputKeyboard.reset()
+      // this.cs.inputTouch.reset()
+      // this.cs.inputTouch.batchUp()
       //
       // // Resize Canvas
       // this.cs.surface.displayAll()

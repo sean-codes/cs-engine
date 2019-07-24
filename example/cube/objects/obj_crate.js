@@ -1,5 +1,4 @@
-cs.object.addTemplate({
-   type: 'obj_crate',
+cs.objects['obj_crate'] = {
 
    create: ({ object, cs }) => {
       object.touch = cs.inputTouch.observer(true)
@@ -31,4 +30,4 @@ cs.object.addTemplate({
 
       cs.draw.sprite({ spr: 'spr_crate', x: object.x, y: object.y });
    }
-})
+}

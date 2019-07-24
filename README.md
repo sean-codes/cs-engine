@@ -32,7 +32,7 @@ engine for building 2D games
 <html>
   <head>
     <!-- include core -->
-    <script id="cs-engine" src='../../engine/core.js'></script>
+    <script id="cs-engine" src='../../src/main.web.js'></script>
   </head>
   <body style="-ms-touch-action: none; touch-action: none">
     <!-- canvas -->
@@ -42,11 +42,11 @@ engine for building 2D games
     <script>
 
       cs.load({
-        parts: '../../engine', // path to parts
+        parts: '../../src', // path to parts
         canvas: document.querySelector('canvas'),
         objects: {
           player: {
-            draw: function() {
+            draw: ({ object, cs }) => {
               cs.draw.fillRect({ x: 0, y: 0, width: 50, height: 50 })
             }
           }
@@ -175,9 +175,9 @@ cs.load({
   ...
   objects: {
     myObjName: {
-      create: function() { console.log('i run when created') },
-      step: function() { console.log('i run each frame of the game') },
-      draw: function() { console.log('i run before the step for drawing') }
+      create: ({ object, cs }) => { console.log('i run when created') },
+      step: ({ object, cs }) => { console.log('i run each frame of the game') },
+      draw: ({ object, cs }) => { console.log('i run before the step for drawing') }
 	 }
   }
   ...
@@ -189,9 +189,9 @@ cs.load({
 ```js
 // /object/obj_name.js
 cs.objects.myObjName = {
-  create: function() { console.log('i run when created') },
-  step: function() { console.log('i run each frame of the game') },
-  draw: function() { console.log('i run before the step for drawing') }
+  create: ({ object, cs }) => { console.log('i run when created') },
+  step: ({ object, cs }) => { console.log('i run each frame of the game') },
+  draw: ({ object, cs }) => { console.log('i run before the step for drawing') }
 }
 ```
 

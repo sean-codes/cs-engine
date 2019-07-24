@@ -10,6 +10,16 @@ cs.load = function(options) {
    this.default = (want, ifnot) => { return want != null ? want : ifnot }
 
    // 1. build the engine
+   this.objects = options.objects || {}
+   this.sprites = options.sprites || []
+   this.storages = options.storages || {}
+
+   this.assets = {
+      scripts: assets && assets.scripts ? assets.scripts : [],
+      sprites: assets && assets.sprites ? assets.sprites : [],
+      storages: assets && assets.storages ? assets.storages : []
+   }
+
    this.canvas = canvas
    this.ctx = canvas.getContext('2d')
    this.maxSize = options.maxSize || 2000
@@ -34,46 +44,36 @@ cs.load = function(options) {
    const checkDone = () => {
       this.loading -= 1
       if (!this.loading) {
-         if (loadedCore) {
-            console.groupEnd()
-            const engineLoadTime = Math.round(Date.now() - this.dateStartLoading)
-            console.log(`Engine Loaded in ${engineLoadTime}ms`)
-            cs.setup.run()
-         } else {
-            loadedCore = true
-            console.log('loading assets')
-            loadScripts(assets.scripts)
-            loadSprites(assets.sprites)
-         }
+         console.groupEnd()
+         const engineLoadTime = Math.round(Date.now() - this.dateStartLoading)
+         console.log(`Engine Loaded in ${engineLoadTime}ms`)
+         cs.setup.run()
       }
    }
 
-   const loadScripts = (scripts, done) => {
-      this.loading += 1
-      const script = scripts.pop()
-      const htmlScript = document.createElement('script')
-      htmlScript.src = `${script.path}.js?v=${this.version}`
-      htmlScript.onload = checkDone
-      document.body.appendChild(htmlScript)
-      console.log(`Loading Script: ${script.path}`)
-      if (scripts.length) {
-         loadScripts(scripts, done)
-      } else {
-         done && done()
+   const loadScripts = (scripts = [], done) => {
+      for (var script of scripts) {
+         this.loading += 1
+         const htmlScript = document.createElement('script')
+         htmlScript.src = `${script.path}.js?v=${this.version}`
+         htmlScript.onload = checkDone
+         document.body.appendChild(htmlScript)
+         console.log(`Loading Script: ${script.path}`)
       }
    }
 
-   const loadSprites = (sprites) => {
-      this.loading += 1
-      const sprite = sprites.pop()
-      cs.sprite.loaded.push(sprite)
-      console.log(`Loading Sprite: ${sprite.path}`)
-      sprite.html = document.createElement('img')
-      sprite.html.src = sprite.path + '.png?v=' + this.version
-      sprite.html.onload = checkDone
-      if (sprites.length) loadSprites(sprites)
+   const loadSprites = (sprites = []) => {
+      for (var sprite of sprites) {
+         this.loading += 1
+         cs.sprites.push(sprite)
+         console.log(`Loading Sprite: ${sprite.path}`)
+         sprite.html = document.createElement('img')
+         sprite.html.src = sprite.path + '.png?v=' + this.version
+         sprite.html.onload = checkDone
+      }
    }
 
+   loadSprites(this.assets.sprites)
    loadScripts([
       { path: this.path + '/parts/Camera' },
       { path: this.path + '/parts/Draw' },
@@ -94,9 +94,8 @@ cs.load = function(options) {
       { path: this.path + '/parts/Surface' },
       { path: this.path + '/parts/Timer' },
       { path: this.path + '/parts/vector' },
+      ...this.assets.scripts
    ])
-
-
 }
 
 //    // Initialize: Load Scripts and Sprites. Setup canvas

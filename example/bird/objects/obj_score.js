@@ -1,35 +1,38 @@
 cs.objects['obj_score'] = {
-   create: function() {
-      this.mask = { x: 0, y: 0, width: 2, height: 40 }
+   create: ({ object, cs }) => {
+      object.mask = { x: 0, y: 0, width: 2, height: 40 }
    },
-   step: function() {
-      this.x -= cs.global.speed;
+
+   draw: ({ object, cs }) => {
+      object.x -= cs.global.speed
    }
 }
 
 cs.objects['obj_score_text'] = {
    zIndex: 21,
-   create: function() {
-      this.text = cs.math.choose([
+   create: ({ object, cs }) => {
+      object.text = cs.math.choose([
          '+1 Nice dive!',
          '+1 Daredevil!',
          '+1 Dangerous!',
          '+1 Holy Smokes!'
-      ]);
-      this.timer = 60;
+      ])
+
+      object.timer = 60
    },
-   step: function() {
-      this.y -= 1;
-      this.x -= cs.global.speed;
-      this.timer -= 1;
 
-      cs.draw.setTextCenter();
-      cs.draw.setColor('#FFF38E');
+   draw: ({ object, cs }) => {
+      object.y -= 1
+      object.x -= cs.global.speed
+      object.timer -= 1
+
+      cs.draw.setTextCenter()
+      cs.draw.setColor('#FFF38E')
       cs.draw.setFont({ effect: 'bold', size: 8, family: 'monospace'})
-      cs.draw.text({ x: this.x, y: this.y, text: this.text })
+      cs.draw.text({ x: object.x, y: object.y, text: object.text })
 
-      if (this.timer == 0) {
-         cs.object.destroy(this);
+      if (object.timer == 0) {
+         cs.object.destroy(object)
       }
    }
 }

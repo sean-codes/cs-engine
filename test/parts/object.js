@@ -1,13 +1,13 @@
 cs.objects['obj_demo_0'] = {
-   create: function() {},
-   step: function() {},
-   draw: function() {}
+   create: ({ object, cs }) => {},
+   step: ({ object, cs }) => {},
+   draw: ({ object, cs }) => {}
 }
 
 cs.objects['obj_demo_1'] = {
-   create: function() {},
-   step: function() {},
-   draw: function() {}
+   create: ({ object, cs }) => {},
+   step: ({ object, cs }) => {},
+   draw: ({ object, cs }) => {}
 }
 
 testUtility.test({

@@ -1,85 +1,86 @@
-cs.object.templates['obj_joystick'] = {
-   create: function() {
-      this.touch = cs.inputTouch.observer()
-      this.width = 64;
-      this.height = 64;
-      this.core.surface = 'gui';
-      this.tx = 0;
-      this.ty = 0;
-      this.jw = this.width / 2;
-      this.jh = this.height / 2;
+cs.objects['obj_joystick'] = {
+   create: ({ object, cs }) => {
+      object.touch = cs.inputTouch.observer()
+      object.width = 64;
+      object.height = 64;
+      object.core.surface = 'gui';
+      object.tx = 0;
+      object.ty = 0;
+      object.jw = object.width / 2;
+      object.jh = object.height / 2;
       cs.global.showJoyStick = true;
    },
-   step: function() {
+
+   draw: ({ object, cs }) => {
       if (!cs.global.showJoyStick)
          return
 
-      this.x = 10;
-      this.y = cs.draw.surface.height - this.height - 10;
+      object.x = 10;
+      object.y = cs.draw.surface.height - object.height - 10;
 
-      this.touch.check({
-         x: this.x,
-         y: this.y,
-         width: this.width,
-         height: this.height
+      object.touch.check({
+         x: object.x,
+         y: object.y,
+         width: object.width,
+         height: object.height
       });
 
-      this.tx = this.x + (this.width / 2) - (this.jw / 2);
-      this.ty = this.y + (this.width / 2) - (this.jh / 2);
-      if (this.touch.isHeld()) {
-         this.tx = this.touch.x - (this.jw / 2);
-         if (this.tx < this.x) {
-            this.tx = this.x;
+      object.tx = object.x + (object.width / 2) - (object.jw / 2);
+      object.ty = object.y + (object.width / 2) - (object.jh / 2);
+      if (object.touch.isHeld()) {
+         object.tx = object.touch.x - (object.jw / 2);
+         if (object.tx < object.x) {
+            object.tx = object.x;
             //left key
-            cs.key.virtualDown(37);
+            cs.inputKeyboard.virtualDown(37);
          } else {
-            cs.key.virtualUp(37)
+            cs.inputKeyboard.virtualUp(37)
          }
-         if (this.tx + this.jw > this.x + this.width) {
-            this.tx = this.x + this.width - this.jw;
+         if (object.tx + object.jw > object.x + object.width) {
+            object.tx = object.x + object.width - object.jw;
             //right key
-            cs.key.virtualDown(39);
+            cs.inputKeyboard.virtualDown(39);
          } else {
-            cs.key.virtualUp(39)
+            cs.inputKeyboard.virtualUp(39)
          }
-         this.ty = this.touch.y - (this.jh / 2);
-         if (this.ty < this.y) {
-            this.ty = this.y;
+         object.ty = object.touch.y - (object.jh / 2);
+         if (object.ty < object.y) {
+            object.ty = object.y;
             //up key
-            cs.key.virtualDown(38);
+            cs.inputKeyboard.virtualDown(38);
          } else {
-            cs.key.virtualUp(38);
+            cs.inputKeyboard.virtualUp(38);
          }
-         if (this.ty + this.jw > this.y + this.height) {
-            this.ty = this.y + this.height - this.jh;
+         if (object.ty + object.jw > object.y + object.height) {
+            object.ty = object.y + object.height - object.jh;
          }
       } else {
-         if (this.touch.isUp()) {
-            if (cs.key.held(37)) {
-               cs.key.virtualUp(37);
+         if (object.touch.isUp()) {
+            if (cs.inputKeyboard.held(37)) {
+               cs.inputKeyboard.virtualUp(37);
             }
-            if (cs.key.held(38)) {
-               cs.key.virtualUp(38);
+            if (cs.inputKeyboard.held(38)) {
+               cs.inputKeyboard.virtualUp(38);
             }
-            if (cs.key.held(39)) {
-               cs.key.virtualUp(39);
+            if (cs.inputKeyboard.held(39)) {
+               cs.inputKeyboard.virtualUp(39);
             }
          }
       }
 
       cs.draw.setAlpha(0.25);
       cs.draw.fillRect({
-         x: this.x,
-         y: this.y,
-         width: this.width,
-         height: this.height
+         x: object.x,
+         y: object.y,
+         width: object.width,
+         height: object.height
       });
       cs.draw.setColor('#fff');
       cs.draw.strokeRect({
-         x: this.tx,
-         y: this.ty,
-         width: this.jw,
-         height: this.jh
+         x: object.tx,
+         y: object.ty,
+         width: object.jw,
+         height: object.jh
       });
 
       cs.draw.setColor('#FFF')

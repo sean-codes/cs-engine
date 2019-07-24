@@ -1,5 +1,4 @@
-cs.object.addTemplate({
-   type: 'obj_light',
+cs.objects['obj_light'] = {
    surface: 'light',
 
    create: ({ object, cs }) => {
@@ -13,7 +12,7 @@ cs.object.addTemplate({
 
       for (var light of cs.global.lightList) {
          var obj = light.obj
-         
+
          cs.draw.setOperation('xor');
          cs.draw.circleGradient({
             x: obj.x + light.xoff,
@@ -24,4 +23,4 @@ cs.object.addTemplate({
          })
       }
    }
-})
+}

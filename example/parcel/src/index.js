@@ -4,10 +4,8 @@ const CS = require('cs-engine')
 window.cs = new CS({
    canvas: canvas,
 
-   assets: {
-      objects: [
-         { type: 'block', src: require('./objects/block') }
-      ]
+   objects: {
+      'block': require('./objects/block')
    },
 
    start: ({ cs }) => {
@@ -18,5 +16,3 @@ window.cs = new CS({
       })
    }
 })
-
-console.log(cs);

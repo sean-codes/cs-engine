@@ -14,36 +14,35 @@
       cs.load({
          parts: '../../src',
          canvas: myCanvas,
-         start: function() {
-
-            cs.object.addTemplate({
-               type: 'box',
-
-               create: function() {
-                  this.x = 20
-                  this.y = 0
-                  this.xSpeed = 3
-                  this.ySpeed = 4
-                  this.size = 40
+         objects: {
+            'box': {
+               create: ({ object, cs }) => {
+                  object.x = 20
+                  object.y = 0
+                  object.xSpeed = 3
+                  object.ySpeed = 4
+                  object.size = 40
                },
-               
-               draw: function() {
+
+               draw: ({ object, cs }) => {
                   cs.draw.settings({ color: '#FFF' })
 
                   cs.draw.fillRect({
-                     x: this.x,
-                     y: this.y,
-                     width: this.size,
-                     height: this.size
+                     x: object.x,
+                     y: object.y,
+                     width: object.size,
+                     height: object.size
                   })
 
-                  this.x += this.xSpeed
-                  this.y += this.ySpeed
-                  if (this.x < 0 || this.x + this.size > cs.room.width) this.xSpeed *= -1
-                  if (this.y < 0 || this.y + this.size > cs.room.height) this.ySpeed *= -1
+                  object.x += object.xSpeed
+                  object.y += object.ySpeed
+                  if (object.x < 0 || object.x + object.size > cs.room.width) object.xSpeed *= -1
+                  if (object.y < 0 || object.y + object.size > cs.room.height) object.ySpeed *= -1
                }
-            })
+            }
+         },
 
+         start: function() {
             cs.object.create({ type: 'box' })
          }
       })

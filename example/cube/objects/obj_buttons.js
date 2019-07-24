@@ -1,5 +1,4 @@
-cs.object.addTemplate({
-   type: 'obj_buttons',
+cs.objects['obj_buttons'] = {
 
    create: ({ object, cs }) => {
       object.width = 30;
@@ -7,7 +6,7 @@ cs.object.addTemplate({
       object.touch = cs.inputTouch.observer()
    },
 
-   step: ({ object, cs }) => {
+   draw: ({ object, cs }) => {
       var btnRect = {
          x: cs.draw.surface.width - 50,
          y: cs.draw.surface.height - 50,
@@ -17,7 +16,7 @@ cs.object.addTemplate({
 
       object.touch.check(btnRect);
       if (object.touch.isDown()) {
-         cs.key.virtualPress(38)
+         cs.inputKeyboard.virtualPress(38)
       }
 
       if (object.touch.isHeld()) {
@@ -28,4 +27,4 @@ cs.object.addTemplate({
       cs.draw.setColor("white")
       cs.draw.strokeRect(btnRect)
    }
-})
+}
