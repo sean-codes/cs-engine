@@ -11,8 +11,9 @@ const Network = require('./parts/Network')
 const Object = require('./parts/Object')
 const Room = require('./parts/Room')
 const Setup = require('./parts/Setup')
-const Surface = require('./parts/Surface')
+const Sound = require('./parts/Sound')
 const Sprite = require('./parts/Sprite')
+const Surface = require('./parts/Surface')
 const Storage = require('./parts/Storage')
 const Timer = require('./parts/Timer')
 const Vector = require('./parts/Vector')
@@ -24,23 +25,19 @@ module.exports = class cs {
          assets
       } = options
 
-      const sounds = assets && assets.sounds ? assets.sounds : []
-      const scripts = assets && assets.scripts ? assets.scripts : []
-      const objects = assets && assets.objects ? assets.objects : []
-      const sprites = assets && assets.sprites ? assets.sprites : []
-      const storages = assets && assets.storages ? assets.storages : []
-
       // 1. build engine
+      this.clone = function(object) { return JSON.parse(JSON.stringify(object)) }
+      this.default = function(want, ifnot) { return want != null ? want : ifnot }
+
       this.canvas = canvas
       this.ctx = canvas.getContext('2d')
       this.maxSize = options.maxSize || 2000
       this.start = options.start
       this.userStep = options.step
       this.userDraw = options.draw
-
-      // general handies
-      this.clone = function(object) { return JSON.parse(JSON.stringify(object)) }
-      this.default = function(want, ifnot) { return want != null ? want : ifnot }
+      this.global = options.global || {}
+      this.progress = options.progress || function() {}
+      this.focus = options.focus || function() {}
 
       this.camera = new Camera(this)
       this.draw = new Draw(this)
@@ -55,11 +52,20 @@ module.exports = class cs {
       this.object = new Object(this)
       this.room = new Room(this)
       this.setup = new Setup(this)
+      this.sound = new Sound(this)
       this.sprite = new Sprite(this)
       this.storage = new Storage(this)
       this.surface = new Surface(this)
+      this.timer = new Timer(this)
+      this.vector = new Vector(this)
 
       // 2. load assets
+      const sounds = assets && assets.sounds ? assets.sounds : []
+      const scripts = assets && assets.scripts ? assets.scripts : []
+      const objects = assets && assets.objects ? assets.objects : []
+      const sprites = assets && assets.sprites ? assets.sprites : []
+      const storages = assets && assets.storages ? assets.storages : []
+
       for (var object of objects) {
          this.object.addTemplate(object.type, object.src)
       }

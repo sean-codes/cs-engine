@@ -1,165 +1,170 @@
-//---------------------------------------------------------------------------------------------//
-//-----------------------------------| Object Functions |--------------------------------------//
-//---------------------------------------------------------------------------------------------//
-class CSENGINE_OBJECT {
-   constructor(cs) {
-      this.cs = cs
+//----------------------------------------------------------------------------//
+//-----------------------------| CS ENGINE: OBJECT |--------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_OBJECT {
+      constructor(cs) {
+         this.cs = cs
 
-      this.templates = {}
-      this.list = [] // all objects
-      this.new = [] // newly added objects
-      this.unique = 0
-      this.types = {}
-      this.objGroups = {}
-      this.shouldClean = false
-   }
-
-   addTemplate(type, template) {
-      this.templates[type] = template
-   }
-
-   loop(call) {
-      var i = cs.object.list.length;
-      while (i--) {
-         var object = cs.object.list[i]
-         call(object)
-      }
-   }
-
-   create(options) {
-      if (!this.templates[options.type]) {
-         console.log('object type "' + options.type + '" does not exist')
-         return undefined
+         this.templates = {}
+         this.list = [] // all objects
+         this.new = [] // newly added objects
+         this.unique = 0
+         this.types = {}
+         this.objGroups = {}
+         this.shouldClean = false
       }
 
-      var attr = options.attr
-      var template = this.templates[options.type]
-      var zIndex = options.zIndex || template.zIndex || 0
+      addTemplate(template) {
+         this.templates[template.type] = template
+      }
 
-      // create the object
-      var newObj = {
-         core: {
-            zIndex: zIndex,
-            live: true,
-            active: true,
-            drawn: false,
-            type: options.type,
-            id: this.unique,
-            surface: this.cs.default(template.surface, 'game')
+      loop(call) {
+         var i = this.cs.object.list.length;
+         while (i--) {
+            var object = this.cs.object.list[i]
+            call(object)
          }
       }
 
-      // predefined / custom Attr
-      for (var name in template.attr) { newObj[name] = template.attr[name] }
-      for (var name in attr) { newObj[name] = attr[name] }
+      create(options) {
+         if (!this.templates[options.type]) {
+            console.log('object type "' + options.type + '" does not exist')
+            return undefined
+         }
 
-      // run create event
-      template.create && template.create.call(newObj, newObj);
+         var attr = options.attr
+         var template = this.templates[options.type]
+         var zIndex = options.zIndex || template.zIndex || 0
 
-      // add to list
-      this.new.push({ obj: newObj, zIndex: zIndex })
-      this.unique += 1
+         // create the object
+         var newObj = {
+            core: {
+               zIndex: zIndex,
+               live: true,
+               active: true,
+               drawn: false,
+               type: options.type,
+               id: this.unique,
+               surface: this.cs.default(template.surface, 'game')
+            }
+         }
 
-      // grouping
-      if (!this.objGroups[options.type]) this.objGroups[options.type] = []
-      this.objGroups[options.type].push(newObj)
+         // predefined / custom Attr
+         for (var name in template.attr) { newObj[name] = template.attr[name] }
+         for (var name in attr) { newObj[name] = attr[name] }
 
-      return newObj
-   }
+         // run create event
+         template.create && template.create.call(newObj, newObj);
 
-   addNewObjects() {
-      while (this.new.length) {
-         var obj = this.new.shift().obj
-         this.list.push(obj)
+         // add to list
+         this.new.push({ obj: newObj, zIndex: zIndex })
+         this.unique += 1
+
+         // grouping
+         if (!this.objGroups[options.type]) this.objGroups[options.type] = []
+         this.objGroups[options.type].push(newObj)
+
+         return newObj
       }
 
-      this.orderObjectsByZIndex()
-   }
+      addNewObjects() {
+         while (this.new.length) {
+            var obj = this.new.shift().obj
+            this.list.push(obj)
+         }
 
-   orderObjectsByZIndex() {
-      this.order = this.list.sort(function(a, b) {
-         return b.core.zIndex === a.core.zIndex
-            ? b.core.id - a.core.id
-            : b.core.zIndex - a.core.zIndex
-      })
-   }
-
-   changeZIndex(object, zIndex) {
-      var listObject = object.list.find(function(listObject) {
-         return listObject.obj.core.id == object.core.id
-      })
-
-      listObject.core.zIndex = zIndex
-
-      this.orderObjectsByZIndex()
-   }
-
-   destroy(destroyObjOrID, fadeTimer) {
-      this.shouldClean = true
-      var destroyObj = (typeof destroyObjOrID === 'number')
-         ? this.id(destroyObjOrID)
-         : destroyObjOrID
-
-      destroyObj.core.live = false
-      destroyObj.core.active = false
-      destroyObj.core.fadeTimer = fadeTimer || 0
-
-      // remove from objGroup
-      var type = destroyObj.core.type
-      if (cs.objects[type].destroy) cs.objects[type].destroy.call(destroyObj)
-      this.objGroups[type] = this.objGroups[type].filter(function(obj) { return obj.core.live })
-   }
-
-   clean() {
-      if(!this.shouldClean) return
-      this.list = this.list.reduce(function(sum, num) {
-         if(num.core.live) sum.push(num)
-         return sum
-      }, [])
-   }
-
-   every() {
-      return this.list.concat(this.new.map(function(obj) { return obj.obj }))
-   }
-
-   all(type) {
-      return this.objGroups[type] || []
-   }
-
-   find(type) {
-      if (!this.objGroups[type]) {
-         return undefined
+         this.orderObjectsByZIndex()
       }
-      return this.objGroups[type][0]
-   }
 
-   search(call) {
-      return this.every().find(function(obj) {
-         if (!obj.core.live) return false
-         return call(obj)
-      })
-   }
+      orderObjectsByZIndex() {
+         this.order = this.list.sort(function(a, b) {
+            return b.core.zIndex === a.core.zIndex
+               ? b.core.id - a.core.id
+               : b.core.zIndex - a.core.zIndex
+         })
+      }
 
-   id(id) {
-      return this.list.find(function(obj) { return obj.core.id === id })
-   }
+      changeZIndex(object, zIndex) {
+         var listObject = object.list.find(function(listObject) {
+            return listObject.obj.core.id == object.core.id
+         })
 
-   count(type) {
-      return this.objGroups[type] ? this.objGroups[type].length : 0
-   }
+         listObject.core.zIndex = zIndex
 
-   reset() {
-      this.list = []
-      this.new = []
-      this.objGroups = {}
-      this.unique = 0
-   }
+         this.orderObjectsByZIndex()
+      }
 
-   resize() {
-      for (var object of this.list) {
-         object.core.drawn = false
+      destroy(destroyObjOrID, fadeTimer) {
+         this.shouldClean = true
+         var destroyObj = (typeof destroyObjOrID === 'number')
+            ? this.id(destroyObjOrID)
+            : destroyObjOrID
+
+         destroyObj.core.live = false
+         destroyObj.core.active = false
+         destroyObj.core.fadeTimer = fadeTimer || 0
+
+         // remove from objGroup
+         var type = destroyObj.core.type
+         if (cs.objects[type].destroy) cs.objects[type].destroy.call(destroyObj)
+         this.objGroups[type] = this.objGroups[type].filter(function(obj) { return obj.core.live })
+      }
+
+      clean() {
+         if(!this.shouldClean) return
+         this.list = this.list.reduce(function(sum, num) {
+            if(num.core.live) sum.push(num)
+            return sum
+         }, [])
+      }
+
+      every() {
+         return this.list.concat(this.new.map(function(obj) { return obj.obj }))
+      }
+
+      all(type) {
+         return this.objGroups[type] || []
+      }
+
+      find(type) {
+         if (!this.objGroups[type]) {
+            return undefined
+         }
+         return this.objGroups[type][0]
+      }
+
+      search(call) {
+         return this.every().find(function(obj) {
+            if (!obj.core.live) return false
+            return call(obj)
+         })
+      }
+
+      id(id) {
+         return this.list.find(function(obj) { return obj.core.id === id })
+      }
+
+      count(type) {
+         return this.objGroups[type] ? this.objGroups[type].length : 0
+      }
+
+      reset() {
+         this.list = []
+         this.new = []
+         this.objGroups = {}
+         this.unique = 0
+      }
+
+      resize() {
+         for (var object of this.list) {
+            object.core.drawn = false
+         }
       }
    }
-}
 
-if (module) module.exports = CSENGINE_OBJECT
+   // export (node / web)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_OBJECT
+      : cs.object = new CSENGINE_OBJECT(cs)
+})()

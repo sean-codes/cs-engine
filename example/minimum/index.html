@@ -3,7 +3,7 @@
 
 <head>
    <!-- Game Engine -->
-   <script src='../../main.js'></script>
+   <script src='../../src/main.web.js'></script>
 </head>
 
 <body style="background: #111">
@@ -12,10 +12,13 @@
 
    <script>
       cs.load({
-         parts: '../../engine',
+         parts: '../../src',
          canvas: myCanvas,
-         objects: {
-            box: {
+         start: function() {
+
+            cs.object.addTemplate({
+               type: 'box',
+
                create: function() {
                   this.x = 20
                   this.y = 0
@@ -23,6 +26,7 @@
                   this.ySpeed = 4
                   this.size = 40
                },
+               
                draw: function() {
                   cs.draw.settings({ color: '#FFF' })
 
@@ -38,9 +42,8 @@
                   if (this.x < 0 || this.x + this.size > cs.room.width) this.xSpeed *= -1
                   if (this.y < 0 || this.y + this.size > cs.room.height) this.ySpeed *= -1
                }
-            }
-         },
-         start: function() {
+            })
+
             cs.object.create({ type: 'box' })
          }
       })

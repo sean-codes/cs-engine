@@ -1,193 +1,238 @@
-// entry point for cs-engine
-// will attempt to load in ajax mode (web) or require mode (node)
-
 cs = {}
 cs.load = function(options) {
-   // Handy
-   this.clone = function(object) { return JSON.parse(JSON.stringify(object)) }
-   this.default = function(want, ifnot) { return want != null ? want : ifnot }
+   const {
+      canvas,
+      assets
+   } = options
 
+   // handy
+   this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
+   this.default = (want, ifnot) => { return want != null ? want : ifnot }
 
-   // Code version
-   this.version = options.version || Math.random()
-
-   // Core Path and Parts
-   this.path = options.parts
-   this.progress = options.progress || function() {}
-   this.focus = options.focus || function() {}
-
-   // Resources
-   this.sounds = []
-   this.sprites = []
-   this.storages = []
-   this.scripts = [
-      { path: this.path + '/parts/camera' },
-      { path: this.path + '/parts/draw' },
-      { path: this.path + '/parts/fps' },
-      { path: this.path + '/parts/fullscreen' },
-      { path: this.path + '/parts/keys' },
-      { path: this.path + '/parts/loop' },
-      { path: this.path + '/parts/math' },
-      { path: this.path + '/parts/mouse' },
-      { path: this.path + '/parts/network' },
-      { path: this.path + '/parts/object' },
-      { path: this.path + '/parts/room' },
-      { path: this.path + '/parts/setup' },
-      { path: this.path + '/parts/sound' },
-      { path: this.path + '/parts/sprite' },
-      { path: this.path + '/parts/storage' },
-      { path: this.path + '/parts/surface' },
-      //{ path: this.path + '/parts/text' },
-      { path: this.path + '/parts/touch' },
-      { path: this.path + '/parts/timer' },
-      { path: this.path + '/parts/vector' },
-   ]
-
-   // Globals / For user
-   this.assets = options.assets || {}
-   this.objects = options.objects || {}
-   this.script = options.script || {}
-   this.global = options.global || {}
-
-   // Setup core info
+   // 1. build the engine
+   this.canvas = canvas
+   this.ctx = canvas.getContext('2d')
    this.maxSize = options.maxSize || 2000
-   this.canvas = options.canvas
    this.start = options.start
    this.userStep = options.step
    this.userDraw = options.draw
+   this.progress = options.progress || function() {}
+   this.focus = options.focus || function() {}
+   this.version = options.version || Math.random()
+   this.global = options.global || {}
+   this.progress = options.progress || function() {}
+   this.focus = options.focus || function() {}
+   this.path = options.parts
 
-   // Initialize: Load Scripts and Sprites. Setup canvas
-   this.load = function(assets) {
-      // Resources
-      this.scripts = this.scripts.concat(this.assets.scripts || [])
-      this.sprites = this.sprites.concat(this.assets.sprites || [])
-      this.sounds = this.sounds.concat(this.assets.sounds || [])
-      this.storages = this.storages.concat(this.assets.storages || [])
-      this.preload()
+   // 2. load core
+   this.loading = 0
+
+   const loadScripts = (scripts, done) => {
+      this.loading += 1
+      const script = scripts.pop()
+      const htmlScript = document.createElement('script')
+      htmlScript.src = `${script.path}.js?v=${this.version}`
+      htmlScript.onload = () => {
+         this.loading -= 1
+         if (!this.loading) done()
+      }
+      document.body.appendChild(htmlScript)
+      console.log(`Loading Script: ${script.path}`)
+      scripts.length && loadScripts(scripts, done)
    }
 
-   this.preload = function() {
-      this.loading = {
-         scripts: { item: 0, required: this.scripts.length },
-         sprites: { item: 0, required: this.sprites.length },
-         sounds: { item: 0, required: this.sounds.length },
-         storages: { item: 0, required: this.storages.length },
-         total: { item: 0, required: this.scripts.length + this.sprites.length + this.sounds.length + this.storages.length, timer: performance.now() }
-      }
+   this.dateStartLoading = Date.now()
+   console.groupCollapsed('Loading Engine...')
 
-      // Load Scripts/Sprites/Sounds
-      console.groupCollapsed('Loading...')
-      if (this.storages.length) return this.loadstorages()
-      if (this.sprites.length) return this.loadsprites()
-      if (this.sounds.length) return this.loadsounds()
-      if (this.scripts.length) return this.loadscripts()
-   }
+   loadScripts([
+      { path: this.path + '/parts/Camera' },
+      { path: this.path + '/parts/Draw' },
+      { path: this.path + '/parts/Fps' },
+      { path: this.path + '/parts/Fullscreen' },
+      { path: this.path + '/parts/InputKeyboard' },
+      { path: this.path + '/parts/InputMouse' },
+      { path: this.path + '/parts/InputTouch' },
+      { path: this.path + '/parts/Loop' },
+      { path: this.path + '/parts/Math' },
+      { path: this.path + '/parts/Network' },
+      { path: this.path + '/parts/Object' },
+      { path: this.path + '/parts/Room' },
+      { path: this.path + '/parts/Setup' },
+      { path: this.path + '/parts/Sound' },
+      { path: this.path + '/parts/Sprite' },
+      { path: this.path + '/parts/Storage' },
+      { path: this.path + '/parts/Surface' },
+      { path: this.path + '/parts/Timer' },
+      { path: this.path + '/parts/vector' },
+   ], () => {
+      const engineLoadTime = Math.round(Date.now() - this.dateStartLoading)
+      console.groupEnd()
+      console.log(`Engine Loaded in ${engineLoadTime}ms`)
 
-   this.loadscripts = function() {
-      var script = this.scripts[this.loading.scripts.item]
-      var that = this
+      console.groupCollapsed('Loading Assets...')
+      console.log(assets)
+      console.groupEnd()
 
-      script.html = document.createElement('script')
-      script.html.src = script.path + '.js?v=' + this.version
-      script.html.onload = function() { that.onload('scripts', 1) }
-      document.head.appendChild(script.html)
-   }
-
-   this.loadsprites = function() {
-      if (!this.sprites.length) return this.onload('sprites', 0)
-      var sprite = this.sprites[this.loading.sprites.item]
-      var that = this
-      sprite.html = document.createElement('img')
-      sprite.html.src = sprite.path + '.png?v=' + this.version
-      sprite.html.onload = function() { that.onload('sprites', 1) }
-   }
-
-   this.loadstorages = function() {
-      if (!this.storages.length) return this.onload('storages', 0)
-      var storage = this.storages[this.loading.storages.item]
-      storage.data = {}
-
-      // attempt to use localstorage
-      if (!storage.path) {
-         storage.data = JSON.parse(window.localStorage.getItem(storage.location))
-         this.onload('storages', 1)
-      }
-
-      // fetch the storage .json
-      if (storage.path) {
-         var that = this
-         storage.request = new XMLHttpRequest()
-         storage.request.onreadystatechange = function() {
-            if (this.readyState == 4) {
-               var data = JSON.parse(this.responseText)
-               storage.data = data
-               that.onload('storages', 1)
-            }
-         }
-         storage.request.open("GET", './' + storage.path + '.json?v=' + this.version, true)
-         storage.request.send()
-      }
-   }
-
-   this.loadsounds = function(sound) {
-      if (!this.sounds.length) return this.onload('sounds', 0)
-      var sound = this.sounds[this.loading.sounds.item]
-
-      sound.loaded = false
-      sound.src = sound.path + '.wav?v=' + this.version
-      sound.buffer = null
-      sound.request = new XMLHttpRequest()
-
-      sound.request.open('GET', sound.src, true);
-      sound.request.responseType = 'arraybuffer';
-
-      var that = this
-      sound.request.onload = function() {
-         window.AudioContext = window.AudioContext || window.webkitAudioContext
-         if (window.AudioContext) {
-            new AudioContext().decodeAudioData(this.response, function(buffer) {
-               sound.buffer = buffer
-            })
-         }
-         that.onload('sounds', 1)
-      }
-      sound.request.send();
-   }
+      cs.setup.run()
+   })
 
 
-   this.onload = function(type, loaded) {
-      this.loading.total.item += loaded
-      this.loading[type].item += loaded
-
-      var loadInfo = {
-         percent: Math.floor(this.loading.total.item / this.loading.total.required * 100),
-         finished: this.loading.total.item === this.loading.total.required,
-         type: type,
-         file: this[type][this.loading.total.item],
-         current: this.loading.total.item,
-         totalRequired: this.loading.total.required,
-         totalType: this.loading[type].required
-      }
-
-      this.progress(cs.clone(loadInfo))
-
-      var loadMessage = 'loaded ' + loadInfo.type + ' ' + loadInfo.current + '/' + loadInfo.totalRequired + ' - total: ' + loadInfo.percent + '%'
-      console.log(loadMessage)
-
-      if (this.loading[type].item < this.loading[type].required) {
-         return this['load' + type]()
-      }
-
-      if (this.loading.total.item == this.loading.total.required && this.start) {
-         console.groupEnd()
-         console.log('Loaded in ' + Math.ceil(performance.now() - this.loading.total.timer) + 'ms')
-         return cs.setup()
-      }
-
-      var loadOrder = ['storages', 'sprites', 'sounds', 'scripts']
-      this['load' + loadOrder[loadOrder.indexOf(type) + 1]]()
-   }
-
-   // load them! :]
-   this.load(options.assets)
 }
+
+//    // Initialize: Load Scripts and Sprites. Setup canvas
+//    this.load = (assets) => {
+//       // Resources
+//       this.parts = [
+//          { path: this.path + '/parts/camera' },
+//          { path: this.path + '/parts/draw' },
+//          { path: this.path + '/parts/fps' },
+//          { path: this.path + '/parts/fullscreen' },
+//          { path: this.path + '/parts/keys' },
+//          { path: this.path + '/parts/loop' },
+//          { path: this.path + '/parts/math' },
+//          { path: this.path + '/parts/mouse' },
+//          { path: this.path + '/parts/network' },
+//          { path: this.path + '/parts/object' },
+//          { path: this.path + '/parts/room' },
+//          { path: this.path + '/parts/setup' },
+//          { path: this.path + '/parts/sound' },
+//          { path: this.path + '/parts/sprite' },
+//          { path: this.path + '/parts/storage' },
+//          { path: this.path + '/parts/surface' },
+//          //{ path: this.path + '/parts/text' },
+//          { path: this.path + '/parts/touch' },
+//          { path: this.path + '/parts/timer' },
+//          { path: this.path + '/parts/vector' },
+//       ]
+//       this.scripts = this.scripts.concat(this.assets.scripts || [])
+//       this.sprites = this.sprites.concat(this.assets.sprites || [])
+//       this.sounds = this.sounds.concat(this.assets.sounds || [])
+//       this.storages = this.storages.concat(this.assets.storages || [])
+//       this.preload()
+//    }
+//
+//    this.preload = function() {
+//       this.loading = {
+//          scripts: { item: 0, required: this.scripts.length },
+//          sprites: { item: 0, required: this.sprites.length },
+//          sounds: { item: 0, required: this.sounds.length },
+//          storages: { item: 0, required: this.storages.length },
+//          total: { item: 0, required: this.scripts.length + this.sprites.length + this.sounds.length + this.storages.length, timer: performance.now() }
+//       }
+//
+//       // Load Scripts/Sprites/Sounds
+//       console.groupCollapsed('Loading...')
+//       if (this.storages.length) return this.loadstorages()
+//       if (this.sprites.length) return this.loadsprites()
+//       if (this.sounds.length) return this.loadsounds()
+//       if (this.scripts.length) return this.loadscripts()
+//    }
+//
+//    this.loadscripts = function() {
+//       var script = this.scripts[this.loading.scripts.item]
+//       var that = this
+//
+//       script.html = document.createElement('script')
+//       script.html.src = script.path + '.js?v=' + this.version
+//       script.html.onload = function() { that.onload('scripts', 1) }
+//       document.head.appendChild(script.html)
+//    }
+//
+//    this.loadsprites = function() {
+//       if (!this.sprites.length) return this.onload('sprites', 0)
+//       var sprite = this.sprites[this.loading.sprites.item]
+//       var that = this
+//       sprite.html = document.createElement('img')
+//       sprite.html.src = sprite.path + '.png?v=' + this.version
+//       sprite.html.onload = function() { that.onload('sprites', 1) }
+//    }
+//
+//    this.loadstorages = function() {
+//       if (!this.storages.length) return this.onload('storages', 0)
+//       var storage = this.storages[this.loading.storages.item]
+//       storage.data = {}
+//
+//       // attempt to use localstorage
+//       if (!storage.path) {
+//          storage.data = JSON.parse(window.localStorage.getItem(storage.location))
+//          this.onload('storages', 1)
+//       }
+//
+//       // fetch the storage .json
+//       if (storage.path) {
+//          var that = this
+//          storage.request = new XMLHttpRequest()
+//          storage.request.onreadystatechange = function() {
+//             if (this.readyState == 4) {
+//                var data = JSON.parse(this.responseText)
+//                storage.data = data
+//                that.onload('storages', 1)
+//             }
+//          }
+//          storage.request.open("GET", './' + storage.path + '.json?v=' + this.version, true)
+//          storage.request.send()
+//       }
+//    }
+//
+//    this.loadsounds = function(sound) {
+//       if (!this.sounds.length) return this.onload('sounds', 0)
+//       var sound = this.sounds[this.loading.sounds.item]
+//
+//       sound.loaded = false
+//       sound.src = sound.path + '.wav?v=' + this.version
+//       sound.buffer = null
+//       sound.request = new XMLHttpRequest()
+//
+//       sound.request.open('GET', sound.src, true);
+//       sound.request.responseType = 'arraybuffer';
+//
+//       var that = this
+//       sound.request.onload = function() {
+//          window.AudioContext = window.AudioContext || window.webkitAudioContext
+//          if (window.AudioContext) {
+//             new AudioContext().decodeAudioData(this.response, function(buffer) {
+//                sound.buffer = buffer
+//             })
+//          }
+//          that.onload('sounds', 1)
+//       }
+//       sound.request.send();
+//    }
+//
+//
+//    this.onload = function(type, loaded) {
+//       this.loading.total.item += loaded
+//       this.loading[type].item += loaded
+//
+//       var loadInfo = {
+//          percent: Math.floor(this.loading.total.item / this.loading.total.required * 100),
+//          finished: this.loading.total.item === this.loading.total.required,
+//          type: type,
+//          file: this[type][this.loading.total.item],
+//          current: this.loading.total.item,
+//          totalRequired: this.loading.total.required,
+//          totalType: this.loading[type].required
+//       }
+//
+//       this.progress(cs.clone(loadInfo))
+//
+//       var loadMessage = 'loaded ' + loadInfo.type + ' ' + loadInfo.current + '/' + loadInfo.totalRequired + ' - total: ' + loadInfo.percent + '%'
+//       console.log(loadMessage)
+//
+//       if (this.loading[type].item < this.loading[type].required) {
+//          return this['load' + type]()
+//       }
+//
+//       if (this.loading.total.item == this.loading.total.required && this.start) {
+//          console.groupEnd()
+//          console.log('Loaded in ' + Math.ceil(performance.now() - this.loading.total.timer) + 'ms')
+//          return cs.setup()
+//       }
+//
+//       var loadOrder = ['storages', 'sprites', 'sounds', 'scripts']
+//       this['load' + loadOrder[loadOrder.indexOf(type) + 1]]()
+//    }
+//
+//    // load them! :]
+//    this.load(options.assets)
+// }

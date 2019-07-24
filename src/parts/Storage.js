@@ -1,49 +1,54 @@
 //----------------------------------------------------------------------------//
-//----------------------------------| Storage Functions |---------------------//
+//-----------------------------| CS ENGINE: STORAGE |-------------------------//
 //----------------------------------------------------------------------------//
-class CSENGINE_STORAGE {
-   constructor(cs) {
-      this.cs = cs
+(() => {
+   class CSENGINE_STORAGE {
+      constructor(cs) {
+         this.cs = cs
 
-      this.loaded = []
-      this.data = {}
-   }
-
-   init() {
-      for (var storage of this.loaded) {
-         this.write(storage)
+         this.loaded = []
+         this.data = {}
       }
-   }
 
-   read(location) {
-      return JSON.parse(this.data[location])
-   }
-
-   write(options) {
-      this.data[options.location] = JSON.stringify(options.data)
-      if (options.save) this.save(options.location)
-   }
-
-   // reminds me of bash ls command
-   ls(location) {
-      var startsWith = cs.default(location, '')
-      var list = []
-      for (var storageName of Object.keys(this.data)) {
-         if (storageName.startsWith(startsWith)) {
-            list.push(storageName)
+      init() {
+         for (var storage of this.loaded) {
+            this.write(storage)
          }
       }
-      return list
+
+      read(location) {
+         return JSON.parse(this.data[location])
+      }
+
+      write(options) {
+         this.data[options.location] = JSON.stringify(options.data)
+         if (options.save) this.save(options.location)
+      }
+
+      // reminds me of bash ls command
+      ls(location) {
+         var startsWith = cs.default(location, '')
+         var list = []
+         for (var storageName of Object.keys(this.data)) {
+            if (storageName.startsWith(startsWith)) {
+               list.push(storageName)
+            }
+         }
+         return list
+      }
+
+      save(location) {
+         // local storage
+         window.localStorage.setItem(location, this.data[location])
+      }
+
+      reset() {
+
+      }
    }
 
-   save(location) {
-      // local storage
-      window.localStorage.setItem(location, this.data[location])
-   }
-
-   reset() {
-
-   }
-}
-
-if (module) module.exports = CSENGINE_STORAGE
+   // export (node / web)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_STORAGE
+      : cs.storage = new CSENGINE_STORAGE(cs)
+})()

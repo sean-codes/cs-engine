@@ -118,2392 +118,2582 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"../node_modules/cs-engine/src/parts/Camera.js":[function(require,module,exports) {
-//---------------------------------------------------------------------------------------------//
-//----------------------------------| Camera Functions |---------------------------------------//
-//---------------------------------------------------------------------------------------------//
-class CSENGINE_CAMERA {
-   constructor(cs) {
-      this.cs = cs
+//----------------------------------------------------------------------------//
+//-----------------------------| CS ENGINE: CAMERA |--------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_CAMERA {
+      constructor(cs) {
+         this.cs = cs
 
-      this.x = 0
-      this.y = 0
-      this.centerX = 0
-      this.centerY = 0
-      this.followPos = { x: 0, y: 0 }
-      this.zoom = 1
-      this.targetZoom = 1
-      this.scale = 1
-      this.width = 0
-      this.height = 0
-      this.maxWidth = 0
-      this.maxHeight = 0
-      this.smoothing = 1
-      this.smoothingZoom = 1
+         this.x = 0
+         this.y = 0
+         this.centerX = 0
+         this.centerY = 0
+         this.followPos = { x: 0, y: 0 }
+         this.zoom = 1
+         this.targetZoom = 1
+         this.scale = 1
+         this.width = 0
+         this.height = 0
+         this.maxWidth = 0
+         this.maxHeight = 0
+         this.smoothing = 1
+         this.smoothingZoom = 1
 
-      this.config = {
-         maxWidth: 0,
-         maxHeight: 0,
-         scale: 1,
-         zoom: 1,
-         smoothing: 1, // 1 means 1:1 movement
-         smoothingZoom: 1,
-         fixedScaling: true
-      }
-   }
-
-   // should happen once
-   setup(options) {
-      this.configure(options)
-      this.scale = this.config.scale
-      this.maxWidth = this.config.maxWidth
-      this.maxHeight = this.config.maxHeight
-      this.cs.resize()
-   }
-
-   // can change anytime (zoom, smoothing, etc)
-   configure(options) {
-      for (var option in options) {
-         this.config[option] = options[option]
-      }
-
-      this.smoothing = this.config.smoothing
-      this.smoothingZoom = this.config.smoothingZoom
-   }
-
-   resize() {
-      var w = this.cs.canvas.width
-      var h = this.cs.canvas.height
-
-      if (this.maxWidth && this.maxHeight) {
-         this.scale = this.config.fixedScaling
-            ? Math.max(1, Math.ceil(h / this.maxHeight))
-            : h / this.maxHeight
-
-         if (this.scale < w / this.maxWidth) {
-            this.scale = this.config.fixedScaling
-               ? Math.max(1, Math.ceil(w / this.maxWidth))
-               : w / this.maxWidth
+         this.config = {
+            maxWidth: 0,
+            maxHeight: 0,
+            scale: 1,
+            zoom: 1,
+            smoothing: 1, // 1 means 1:1 movement
+            smoothingZoom: 1,
+            fixedScaling: true
          }
       }
 
-      this.width = w / this.scale
-      this.height = h / this.scale
-   }
+      // should happen once
+      setup(options) {
+         this.configure(options)
+         this.scale = this.config.scale
+         this.maxWidth = this.config.maxWidth
+         this.maxHeight = this.config.maxHeight
+         this.cs.resize()
+      }
 
-   snap(pos) {
-      this.follow(pos)
-      this.update(1)
-   }
+      // can change anytime (zoom, smoothing, etc)
+      configure(options) {
+         for (var option in options) {
+            this.config[option] = options[option]
+         }
 
-   follow(pos) {
-      this.followPos = {
-         x: pos.x,
-         y: pos.y
+         this.smoothing = this.config.smoothing
+         this.smoothingZoom = this.config.smoothingZoom
+      }
+
+      resize() {
+         var w = this.cs.canvas.width
+         var h = this.cs.canvas.height
+
+         if (this.maxWidth && this.maxHeight) {
+            this.scale = this.config.fixedScaling
+               ? Math.max(1, Math.ceil(h / this.maxHeight))
+               : h / this.maxHeight
+
+            if (this.scale < w / this.maxWidth) {
+               this.scale = this.config.fixedScaling
+                  ? Math.max(1, Math.ceil(w / this.maxWidth))
+                  : w / this.maxWidth
+            }
+         }
+
+         this.width = w / this.scale
+         this.height = h / this.scale
+      }
+
+      snap(pos) {
+         this.follow(pos)
+         this.update(1)
+      }
+
+      follow(pos) {
+         this.followPos = {
+            x: pos.x,
+            y: pos.y
+         }
+      }
+
+      update(smoothing) {
+         var smoothing = this.cs.default(smoothing, this.smoothing)
+
+         // smooth zooming
+         var differenceZoom = this.config.zoom - this.zoom
+         this.zoom += differenceZoom / this.smoothingZoom
+         // if zooming turn smoothing off
+         if (differenceZoom) smoothing = 1
+
+         var scale = this.info().zScale
+         this.width = this.cs.canvas.width / scale
+         this.height = this.cs.canvas.height / scale
+
+         var differenceX = this.followPos.x - (this.x + this.width/2)
+         var differenceY = this.followPos.y - (this.y + this.height/2)
+
+         this.x = this.x + differenceX / smoothing
+         this.y = this.y + differenceY / smoothing
+
+         if (this.x < 0) this.x = 0
+         if (this.y < 0) this.y = 0
+
+         if (this.x + this.width > this.cs.room.width) {
+            this.x = (this.cs.room.width - this.width) / (this.cs.room.width < this.width ? 2 : 1)
+         }
+
+         if (this.y + this.height > this.cs.room.height) {
+            this.y = (this.cs.room.height - this.height) / (this.cs.room.height < this.height ? 2 : 1)
+         }
+
+         this.centerX = this.x + this.width/2
+         this.centerY = this.y + this.height/2
+      }
+
+      zoomOut() {
+         if(this.config.zoom >= 2) this.config.zoom -= 1
+      }
+
+      zoomIn() {
+         this.config.zoom += 1
+      }
+
+      outside(rect) {
+         if (
+               rect.x + rect.width < this.x
+            || rect.x > this.x + this.width
+            || rect.y + rect.height < this.y
+            || rect.y > this.y + this.height
+         ) {
+            return true
+         }
+         return false
+      }
+
+      info() {
+         return {
+            zoom: Math.round(this.zoom * 1000) / 1000,
+            scale: Math.round(this.scale * 1000) / 1000,
+            zScale: Math.round(this.scale * this.zoom * 1000) / 1000,
+            x: Math.round(this.x * 1000) / 1000 - 0.005, // prevent 0.5 artifacts
+            y: Math.round(this.y * 1000) / 1000 - 0.005,
+            width: Math.round(this.width * 1000 + 0.010) / 1000,
+            height: Math.round(this.height * 1000 + 0.010) / 1000
+         }
       }
    }
 
-   update(smoothing) {
-      var smoothing = this.cs.default(smoothing, this.smoothing)
-
-      // smooth zooming
-      var differenceZoom = this.config.zoom - this.zoom
-      this.zoom += differenceZoom / this.smoothingZoom
-      // if zooming turn smoothing off
-      if (differenceZoom) smoothing = 1
-
-      var scale = this.info().zScale
-      this.width = this.cs.canvas.width / scale
-      this.height = this.cs.canvas.height / scale
-
-      var differenceX = this.followPos.x - (this.x + this.width/2)
-      var differenceY = this.followPos.y - (this.y + this.height/2)
-
-      this.x = this.x + differenceX / smoothing
-      this.y = this.y + differenceY / smoothing
-
-      if (this.x < 0) this.x = 0
-      if (this.y < 0) this.y = 0
-
-      if (this.x + this.width > this.cs.room.width) {
-         this.x = (this.cs.room.width - this.width) / (this.cs.room.width < this.width ? 2 : 1)
-      }
-
-      if (this.y + this.height > this.cs.room.height) {
-         this.y = (this.cs.room.height - this.height) / (this.cs.room.height < this.height ? 2 : 1)
-      }
-
-      this.centerX = this.x + this.width/2
-      this.centerY = this.y + this.height/2
-   }
-
-   zoomOut() {
-      if(this.config.zoom >= 2) this.config.zoom -= 1
-   }
-
-   zoomIn() {
-      this.config.zoom += 1
-   }
-
-   outside(rect) {
-      if (
-            rect.x + rect.width < this.x
-         || rect.x > this.x + this.width
-         || rect.y + rect.height < this.y
-         || rect.y > this.y + this.height
-      ) {
-         return true
-      }
-      return false
-   }
-
-   info() {
-      return {
-         zoom: Math.round(this.zoom * 1000) / 1000,
-         scale: Math.round(this.scale * 1000) / 1000,
-         zScale: Math.round(this.scale * this.zoom * 1000) / 1000,
-         x: Math.round(this.x * 1000) / 1000 - 0.005, // prevent 0.5 artifacts
-         y: Math.round(this.y * 1000) / 1000 - 0.005,
-         width: Math.round(this.width * 1000 + 0.010) / 1000,
-         height: Math.round(this.height * 1000 + 0.010) / 1000
-      }
-   }
-}
-
-if (module) module.exports = CSENGINE_CAMERA
+   // export (node / web)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_CAMERA
+      : cs.camera = new CSENGINE_CAMERA(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Draw.js":[function(require,module,exports) {
-class CSENGINE_DRAW {
-   constructor(cs) {
-      this.cs = cs
-      this.debug = {}
-      this.surface = {}
-      this.config = {
-         defaults: {
-            alpha: 1,
-            width: 1,
-            font: { size: 12, family: 'Arial' },
-            textAlign: 'start',
-            textBaseline: 'top',
-            color: '#000',
-            lineHeight: 10,
-            lineDash: [],
-            operation: 'source-over'
-         },
-         current: {} // will clone on settingsDefault()
-      }
-   }
-
-   setSurface(surface) {
-      this.surface = surface
-      this.scale = 1
-      this.cameraX = 0
-      this.cameraY = 0
-      this.cameraWidth = this.surface.width
-      this.cameraHeight = this.surface.height
-      this.zScaleHack = 0
-
-      if (this.surface.useCamera && this.surface.oneToOne) {
-         var camera = this.cs.camera.info()
-
-         this.scale = camera.zScale
-         this.cameraX = camera.x
-         this.cameraY = camera.y
-         this.cameraWidth = camera.width
-         this.cameraHeight = camera.height
-
-         // helps sync up scaled surfaces with unscaled
-         if (this.surface.oneToOne && camera.scale > 1) {
-            this.zScaleHack = 1
+//----------------------------------------------------------------------------//
+//------------------------------| CS ENGINE: DRAW |---------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_DRAW {
+      constructor(cs) {
+         this.cs = cs
+         this.debug = {}
+         this.surface = {}
+         this.config = {
+            defaults: {
+               alpha: 1,
+               width: 1,
+               font: { size: 12, family: 'Arial' },
+               textAlign: 'start',
+               textBaseline: 'top',
+               color: '#000',
+               lineHeight: 10,
+               lineDash: [],
+               operation: 'source-over'
+            },
+            current: {} // will clone on settingsDefault()
          }
       }
 
-      this.settingsDefault()
-   }
+      setSurface(surface) {
+         this.surface = surface
+         this.scale = 1
+         this.cameraX = 0
+         this.cameraY = 0
+         this.cameraWidth = this.surface.width
+         this.cameraHeight = this.surface.height
+         this.zScaleHack = 0
 
-   debugReset() {
-      this.debug = {
-         spritesSkipped: this.debug.spritesSkippedCount,
-         spritesDrawn: this.debug.spritesDrawnCount,
-         rectanglesSkipped: this.debug.rectanglesSkippedCount,
-         rectanglesDrawn: this.debug.rectanglesDrawnCount,
-         shapesSkipped: this.debug.shapesSkippedCount,
-         shapesDrawn: this.debug.shapesDrawnCount,
-         circlesSkipped: this.debug.circlesSkippedCount,
-         circlesDrawn: this.debug.circlesDrawnCount,
-         spritesSkippedCount: 0,
-         spritesDrawnCount: 0,
-         rectanglesSkippedCount: 0,
-         rectanglesDrawnCount: 0,
-         shapesSkippedCount: 0,
-         shapesDrawnCount: 0,
-         circlesSkippedCount: 0,
-         circlesDrawnCount: 0,
-      }
-   }
+         if (this.surface.useCamera && this.surface.oneToOne) {
+            var camera = this.cs.camera.info()
 
-   outside(o) {
-      return (
-         o.x + o.width < this.cameraX ||
-         o.x > this.cameraX + this.cameraWidth ||
-         o.y + o.height < this.cameraY ||
-         o.y > this.cameraY + this.cameraHeight
-      )
-   }
+            this.scale = camera.zScale
+            this.cameraX = camera.x
+            this.cameraY = camera.y
+            this.cameraWidth = camera.width
+            this.cameraHeight = camera.height
 
-   sprite(options) {
-      var scale = this.scale
-      var info = this.this.cs.sprite.info(options)
-      var frame = info.frame
-      var xOff = info.xoff
-      var yOff = info.yoff
-
-      // dest
-      var dx = options.x - this.cameraX
-      var dy = options.y - this.cameraY
-      var dWidth = info.width
-      var dHeight = info.height
-
-      // source
-      var sx = 0
-      var sy = 0
-      var sWidth = info.fWidth
-      var sHeight = info.fHeight
-
-      // trimming
-      if (options.hTrim) {
-         sHeight -= options.hTrim
-         dHeight -= options.hTrim
-      }
-
-      // when flipping match the pixel
-      if (info.scaleX < 0 && xOff) dx++
-      if (info.scaleY < 0 && yOff) dy++
-
-      var rotateOrSomething = (info.scaleX < 0 || info.scaleY < 0 || info.angle)
-      if (rotateOrSomething) {
-         this.surface.ctx.save()
-         this.surface.ctx.translate((dx * scale), (dy * scale))
-         this.surface.ctx.rotate(options.angle * Math.PI / 180)
-         this.surface.ctx.scale(info.scaleX, info.scaleY)
-
-         this.surface.ctx.drawImage(
-            frame,
-            sx, sy, sWidth, sHeight,
-            (-xOff * scale),
-            (-yOff * scale + this.zScaleHack),
-            (dWidth * scale),
-            (dHeight * scale)
-         )
-
-         this.surface.ctx.restore()
-      } else {
-         this.surface.ctx.drawImage(
-            frame,
-            sx, sy, sWidth, sHeight,
-            ((dx - xOff) * scale),
-            ((dy - yOff) * scale) + this.zScaleHack,
-            (dWidth * scale),
-            (dHeight * scale)
-         )
-      }
-
-      this.debug.spritesDrawnCount += 1
-      this.cs.draw.settingsDefault()
-      return
-   }
-
-   textInfo(options) {
-      // Guessing the size
-      var lines = []
-      var curLine = []
-      var y = 0
-      var x = 0
-      var textArr = (options.text.toString()).split('')
-
-      // Setup the lines
-      for (var pos in textArr) {
-         curLine.push(textArr[pos])
-
-         if (this.surface.ctx.measureText(curLine.join('')).width > options.width) {
-            // Try to find a space
-            for (var o = curLine.length; o > 0; o--)
-               if (curLine[o] == ' ') break
-
-            // If no space add a dash
-            if (!o) {
-               o = curLine.length - 2
-               curLine.splice(o - 1, 0, '-')
+            // helps sync up scaled surfaces with unscaled
+            if (this.surface.oneToOne && camera.scale > 1) {
+               this.zScaleHack = 1
             }
-
-            // Draw and reset
-            lines.push(curLine.slice(0, o).join('').trim())
-            curLine = curLine.slice(o, curLine.length)
-            y += options.lineHeight
          }
-         if (pos == textArr.length - 1) {
-            lines.push(curLine.join('').trim())
+
+         this.settingsDefault()
+      }
+
+      debugReset() {
+         this.debug = {
+            spritesSkipped: this.debug.spritesSkippedCount,
+            spritesDrawn: this.debug.spritesDrawnCount,
+            rectanglesSkipped: this.debug.rectanglesSkippedCount,
+            rectanglesDrawn: this.debug.rectanglesDrawnCount,
+            shapesSkipped: this.debug.shapesSkippedCount,
+            shapesDrawn: this.debug.shapesDrawnCount,
+            circlesSkipped: this.debug.circlesSkippedCount,
+            circlesDrawn: this.debug.circlesDrawnCount,
+            spritesSkippedCount: 0,
+            spritesDrawnCount: 0,
+            rectanglesSkippedCount: 0,
+            rectanglesDrawnCount: 0,
+            shapesSkippedCount: 0,
+            shapesDrawnCount: 0,
+            circlesSkippedCount: 0,
+            circlesDrawnCount: 0,
          }
       }
 
-      return {
-         lines: lines,
-         lineHeight: options.lineHeight,
-         width: options.width,
-         height: lines.length * options.lineHeight,
+      outside(o) {
+         return (
+            o.x + o.width < this.cameraX ||
+            o.x > this.cameraX + this.cameraWidth ||
+            o.y + o.height < this.cameraY ||
+            o.y > this.cameraY + this.cameraHeight
+         )
       }
-   }
 
-   text(options) {
-      var x = options.x - this.cameraX
-      var y = options.y - this.cameraY
-      var scale = this.scale
+      sprite(options) {
+         var scale = this.scale
+         var info = this.this.cs.sprite.info(options)
+         var frame = info.frame
+         var xOff = info.xoff
+         var yOff = info.yoff
 
-      options.center && this.cs.draw.setTextCenter()
+         // dest
+         var dx = options.x - this.cameraX
+         var dy = options.y - this.cameraY
+         var dWidth = info.width
+         var dHeight = info.height
 
-      if (options.lines) {
-         for (var line in options.lines) {
-            var lineYOffset = (line * (options.lineHeight || this.surface.ctx.lineHeight))
-            this.surface.ctx.fillText(
-               options.lines[line],
-               x * scale,
-               (y + lineYOffset) * scale
+         // source
+         var sx = 0
+         var sy = 0
+         var sWidth = info.fWidth
+         var sHeight = info.fHeight
+
+         // trimming
+         if (options.hTrim) {
+            sHeight -= options.hTrim
+            dHeight -= options.hTrim
+         }
+
+         // when flipping match the pixel
+         if (info.scaleX < 0 && xOff) dx++
+         if (info.scaleY < 0 && yOff) dy++
+
+         var rotateOrSomething = (info.scaleX < 0 || info.scaleY < 0 || info.angle)
+         if (rotateOrSomething) {
+            this.surface.ctx.save()
+            this.surface.ctx.translate((dx * scale), (dy * scale))
+            this.surface.ctx.rotate(options.angle * Math.PI / 180)
+            this.surface.ctx.scale(info.scaleX, info.scaleY)
+
+            this.surface.ctx.drawImage(
+               frame,
+               sx, sy, sWidth, sHeight,
+               (-xOff * scale),
+               (-yOff * scale + this.zScaleHack),
+               (dWidth * scale),
+               (dHeight * scale)
+            )
+
+            this.surface.ctx.restore()
+         } else {
+            this.surface.ctx.drawImage(
+               frame,
+               sx, sy, sWidth, sHeight,
+               ((dx - xOff) * scale),
+               ((dy - yOff) * scale) + this.zScaleHack,
+               (dWidth * scale),
+               (dHeight * scale)
             )
          }
-      } else {
-         this.surface.ctx.fillText(
-            options.text,
-            Math.floor(x * scale),
-            Math.floor(y * scale)
+
+         this.debug.spritesDrawnCount += 1
+         this.cs.draw.settingsDefault()
+         return
+      }
+
+      textInfo(options) {
+         // Guessing the size
+         var lines = []
+         var curLine = []
+         var y = 0
+         var x = 0
+         var textArr = (options.text.toString()).split('')
+
+         // Setup the lines
+         for (var pos in textArr) {
+            curLine.push(textArr[pos])
+
+            if (this.surface.ctx.measureText(curLine.join('')).width > options.width) {
+               // Try to find a space
+               for (var o = curLine.length; o > 0; o--)
+                  if (curLine[o] == ' ') break
+
+               // If no space add a dash
+               if (!o) {
+                  o = curLine.length - 2
+                  curLine.splice(o - 1, 0, '-')
+               }
+
+               // Draw and reset
+               lines.push(curLine.slice(0, o).join('').trim())
+               curLine = curLine.slice(o, curLine.length)
+               y += options.lineHeight
+            }
+            if (pos == textArr.length - 1) {
+               lines.push(curLine.join('').trim())
+            }
+         }
+
+         return {
+            lines: lines,
+            lineHeight: options.lineHeight,
+            width: options.width,
+            height: lines.length * options.lineHeight,
+         }
+      }
+
+      text(options) {
+         var x = options.x - this.cameraX
+         var y = options.y - this.cameraY
+         var scale = this.scale
+
+         options.center && this.cs.draw.setTextCenter()
+
+         if (options.lines) {
+            for (var line in options.lines) {
+               var lineYOffset = (line * (options.lineHeight || this.surface.ctx.lineHeight))
+               this.surface.ctx.fillText(
+                  options.lines[line],
+                  x * scale,
+                  (y + lineYOffset) * scale
+               )
+            }
+         } else {
+            this.surface.ctx.fillText(
+               options.text,
+               Math.floor(x * scale),
+               Math.floor(y * scale)
+            )
+         }
+         this.settingsDefault()
+      }
+
+      textWidth(str) {
+         return this.surface.ctx.measureText(str).width
+      }
+
+      line(options) {
+         var lineWidth = this.surface.ctx.lineWidth
+         var lineWidthAdjust = lineWidth / 2 / this.scale
+         var scale = this.scale
+
+         var x1 = options.points[0].x + lineWidthAdjust - this.cameraX
+         var x2 = options.points[1].x + lineWidthAdjust - this.cameraX
+         var y1 = options.points[0].y - lineWidthAdjust - this.cameraY
+         var y2 = options.points[1].y - lineWidthAdjust - this.cameraY
+
+         this.surface.ctx.beginPath();
+         this.surface.ctx.moveTo(x1 * scale, y1 * scale);
+         this.surface.ctx.lineTo(x2 * scale, y2 * scale);
+         this.surface.ctx.stroke()
+         this.settingsDefault()
+      }
+
+      fillRect(args) {
+         // console.log('drawing', args)
+         var scale = this.scale
+         var x = args.x
+         var y = args.y
+         var width = this.cs.default(args.width, args.size)
+         var height = this.cs.default(args.height, args.size)
+
+         if (args.center) {
+            x -= width / 2
+            y -= height / 2
+         }
+
+         if (this.outside({ x: x, y: y, width: width, height: height })) {
+            this.debug.rectanglesSkippedCount += 1
+            this.settingsDefault()
+            return
+         } else {
+            this.debug.rectanglesDrawnCount += 1
+         }
+
+         this.surface.ctx.fillRect(
+            (x - this.cameraX) * scale,
+            (y - this.cameraY) * scale,
+            width * scale,
+            height * scale,
          )
-      }
-      this.settingsDefault()
-   }
-
-   textWidth(str) {
-      return this.surface.ctx.measureText(str).width
-   }
-
-   line(options) {
-      var lineWidth = this.surface.ctx.lineWidth
-      var lineWidthAdjust = lineWidth / 2 / this.scale
-      var scale = this.scale
-
-      var x1 = options.points[0].x + lineWidthAdjust - this.cameraX
-      var x2 = options.points[1].x + lineWidthAdjust - this.cameraX
-      var y1 = options.points[0].y - lineWidthAdjust - this.cameraY
-      var y2 = options.points[1].y - lineWidthAdjust - this.cameraY
-
-      this.surface.ctx.beginPath();
-      this.surface.ctx.moveTo(x1 * scale, y1 * scale);
-      this.surface.ctx.lineTo(x2 * scale, y2 * scale);
-      this.surface.ctx.stroke()
-      this.settingsDefault()
-   }
-
-   fillRect(args) {
-      var scale = this.scale
-      var x = args.x
-      var y = args.y
-      var width = this.cs.default(args.width, args.size)
-      var height = this.cs.default(args.height, args.size)
-
-      if (args.center) {
-         x -= width / 2
-         y -= height / 2
-      }
-
-      if (this.outside({ x: x, y: y, width: width, height: height })) {
-         this.debug.rectanglesSkippedCount += 1
          this.settingsDefault()
-         return
-      } else {
-         this.debug.rectanglesDrawnCount += 1
       }
 
-      this.surface.ctx.fillRect(
-         (x - this.cameraX) * scale,
-         (y - this.cameraY) * scale,
-         width * scale,
-         height * scale,
-      )
-      this.settingsDefault()
-   }
+      strokeRect(args) {
+         var scale = this.scale
+         var lineWidth = this.surface.ctx.lineWidth
+         var lineWidthAdjust = lineWidth / 2 / scale
 
-   strokeRect(args) {
-      var scale = this.scale
-      var lineWidth = this.surface.ctx.lineWidth
-      var lineWidthAdjust = lineWidth / 2 / scale
+         var x = args.x + lineWidthAdjust
+         var y = args.y + lineWidthAdjust
+         var width = this.cs.default(args.width, args.size) - lineWidthAdjust * 2
+         var height = this.cs.default(args.height, args.size) - lineWidthAdjust * 2
 
-      var x = args.x + lineWidthAdjust
-      var y = args.y + lineWidthAdjust
-      var width = this.cs.default(args.width, args.size) - lineWidthAdjust * 2
-      var height = this.cs.default(args.height, args.size) - lineWidthAdjust * 2
+         if (args.center) {
+            x -= width / 2
+            y -= height / 2
+         }
 
-      if (args.center) {
-         x -= width / 2
-         y -= height / 2
-      }
+         if (this.outside({ x: x, y: y, width: width, height: height })) {
+            this.debug.rectanglesSkippedCount += 1
+            this.settingsDefault()
+            return
+         } else {
+            this.debug.rectanglesDrawnCount += 1
+         }
 
-      if (this.outside({ x: x, y: y, width: width, height: height })) {
-         this.debug.rectanglesSkippedCount += 1
-         this.settingsDefault()
-         return
-      } else {
-         this.debug.rectanglesDrawnCount += 1
-      }
-
-      this.surface.ctx.strokeRect(
-         (x - this.cameraX) * scale,
-         (y - this.cameraY) * scale,
-         width * scale,
-         height * scale,
-      )
-
-      this.settingsDefault()
-   }
-
-   circle(options) {
-      var scale = this.scale
-      var x = options.pos ? options.pos.x : options.x
-      var y = options.pos ? options.pos.y : options.y
-      var radius = options.radius
-
-      if (this.outside({
-         x: x - radius,
-         y: y - radius,
-         width: radius * 2,
-         height: radius * 2,
-      })) {
-         this.debug.circlesSkippedCount += 1
-         this.settingsDefault()
-         return
-      } else {
-         this.debug.circleDrawnCount += 1
-      }
-
-      var fill = this.cs.default(options.fill, false)
-      this.surface.ctx.beginPath()
-      this.surface.ctx.arc(
-         (x - this.cameraX) * scale,
-         (y - this.cameraY) * scale,
-         radius * scale,
-         0, Math.PI * 2, true
-      )
-      this.surface.ctx.closePath()
-      fill ? this.surface.ctx.fill() : this.surface.ctx.stroke()
-      this.settingsDefault()
-   }
-
-   circleGradient(options) {
-      var scale = this.scale
-      var x = options.x - this.cameraX
-      var y = options.y - this.cameraY
-      var radius = options.radius
-      var colorStart = options.colorStart
-      var colorEnd = options.colorEnd
-
-      var g = this.surface.ctx.createRadialGradient(
-         x * scale,
-         y * scale,
-         0,
-         x * scale,
-         y * scale,
-         radius * scale
-      )
-      g.addColorStop(1, colorEnd)
-      g.addColorStop(0, colorStart)
-      this.surface.ctx.fillStyle = g
-      this.surface.ctx.beginPath()
-      this.surface.ctx.arc(
-         x * scale,
-         y * scale,
-         radius * scale,
-         0, Math.PI * 2, true
-      )
-      this.surface.ctx.closePath()
-      this.surface.ctx.fill()
-      this.settingsDefault()
-   }
-
-   shape(options) {
-      var scale = this.scale
-      var vertices = options.vertices
-      var relative = this.cs.default(options.relative, { x: 0, y: 0 })
-
-      var bounds = { xmin: 0, ymin: 0, xmax: 0, ymax: 0 }
-      for (var i = 0; i < vertices.length; i++) {
-         bounds.xmin = Math.min(relative.x + vertices[i].x, bounds.xmin)
-         bounds.ymin = Math.min(relative.y + vertices[i].y, bounds.ymin)
-         bounds.xmax = Math.max(relative.x + vertices[i].x, bounds.xmax)
-         bounds.ymax = Math.max(relative.y + vertices[i].y, bounds.ymax)
-      }
-
-      if (this.outside({
-         x: bounds.xmin,
-         y: bounds.ymin,
-         width: bounds.xmax - bounds.xmin,
-         height: bounds.ymax - bounds.ymin
-      })) {
-         this.debug.shapesSkippedCount += 1
-         this.settingsDefault()
-         return
-      } else {
-         this.debug.shapesDrawnCount += 1
-      }
-
-
-      this.surface.ctx.beginPath()
-      this.surface.ctx.moveTo(
-         (relative.x + vertices[0].x - this.cameraX) * scale,
-         (relative.y + vertices[0].y - this.cameraY) * scale
-      )
-
-      for (var i = 1; i < vertices.length; i++) {
-         this.surface.ctx.lineTo(
-            (relative.x + vertices[i].x - this.cameraX) * scale,
-            (relative.y + vertices[i].y - this.cameraY) * scale
+         this.surface.ctx.strokeRect(
+            (x - this.cameraX) * scale,
+            (y - this.cameraY) * scale,
+            width * scale,
+            height * scale,
          )
+
+         this.settingsDefault()
       }
 
-      this.surface.ctx.closePath(
-         (relative.x + vertices[0].x - this.cameraX) * scale,
-         (relative.y + vertices[0].y - this.cameraY) * scale
-      )
+      circle(options) {
+         var scale = this.scale
+         var x = options.pos ? options.pos.x : options.x
+         var y = options.pos ? options.pos.y : options.y
+         var radius = options.radius
 
-      !options.fill && this.surface.ctx.stroke()
-      options.fill && this.surface.ctx.fill()
-      this.settingsDefault()
-   }
+         if (this.outside({
+            x: x - radius,
+            y: y - radius,
+            width: radius * 2,
+            height: radius * 2,
+         })) {
+            this.debug.circlesSkippedCount += 1
+            this.settingsDefault()
+            return
+         } else {
+            this.debug.circleDrawnCount += 1
+         }
 
-   setColor(color) {
-      if(this.surface.ctx.fillStyle === color && this.surface.ctx.strokeStyle === color) return
-      this.surface.ctx.fillStyle = color;
-      this.surface.ctx.strokeStyle = color;
-   }
-
-   setAlpha(alpha) {
-      if(this.surface.ctx.globalAlpha === alpha) return
-      this.surface.ctx.globalAlpha = alpha;
-   }
-
-   setWidth(width) {
-      if(this.surface.ctx.lineWidth === width * this.scale) return
-      this.surface.ctx.lineWidth = width * this.scale;
-   }
-
-   setFont(options) {
-      if(this.surface.ctx.fontSize === options.size * this.scale && this.surface.ctx.fontFamily === options.family) return
-      this.surface.ctx.fontSize = options.size * this.scale
-      this.surface.ctx.fontFamily = options.family
-      this.surface.ctx.font = (options.effect ? options.effect + ' ' : '') + options.size * this.scale + 'px ' + options.family;
-   }
-
-   setLineHeight(height) {
-      if(this.surface.ctx.lineHeight === height) return
-      this.surface.ctx.lineHeight = height
-   }
-
-   setLineDash(lineDash) {
-      this.surface.ctx.setLineDash(lineDash)
-   }
-
-   setTextAlign(alignment) {
-      if(this.surface.ctx.textAlign === alignment) return
-      this.surface.ctx.textAlign = alignment;
-   }
-
-   setTextBaseline(alignment) {
-      if(this.surface.ctx.textBaseline === alignment) return
-      this.surface.ctx.textBaseline = alignment;
-   }
-
-   setTextCenter() {
-      this.setTextAlign('center');
-      this.setTextBaseline('middle');
-   }
-
-   setOperation(operation) {
-      if(this.surface.ctx.globalCompositeOperation === operation) return
-      this.surface.ctx.globalCompositeOperation = operation;
-   }
-
-   settings(settings) {
-      for (var setting in settings) {
-         this.config.current[setting] = settings[setting]
-      }
-      this.settingsUpdate()
-   }
-
-   default(settings) {
-      for (var setting in settings) {
-         this.config.defaults[setting] = settings[setting]
-      }
-      this.settingsDefault()
-   }
-
-   settingsUpdate() {
-      this.cs.draw.setAlpha(this.config.current.alpha)
-      this.cs.draw.setWidth(this.config.current.width)
-      this.cs.draw.setFont(this.config.current.font)
-      this.cs.draw.setTextAlign(this.config.current.textAlign)
-      this.cs.draw.setLineHeight(this.config.current.lineHeight)
-      this.cs.draw.setTextBaseline(this.config.current.textBaseline)
-      this.cs.draw.setColor(this.config.current.color)
-      this.cs.draw.setOperation(this.config.current.operation)
-      this.cs.draw.setLineDash(this.config.current.lineDash)
-   }
-
-   settingsDefault() {
-      for (var setting in this.config.defaults) {
-         this.config.current[setting] = this.config.defaults[setting]
+         var fill = this.cs.default(options.fill, false)
+         this.surface.ctx.beginPath()
+         this.surface.ctx.arc(
+            (x - this.cameraX) * scale,
+            (y - this.cameraY) * scale,
+            radius * scale,
+            0, Math.PI * 2, true
+         )
+         this.surface.ctx.closePath()
+         fill ? this.surface.ctx.fill() : this.surface.ctx.stroke()
+         this.settingsDefault()
       }
 
-      this.settingsUpdate()
-   }
-}
+      circleGradient(options) {
+         var scale = this.scale
+         var x = options.x - this.cameraX
+         var y = options.y - this.cameraY
+         var radius = options.radius
+         var colorStart = options.colorStart
+         var colorEnd = options.colorEnd
 
-if (module) module.exports = CSENGINE_DRAW
+         var g = this.surface.ctx.createRadialGradient(
+            x * scale,
+            y * scale,
+            0,
+            x * scale,
+            y * scale,
+            radius * scale
+         )
+         g.addColorStop(1, colorEnd)
+         g.addColorStop(0, colorStart)
+         this.surface.ctx.fillStyle = g
+         this.surface.ctx.beginPath()
+         this.surface.ctx.arc(
+            x * scale,
+            y * scale,
+            radius * scale,
+            0, Math.PI * 2, true
+         )
+         this.surface.ctx.closePath()
+         this.surface.ctx.fill()
+         this.settingsDefault()
+      }
+
+      shape(options) {
+         var scale = this.scale
+         var vertices = options.vertices
+         var relative = this.cs.default(options.relative, { x: 0, y: 0 })
+
+         var bounds = { xmin: 0, ymin: 0, xmax: 0, ymax: 0 }
+         for (var i = 0; i < vertices.length; i++) {
+            bounds.xmin = Math.min(relative.x + vertices[i].x, bounds.xmin)
+            bounds.ymin = Math.min(relative.y + vertices[i].y, bounds.ymin)
+            bounds.xmax = Math.max(relative.x + vertices[i].x, bounds.xmax)
+            bounds.ymax = Math.max(relative.y + vertices[i].y, bounds.ymax)
+         }
+
+         if (this.outside({
+            x: bounds.xmin,
+            y: bounds.ymin,
+            width: bounds.xmax - bounds.xmin,
+            height: bounds.ymax - bounds.ymin
+         })) {
+            this.debug.shapesSkippedCount += 1
+            this.settingsDefault()
+            return
+         } else {
+            this.debug.shapesDrawnCount += 1
+         }
+
+
+         this.surface.ctx.beginPath()
+         this.surface.ctx.moveTo(
+            (relative.x + vertices[0].x - this.cameraX) * scale,
+            (relative.y + vertices[0].y - this.cameraY) * scale
+         )
+
+         for (var i = 1; i < vertices.length; i++) {
+            this.surface.ctx.lineTo(
+               (relative.x + vertices[i].x - this.cameraX) * scale,
+               (relative.y + vertices[i].y - this.cameraY) * scale
+            )
+         }
+
+         this.surface.ctx.closePath(
+            (relative.x + vertices[0].x - this.cameraX) * scale,
+            (relative.y + vertices[0].y - this.cameraY) * scale
+         )
+
+         !options.fill && this.surface.ctx.stroke()
+         options.fill && this.surface.ctx.fill()
+         this.settingsDefault()
+      }
+
+      setColor(color) {
+         if(this.surface.ctx.fillStyle === color && this.surface.ctx.strokeStyle === color) return
+         this.surface.ctx.fillStyle = color;
+         this.surface.ctx.strokeStyle = color;
+      }
+
+      setAlpha(alpha) {
+         if(this.surface.ctx.globalAlpha === alpha) return
+         this.surface.ctx.globalAlpha = alpha;
+      }
+
+      setWidth(width) {
+         if(this.surface.ctx.lineWidth === width * this.scale) return
+         this.surface.ctx.lineWidth = width * this.scale;
+      }
+
+      setFont(options) {
+         if(this.surface.ctx.fontSize === options.size * this.scale && this.surface.ctx.fontFamily === options.family) return
+         this.surface.ctx.fontSize = options.size * this.scale
+         this.surface.ctx.fontFamily = options.family
+         this.surface.ctx.font = (options.effect ? options.effect + ' ' : '') + options.size * this.scale + 'px ' + options.family;
+      }
+
+      setLineHeight(height) {
+         if(this.surface.ctx.lineHeight === height) return
+         this.surface.ctx.lineHeight = height
+      }
+
+      setLineDash(lineDash) {
+         this.surface.ctx.setLineDash(lineDash)
+      }
+
+      setTextAlign(alignment) {
+         if(this.surface.ctx.textAlign === alignment) return
+         this.surface.ctx.textAlign = alignment;
+      }
+
+      setTextBaseline(alignment) {
+         if(this.surface.ctx.textBaseline === alignment) return
+         this.surface.ctx.textBaseline = alignment;
+      }
+
+      setTextCenter() {
+         this.setTextAlign('center');
+         this.setTextBaseline('middle');
+      }
+
+      setOperation(operation) {
+         if(this.surface.ctx.globalCompositeOperation === operation) return
+         this.surface.ctx.globalCompositeOperation = operation;
+      }
+
+      settings(settings) {
+         for (var setting in settings) {
+            this.config.current[setting] = settings[setting]
+         }
+         this.settingsUpdate()
+      }
+
+      default(settings) {
+         for (var setting in settings) {
+            this.config.defaults[setting] = settings[setting]
+         }
+         this.settingsDefault()
+      }
+
+      settingsUpdate() {
+         this.cs.draw.setAlpha(this.config.current.alpha)
+         this.cs.draw.setWidth(this.config.current.width)
+         this.cs.draw.setFont(this.config.current.font)
+         this.cs.draw.setTextAlign(this.config.current.textAlign)
+         this.cs.draw.setLineHeight(this.config.current.lineHeight)
+         this.cs.draw.setTextBaseline(this.config.current.textBaseline)
+         this.cs.draw.setColor(this.config.current.color)
+         this.cs.draw.setOperation(this.config.current.operation)
+         this.cs.draw.setLineDash(this.config.current.lineDash)
+      }
+
+      settingsDefault() {
+         for (var setting in this.config.defaults) {
+            this.config.current[setting] = this.config.defaults[setting]
+         }
+
+         this.settingsUpdate()
+      }
+   }
+
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_DRAW : cs.camera = new CSENGINE_DRAW(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Fps.js":[function(require,module,exports) {
-class CSENGINE_FPS {
-   constructor(cs) {
-      this.cs = cs
+//----------------------------------------------------------------------------//
+//------------------------------| CS ENGINE: FPS |---------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_FPS {
+      constructor(cs) {
+         this.cs = cs
 
-      this.rate = 0
-      this.frame = 0
-      this.check = Date.now()
+         this.rate = 0
+         this.frame = 0
+         this.check = Date.now()
+      }
+
+      update() {
+         this.checkReset() ? this.frame += 1 : this.reset()
+      }
+
+      checkReset() {
+         return Date.now() - this.check < 1000
+      }
+
+      reset() {
+         this.check = Date.now()
+         this.rate = this.frame
+         this.frame = 0
+      }
    }
 
-   update() {
-      this.checkReset() ? this.frame += 1 : this.reset()
-   }
-
-   checkReset() {
-      return Date.now() - this.check < 1000
-   }
-
-   reset() {
-      this.check = Date.now()
-      this.rate = this.frame
-      this.frame = 0
-   }
-}
-
-if (module) module.exports = CSENGINE_FPS
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_FPS : cs.camera = new CSENGINE_FPS(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Fullscreen.js":[function(require,module,exports) {
-class CSENGINE_FULLSCREEN {
-   constructor(cs) {
-      this.cs = cs
-   }
-
-   possible() {
-      return this.normalize('possible')
-   }
-
-   is() {
-      return this.normalize('element') ? true : false
-   }
-
-   toggle() {
-      if (this.possible()) {
-         this.normalize('element')
-            ? this.exit()
-            : this.enter()
+//----------------------------------------------------------------------------//
+//--------------------------| CS ENGINE: FULLSCREEN |-------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_FULLSCREEN {
+      constructor(cs) {
+         this.cs = cs
       }
-   }
 
-   enter() {
-      this.possible() && this.normalize('request')
-   }
+      possible() {
+         return this.normalize('possible')
+      }
 
-   exit() {
-      this.possible() && this.normalize('exit')
-   }
+      is() {
+         return this.normalize('element') ? true : false
+      }
 
-   normalize(func) {
-      for (var prefix of [undefined, 'moz', 'webkit']) {
-         var requestFullscreen = prefix + 'RequestFullscreen'
-         var fullscreenElement = prefix + 'FullscreenElement'
-         var fullscreenEnabled = prefix + 'FullscreenEnabled'
-         var exitFullscreen = prefix + 'ExitFullscreen'
-
-         if (!prefix) {
-            requestFullscreen = 'requestFullscreen'
-            fullscreenElement = 'fullscreenElement'
-            fullscreenEnabled = 'fullscreenEnabled'
-            exitFullscreen = 'exitFullscreen'
-         }
-
-         if (document.documentElement[requestFullscreen] !== undefined) {
-            if (func == 'possible') return document.documentElement[requestFullscreen] ? true : false
-            if (func == 'element') return document[fullscreenElement]
-            if (func == 'exit') return document[exitFullscreen]()
-            if (func == 'request') return document.documentElement[requestFullscreen]()
-            if (func == 'enabled') return document[fullscreenEnabled]
+      toggle() {
+         if (this.possible()) {
+            this.normalize('element')
+               ? this.exit()
+               : this.enter()
          }
       }
 
-      return undefined
-   }
-}
+      enter() {
+         this.possible() && this.normalize('request')
+      }
 
-if (module) module.exports = CSENGINE_FULLSCREEN
+      exit() {
+         this.possible() && this.normalize('exit')
+      }
+
+      normalize(func) {
+         for (var prefix of [undefined, 'moz', 'webkit']) {
+            var requestFullscreen = prefix + 'RequestFullscreen'
+            var fullscreenElement = prefix + 'FullscreenElement'
+            var fullscreenEnabled = prefix + 'FullscreenEnabled'
+            var exitFullscreen = prefix + 'ExitFullscreen'
+
+            if (!prefix) {
+               requestFullscreen = 'requestFullscreen'
+               fullscreenElement = 'fullscreenElement'
+               fullscreenEnabled = 'fullscreenEnabled'
+               exitFullscreen = 'exitFullscreen'
+            }
+
+            if (document.documentElement[requestFullscreen] !== undefined) {
+               if (func == 'possible') return document.documentElement[requestFullscreen] ? true : false
+               if (func == 'element') return document[fullscreenElement]
+               if (func == 'exit') return document[exitFullscreen]()
+               if (func == 'request') return document.documentElement[requestFullscreen]()
+               if (func == 'enabled') return document[fullscreenEnabled]
+            }
+         }
+
+         return undefined
+      }
+   }
+
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_FULLSCREEN : cs.camera = new CSENGINE_FULLSCREEN(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/InputKeyboard.js":[function(require,module,exports) {
-//---------------------------------------------------------------------------------------------//
-//---------------------------------| Key Input Functions |-------------------------------------//
-//---------------------------------------------------------------------------------------------//
-class CSENGINE_INPUT_KEYBOARD {
-   constructor(cs) {
-      this.cs = cs
+//----------------------------------------------------------------------------//
+//------------------------| CS ENGINE: INPUT KEYBOARD |-----------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_INPUT_KEYBOARD {
+      constructor(cs) {
+         this.cs = cs
 
-      this.upList = {}
-      this.downList = {}
-      this.heldList = {}
-      this.events = []
-   }
-
-   addEvent(keyCode, eventType) {
-      var num = this.events.length
-      this.events[num] = {
-         event: eventType,
-         key: keyCode
-      }
-   }
-
-   execute() {
-      for (var i = 0; i < this.events.length; i++) {
-         var event = this.events[i].event;
-         var key = this.events[i].key
-         this.processEvent(key, event)
-      }
-      this.events = [];
-   }
-
-   processEvent(keyCode, type) {
-      if (type == 'up') {
-         if(!this.heldList[keyCode]) return
-         this.upList[keyCode] = performance.now()
-         return
+         this.upList = {}
+         this.downList = {}
+         this.heldList = {}
+         this.events = []
       }
 
-      this.downList[keyCode] = performance.now()
-      this.heldList[keyCode] = performance.now()
-   }
+      addEvent(keyCode, eventType) {
+         var num = this.events.length
+         this.events[num] = {
+            event: eventType,
+            key: keyCode
+         }
+      }
 
-   reset() {
-      for (var tmp in this.downList) {
-         this.downList[tmp] = false
-         if (this.upList[tmp]) {
-            this.heldList[tmp] = false
+      execute() {
+         for (var i = 0; i < this.events.length; i++) {
+            var event = this.events[i].event;
+            var key = this.events[i].key
+            this.processEvent(key, event)
+         }
+         this.events = [];
+      }
+
+      processEvent(keyCode, type) {
+         if (type == 'up') {
+            if(!this.heldList[keyCode]) return
+            this.upList[keyCode] = performance.now()
+            return
          }
 
-         this.upList[tmp] = false
+         this.downList[keyCode] = performance.now()
+         this.heldList[keyCode] = performance.now()
+      }
+
+      reset() {
+         for (var tmp in this.downList) {
+            this.downList[tmp] = false
+            if (this.upList[tmp]) {
+               this.heldList[tmp] = false
+            }
+
+            this.upList[tmp] = false
+         }
+      }
+
+      blur() {
+         for (var keyId in this.downList) {
+            this.downList[keyId] = false
+            this.heldList[keyId] = false
+            this.upList[keyId] = false
+         }
+
+         this.events = []
+      }
+
+      eventDown(keyEvent) {
+         keyEvent.preventDefault();
+         if (!keyEvent.repeat) {
+            this.virtualDown(keyEvent.keyCode);
+         }
+      }
+
+      eventUp(keyEvent) {
+         this.virtualUp(keyEvent.keyCode);
+      }
+
+      virtualDown(keyCode) {
+         this.addEvent(keyCode, 'down');
+      }
+
+      virtualUp(keyCode) {
+         this.addEvent(keyCode, 'up');
+      }
+
+      virtualPress(key) {
+         this.virtualDown(key);
+         this.virtualUp(key);
+      }
+
+      up(keyID) {
+         return this.upList[keyID] || false
+      }
+
+      down(keyID) {
+         return this.downList[keyID] || false
+      }
+
+      held(keyID) {
+         return this.heldList[keyID] || false
+      }
+
+      isUp(keyID) {
+         return this.upList[keyID] ? true : false
+      }
+
+      isDown(keyID) {
+         return this.downList[keyID] ? true : false
+      }
+
+      isHeld(keyID) {
+         return this.heldList[keyID] ? true : false
       }
    }
 
-   blur() {
-      for (var keyId in this.downList) {
-         this.downList[keyId] = false
-         this.heldList[keyId] = false
-         this.upList[keyId] = false
-      }
-
-      this.events = []
-   }
-
-   eventDown(keyEvent) {
-      keyEvent.preventDefault();
-      if (!keyEvent.repeat) {
-         this.virtualDown(keyEvent.keyCode);
-      }
-   }
-
-   eventUp(keyEvent) {
-      this.virtualUp(keyEvent.keyCode);
-   }
-
-   virtualDown(keyCode) {
-      this.addEvent(keyCode, 'down');
-   }
-
-   virtualUp(keyCode) {
-      this.addEvent(keyCode, 'up');
-   }
-
-   virtualPress(key) {
-      this.virtualDown(key);
-      this.virtualUp(key);
-   }
-
-   up(keyID) {
-      return this.upList[keyID] || false
-   }
-
-   down(keyID) {
-      return this.downList[keyID] || false
-   }
-
-   held(keyID) {
-      return this.heldList[keyID] || false
-   }
-
-   isUp(keyID) {
-      return this.upList[keyID] ? true : false
-   }
-
-   isDown(keyID) {
-      return this.downList[keyID] ? true : false
-   }
-
-   isHeld(keyID) {
-      return this.heldList[keyID] ? true : false
-   }
-}
-
-if (module) module.exports = CSENGINE_INPUT_KEYBOARD
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_INPUT_KEYBOARD : cs.camera = new CSENGINE_INPUT_KEYBOARD(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/InputMouse.js":[function(require,module,exports) {
-//---------------------------------------------------------------------------------------------//
-//-------------------------------| Mouse Input Functions |-------------------------------------//
-//---------------------------------------------------------------------------------------------//
-class CSENGINE_INPUT_MOUSE {
-   constructor(cs) {
-      this.cs = cs
+//----------------------------------------------------------------------------//
+//--------------------------| CS ENGINE: INPUT MOUSE |------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_INPUT_MOUSE {
+      constructor(cs) {
+         this.cs = cs
 
-      this.x = undefined
-      this.y = undefined
+         this.x = undefined
+         this.y = undefined
+      }
+
+      pos() {
+         var convert = this.cs.touch.convertToGameCords(this.x, this.y)
+         return (cs.draw.raw)
+            ? { x: this.x, y: this.y }
+            : { x: convert.x, y: convert.y }
+      }
+
+      eventDown(e) {
+         this.cs.touch.touchUse(-1)
+         this.x = e.clientX
+         this.y = e.clientY
+
+         this.cs.touch.eventsDownMove.push({
+            type: 'down',
+            id: -1,
+            x: this.x,
+            y: this.y
+         })
+
+         this.eventMove(e)
+      }
+
+      eventMove(e) {
+         this.x = e.clientX
+         this.y = e.clientY
+
+         this.cs.touch.eventsDownMove.push({
+            type: 'move',
+            id: -1,
+            x: this.x,
+            y: this.y
+         })
+      }
+
+      eventUp(e) {
+         this.cs.touch.eventsUp.push({
+            type: 'up',
+            id: -1
+         })
+      }
    }
-   
-   pos() {
-      var convert = this.cs.touch.convertToGameCords(this.x, this.y)
-      return (cs.draw.raw)
-         ? { x: this.x, y: this.y }
-         : { x: convert.x, y: convert.y }
-   }
 
-   eventDown(e) {
-      this.cs.touch.touchUse(-1)
-      this.x = e.clientX
-      this.y = e.clientY
-
-      this.cs.touch.eventsDownMove.push({
-         type: 'down',
-         id: -1,
-         x: this.x,
-         y: this.y
-      })
-
-      this.eventMove(e)
-   }
-
-   eventMove(e) {
-      this.x = e.clientX
-      this.y = e.clientY
-
-      this.cs.touch.eventsDownMove.push({
-         type: 'move',
-         id: -1,
-         x: this.x,
-         y: this.y
-      })
-   }
-
-   eventUp(e) {
-      this.cs.touch.eventsUp.push({
-         type: 'up',
-         id: -1
-      })
-   }
-}
-
-if (module) module.exports = CSENGINE_INPUT_MOUSE
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_INPUT_MOUSE : cs.camera = new CSENGINE_INPUT_MOUSE(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/InputTouch.js":[function(require,module,exports) {
-//---------------------------------------------------------------------------------------------//
-//-------------------------------| Touch Input Functions |-------------------------------------//
-//---------------------------------------------------------------------------------------------//
-class CSENGINE_INPUT_TOUCH {
-   constructor(cs) {
-      this.cs = cs
-      this.eventsDownMove = []
-      this.eventsUp = []
-      this.list = [
-         { id: -1, x: undefined, y: undefined, used: false } // mouse
-      ]
-   }
+//----------------------------------------------------------------------------//
+//--------------------------| CS ENGINE: INPUT TOUCH |------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_INPUT_TOUCH {
+      constructor(cs) {
+         this.cs = cs
+         this.eventsDownMove = []
+         this.eventsUp = []
+         this.list = [
+            { id: -1, x: undefined, y: undefined, used: false } // mouse
+         ]
 
-   batchDownMove() {
-      while(this.eventsDownMove.length) {
-         var event = this.eventsDownMove.shift()
-         this.eventFunc[event.type](event)
+         this.eventFunctions = {
+            down: this.eventFunctionDown.bind(this),
+            move: this.eventFunctionMove.bind(this),
+            up: this.eventFunctionUp.bind(this),
+         }
       }
-   }
 
-   batchUp() {
-      while(this.eventsUp.length) {
-         var event = this.eventsUp.shift()
-         this[{
-            down: this.eventFuncDown,
-            up: this.eventFuncUp,
-            move:  this.eventFuncMove,
-         }[event.type]](event) // ok.... -.O
+      batchDownMove() {
+         while(this.eventsDownMove.length) {
+            var event = this.eventsDownMove.shift()
+            this.eventFunctions[event.type](event)
+         }
       }
-   }
 
-   eventFuncDown() {
-      this.touchUse(vEvent.id)
-   }
+      batchUp() {
+         while(this.eventsUp.length) {
+            var event = this.eventsUp.shift()
+            this.eventFunctions[event.type](event) // ok.... -.O
+         }
+      }
 
-   eventFuncUp() {
-      this.touchUnuse(vEvent.id)
-   }
+      eventFunctionDown(vEvent) {
+         this.touchUse(vEvent.id)
+      }
 
-   eventFuncMove() {
-      this.touchUpdate({
-         id: vEvent.id,
-         x: vEvent.x,
-         y: vEvent.y
-      })
-   }
+      eventFunctionUp(vEvent) {
+         this.touchUnuse(vEvent.id)
+      }
 
-   // modern pointers
-   eventPointerDown(e) {
-      e.preventDefault()
+      eventFunctionMove(vEvent) {
+         this.touchUpdate({
+            id: vEvent.id,
+            x: vEvent.x,
+            y: vEvent.y
+         })
+      }
 
-      this.eventsDownMove.push({
-         type: 'down',
-         id: e.pointerId,
-         x: e.clientX,
-         y: e.clientY
-      })
+      // modern pointers
+      eventPointerDown(e) {
+         e.preventDefault()
 
-      this.eventPointerMove(e)
-   }
-
-   eventPointerMove(e) {
-      e.preventDefault()
-
-      this.cs.mouse.x = e.clientX
-      this.cs.mouse.y = e.clientY
-
-      this.eventsDownMove.push({
-         type: 'move',
-         id: e.pointerId,
-         x: e.clientX,
-         y: e.clientY
-      })
-   }
-
-   eventPointerUp(e) {
-      e.preventDefault()
-
-      this.eventsUp.push({
-         type: 'up',
-         id: e.pointerId,
-         x: e.clientX,
-         y: e.clientY
-      })
-   }
-
-   // old touch
-   eventTouchDown(e) {
-      e.preventDefault()
-
-      for (var touch of e.changedTouches) {
          this.eventsDownMove.push({
             type: 'down',
-            id: touch.identifier,
-            x: touch.clientX,
-            y: touch.clientY
+            id: e.pointerId,
+            x: e.clientX,
+            y: e.clientY
          })
 
-         this.eventTouchMove(e)
+         this.eventPointerMove(e)
       }
-   }
 
-   eventTouchMove(e) {
-      e.preventDefault()
+      eventPointerMove(e) {
+         e.preventDefault()
 
-      for (var touch of e.changedTouches) {
+         this.cs.inputMouse.x = e.clientX
+         this.cs.inputMouse.y = e.clientY
+
          this.eventsDownMove.push({
             type: 'move',
-            id: touch.identifier,
-            x: touch.clientX,
-            y: touch.clientY
+            id: e.pointerId,
+            x: e.clientX,
+            y: e.clientY
          })
       }
-   }
 
-   eventTouchUp(e) {
-      e.preventDefault()
+      eventPointerUp(e) {
+         e.preventDefault()
 
-      for (var touch of e.changedTouches) {
          this.eventsUp.push({
             type: 'up',
-            id: touch.identifier,
-            x: touch.clientX,
-            y: touch.clientY
+            id: e.pointerId,
+            x: e.clientX,
+            y: e.clientY
          })
       }
-   }
 
-   touchUse(id) {
-      // reuse from list or add to end
-      for (var i = 0; i < this.list.length; i++) {
-         var touch = this.list[i]
-         if (!touch.used && !touch.new) break
-      }
+      // old touch
+      eventTouchDown(e) {
+         e.preventDefault()
 
-      this.list[i] = {
-         id: id,
-         used: false,
-         new: true,
-         down: true,
-         held: true,
-         up: false,
-         x: undefined,
-         y: undefined
-      }
-   }
+         for (var touch of e.changedTouches) {
+            this.eventsDownMove.push({
+               type: 'down',
+               id: touch.identifier,
+               x: touch.clientX,
+               y: touch.clientY
+            })
 
-   touchUnuse(id) {
-      var touch = this.list.find(function(t) { return t.id == id })
-      if (!touch) {
-         return
-      }
-
-      touch.used = false
-      touch.held = false
-      touch.up = true
-   }
-
-   touchUpdate(eTouch) {
-      var touch = this.list.find(function(t) { return t.id == eTouch.id })
-      if (!touch) return
-
-
-      touch.x = eTouch.x / this.cs.width * this.cs.clampWidth
-      touch.y = eTouch.y / this.cs.height * this.cs.clampHeight
-   }
-
-   observer(useGameCords) {
-      return {
-         observing: false,
-         useGameCords: useGameCords,
-         down: false,
-         held: false,
-         up: false,
-         x: 0,
-         y: 0,
-         offsetX: 0,
-         offsetY: 0,
-         check: function(area) {
-            this.observing ?
-               this.observe() :
-               this.findTouchToObserve(area)
-         },
-         uncheck: function() {
-            this.observing = false
-         },
-         observe: function() {
-            // im observing. lets update my values
-            if (this.observing) {
-               this.x = this.touch.x
-               this.y = this.touch.y
-               if (this.useGameCords) {
-                  var convertedToGameCords = this.convertToGameCords(this.x, this.y)
-                  this.x = convertedToGameCords.x
-                  this.y = convertedToGameCords.y
-               }
-
-               this.down = this.touch.down
-               this.held = this.touch.held
-               this.up = this.touch.up
-
-               if (this.up) this.observing = false
-               return
-            }
-         },
-         findTouchToObserve(area) {
-            // find a touch to observe
-            for (var touch of this.list) {
-               // this touch is being observed or not available to latch
-               if (touch.used || !touch.down) continue
-
-               var touchX = touch.x
-               var touchY = touch.y
-               if (this.useGameCords) {
-                  var convertedToGameCords = this.convertToGameCords(touchX, touchY)
-                  touchX = convertedToGameCords.x
-                  touchY = convertedToGameCords.y
-               }
-
-               // check if within
-               if (
-                  touchX > area.x && touchX < area.x + (area.width || area.size) &&
-                  touchY > area.y && touchY < area.y + (area.height || area.size)
-               ) {
-                  // observe this touch!
-                  touch.used = true
-
-                  // setup
-                  this.observing = true
-                  this.touch = touch
-                  // handy
-                  this.offsetX = touchX - area.x
-                  this.offsetY = touchY - area.y
-
-                  this.observe()
-                  break
-               }
-            }
-         },
-         isDown: function() {
-            return this.touch && this.touch.down
-         },
-         isUp: function() {
-            return this.touch && this.touch.up
-         },
-         isHeld: function() {
-            return this.touch && this.touch.held
-         },
-         isWithin: function(rect) {
-            var width = this.cs.default(rect.width, rect.size || 0)
-            var height = this.cs.default(rect.height, rect.size || 0)
-
-            return (
-               this.x > rect.x && this.x < rect.x + width &&
-               this.y > rect.y && this.y < rect.y + height
-            )
+            this.eventTouchMove(e)
          }
       }
-   }
 
-   reset() {
-      // up and down state only last one step
-      for (var touch of this.list) {
-         touch.down = false
-         touch.up = false
-         touch.new = false
+      eventTouchMove(e) {
+         e.preventDefault()
+
+         for (var touch of e.changedTouches) {
+            this.eventsDownMove.push({
+               type: 'move',
+               id: touch.identifier,
+               x: touch.clientX,
+               y: touch.clientY
+            })
+         }
+      }
+
+      eventTouchUp(e) {
+         e.preventDefault()
+
+         for (var touch of e.changedTouches) {
+            this.eventsUp.push({
+               type: 'up',
+               id: touch.identifier,
+               x: touch.clientX,
+               y: touch.clientY
+            })
+         }
+      }
+
+      touchUse(id) {
+         // reuse from list or add to end
+         for (var i = 0; i < this.list.length; i++) {
+            var touch = this.list[i]
+            if (!touch.used && !touch.new) break
+         }
+
+         this.list[i] = {
+            id: id,
+            used: false,
+            new: true,
+            down: true,
+            held: true,
+            up: false,
+            x: undefined,
+            y: undefined
+         }
+      }
+
+      touchUnuse(id) {
+         var touch = this.list.find(function(t) { return t.id == id })
+         if (!touch) {
+            return
+         }
+
+         touch.used = false
+         touch.held = false
+         touch.up = true
+      }
+
+      touchUpdate(eTouch) {
+         var touch = this.list.find(function(t) { return t.id == eTouch.id })
+         if (!touch) return
+
+
+         touch.x = eTouch.x / this.cs.width * this.cs.clampWidth
+         touch.y = eTouch.y / this.cs.height * this.cs.clampHeight
+      }
+
+      observer(useGameCords) {
+         return {
+            observing: false,
+            useGameCords: useGameCords,
+            down: false,
+            held: false,
+            up: false,
+            x: 0,
+            y: 0,
+            offsetX: 0,
+            offsetY: 0,
+            check: function(area) {
+               this.observing ?
+                  this.observe() :
+                  this.findTouchToObserve(area)
+            },
+            uncheck: function() {
+               this.observing = false
+            },
+            observe: function() {
+               // im observing. lets update my values
+               if (this.observing) {
+                  this.x = this.touch.x
+                  this.y = this.touch.y
+                  if (this.useGameCords) {
+                     var convertedToGameCords = this.convertToGameCords(this.x, this.y)
+                     this.x = convertedToGameCords.x
+                     this.y = convertedToGameCords.y
+                  }
+
+                  this.down = this.touch.down
+                  this.held = this.touch.held
+                  this.up = this.touch.up
+
+                  if (this.up) this.observing = false
+                  return
+               }
+            },
+            findTouchToObserve(area) {
+               // find a touch to observe
+               for (var touch of this.list) {
+                  // this touch is being observed or not available to latch
+                  if (touch.used || !touch.down) continue
+
+                  var touchX = touch.x
+                  var touchY = touch.y
+                  if (this.useGameCords) {
+                     var convertedToGameCords = this.convertToGameCords(touchX, touchY)
+                     touchX = convertedToGameCords.x
+                     touchY = convertedToGameCords.y
+                  }
+
+                  // check if within
+                  if (
+                     touchX > area.x && touchX < area.x + (area.width || area.size) &&
+                     touchY > area.y && touchY < area.y + (area.height || area.size)
+                  ) {
+                     // observe this touch!
+                     touch.used = true
+
+                     // setup
+                     this.observing = true
+                     this.touch = touch
+                     // handy
+                     this.offsetX = touchX - area.x
+                     this.offsetY = touchY - area.y
+
+                     this.observe()
+                     break
+                  }
+               }
+            },
+            isDown: function() {
+               return this.touch && this.touch.down
+            },
+            isUp: function() {
+               return this.touch && this.touch.up
+            },
+            isHeld: function() {
+               return this.touch && this.touch.held
+            },
+            isWithin: function(rect) {
+               var width = this.cs.default(rect.width, rect.size || 0)
+               var height = this.cs.default(rect.height, rect.size || 0)
+
+               return (
+                  this.x > rect.x && this.x < rect.x + width &&
+                  this.y > rect.y && this.y < rect.y + height
+               )
+            }
+         }
+      }
+
+      reset() {
+         // up and down state only last one step
+         for (var touch of this.list) {
+            touch.down = false
+            touch.up = false
+            touch.new = false
+         }
+      }
+
+      convertToGameCords(x, y) {
+         var rect = this.cs.canvas.getBoundingClientRect();
+
+         var physicalViewWidth = rect.width
+         var physicalViewHeight = rect.height
+         var hortPercent = (x - rect.left) / physicalViewWidth
+         var vertPercent = (y - rect.top) / physicalViewHeight
+
+         var gamex = Math.round(hortPercent * (this.cs.camera.width / this.cs.camera.zoom))
+         var gamey = Math.round(vertPercent * (this.cs.camera.height / this.cs.camera.zoom))
+         gamex = (gamex) + this.cs.camera.x
+         gamey = (gamey) + this.cs.camera.y
+         return { x: gamex, y: gamey }
       }
    }
 
-   convertToGameCords(x, y) {
-      var rect = this.cs.canvas.getBoundingClientRect();
-
-      var physicalViewWidth = rect.width
-      var physicalViewHeight = rect.height
-      var hortPercent = (x - rect.left) / physicalViewWidth
-      var vertPercent = (y - rect.top) / physicalViewHeight
-
-      var gamex = Math.round(hortPercent * (this.cs.camera.width / this.cs.camera.zoom))
-      var gamey = Math.round(vertPercent * (this.cs.camera.height / this.cs.camera.zoom))
-      gamex = (gamex) + this.cs.camera.x
-      gamey = (gamey) + this.cs.camera.y
-      return { x: gamex, y: gamey }
-   }
-}
-
-if (module) module.exports = CSENGINE_INPUT_TOUCH
+   // export (node / web)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_INPUT_TOUCH 
+      : cs.camera = new CSENGINE_INPUT_TOUCH(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Loop.js":[function(require,module,exports) {
-class CSENGINE_LOOP {
-   constructor(cs) {
-      this.cs = cs
+//----------------------------------------------------------------------------//
+//------------------------------| CS ENGINE: LOOP |---------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_LOOP {
+      constructor(cs) {
+         this.cs = cs
 
-      this.run = false
-      this.endSteps = []
-      this.beforeSteps = []
-      this.speed = 1000 / 60
-      this.last = Date.now()
-      this.id = 0
-      this.timeout = undefined
-   }
+         this.run = false
+         this.endSteps = []
+         this.beforeSteps = []
+         this.speed = 1000 / 60
+         this.last = Date.now()
+         this.id = 0
+         this.timeout = undefined
+      }
 
-   step(once) {
-      this.id += 1
+      step(once) {
+         this.id += 1
 
-      // delta fixing
-      var now = Date.now()
-      this.delta = (now - this.last) / this.speed
-      this.last = now
+         // delta fixing
+         var now = Date.now()
+         this.delta = (now - this.last) / this.speed
+         this.last = now
 
-      if (!this.run && !once) return
-      this.timeout = setTimeout(() => this.step(), this.speed)
+         if (!this.run || once) return
+         this.timeout = setTimeout(() => this.step(), this.speed)
 
-      this.cs.fps.update()
-      this.cs.draw.debugReset()
-      this.cs.network.read()
+         this.cs.fps.update()
+         this.cs.draw.debugReset()
+         this.cs.network.read()
 
+         // move camera before clear
+         this.cs.camera.update()
+         this.cs.surface.clearAll()
+         this.cs.object.addNewObjects()
 
-      // move camera before clear
-      this.cs.camera.update()
-      this.cs.surface.clearAll()
-      this.cs.object.addNewObjects()
+         // input
+         this.cs.inputKeyboard.execute()
+         this.cs.inputTouch.batchDownMove()
 
-      // input
-      this.cs.inputKeyboard.execute()
-      this.cs.inputTouch.batchDownMove()
+         // // Execute before steps
+         // // disconnect to allow adding within a beforestep
+         // var temporaryBeforeSteps = []
+         // while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
+         // while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
 
-      // // Execute before steps
-      // // disconnect to allow adding within a beforestep
-      // var temporaryBeforeSteps = []
-      // while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
-      // while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
+         this.cs.userStep && this.cs.userStep()
 
-      this.cs.userStep && this.cs.userStep()
-
-      // this.cs.object.loop(function(object) {
-      //    if (!object.core.active || !object.core.live) return
-      //    var stepEvent = cs.objects[object.core.type].step
-      //    cs.draw.setSurface(object.core.surface)
-      //    stepEvent && stepEvent.call(object  , object);
-      // })
-      //
-      this.cs.userDraw && this.cs.userDraw()
-      // console.log(this)
-      // this.cs.object.loop((object) => {
-         // console.log('wtf')
-         // if (!object.core.active || !object.core.live) return
-         // var objectType = this.cs.objects[object.core.type]
-         // var drawEvent = objectType.draw
-         // var drawOnceEvent = objectType.drawOnce
+         // this.cs.object.loop(function(object) {
+         //    if (!object.core.active || !object.core.live) return
+         //    var stepEvent = cs.objects[object.core.type].step
+         //    cs.draw.setSurface(object.core.surface)
+         //    stepEvent && stepEvent.call(object  , object);
+         // })
          //
-         // this.cs.draw.setSurface(object.core.surface)
-         // if (drawOnceEvent) {
-         //    if (this.cs.surface.list[object.core.surface].clear || !object.core.drawn) {
-         //       object.core.drawn = true
-         //       drawOnceEvent.call(object, object)
-         //    }
+         this.cs.userDraw && this.cs.userDraw()
+
+         this.cs.object.loop((object) => {
+            if (!object.core.active || !object.core.live) return
+            var template = this.cs.object.templates[object.core.type]
+            var drawFunction = template.draw
+            var drawOnceFunction = template.drawOnce
+
+            var surface = this.cs.surface.list[object.core.surface]
+            this.cs.draw.setSurface(surface)
+
+            if (drawOnceFunction) {
+               if (surface.clear || !object.core.drawn) {
+                  object.core.drawn = true
+                  drawOnceEvent.call(object, { object, cs: this.cs })
+               }
+            }
+
+            drawFunction && drawFunction.call(object, { object, cs: this.cs })
+         })
+
+         // timers
+         this.cs.timer.loop()
+
+         // Touch / Keyboard
+         this.cs.inputKeyboard.reset()
+         this.cs.inputTouch.reset()
+         this.cs.inputTouch.batchUp()
+
+         this.cs.surface.displayAll()
+
+         // Execute next steps
+         while (this.endSteps.length) {
+            this.endSteps.pop()()
+         }
+
+         // could clearup !live objects here
+         this.cs.object.clean()
+
+         //
+         // // network metrics
+         // if (this.cs.network.status) {
+         //    this.cs.network.updateMetrics()
          // }
-         //
-         // drawEvent && drawEvent.call(object, object)
-      // })
-      //
-      // // timers
-      // this.cs.timer.loop()
-      //
-      // // Touch / Keyboard
-      // this.cs.key.reset()
-      // this.cs.touch.reset()
-      // this.cs.touch.batchUp()
-      //
-      // // Resize Canvas
-      // this.cs.surface.displayAll()
-      // if (this.cs.room.restarting === true)
-      //    this.cs.room.reset()
-      //
-      // // Execute next steps
-      // while (this.endSteps.length) {
-      //    this.endSteps.pop()()
-      // }
-      //
-      // // could clearup !live objects here
-      // this.cs.object.clean()
-      //
-      // // network metrics
-      // if (this.cs.network.status) {
-      //    this.cs.network.updateMetrics()
-      // }
+      }
+
+      beforeStep(func) {
+         this.beforeSteps.push(func)
+      }
+
+      endStep(func) {
+         this.endSteps.push(func)
+      }
+
+      start() {
+         this.run = true
+         this.step()
+      }
+
+      stop() {
+         this.run = false
+         clearTimeout(this.timeout)
+      }
    }
 
-   beforeStep(func) {
-      this.beforeSteps.push(func)
-   }
-
-   endStep(func) {
-      this.endSteps.push(func)
-   }
-
-   start() {
-      this.run = true
-      this.step()
-   }
-
-   stop() {
-      this.run = false
-      clearTimeout(this.timeout)
-   }
-}
-
-// export node
-if (module) module.exports = CSENGINE_LOOP
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_LOOP : cs.camera = new CSENGINE_LOOP(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Math.js":[function(require,module,exports) {
-//---------------------------------------------------------------------------------------------//
-//------------------------------------| Math Functions |---------------------------------------//
-//---------------------------------------------------------------------------------------------//
-class CSENGINE_MATH {
-   constructor(cs) {
-      this.cs = cs
-   }
+//----------------------------------------------------------------------------//
+//------------------------------| CS ENGINE: MATH |---------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_MATH {
+      constructor(cs) {
+         this.cs = cs
+      }
 
-   sign(number) {
-      if (!number) return 0
-      return number < 0 ? -1 : 1
-   }
+      sign(number) {
+         if (!number) return 0
+         return number < 0 ? -1 : 1
+      }
 
-   between(num, min, max) {
-      return num >= Math.min(min, max) && num <= Math.max(min, max)
-   }
+      between(num, min, max) {
+         return num >= Math.min(min, max) && num <= Math.max(min, max)
+      }
 
-   outside(num, min, max) {
-      return num < Math.min(min, max) || num > Math.max(min, max)
-   }
+      outside(num, min, max) {
+         return num < Math.min(min, max) || num > Math.max(min, max)
+      }
 
-   randomRange(min, max) {
-      return (min + Math.random() * (max-min))
-   }
+      randomRange(min, max) {
+         return (min + Math.random() * (max-min))
+      }
 
-   iRandomRange(min, max) {
-      return Math.round(this.randomRange(min, max))
-   }
+      iRandomRange(min, max) {
+         return Math.round(this.randomRange(min, max))
+      }
 
-   choose(array) {
-      return array[this.iRandomRange(0, array.length - 1)]
-   }
+      choose(array) {
+         return array[this.iRandomRange(0, array.length - 1)]
+      }
 
-   chooseRatio(ratios) {
-      // ratios = { "50": "Choice1", "100": "Choice2" }
-      var random = Math.random() * 100
-      for (var ratio in ratios) {
-         if (parseInt(ratio) > random) {
-            return ratios[ratio]
+      chooseRatio(ratios) {
+         // ratios = { "50": "Choice1", "100": "Choice2" }
+         var random = Math.random() * 100
+         for (var ratio in ratios) {
+            if (parseInt(ratio) > random) {
+               return ratios[ratio]
+            }
          }
-      }
-      return ratios[ratio]
-   }
-
-   brakingDistance(options) {
-      return (Math.abs(options.speed) * options.friction) / (1 - options.friction)
-   }
-
-   requiredSpeed(options) {
-      return Math.sqrt(2 * options.friction * options.distance);
-   }
-
-   inRange(options) {
-      return options.num > options.min && options.num < options.max
-   }
-
-   sin(angleInDegrees) {
-      return Math.sin((angleInDegrees-90) * Math.PI/180)
-   }
-
-   cos(angleInDegrees) {
-      return Math.cos((angleInDegrees-90) * Math.PI/180)
-   }
-
-   degrees(radians) {
-      return radians * (180/Math.PI)
-   }
-
-   radians(degree) {
-
-   }
-
-   distance(p1, p2) {
-      // a^2 + b^2 = c^2
-      var a2 = (p1.x - p2.x) * (p1.x - p2.x)
-      var b2 = (p1.y - p2.y) * (p1.y - p2.y)
-
-      return Math.sqrt(a2 + b2)
-   }
-
-   direction(p1, p2) {
-      if (p2 == undefined) {
-         p2 = p1
-         p1 = { x: 0, y: 0 }
+         return ratios[ratio]
       }
 
-      var xOff = p2.x - p1.x
-      var yOff = p2.y - p1.y
-      var beforeTurn = this.degrees(Math.atan2(xOff, -yOff)) + 180
-      var afterTurn = beforeTurn + 180
-      if (afterTurn > 360) {
-         afterTurn -= 360
+      brakingDistance(options) {
+         return (Math.abs(options.speed) * options.friction) / (1 - options.friction)
       }
-      return afterTurn
+
+      requiredSpeed(options) {
+         return Math.sqrt(2 * options.friction * options.distance);
+      }
+
+      inRange(options) {
+         return options.num > options.min && options.num < options.max
+      }
+
+      sin(angleInDegrees) {
+         return Math.sin((angleInDegrees-90) * Math.PI/180)
+      }
+
+      cos(angleInDegrees) {
+         return Math.cos((angleInDegrees-90) * Math.PI/180)
+      }
+
+      degrees(radians) {
+         return radians * (180/Math.PI)
+      }
+
+      radians(degree) {
+
+      }
+
+      distance(p1, p2) {
+         // a^2 + b^2 = c^2
+         var a2 = (p1.x - p2.x) * (p1.x - p2.x)
+         var b2 = (p1.y - p2.y) * (p1.y - p2.y)
+
+         return Math.sqrt(a2 + b2)
+      }
+
+      direction(p1, p2) {
+         if (p2 == undefined) {
+            p2 = p1
+            p1 = { x: 0, y: 0 }
+         }
+
+         var xOff = p2.x - p1.x
+         var yOff = p2.y - p1.y
+         var beforeTurn = this.degrees(Math.atan2(xOff, -yOff)) + 180
+         var afterTurn = beforeTurn + 180
+         if (afterTurn > 360) {
+            afterTurn -= 360
+         }
+         return afterTurn
+      }
+
+      shortestDirection(d1, d2) {
+          var right = d2 - d1
+          if (right < 0) {
+              right = 360 + right
+          }
+
+          var left = d1 - d2
+          if (left < 0) {
+              left = 360 + left
+          }
+
+          return right > left ? -left : right
+      }
+
+      stepsToSeconds(steps, decimals) {
+         var decimals = this.cs.default(decimals, 1)
+         return Math.ceil(steps / (60) * decimals) / decimals
+      }
    }
 
-   shortestDirection(d1, d2) {
-       var right = d2 - d1
-       if (right < 0) {
-           right = 360 + right
-       }
-
-       var left = d1 - d2
-       if (left < 0) {
-           left = 360 + left
-       }
-
-       return right > left ? -left : right
-   }
-
-   stepsToSeconds(steps, decimals) {
-      var decimals = this.cs.default(decimals, 1)
-      return Math.ceil(steps / (60) * decimals) / decimals
-   }
-}
-
-if (module) module.exports = CSENGINE_MATH
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_MATH : cs.camera = new CSENGINE_MATH(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Network.js":[function(require,module,exports) {
-//---------------------------------------------------------------------------------------------//
-//------------------------------------| Networking |-------------------------------------------//
-//---------------------------------------------------------------------------------------------//
-class CSENGINE_NETWORK {
-   constructor(cs) {
-      this.cs = cs
+//----------------------------------------------------------------------------//
+//----------------------------| CS ENGINE: NETWORK |--------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_NETWORK {
+      constructor(cs) {
+         this.cs = cs
 
-      this.ws = {}
-      this.status = false
-      this.buffer = []
+         this.ws = {}
+         this.status = false
+         this.buffer = []
 
-      this.metrics = {
-         upNow: 0,
-         downNow: 0,
-         upAverage: 0,
-         downAverage: 0,
-         upTotal: 0,
-         downTotal: 0,
-         upWatch: 0,
-         downWatch: 0,
-         last: Date.now(),
-         count: 0
-      }
-
-      this.overrides = {
-         connect: function() {},
-         disconnect: function() {},
-         message: function() {},
-      }
-   }
-
-   updateMetrics() {
-      var metrics = cs.network.metrics
-      var now = Date.now()
-      if (now - metrics.last > 1000) {
-         metrics.count++
-         metrics.last = now
-         metrics.upNow = metrics.upWatch
-         metrics.downNow = metrics.downWatch
-         metrics.upTotal += metrics.upWatch
-         metrics.downTotal += metrics.downWatch
-         metrics.upAverage = metrics.upTotal / metrics.count
-         metrics.downAverage = metrics.downTotal / metrics.count
-
-         metrics.upWatch = 0
-         metrics.downWatch = 0
-      }
-   }
-
-   connect(options) {
-      // console.log('cs.network.connect', options)
-      try {
-         var host = options.host || window.location.host
-         if (options.ssl == undefined || options.ssl == false) {
-            var url = "ws://" + host + ":" + options.port
-         } else {
-            var url = "wss://" + host + ":" + options.port
+         this.metrics = {
+            upNow: 0,
+            downNow: 0,
+            upAverage: 0,
+            downAverage: 0,
+            upTotal: 0,
+            downTotal: 0,
+            upWatch: 0,
+            downWatch: 0,
+            last: Date.now(),
+            count: 0
          }
-         var ws = new WebSocket(url);
-         ws.onopen = function() {
-            cs.network.onconnect()
+
+         this.overrides = {
+            connect: function() {},
+            disconnect: function() {},
+            message: function() {},
          }
-         ws.onclose = function() { cs.network.ondisconnect() }
-         ws.onmessage = function(event) { cs.network.onmessage(event.data) }
-         cs.network.ws = ws;
-      } catch(e) {
-         console.log(e);
+      }
+
+      updateMetrics() {
+         var metrics = cs.network.metrics
+         var now = Date.now()
+         if (now - metrics.last > 1000) {
+            metrics.count++
+            metrics.last = now
+            metrics.upNow = metrics.upWatch
+            metrics.downNow = metrics.downWatch
+            metrics.upTotal += metrics.upWatch
+            metrics.downTotal += metrics.downWatch
+            metrics.upAverage = metrics.upTotal / metrics.count
+            metrics.downAverage = metrics.downTotal / metrics.count
+
+            metrics.upWatch = 0
+            metrics.downWatch = 0
+         }
+      }
+
+      connect(options) {
+         // console.log('cs.network.connect', options)
+         try {
+            var host = options.host || window.location.host
+            if (options.ssl == undefined || options.ssl == false) {
+               var url = "ws://" + host + ":" + options.port
+            } else {
+               var url = "wss://" + host + ":" + options.port
+            }
+            var ws = new WebSocket(url);
+            ws.onopen = function() {
+               cs.network.onconnect()
+            }
+            ws.onclose = function() { cs.network.ondisconnect() }
+            ws.onmessage = function(event) { cs.network.onmessage(event.data) }
+            cs.network.ws = ws;
+         } catch(e) {
+            console.log(e);
+         }
+      }
+
+      isConnected() {
+         return cs.network.ws.readyState !== cs.network.ws.CLOSED
+      }
+
+      send(data) {
+         if (!this.status) return
+         if (typeof data !== 'string') {
+            data = JSON.stringify(data)
+         }
+         cs.network.metrics.upWatch += data.length
+         cs.network.ws.send(data)
+      }
+
+      read() {
+         while(this.buffer.length) {
+            var data = this.buffer.shift()
+            cs.network.metrics.downWatch += data.length
+            this.overrides.message(data)
+         }
+      }
+
+      onconnect() {
+         cs.network.status = true
+         this.overrides.connect()
+      }
+
+      ondisconnect() {
+         cs.network.status = false
+         this.overrides.disconnect()
+      }
+
+      onmessage(message) {
+         this.buffer.push(message)
+      }
+
+      setup(options) {
+         for (var optionName in options) {
+            cs.network.overrides[optionName] = options[optionName]
+         }
       }
    }
 
-   isConnected() {
-      return cs.network.ws.readyState !== cs.network.ws.CLOSED
-   }
-
-   send(data) {
-      if (!this.status) return
-      if (typeof data !== 'string') {
-         data = JSON.stringify(data)
-      }
-      cs.network.metrics.upWatch += data.length
-      cs.network.ws.send(data)
-   }
-
-   read() {
-      while(this.buffer.length) {
-         var data = this.buffer.shift()
-         cs.network.metrics.downWatch += data.length
-         this.overrides.message(data)
-      }
-   }
-
-   onconnect() {
-      cs.network.status = true
-      this.overrides.connect()
-   }
-
-   ondisconnect() {
-      cs.network.status = false
-      this.overrides.disconnect()
-   }
-
-   onmessage(message) {
-      this.buffer.push(message)
-   }
-
-   setup(options) {
-      for (var optionName in options) {
-         cs.network.overrides[optionName] = options[optionName]
-      }
-   }
-}
-
-if (module.exports) module.exports = CSENGINE_NETWORK
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_NETWORK : cs.camera = new CSENGINE_NETWORK(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Object.js":[function(require,module,exports) {
-//---------------------------------------------------------------------------------------------//
-//-----------------------------------| Object Functions |--------------------------------------//
-//---------------------------------------------------------------------------------------------//
-class CSENGINE_OBJECT {
-   constructor(cs) {
-      this.cs = cs
+//----------------------------------------------------------------------------//
+//-----------------------------| CS ENGINE: OBJECT |--------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_OBJECT {
+      constructor(cs) {
+         this.cs = cs
 
-      this.templates = {}
-      this.list = [] // all objects
-      this.new = [] // newly added objects
-      this.unique = 0
-      this.types = {}
-      this.objGroups = {}
-      this.shouldClean = false
-   }
-
-   addTemplate(type, template) {
-      this.templates[type] = template
-   }
-
-   loop(call) {
-      var i = cs.object.list.length;
-      while (i--) {
-         var object = cs.object.list[i]
-         call(object)
-      }
-   }
-
-   create(options) {
-      if (!this.templates[options.type]) {
-         console.log('object type "' + options.type + '" does not exist')
-         return undefined
+         this.templates = {}
+         this.list = [] // all objects
+         this.new = [] // newly added objects
+         this.unique = 0
+         this.types = {}
+         this.objGroups = {}
+         this.shouldClean = false
       }
 
-      var attr = options.attr
-      var template = this.templates[options.type]
-      var zIndex = options.zIndex || template.zIndex || 0
+      addTemplate(type, template) {
+         this.templates[type] = template
+      }
 
-      // create the object
-      var newObj = {
-         core: {
-            zIndex: zIndex,
-            live: true,
-            active: true,
-            drawn: false,
-            type: options.type,
-            id: this.unique,
-            surface: this.cs.default(template.surface, 'game')
+      loop(call) {
+         var i = this.cs.object.list.length;
+         while (i--) {
+            var object = this.cs.object.list[i]
+            call(object)
          }
       }
 
-      // predefined / custom Attr
-      for (var name in template.attr) { newObj[name] = template.attr[name] }
-      for (var name in attr) { newObj[name] = attr[name] }
+      create(options) {
+         if (!this.templates[options.type]) {
+            console.log('object type "' + options.type + '" does not exist')
+            return undefined
+         }
 
-      // run create event
-      template.create && template.create.call(newObj, newObj);
+         var attr = options.attr
+         var template = this.templates[options.type]
+         var zIndex = options.zIndex || template.zIndex || 0
 
-      // add to list
-      this.new.push({ obj: newObj, zIndex: zIndex })
-      this.unique += 1
+         // create the object
+         var newObj = {
+            core: {
+               zIndex: zIndex,
+               live: true,
+               active: true,
+               drawn: false,
+               type: options.type,
+               id: this.unique,
+               surface: this.cs.default(template.surface, 'game')
+            }
+         }
 
-      // grouping
-      if (!this.objGroups[options.type]) this.objGroups[options.type] = []
-      this.objGroups[options.type].push(newObj)
+         // predefined / custom Attr
+         for (var name in template.attr) { newObj[name] = template.attr[name] }
+         for (var name in attr) { newObj[name] = attr[name] }
 
-      return newObj
-   }
+         // run create event
+         template.create && template.create.call(newObj, newObj);
 
-   addNewObjects() {
-      while (this.new.length) {
-         var obj = this.new.shift().obj
-         this.list.push(obj)
+         // add to list
+         this.new.push({ obj: newObj, zIndex: zIndex })
+         this.unique += 1
+
+         // grouping
+         if (!this.objGroups[options.type]) this.objGroups[options.type] = []
+         this.objGroups[options.type].push(newObj)
+
+         return newObj
       }
 
-      this.orderObjectsByZIndex()
-   }
+      addNewObjects() {
+         while (this.new.length) {
+            var obj = this.new.shift().obj
+            this.list.push(obj)
+         }
 
-   orderObjectsByZIndex() {
-      this.order = this.list.sort(function(a, b) {
-         return b.core.zIndex === a.core.zIndex
-            ? b.core.id - a.core.id
-            : b.core.zIndex - a.core.zIndex
-      })
-   }
-
-   changeZIndex(object, zIndex) {
-      var listObject = object.list.find(function(listObject) {
-         return listObject.obj.core.id == object.core.id
-      })
-
-      listObject.core.zIndex = zIndex
-
-      this.orderObjectsByZIndex()
-   }
-
-   destroy(destroyObjOrID, fadeTimer) {
-      this.shouldClean = true
-      var destroyObj = (typeof destroyObjOrID === 'number')
-         ? this.id(destroyObjOrID)
-         : destroyObjOrID
-
-      destroyObj.core.live = false
-      destroyObj.core.active = false
-      destroyObj.core.fadeTimer = fadeTimer || 0
-
-      // remove from objGroup
-      var type = destroyObj.core.type
-      if (cs.objects[type].destroy) cs.objects[type].destroy.call(destroyObj)
-      this.objGroups[type] = this.objGroups[type].filter(function(obj) { return obj.core.live })
-   }
-
-   clean() {
-      if(!this.shouldClean) return
-      this.list = this.list.reduce(function(sum, num) {
-         if(num.core.live) sum.push(num)
-         return sum
-      }, [])
-   }
-
-   every() {
-      return this.list.concat(this.new.map(function(obj) { return obj.obj }))
-   }
-
-   all(type) {
-      return this.objGroups[type] || []
-   }
-
-   find(type) {
-      if (!this.objGroups[type]) {
-         return undefined
+         this.orderObjectsByZIndex()
       }
-      return this.objGroups[type][0]
-   }
 
-   search(call) {
-      return this.every().find(function(obj) {
-         if (!obj.core.live) return false
-         return call(obj)
-      })
-   }
+      orderObjectsByZIndex() {
+         this.order = this.list.sort(function(a, b) {
+            return b.core.zIndex === a.core.zIndex
+               ? b.core.id - a.core.id
+               : b.core.zIndex - a.core.zIndex
+         })
+      }
 
-   id(id) {
-      return this.list.find(function(obj) { return obj.core.id === id })
-   }
+      changeZIndex(object, zIndex) {
+         var listObject = object.list.find(function(listObject) {
+            return listObject.obj.core.id == object.core.id
+         })
 
-   count(type) {
-      return this.objGroups[type] ? this.objGroups[type].length : 0
-   }
+         listObject.core.zIndex = zIndex
 
-   reset() {
-      this.list = []
-      this.new = []
-      this.objGroups = {}
-      this.unique = 0
-   }
+         this.orderObjectsByZIndex()
+      }
 
-   resize() {
-      for (var object of this.list) {
-         object.core.drawn = false
+      destroy(destroyObjOrID, fadeTimer) {
+         this.shouldClean = true
+         var destroyObj = (typeof destroyObjOrID === 'number')
+            ? this.id(destroyObjOrID)
+            : destroyObjOrID
+
+         destroyObj.core.live = false
+         destroyObj.core.active = false
+         destroyObj.core.fadeTimer = fadeTimer || 0
+
+         // remove from objGroup
+         var type = destroyObj.core.type
+         if (cs.objects[type].destroy) cs.objects[type].destroy.call(destroyObj)
+         this.objGroups[type] = this.objGroups[type].filter(function(obj) { return obj.core.live })
+      }
+
+      clean() {
+         if(!this.shouldClean) return
+         this.list = this.list.reduce(function(sum, num) {
+            if(num.core.live) sum.push(num)
+            return sum
+         }, [])
+      }
+
+      every() {
+         return this.list.concat(this.new.map(function(obj) { return obj.obj }))
+      }
+
+      all(type) {
+         return this.objGroups[type] || []
+      }
+
+      find(type) {
+         if (!this.objGroups[type]) {
+            return undefined
+         }
+         return this.objGroups[type][0]
+      }
+
+      search(call) {
+         return this.every().find(function(obj) {
+            if (!obj.core.live) return false
+            return call(obj)
+         })
+      }
+
+      id(id) {
+         return this.list.find(function(obj) { return obj.core.id === id })
+      }
+
+      count(type) {
+         return this.objGroups[type] ? this.objGroups[type].length : 0
+      }
+
+      reset() {
+         this.list = []
+         this.new = []
+         this.objGroups = {}
+         this.unique = 0
+      }
+
+      resize() {
+         for (var object of this.list) {
+            object.core.drawn = false
+         }
       }
    }
-}
 
-if (module) module.exports = CSENGINE_OBJECT
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_OBJECT : cs.camera = new CSENGINE_OBJECT(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Room.js":[function(require,module,exports) {
-//---------------------------------------------------------------------------------------------//
-//-----------------------------------| Room Functions |----------------------------------------//
-//---------------------------------------------------------------------------------------------//
-class CSENGINE_ROOM {
-   constructor(cs) {
-      this.cs = cs
+//----------------------------------------------------------------------------//
+//------------------------------| CS ENGINE: ROOM |---------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_ROOM {
+      constructor(cs) {
+         this.cs = cs
 
-      this.width = 100
-      this.height = 100
-      this.rect = {
-         x: 0,
-         y: 0,
-         width: 100,
-         height: 100
+         this.width = 100
+         this.height = 100
+         this.rect = {
+            x: 0,
+            y: 0,
+            width: 100,
+            height: 100
+         }
+      }
+
+      setup(info) {
+         this.width = info.width
+         this.height = info.height
+         if (info.background) cs.canvas.style.background = info.background
+         this.rect = { x: 0, y: 0, width: this.width, height: this.height }
+         this.cs.resize()
+      }
+
+      outside(rect) {
+         var width = this.cs.default(rect.width, 0)
+         var height = this.cs.default(rect.height, 0)
+
+         return (
+            rect.x < 0 ||
+            rect.y < 0 ||
+            rect.x + width > this.width ||
+            rect.y + height > this.height
+         )
       }
    }
 
-   setup(info) {
-      this.width = info.width
-      this.height = info.height
-      if (info.background) cs.canvas.style.background = info.background
-      this.rect = { x: 0, y: 0, width: this.width, height: this.height }
-      this.cs.resize()
-   }
-
-   outside(rect) {
-      var width = this.cs.default(rect.width, 0)
-      var height = this.cs.default(rect.height, 0)
-
-      return (
-         rect.x < 0 ||
-         rect.y < 0 ||
-         rect.x + width > this.width ||
-         rect.y + height > this.height
-      )
-   }
-}
-
-if (module) module.exports = CSENGINE_ROOM
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_ROOM : cs.camera = new CSENGINE_ROOM(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Setup.js":[function(require,module,exports) {
-class CSENGINE_SETUP {
-   constructor(cs) {
-      this.cs = cs
+//----------------------------------------------------------------------------//
+//------------------------------| CS ENGINE: SETUP |--------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_SETUP {
+      constructor(cs) {
+         this.cs = cs
+      }
+
+      run() {
+         // Initiate Inputs
+         this.cs.ctx = this.cs.canvas.getContext('2d')
+         this.cs.canvas.tabIndex = 1000
+         this.cs.canvas.style.outline = 'none'
+         this.cs.canvas.style.touchAction = 'none'
+
+         this.cs.canvas.addEventListener('click', () => {
+            this.cs.sound.enable.bind(this.cs.sound)
+            this.cs.canvas.focus()
+         })
+
+         this.cs.canvas.addEventListener('keydown', (e) => this.cs.inputKeyboard.eventDown(e))
+         this.cs.canvas.addEventListener('keyup', (e) => this.cs.inputKeyboard.eventUp(e))
+
+         if (this.cs.canvas.setPointerCapture) {
+            this.cs.canvas.addEventListener("pointerdown", (e) => this.cs.inputTouch.eventPointerDown(e))
+            this.cs.canvas.addEventListener("pointermove", (e) => this.cs.inputTouch.eventPointerMove(e))
+            this.cs.canvas.addEventListener("pointerup", (e) => this.cs.inputTouch.eventPointerUp(e))
+            this.cs.canvas.addEventListener("pointerout", (e) => this.cs.inputTouch.eventPointerUp(e))
+         } else {
+            this.cs.canvas.addEventListener("touchstart", (e) => this.cs.inputTouch.eventTouchDown(e))
+            this.cs.canvas.addEventListener("touchmove", (e) => his.cs.inputTouch.eventTouchMove(e))
+            this.cs.canvas.addEventListener("touchend", (e) => this.cs.inputTouch.eventTouchUp(e))
+
+            this.cs.canvas.addEventListener('mousedown', (e) => this.cs.inputMouse.eventDown(e))
+            this.cs.canvas.addEventListener('mousemove', (e) => this.cs.inputMouse.eventMove(e))
+            this.cs.canvas.addEventListener('mouseup', (e) => this.cs.inputMouse.eventUp(e))
+            this.cs.canvas.addEventListener('mouseout', (e) => this.cs.inputMouse.eventUp(e))
+         }
+
+         // View, Game and GUI surfaces
+         this.cs.surface.create({ name: 'gui', oneToOne: true, useCamera: false, depth: 0 })
+         this.cs.surface.create({ name: 'game', oneToOne: true, useCamera: true,  depth: 10 })
+
+         // Sound
+         //this.cs.sound.active = this.cs.sound.init();
+
+         // watch for resizing
+         this.cs.resize = () => {
+            var maxSize = this.cs.maxSize
+            this.cs.width = this.cs.canvas.clientWidth
+            this.cs.height = this.cs.canvas.clientHeight
+            this.cs.clampWidth = this.cs.width
+            this.cs.clampHeight = this.cs.height
+
+            if (this.cs.clampWidth > maxSize) {
+               this.cs.clampHeight = this.cs.clampHeight / this.cs.clampWidth * maxSize
+               this.cs.clampWidth = maxSize
+            }
+
+            if (this.cs.clampHeight > maxSize) {
+               this.cs.clampWidth = this.cs.clampWidth / this.cs.clampHeight * maxSize
+               this.cs.clampHeight = maxSize
+            }
+
+            this.cs.clampWidth = Math.ceil(this.cs.clampWidth)
+            this.cs.clampHeight = Math.ceil(this.cs.clampHeight)
+
+            this.cs.canvas.width = this.cs.clampWidth
+            this.cs.canvas.height = this.cs.clampHeight
+
+            this.cs.camera.resize()
+            this.cs.surface.resize()
+            this.cs.object.resize()
+         }
+
+         // Sprites/Storage/Sound
+         this.cs.sprite.init()
+         this.cs.storage.init()
+
+         // room/camera
+         this.cs.room.setup({
+            width: this.cs.canvas.getBoundingClientRect().width,
+            height: this.cs.canvas.getBoundingClientRect().height
+         })
+
+         this.cs.camera.setup({
+            width: this.cs.canvas.getBoundingClientRect().width,
+            height: this.cs.canvas.getBoundingClientRect().height
+         })
+
+         // window global functions
+         if (window) {
+            window.onerror = function(errorMsg, url, lineNumber) { this.cs.loop.stop() }
+
+            window.onfocus = function(e) {
+               this.cs.focus(true)
+            }
+
+            window.onblur = function(e) {
+               this.cs.focus(false)
+               this.cs.sound.toggleActive(false, e)
+               this.cs.inputKeyboard.blur()
+            }
+
+            window.onresize = this.cs.resize.bind(this)
+         }
+
+         // bootstrapping
+         this.cs.start({ cs: this.cs })
+         this.cs.resize()
+         this.cs.loop.start()
+      }
    }
 
-   run() {
-      // Initiate Inputs
-      this.cs.ctx = this.cs.canvas.getContext('2d')
-      this.cs.canvas.tabIndex = 1000
-      this.cs.canvas.style.outline = 'none'
-      // this.cs.canvas.style.touchAction = 'none'
-      this.cs.canvas.addEventListener('click', function() {
-         this.cs.sound.enable.bind(this.cs.sound)
-         this.cs.canvas.focus()
-      })
+   // export (node / web)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_SETUP
+      : cs.setup = new CSENGINE_SETUP(cs)
+})()
 
-      this.cs.canvas.addEventListener('keydown', this.cs.inputKeyboard.eventDown)
-      this.cs.canvas.addEventListener('keyup', this.cs.inputKeyboard.eventUp)
+},{}],"../node_modules/cs-engine/src/parts/Sound.js":[function(require,module,exports) {
+//----------------------------------------------------------------------------//
+//------------------------------| CS ENGINE: SOUND |--------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_SOUND {
+      constructor(cs) {
+         this.cs = cs
 
-      if (this.cs.canvas.setPointerCapture) {
-         this.cs.canvas.addEventListener("pointerdown", this.cs.inputTouch.eventPointerDown)
-         this.cs.canvas.addEventListener("pointermove", this.cs.inputTouch.eventPointerMove)
-         this.cs.canvas.addEventListener("pointerup", this.cs.inputTouch.eventPointerUp)
-         this.cs.canvas.addEventListener("pointerout", this.cs.inputTouch.eventPointerUp)
-      } else {
-         this.cs.canvas.addEventListener("touchstart", this.cs.inputTouch.eventTouchDown)
-         this.cs.canvas.addEventListener("touchmove", this.cs.inputTouch.eventTouchMove)
-         this.cs.canvas.addEventListener("touchend", this.cs.inputTouch.eventTouchUp)
-
-         this.cs.canvas.addEventListener('mousedown', this.cs.inputMouse.eventDown)
-         this.cs.canvas.addEventListener('mousemove', this.cs.inputMouse.eventMove)
-         this.cs.canvas.addEventListener('mouseup', this.cs.inputMouse.eventUp)
-         this.cs.canvas.addEventListener('mouseout', this.cs.inputMouse.eventUp)
+         this.list = {}
+         this.playList = []
+         this.initiated = false
+         this.context = undefined
+         this.canPlayAudio = false
+         this.mute = false
+         this.active = true
+         this.volume = undefined
       }
 
-      // View, Game and GUI surfaces
-      this.cs.surface.create({ name: 'gui', oneToOne: true, useCamera: false, depth: 0 })
-      this.cs.surface.create({ name: 'game', oneToOne: true, useCamera: true,  depth: 10 })
+      enable() {
+         if (!this.initiated) this.init()
+         if (this.initiated && !this.canPlayAudio) return
+         if (!this.context) return
 
-      // Sound
-      //this.cs.sound.active = this.cs.sound.init();
-
-
-      // watch for resizing
-      this.cs.resize = () => {
-         var maxSize = this.cs.maxSize
-         this.cs.width = this.cs.canvas.clientWidth
-         this.cs.height = this.cs.canvas.clientHeight
-         this.cs.clampWidth = this.cs.width
-         this.cs.clampHeight = this.cs.height
-
-         if (this.cs.clampWidth > maxSize) {
-            this.cs.clampHeight = this.cs.clampHeight / this.cs.clampWidth * maxSize
-            this.cs.clampWidth = maxSize
-         }
-
-         if (this.cs.clampHeight > maxSize) {
-            this.cs.clampWidth = this.cs.clampWidth / this.cs.clampHeight * maxSize
-            this.cs.clampHeight = maxSize
-         }
-
-         this.cs.clampWidth = Math.ceil(this.cs.clampWidth)
-         this.cs.clampHeight = Math.ceil(this.cs.clampHeight)
-
-         this.cs.canvas.width = this.cs.clampWidth
-         this.cs.canvas.height = this.cs.clampHeight
-
-         this.cs.camera.resize()
-         this.cs.surface.resize()
-         this.cs.object.resize()
+         cs.sound.toggleActive(true)
+         var source = this.context.createBufferSource();
+         source.buffer = this.context.createBuffer(1, 1, 22050);
+         source.connect(this.context.destination);
+         source.start(0);
       }
 
-      // Sprites/Storage/Sound
-      this.cs.sprite.init()
-      this.cs.storage.init()
-
-      // room/camera
-      this.cs.room.setup({
-         width: this.cs.canvas.getBoundingClientRect().width,
-         height: this.cs.canvas.getBoundingClientRect().height
-      })
-
-      this.cs.camera.setup({
-         width: this.cs.canvas.getBoundingClientRect().width,
-         height: this.cs.canvas.getBoundingClientRect().height
-      })
-
-      // window global functions
-      if (window) {
-         window.onerror = function(errorMsg, url, lineNumber) { this.cs.loop.stop() }
-
-         window.onfocus = function(e) {
-            this.cs.focus(true)
+      init() {
+         this.initiated = true
+         this.list = {};
+         window.AudioContext = window.AudioContext || window.webkitAudioContext
+         if (window.AudioContext) {
+            this.context = new AudioContext()
+            this.canPlayAudio = true
          }
-
-         window.onblur = function(e) {
-            this.cs.focus(false)
-            this.cs.sound.toggleActive(false, e)
-            this.cs.key.blur()
-         }
-
-         window.onresize = this.cs.resize.bind(this)
+         this.loadSounds()
       }
 
-      // bootstrapping
-      this.cs.start({ cs: this.cs })
-      this.cs.resize()
-      this.cs.loop.start()
+      loadSounds() {
+         for (var sound of cs.sounds) {
+            var name = sound.path.split('/').pop()
+            this.list[name] = sound
+         }
+      }
+
+      play(audioName, options) {
+         var sound = this.list[audioName]
+         if (this.canPlayAudio && sound) {
+            this.playList.forEach(function(audioObj) {
+               if (audioObj.name == audioName) {
+                  //console.log('Reuse this sound');
+               }
+            })
+            var csAudioObj = this.context.createBufferSource();
+            csAudioObj.name = audioName;
+            csAudioObj.buffer = sound.buffer;
+            for (var opt in options) { csAudioObj[opt] = options[opt] }
+            csAudioObj.gainNode = this.context.createGain();
+            csAudioObj.connect(csAudioObj.gainNode);
+            csAudioObj.gainNode.connect(this.context.destination);
+            csAudioObj.gainNode.gain.value = cs.sound.mute ? 0 : 1;
+            csAudioObj.start(0);
+            this.playList.push(csAudioObj);
+            return csAudioObj;
+         }
+         return undefined;
+      }
+
+      reset() {
+         for (var sound in this.playList) {
+            //TODO there is an error here take a look in a second I got to go wash my cloths~!!!
+            if (!this.playList) return;
+            this.playList[sound].stop();
+            this.playList[sound].disconnect();
+         }
+      }
+
+      toggleMute(bool) {
+         this.mute = bool;
+         (bool) ? this.setGain(0): this.setGain(1);
+      }
+
+      setGain(gainValue) {
+         console.log('GainValue: ' + gainValue);
+         for (var audioObj in this.playList) {
+            console.log('Muting...', audioObj);
+            this.playList[audioObj].gainNode.gain.value = gainValue;
+         }
+      }
+
+      toggleActive(bool) {
+         if (bool && !this.initiated) {
+            this.init()
+         }
+
+         if (this.context) {
+            this.context[bool ? 'resume' : 'suspend']()
+         }
+      }
    }
-}
 
-if (module) module.exports = CSENGINE_SETUP
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_SOUND : cs.sound = new CSENGINE_SOUND(cs)
+})()
+
+},{}],"../node_modules/cs-engine/src/parts/Sprite.js":[function(require,module,exports) {
+//----------------------------------------------------------------------------//
+//------------------------------| CS ENGINE: SPRITE |--------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_SPRITE {
+      constructor(cs) {
+         this.cs = cs
+
+         this.loaded = []
+         this.list = {}
+      }
+
+      init(sprites) {
+         for (var sprite of this.loaded) {
+            this.initSprite(sprite)
+         }
+      }
+
+      initSprite(options) {
+         // create Sprite
+         var width = options.fwidth || options.html.width
+         var height = options.fheight || options.html.height
+         var newSprite = {
+            html: options.html,
+            name: options.name || options.path.split('/').pop(),
+            texture: document.createElement('canvas'),
+            frames: options.frames || 1,
+            fwidth: width,
+            fheight: height,
+            xoff: options.xoff || 0,
+            yoff: options.yoff || 0,
+            mask: {
+               width: options.mask ? (options.mask.width || width - (options.mask.left || 0) - (options.mask.right || 0)) : width,
+               height: options.mask ? (options.mask.height || height - (options.mask.top || 0) - (options.mask.bottom || 0)) : height
+            },
+            frames: []
+         }
+
+         // handle Frames
+         var dx = 0
+         var dy = 0
+
+         while (dx < newSprite.html.width && dy < newSprite.html.height) {
+            var frame = {}
+            frame.canvas = document.createElement('canvas')
+            frame.canvas.width = newSprite.fwidth
+            frame.canvas.height = newSprite.fheight
+            frame.canvas.ctx = frame.canvas.getContext('2d')
+
+            frame.canvas.ctx.drawImage(newSprite.html, dx, dy, newSprite.fwidth, newSprite.fheight,
+               0, 0, newSprite.fwidth, newSprite.fheight)
+            newSprite.frames.push(frame.canvas)
+
+            dx += newSprite.fwidth
+            if (dx === newSprite.html.width) {
+               dx = 0
+               dy += newSprite.fheight
+            }
+         }
+
+         this.cs.sprite.list[newSprite.name] = newSprite
+      }
+
+      texture(spriteName, width, height) {
+         var sprite = this.cs.sprite.list[spriteName]
+         sprite.texture = document.createElement('canvas')
+         sprite.texture.ctx = sprite.texture.getContext('2d')
+         sprite.texture.width = width
+         sprite.texture.height = height
+         sprite.texture.fwidth = width
+         sprite.texture.fheight = height
+
+         var x = 0
+         while (x < width) {
+            var y = 0
+            while (y < height) {
+               sprite.texture.ctx.drawImage(sprite.html, x, y);
+               y += sprite.html.height
+            }
+            x += sprite.html.width
+         }
+      }
+
+      info(options) {
+         // we need something to return info on sprites based on scale etc
+         var sprite = this.list[options.spr]
+         var frame = this.cs.default(options.frame, 0)
+         var scaleX = this.cs.default(options.scaleX, 1)
+         var scaleY = this.cs.default(options.scaleY, 1)
+         var width = this.cs.default(options.width, sprite.fwidth)
+         var height = this.cs.default(options.height, sprite.fheight)
+         var angle = this.cs.default(options.angle, 0)
+         var xoff = this.cs.default(options.xoff, sprite.xoff)
+         var yoff = this.cs.default(options.yoff, sprite.yoff)
+
+         if (options.size) {
+            var tall = height > width
+            var ratio = height / width
+
+            width = tall ? options.size / ratio : options.size
+            height = tall ? options.size : options.size * ratio
+         }
+
+         if (options.xCenter) xoff = width / 2
+         if (options.yCenter) yoff = height / 2
+         if (options.center) {
+            xoff = width / 2
+            yoff = height / 2
+         }
+
+         return {
+            name: options.spr,
+            fWidth: sprite.fwidth,
+            fHeight: sprite.fheight,
+            width: (options.texture ? sprite.texture.fwidth : width),
+            height: (options.texture ? sprite.texture.fheight : height),
+            scaleX: scaleX,
+            scaleY: scaleY,
+            angle: angle,
+            xoff: xoff,
+            yoff: yoff,
+            frames: options.texture ? [sprite.texture] : sprite.frames,
+            frame: sprite.frames[frame],
+            mask: {
+               width: sprite.mask.width,
+               height: sprite.mask.height
+            }
+         }
+      }
+
+      exists(name) {
+         return this.list[name] ? true : false
+      }
+   }
+
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_SPRITE : cs.sound = new CSENGINE_SPRITE(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Surface.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
-//-------------------------------| Surfaces |---------------------------------//
+//-----------------------------| CS ENGINE: SURFACE |-------------------------//
 //----------------------------------------------------------------------------//
 /*
-   Types of surfaces
-      - GUI
-         - matches device pixels
-         - draw calls match pixels
-      - GAME
-         - matches device pixels
-         - draw calls will offset by camera
-      - MAP
-         - matches room size
+Types of surfaces
+   - GUI
+   - matches device pixels
+   - draw calls match pixels
+   - GAME
+   - matches device pixels
+   - draw calls will offset by camera
+   - MAP
+   - matches room size
 */
-class CSENGINE_SURFACE {
-   constructor(cs) {
-      this.cs = cs
+(() => {
+   class CSENGINE_SURFACE {
+      constructor(cs) {
+         this.cs = cs
 
-      this.list = []
-      this.order = []
-      this.imageSmoothing = false
-   }
-
-   create(config) {
-      var num = this.list.length
-      var canvas = document.createElement("canvas")
-
-      var oneToOne = this.cs.default(config.oneToOne, true)
-      var useCamera = this.cs.default(config.useCamera, true)
-      var drawOutside = this.cs.default(config.drawOutside, false)
-      var manualClear = this.cs.default(config.manualClear, false)
-
-      this.list[config.name] = {
-         name: config.name,
-         canvas: canvas,
-         ctx: canvas.getContext('2d'),
-         depth: this.cs.default(config.depth, 0),
-         width: 0,
-         height: 0,
-         scale: 1,
-         oneToOne: oneToOne,
-         useCamera: useCamera,
-         drawOutside: drawOutside,
-         manualClear: manualClear,
-         clearRequest: false,
-         clear: true
+         this.list = {}
+         this.order = []
+         this.imageSmoothing = false
       }
 
-      // Add and fix size
-      this.addToOrder(this.list[config.name])
-      this.resize()
+      create(config) {
+         var num = this.list.length
+         var canvas = document.createElement("canvas")
 
-      // Return the element
-      return this.list[config.name]
-   }
+         var oneToOne = this.cs.default(config.oneToOne, true)
+         var useCamera = this.cs.default(config.useCamera, true)
+         var drawOutside = this.cs.default(config.drawOutside, false)
+         var manualClear = this.cs.default(config.manualClear, false)
 
-   addToOrder(surface) {
-      // Find Place to put it!
-      for (var i = 0; i < this.order.length; i++) {
-         if (this.order[i].depth > surface.depth) {
-            break
+         this.list[config.name] = {
+            name: config.name,
+            canvas: canvas,
+            ctx: canvas.getContext('2d'),
+            depth: this.cs.default(config.depth, 0),
+            width: 0,
+            height: 0,
+            scale: 1,
+            oneToOne: oneToOne,
+            useCamera: useCamera,
+            drawOutside: drawOutside,
+            manualClear: manualClear,
+            clearRequest: false,
+            clear: true
+         }
+
+         // Add and fix size
+         this.addToOrder(this.list[config.name])
+         this.resize()
+
+         // Return the element
+         return this.list[config.name]
+      }
+
+      addToOrder(surface) {
+         // Find Place to put it!
+         for (var i = 0; i < this.order.length; i++) {
+            if (this.order[i].depth > surface.depth) {
+               break
+            }
+         }
+
+         this.order.splice(i, 0, surface)
+      }
+
+      clearAll() {
+         this.cs.ctx.clearRect(0, 0, this.cs.canvas.width, this.cs.canvas.height)
+         for (var surface of this.order) {
+            if (!surface.manualClear || surface.clearRequest) {
+               var clearRect = { x: 0, y: 0, width: surface.canvas.width, height: surface.canvas.height }
+
+               if (surface.clearRequest)
+                  clearRect = surface.clearRequest
+
+               surface.ctx.clearRect(clearRect.x, clearRect.y, clearRect.width, clearRect.height)
+               surface.clearRequest = undefined
+               surface.clear = true
+               continue
+            }
+
+            surface.clear = false
          }
       }
 
-      this.order.splice(i, 0, surface)
-   }
-
-   clearAll() {
-      this.cs.ctx.clearRect(0, 0, this.cs.canvas.width, this.cs.canvas.height)
-      for (var surface of this.order) {
-         if (!surface.manualClear || surface.clearRequest) {
-            var clearRect = { x: 0, y: 0, width: surface.canvas.width, height: surface.canvas.height }
-
-            if (surface.clearRequest)
-               clearRect = surface.clearRequest
-
-            surface.ctx.clearRect(clearRect.x, clearRect.y, clearRect.width, clearRect.height)
-            surface.clearRequest = undefined
-            surface.clear = true
-            continue
-         }
-
-         surface.clear = false
-      }
-   }
-
-   clear(options) {
-      var surface = this.list[options.name]
-      surface.clearRequest = {
-         x: options.x || 0,
-         y: options.y || 0,
-         width: options.width || surface.canvas.width,
-         height: options.height || surface.canvas.height
-      }
-   }
-
-   displayAll() {
-      var i = this.order.length;
-      while (i--) {
-         this.display(this.order[i].name)
-      }
-   }
-
-   display(surfaceName) {
-      var surface = this.list[surfaceName]
-      // destination
-      var dx = 0
-      var dy = 0
-      var dWidth = this.cs.canvas.width
-      var dHeight = this.cs.canvas.height
-
-      // source
-      var sx = dx
-      var sy = dy
-      var sWidth = dWidth
-      var sHeight = dHeight
-
-      if (!surface.oneToOne) {
-         var cameraRect = this.cs.camera.info()
-         sx = cameraRect.x
-         sy = cameraRect.y
-         sWidth = cameraRect.width
-         sHeight = cameraRect.height
-
-         // safari does not allow negative source
-         if (sy < 0) {
-            dy -= sy * cameraRect.zScale
-            sy = 0
-            sHeight = surface.height
-            dHeight = sHeight * cameraRect.zScale
-         }
-
-         if (sx < 0) {
-            dx -= sx * cameraRect.zScale
-            sx = 0
-            sWidth = surface.width
-            dWidth = sWidth * cameraRect.zScale
+      clear(options) {
+         var surface = this.list[options.name]
+         surface.clearRequest = {
+            x: options.x || 0,
+            y: options.y || 0,
+            width: options.width || surface.canvas.width,
+            height: options.height || surface.canvas.height
          }
       }
 
-      this.cs.ctx.drawImage(surface.canvas,
-         sx, sy, sWidth, sHeight,
-         (dx), (dy), (dWidth), (dHeight)
-      )
-   }
-
-   resize() {
-      var width = this.cs.clampWidth
-      var height = this.cs.clampHeight
-
-      // set main canvas
-      this.ctxImageSmoothing(this.cs.ctx)
-
-      // loop over the surfaces to match
-      // a surface can be raw (screen coordinates) or not (the size of the room)
-      for (var surface of this.order) {
-         if (this.cs.loop.run) {
-            var save = surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
-         }
-
-         surface.canvas.width = surface.oneToOne ? width : this.cs.room.width
-         surface.canvas.height = surface.oneToOne ? height : this.cs.room.height
-         surface.width = surface.canvas.width
-         surface.height = surface.canvas.height
-         this.clear({ name: surface.name })
-         this.ctxImageSmoothing(surface.ctx)
-
-         if (this.cs.loop.run) surface.ctx.putImageData(save, 0, 0)
-      }
-   }
-
-   ctxImageSmoothing(ctx) {
-      ctx.webkitImageSmoothingEnabled = this.imageSmoothing
-      ctx.mozImageSmoothingEnabled = this.imageSmoothing
-      ctx.msImageSmoothingEnabled = this.imageSmoothing
-      ctx.imageSmoothingEnabled = this.imageSmoothing
-   }
-
-   info(surfaceName) {
-      return {
-         canvas: this.list[surfaceName].canvas,
-         width: this.list[surfaceName].width,
-         height: this.list[surfaceName].height
-      }
-   }
-
-   debug(surfaceName) {
-      var canvas = this.cs.surface.list[surfaceName].canvas
-      canvas.style.position = 'fixed'
-      canvas.style.top = '50%'
-      canvas.style.left = '50%'
-      canvas.style.transform = 'translateX(-50%) translateY(-50%)'
-      canvas.style.background = '#222'
-      canvas.style.border = '2px solid #000'
-
-      document.body.appendChild(canvas)
-   }
-}
-
-if (module) module.exports = CSENGINE_SURFACE
-
-},{}],"../node_modules/cs-engine/src/parts/Sprite.js":[function(require,module,exports) {
-//---------------------------------------------------------------------------------------------//
-//-----------------------------------| Sprite Functions |--------------------------------------//
-//---------------------------------------------------------------------------------------------//
-class CSENGINE_SPRITE {
-   constructor(cs) {
-      this.cs = cs
-
-      this.loaded = []
-      this.list = {}
-   }
-
-   init(sprites) {
-      for (var sprite of this.loaded) {
-         this.initSprite(sprite)
-      }
-   }
-
-   initSprite(options) {
-      // create Sprite
-      var width = options.fwidth || options.html.width
-      var height = options.fheight || options.html.height
-      var newSprite = {
-         html: options.html,
-         name: options.name || options.path.split('/').pop(),
-         texture: document.createElement('canvas'),
-         frames: options.frames || 1,
-         fwidth: width,
-         fheight: height,
-         xoff: options.xoff || 0,
-         yoff: options.yoff || 0,
-         mask: {
-            width: options.mask ? (options.mask.width || width - (options.mask.left || 0) - (options.mask.right || 0)) : width,
-            height: options.mask ? (options.mask.height || height - (options.mask.top || 0) - (options.mask.bottom || 0)) : height
-         },
-         frames: []
-      }
-
-      // handle Frames
-      var dx = 0
-      var dy = 0
-
-      while (dx < newSprite.html.width && dy < newSprite.html.height) {
-         var frame = {}
-         frame.canvas = document.createElement('canvas')
-         frame.canvas.width = newSprite.fwidth
-         frame.canvas.height = newSprite.fheight
-         frame.canvas.ctx = frame.canvas.getContext('2d')
-
-         frame.canvas.ctx.drawImage(newSprite.html, dx, dy, newSprite.fwidth, newSprite.fheight,
-            0, 0, newSprite.fwidth, newSprite.fheight)
-         newSprite.frames.push(frame.canvas)
-
-         dx += newSprite.fwidth
-         if (dx === newSprite.html.width) {
-            dx = 0
-            dy += newSprite.fheight
+      displayAll() {
+         var i = this.order.length;
+         while (i--) {
+            this.display(this.order[i].name)
          }
       }
 
-      this.cs.sprite.list[newSprite.name] = newSprite
-   }
+      display(surfaceName) {
+         var surface = this.list[surfaceName]
+         // destination
+         var dx = 0
+         var dy = 0
+         var dWidth = this.cs.canvas.width
+         var dHeight = this.cs.canvas.height
 
-   texture(spriteName, width, height) {
-      var sprite = this.cs.sprite.list[spriteName]
-      sprite.texture = document.createElement('canvas')
-      sprite.texture.ctx = sprite.texture.getContext('2d')
-      sprite.texture.width = width
-      sprite.texture.height = height
-      sprite.texture.fwidth = width
-      sprite.texture.fheight = height
+         // source
+         var sx = dx
+         var sy = dy
+         var sWidth = dWidth
+         var sHeight = dHeight
 
-      var x = 0
-      while (x < width) {
-         var y = 0
-         while (y < height) {
-            sprite.texture.ctx.drawImage(sprite.html, x, y);
-            y += sprite.html.height
+         if (!surface.oneToOne) {
+            var cameraRect = this.cs.camera.info()
+            sx = cameraRect.x
+            sy = cameraRect.y
+            sWidth = cameraRect.width
+            sHeight = cameraRect.height
+
+            // safari does not allow negative source
+            if (sy < 0) {
+               dy -= sy * cameraRect.zScale
+               sy = 0
+               sHeight = surface.height
+               dHeight = sHeight * cameraRect.zScale
+            }
+
+            if (sx < 0) {
+               dx -= sx * cameraRect.zScale
+               sx = 0
+               sWidth = surface.width
+               dWidth = sWidth * cameraRect.zScale
+            }
          }
-         x += sprite.html.width
-      }
-   }
 
-   info(options) {
-      // we need something to return info on sprites based on scale etc
-      var sprite = this.list[options.spr]
-      var frame = this.cs.default(options.frame, 0)
-      var scaleX = this.cs.default(options.scaleX, 1)
-      var scaleY = this.cs.default(options.scaleY, 1)
-      var width = this.cs.default(options.width, sprite.fwidth)
-      var height = this.cs.default(options.height, sprite.fheight)
-      var angle = this.cs.default(options.angle, 0)
-      var xoff = this.cs.default(options.xoff, sprite.xoff)
-      var yoff = this.cs.default(options.yoff, sprite.yoff)
-
-      if (options.size) {
-         var tall = height > width
-         var ratio = height / width
-
-         width = tall ? options.size / ratio : options.size
-         height = tall ? options.size : options.size * ratio
+         this.cs.ctx.drawImage(surface.canvas,
+            sx, sy, sWidth, sHeight,
+            (dx), (dy), (dWidth), (dHeight)
+         )
       }
 
-      if (options.xCenter) xoff = width / 2
-      if (options.yCenter) yoff = height / 2
-      if (options.center) {
-         xoff = width / 2
-         yoff = height / 2
-      }
+      resize() {
+         var width = this.cs.clampWidth
+         var height = this.cs.clampHeight
 
-      return {
-         name: options.spr,
-         fWidth: sprite.fwidth,
-         fHeight: sprite.fheight,
-         width: (options.texture ? sprite.texture.fwidth : width),
-         height: (options.texture ? sprite.texture.fheight : height),
-         scaleX: scaleX,
-         scaleY: scaleY,
-         angle: angle,
-         xoff: xoff,
-         yoff: yoff,
-         frames: options.texture ? [sprite.texture] : sprite.frames,
-         frame: sprite.frames[frame],
-         mask: {
-            width: sprite.mask.width,
-            height: sprite.mask.height
+         // set main canvas
+         this.ctxImageSmoothing(this.cs.ctx)
+
+         // loop over the surfaces to match
+         // a surface can be raw (screen coordinates) or not (the size of the room)
+         for (var surface of this.order) {
+            if (this.cs.loop.run) {
+               var save = surface.ctx.getImageData(0, 0, surface.canvas.width, surface.canvas.height)
+            }
+
+            surface.canvas.width = surface.oneToOne ? width : this.cs.room.width
+            surface.canvas.height = surface.oneToOne ? height : this.cs.room.height
+            surface.width = surface.canvas.width
+            surface.height = surface.canvas.height
+            this.clear({ name: surface.name })
+            this.ctxImageSmoothing(surface.ctx)
+
+            if (this.cs.loop.run) surface.ctx.putImageData(save, 0, 0)
          }
       }
+
+      ctxImageSmoothing(ctx) {
+         ctx.webkitImageSmoothingEnabled = this.imageSmoothing
+         ctx.mozImageSmoothingEnabled = this.imageSmoothing
+         ctx.msImageSmoothingEnabled = this.imageSmoothing
+         ctx.imageSmoothingEnabled = this.imageSmoothing
+      }
+
+      info(surfaceName) {
+         return {
+            canvas: this.list[surfaceName].canvas,
+            width: this.list[surfaceName].width,
+            height: this.list[surfaceName].height
+         }
+      }
+
+      debug(surfaceName) {
+         var canvas = this.cs.surface.list[surfaceName].canvas
+         canvas.style.position = 'fixed'
+         canvas.style.top = '50%'
+         canvas.style.left = '50%'
+         canvas.style.transform = 'translateX(-50%) translateY(-50%)'
+         canvas.style.background = '#222'
+         canvas.style.border = '2px solid #000'
+
+         document.body.appendChild(canvas)
+      }
    }
 
-   exists(name) {
-      return this.list[name] ? true : false
-   }
-}
-
-if (module) module.exports = CSENGINE_SPRITE
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_SURFACE : cs.sound = new CSENGINE_SURFACE(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Storage.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
-//----------------------------------| Storage Functions |---------------------//
+//-----------------------------| CS ENGINE: STORAGE |-------------------------//
 //----------------------------------------------------------------------------//
-class CSENGINE_STORAGE {
-   constructor(cs) {
-      this.cs = cs
+(() => {
+   class CSENGINE_STORAGE {
+      constructor(cs) {
+         this.cs = cs
 
-      this.loaded = []
-      this.data = {}
-   }
-
-   init() {
-      for (var storage of this.loaded) {
-         this.write(storage)
+         this.loaded = []
+         this.data = {}
       }
-   }
 
-   read(location) {
-      return JSON.parse(this.data[location])
-   }
-
-   write(options) {
-      this.data[options.location] = JSON.stringify(options.data)
-      if (options.save) this.save(options.location)
-   }
-
-   // reminds me of bash ls command
-   ls(location) {
-      var startsWith = cs.default(location, '')
-      var list = []
-      for (var storageName of Object.keys(this.data)) {
-         if (storageName.startsWith(startsWith)) {
-            list.push(storageName)
+      init() {
+         for (var storage of this.loaded) {
+            this.write(storage)
          }
       }
-      return list
+
+      read(location) {
+         return JSON.parse(this.data[location])
+      }
+
+      write(options) {
+         this.data[options.location] = JSON.stringify(options.data)
+         if (options.save) this.save(options.location)
+      }
+
+      // reminds me of bash ls command
+      ls(location) {
+         var startsWith = cs.default(location, '')
+         var list = []
+         for (var storageName of Object.keys(this.data)) {
+            if (storageName.startsWith(startsWith)) {
+               list.push(storageName)
+            }
+         }
+         return list
+      }
+
+      save(location) {
+         // local storage
+         window.localStorage.setItem(location, this.data[location])
+      }
+
+      reset() {
+
+      }
    }
 
-   save(location) {
-      // local storage
-      window.localStorage.setItem(location, this.data[location])
-   }
-
-   reset() {
-
-   }
-}
-
-if (module) module.exports = CSENGINE_STORAGE
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_STORAGE : cs.sound = new CSENGINE_STORAGE(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Timer.js":[function(require,module,exports) {
-class CSENGINE_TIMER {
-   constructor(cs) {
-      this.cs = cs
+//----------------------------------------------------------------------------//
+//------------------------------| CS ENGINE: TIMER |--------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_TIMER {
+      constructor(cs) {
+         this.cs = cs
 
-      this.list = []
-      this.count = 0
-   }
-
-   loop() {
-      for (var timer of this.list) {
-         if(timer.time) timer.time += 1
-
-         timer.percent = timer.time / timer.duration
-
-         if(timer.percent == 1) {
-            timer.running = false
-
-            this.unWatch(timer)
-            timer.end && timer.end()
-         }
+         this.list = []
+         this.count = 0
       }
-   }
 
-   create(options) {
-      var timer = options.timer
-      if(!timer) {
-         this.count += 1
+      loop() {
+         for (var timer of this.list) {
+            if(timer.time) timer.time += 1
 
-         timer = {
-            id: this.count,
-            start: options.start,
-            end: options.end,
-            duration: options.duration,
-            time: 0,
-            percent: 0
+            timer.percent = timer.time / timer.duration
+
+            if(timer.percent == 1) {
+               timer.running = false
+
+               this.unWatch(timer)
+               timer.end && timer.end()
+            }
          }
       }
 
+      create(options) {
+         var timer = options.timer
+         if(!timer) {
+            this.count += 1
 
-      //this.list.push(timer)
-      return timer
+            timer = {
+               id: this.count,
+               start: options.start,
+               end: options.end,
+               duration: options.duration,
+               time: 0,
+               percent: 0
+            }
+         }
+
+
+         //this.list.push(timer)
+         return timer
+      }
+
+      start(timer) {
+         if (timer.running) return
+
+         this.watch(timer)
+         timer.start && timer.start()
+         timer.running = true
+         timer.time = 1
+      }
+
+      watch(timer) {
+         this.list.push(timer)
+      }
+
+      unWatch(timer) {
+         this.list = this.list.filter(function(num) {
+            return num.id !== timer.id
+         })
+      }
+
+      isOn(timer) {
+         return timer.time > 0
+      }
    }
 
-   start(timer) {
-      if (timer.running) return
-
-      this.watch(timer)
-      timer.start && timer.start()
-      timer.running = true
-      timer.time = 1
-   }
-
-   watch(timer) {
-      this.list.push(timer)
-   }
-
-   unWatch(timer) {
-      this.list = this.list.filter(function(num) {
-         return num.id !== timer.id
-      })
-   }
-
-   isOn(timer) {
-      return timer.time > 0
-   }
-}
-
-if (module) module.exports = CSENGINE_TIMER
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_TIMER : cs.sound = new CSENGINE_TIMER(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/parts/Vector.js":[function(require,module,exports) {
-class CSENGINE_VECTOR {
-   create(x, y) {
-      return { x: x, y: y }
+//----------------------------------------------------------------------------//
+//-----------------------------| CS ENGINE: VECTOR |--------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_VECTOR {
+      create(x, y) {
+         return { x: x, y: y }
+      }
+
+      clone(v) {
+         return cs.vector.create(v.x, v.y)
+      }
+
+      add(v0, v1) {
+         return cs.vector.create(
+            v0.x + v1.x,
+            v0.y + v1.y
+         )
+      }
+
+      min(v0, v1) {
+         return cs.vector.create(
+            v0.x - v1.x,
+            v0.y - v1.y
+         )
+      }
+
+      scale(v, s) {
+         return cs.vector.create(
+            v.x * s,
+            v.y * s
+         )
+      }
+
+      dot(v0, v1) {
+         return v0.x * v1.x + v0.y * v1.y
+      }
+
+      length(v) {
+         return Math.sqrt(v.x * v.x + v.y * v.y)
+      }
+
+      unit(v) {
+         return cs.vector.scale(v, 1/cs.vector.length(v))
+      }
+
+      distance(v0, v1) {
+         return cs.vector.length(cs.vector.min(v0, v1))
+      }
+
+      cross(v) {
+         return cs.vector.create(-v.y, v.x)
+      }
+
+      direction(v0, v1) {
+         return cs.vector.unit(cs.vector.min(v1, v0))
+      }
    }
 
-   clone(v) {
-      return cs.vector.create(v.x, v.y)
-   }
-
-   add(v0, v1) {
-      return cs.vector.create(
-         v0.x + v1.x,
-         v0.y + v1.y
-      )
-   }
-
-   min(v0, v1) {
-      return cs.vector.create(
-         v0.x - v1.x,
-         v0.y - v1.y
-      )
-   }
-
-   scale(v, s) {
-      return cs.vector.create(
-         v.x * s,
-         v.y * s
-      )
-   }
-
-   dot(v0, v1) {
-      return v0.x * v1.x + v0.y * v1.y
-   }
-
-   length(v) {
-      return Math.sqrt(v.x * v.x + v.y * v.y)
-   }
-
-   unit(v) {
-      return cs.vector.scale(v, 1/cs.vector.length(v))
-   }
-
-   distance(v0, v1) {
-      return cs.vector.length(cs.vector.min(v0, v1))
-   }
-
-   cross(v) {
-      return cs.vector.create(-v.y, v.x)
-   }
-
-   direction(v0, v1) {
-      return cs.vector.unit(cs.vector.min(v1, v0))
-   }
-}
-
-if (module) module.exports = CSENGINE_VECTOR
+   // export (node / web)
+   typeof module !== 'undefined' ? module.exports = CSENGINE_VECTOR : cs.sound = new CSENGINE_VECTOR(cs)
+})()
 
 },{}],"../node_modules/cs-engine/src/main.node.js":[function(require,module,exports) {
 const Camera = require('./parts/Camera')
@@ -2519,8 +2709,9 @@ const Network = require('./parts/Network')
 const Object = require('./parts/Object')
 const Room = require('./parts/Room')
 const Setup = require('./parts/Setup')
-const Surface = require('./parts/Surface')
+const Sound = require('./parts/Sound')
 const Sprite = require('./parts/Sprite')
+const Surface = require('./parts/Surface')
 const Storage = require('./parts/Storage')
 const Timer = require('./parts/Timer')
 const Vector = require('./parts/Vector')
@@ -2532,23 +2723,19 @@ module.exports = class cs {
          assets
       } = options
 
-      const sounds = assets && assets.sounds ? assets.sounds : []
-      const scripts = assets && assets.scripts ? assets.scripts : []
-      const objects = assets && assets.objects ? assets.objects : []
-      const sprites = assets && assets.sprites ? assets.sprites : []
-      const storages = assets && assets.storages ? assets.storages : []
-
       // 1. build engine
+      this.clone = function(object) { return JSON.parse(JSON.stringify(object)) }
+      this.default = function(want, ifnot) { return want != null ? want : ifnot }
+
       this.canvas = canvas
       this.ctx = canvas.getContext('2d')
       this.maxSize = options.maxSize || 2000
       this.start = options.start
       this.userStep = options.step
       this.userDraw = options.draw
-
-      // general handies
-      this.clone = function(object) { return JSON.parse(JSON.stringify(object)) }
-      this.default = function(want, ifnot) { return want != null ? want : ifnot }
+      this.global = options.global || {}
+      this.progress = options.progress || function() {}
+      this.focus = options.focus || function() {}
 
       this.camera = new Camera(this)
       this.draw = new Draw(this)
@@ -2563,11 +2750,20 @@ module.exports = class cs {
       this.object = new Object(this)
       this.room = new Room(this)
       this.setup = new Setup(this)
+      this.sound = new Sound(this)
       this.sprite = new Sprite(this)
       this.storage = new Storage(this)
       this.surface = new Surface(this)
+      this.timer = new Timer(this)
+      this.vector = new Vector(this)
 
       // 2. load assets
+      const sounds = assets && assets.sounds ? assets.sounds : []
+      const scripts = assets && assets.scripts ? assets.scripts : []
+      const objects = assets && assets.objects ? assets.objects : []
+      const sprites = assets && assets.sprites ? assets.sprites : []
+      const storages = assets && assets.storages ? assets.storages : []
+
       for (var object of objects) {
          this.object.addTemplate(object.type, object.src)
       }
@@ -2577,7 +2773,7 @@ module.exports = class cs {
    }
 }
 
-},{"./parts/Camera":"../node_modules/cs-engine/src/parts/Camera.js","./parts/Draw":"../node_modules/cs-engine/src/parts/Draw.js","./parts/Fps":"../node_modules/cs-engine/src/parts/Fps.js","./parts/Fullscreen":"../node_modules/cs-engine/src/parts/Fullscreen.js","./parts/InputKeyboard":"../node_modules/cs-engine/src/parts/InputKeyboard.js","./parts/InputMouse":"../node_modules/cs-engine/src/parts/InputMouse.js","./parts/InputTouch":"../node_modules/cs-engine/src/parts/InputTouch.js","./parts/Loop":"../node_modules/cs-engine/src/parts/Loop.js","./parts/Math":"../node_modules/cs-engine/src/parts/Math.js","./parts/Network":"../node_modules/cs-engine/src/parts/Network.js","./parts/Object":"../node_modules/cs-engine/src/parts/Object.js","./parts/Room":"../node_modules/cs-engine/src/parts/Room.js","./parts/Setup":"../node_modules/cs-engine/src/parts/Setup.js","./parts/Surface":"../node_modules/cs-engine/src/parts/Surface.js","./parts/Sprite":"../node_modules/cs-engine/src/parts/Sprite.js","./parts/Storage":"../node_modules/cs-engine/src/parts/Storage.js","./parts/Timer":"../node_modules/cs-engine/src/parts/Timer.js","./parts/Vector":"../node_modules/cs-engine/src/parts/Vector.js"}],"objects/block.js":[function(require,module,exports) {
+},{"./parts/Camera":"../node_modules/cs-engine/src/parts/Camera.js","./parts/Draw":"../node_modules/cs-engine/src/parts/Draw.js","./parts/Fps":"../node_modules/cs-engine/src/parts/Fps.js","./parts/Fullscreen":"../node_modules/cs-engine/src/parts/Fullscreen.js","./parts/InputKeyboard":"../node_modules/cs-engine/src/parts/InputKeyboard.js","./parts/InputMouse":"../node_modules/cs-engine/src/parts/InputMouse.js","./parts/InputTouch":"../node_modules/cs-engine/src/parts/InputTouch.js","./parts/Loop":"../node_modules/cs-engine/src/parts/Loop.js","./parts/Math":"../node_modules/cs-engine/src/parts/Math.js","./parts/Network":"../node_modules/cs-engine/src/parts/Network.js","./parts/Object":"../node_modules/cs-engine/src/parts/Object.js","./parts/Room":"../node_modules/cs-engine/src/parts/Room.js","./parts/Setup":"../node_modules/cs-engine/src/parts/Setup.js","./parts/Sound":"../node_modules/cs-engine/src/parts/Sound.js","./parts/Sprite":"../node_modules/cs-engine/src/parts/Sprite.js","./parts/Surface":"../node_modules/cs-engine/src/parts/Surface.js","./parts/Storage":"../node_modules/cs-engine/src/parts/Storage.js","./parts/Timer":"../node_modules/cs-engine/src/parts/Timer.js","./parts/Vector":"../node_modules/cs-engine/src/parts/Vector.js"}],"objects/block.js":[function(require,module,exports) {
 module.exports = {
   create: function create(_ref) {
     var object = _ref.object,
@@ -2586,12 +2782,13 @@ module.exports = {
   draw: function draw(_ref2) {
     var object = _ref2.object,
         cs = _ref2.cs;
-    console.log('draw');
+    // console.log('draw')
+    cs.draw.setColor('red');
     cs.draw.fillRect({
       x: 0,
       y: 0,
-      width: 10,
-      height: 10
+      width: 100,
+      height: 100
     });
   }
 };
@@ -2644,7 +2841,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59340" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60597" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
