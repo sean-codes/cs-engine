@@ -23,26 +23,56 @@ cs.load = function(options) {
    this.progress = options.progress || function() {}
    this.focus = options.focus || function() {}
    this.path = options.parts
+   this.script = {}
 
    // 2. load core
+   let loadedCore = false
+   this.dateStartLoading = Date.now()
    this.loading = 0
+   console.groupCollapsed('Loading Engine...')
+
+   const checkDone = () => {
+      this.loading -= 1
+      if (!this.loading) {
+         if (loadedCore) {
+            console.groupEnd()
+            const engineLoadTime = Math.round(Date.now() - this.dateStartLoading)
+            console.log(`Engine Loaded in ${engineLoadTime}ms`)
+            cs.setup.run()
+         } else {
+            loadedCore = true
+            console.log('loading assets')
+            loadScripts(assets.scripts)
+            loadSprites(assets.sprites)
+         }
+      }
+   }
 
    const loadScripts = (scripts, done) => {
       this.loading += 1
       const script = scripts.pop()
       const htmlScript = document.createElement('script')
       htmlScript.src = `${script.path}.js?v=${this.version}`
-      htmlScript.onload = () => {
-         this.loading -= 1
-         if (!this.loading) done()
-      }
+      htmlScript.onload = checkDone
       document.body.appendChild(htmlScript)
       console.log(`Loading Script: ${script.path}`)
-      scripts.length && loadScripts(scripts, done)
+      if (scripts.length) {
+         loadScripts(scripts, done)
+      } else {
+         done && done()
+      }
    }
 
-   this.dateStartLoading = Date.now()
-   console.groupCollapsed('Loading Engine...')
+   const loadSprites = (sprites) => {
+      this.loading += 1
+      const sprite = sprites.pop()
+      cs.sprite.loaded.push(sprite)
+      console.log(`Loading Sprite: ${sprite.path}`)
+      sprite.html = document.createElement('img')
+      sprite.html.src = sprite.path + '.png?v=' + this.version
+      sprite.html.onload = checkDone
+      if (sprites.length) loadSprites(sprites)
+   }
 
    loadScripts([
       { path: this.path + '/parts/Camera' },
@@ -64,17 +94,7 @@ cs.load = function(options) {
       { path: this.path + '/parts/Surface' },
       { path: this.path + '/parts/Timer' },
       { path: this.path + '/parts/vector' },
-   ], () => {
-      const engineLoadTime = Math.round(Date.now() - this.dateStartLoading)
-      console.groupEnd()
-      console.log(`Engine Loaded in ${engineLoadTime}ms`)
-
-      console.groupCollapsed('Loading Assets...')
-      console.log(assets)
-      console.groupEnd()
-
-      cs.setup.run()
-   })
+   ])
 
 
 }

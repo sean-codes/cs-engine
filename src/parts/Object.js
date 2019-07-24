@@ -55,7 +55,7 @@
          for (var name in attr) { newObj[name] = attr[name] }
 
          // run create event
-         template.create && template.create.call(newObj, newObj);
+         template.create && template.create.call(newObj, { object: newObj, cs: this.cs });
 
          // add to list
          this.new.push({ obj: newObj, zIndex: zIndex })

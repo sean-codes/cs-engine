@@ -170,6 +170,8 @@
 
       observer(useGameCords) {
          return {
+            parent: this,
+            touch: undefined,
             observing: false,
             useGameCords: useGameCords,
             down: false,
@@ -192,8 +194,9 @@
                if (this.observing) {
                   this.x = this.touch.x
                   this.y = this.touch.y
+
                   if (this.useGameCords) {
-                     var convertedToGameCords = this.convertToGameCords(this.x, this.y)
+                     var convertedToGameCords = this.parent.convertToGameCords(this.x, this.y)
                      this.x = convertedToGameCords.x
                      this.y = convertedToGameCords.y
                   }
@@ -208,14 +211,14 @@
             },
             findTouchToObserve(area) {
                // find a touch to observe
-               for (var touch of this.list) {
+               for (var touch of this.parent.list) {
                   // this touch is being observed or not available to latch
                   if (touch.used || !touch.down) continue
 
                   var touchX = touch.x
                   var touchY = touch.y
                   if (this.useGameCords) {
-                     var convertedToGameCords = this.convertToGameCords(touchX, touchY)
+                     var convertedToGameCords = this.parent.convertToGameCords(touchX, touchY)
                      touchX = convertedToGameCords.x
                      touchY = convertedToGameCords.y
                   }

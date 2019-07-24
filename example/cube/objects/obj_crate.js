@@ -1,29 +1,34 @@
-cs.objects['obj_crate'] = {
-   create: function() {
-      this.touch = cs.touch.observer(true)
-      this.mask = cs.sprite.info({ spr: 'spr_crate' }).mask
-      this.vspeed = 0;
-      this.hspeed = 0;
-      this.gravity = 8;
+cs.object.addTemplate({
+   type: 'obj_crate',
+
+   create: ({ object, cs }) => {
+      object.touch = cs.inputTouch.observer(true)
+      object.mask = cs.sprite.info({ spr: 'spr_crate' }).mask
+      object.vspeed = 0;
+      object.hspeed = 0;
+      object.gravity = 8;
    },
-   step: function() {
-      this.touch.check({ x: this.x, y: this.y, width: this.mask.width, height: this.mask.height });
-      if (this.touch.isHeld()) {
-         this.x = this.touch.x - this.touch.offsetX;
-         this.y = this.touch.y - this.touch.offsetY;
+
+   draw: ({ object, cs }) => {
+      object.touch.check({ x: object.x, y: object.y, width: object.mask.width, height: object.mask.height })
+
+      if (object.touch.isHeld()) {
+         object.x = object.touch.x - object.touch.offsetX;
+         object.y = object.touch.y - object.touch.offsetY;
       } else {
          //Vertical Movement
-         if (this.vspeed < this.gravity) {
-            this.vspeed += 1;
+         if (object.vspeed < object.gravity) {
+            object.vspeed += 1;
          }
 
-         this.v_col = cs.script.collide(this, 'obj_block')
+         object.v_col = cs.script.collide(object, 'obj_block')
 
-         if (this.v_col) {
-            this.vspeed = 0;
+         if (object.v_col) {
+            object.vspeed = 0;
          }
-         this.y += this.vspeed;
+         object.y += object.vspeed;
       }
-      cs.draw.sprite({ spr: 'spr_crate', x: this.x, y: this.y });
+
+      cs.draw.sprite({ spr: 'spr_crate', x: object.x, y: object.y });
    }
-}
+})

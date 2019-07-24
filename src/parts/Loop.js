@@ -92,12 +92,11 @@
 
          // could clearup !live objects here
          this.cs.object.clean()
-
-         //
-         // // network metrics
-         // if (this.cs.network.status) {
-         //    this.cs.network.updateMetrics()
-         // }
+         
+         // network metrics
+         if (this.cs.network.status) {
+            this.cs.network.updateMetrics()
+         }
       }
 
       beforeStep(func) {

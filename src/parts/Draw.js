@@ -82,7 +82,7 @@
 
       sprite(options) {
          var scale = this.scale
-         var info = this.this.cs.sprite.info(options)
+         var info = this.cs.sprite.info(options)
          var frame = info.frame
          var xOff = info.xoff
          var yOff = info.yoff

@@ -1,6 +1,6 @@
-cs.objects['obj_inventory'] = {
+cs.object.templates['obj_inventory'] = {
    create: function() {
-      this.touch = cs.touch.observer()
+      this.touch = cs.inputTouch.observer()
       this.width = 32;
       this.height = 32;
       this.core.surface = 'gui';
