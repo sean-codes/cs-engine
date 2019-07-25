@@ -37,7 +37,10 @@ cs.load = function(options) {
       sounds: assets && assets.sounds ? assets.sounds : [],
    }
 
-   this.assets.scripts.push(
+   // 2. load parts
+   console.groupCollapsed('Loading Engine...')
+
+   const parts = [
       { path: this.path + '/parts/Camera' },
       { path: this.path + '/parts/Draw' },
       { path: this.path + '/parts/Fps' },
@@ -46,6 +49,7 @@ cs.load = function(options) {
       { path: this.path + '/parts/InputMouse' },
       { path: this.path + '/parts/InputTouch' },
       { path: this.path + '/parts/Loop' },
+      { path: this.path + '/parts/Loader' },
       { path: this.path + '/parts/Math' },
       { path: this.path + '/parts/Network' },
       { path: this.path + '/parts/Object' },
@@ -57,95 +61,28 @@ cs.load = function(options) {
       { path: this.path + '/parts/Surface' },
       { path: this.path + '/parts/Timer' },
       { path: this.path + '/parts/Vector' },
-   )
+   ]
 
-   // 2. load core
-   console.groupCollapsed('Loading Engine...')
-   this.dateStartLoading = Date.now()
-   this.loading =
-      this.assets.scripts.length +
-      this.assets.sprites.length +
-      this.assets.storages.length +
-      this.assets.sounds.length
+   let loading = parts.length
+   const dateStartLoading = Date.now()
 
    const checkDone = () => {
-      this.loading -= 1
-      if (!this.loading) {
+      loading -= 1
+      console.log(loading)
+      if (!loading) {
          console.groupEnd()
-         const engineLoadTime = Math.round(Date.now() - this.dateStartLoading)
+         const engineLoadTime = Math.round(Date.now() - dateStartLoading)
          console.log(`Engine Loaded in ${engineLoadTime}ms`)
-         cs.setup.run()
+         cs.loader.load()
       }
    }
 
-   // load scripts
-   for (const script of this.assets.scripts) {
-      console.log(`Loading Script: ${script.path}`)
+   for (var part of parts) {
+      console.log(`Loading Part: ${part.path}`)
       const htmlScript = document.createElement('script')
-      htmlScript.src = `${script.path}.js?v=${this.version}`
+      htmlScript.src = `${part.path}.js?v=${this.version}`
       htmlScript.onload = checkDone
       document.body.appendChild(htmlScript)
-   }
-
-   // load sprites
-   for (const sprite of this.assets.sprites) {
-      cs.sprites.push(sprite)
-      console.log(`Loading Sprite: ${sprite.path}`)
-      sprite.html = document.createElement('img')
-      sprite.html.src = sprite.path + '.png?v=' + this.version
-      sprite.html.onload = checkDone
-   }
-
-   // load sounds
-   for (const sound of this.assets.sounds) {
-      this.sounds.push(sound)
-      console.log(`Loading Sound: ${sound.path}`)
-      sound.loaded = false
-      sound.src = sound.path + '.wav?v=' + this.version
-      sound.buffer = null
-      sound.request = new XMLHttpRequest()
-
-      sound.request.open('GET', sound.src, true);
-      sound.request.responseType = 'arraybuffer';
-
-      sound.request.onload = (data) => {
-         window.AudioContext = window.AudioContext || window.webkitAudioContext
-         if (window.AudioContext) {
-            new AudioContext().decodeAudioData(data.currentTarget.response, function(buffer) {
-               console.log(buffer)
-               sound.buffer = buffer
-            })
-         }
-         checkDone()
-      }
-      sound.request.send()
-   }
-
-   // load storages
-   for (const storage of this.assets.storages) {
-      this.storages.push(storage)
-      storage.data = {}
-
-      // attempt to use localstorage
-      if (!storage.path) {
-         storage.data = JSON.parse(window.localStorage.getItem(storage.location))
-         checkDone()
-      }
-
-      // fetch the storage .json
-      if (storage.path) {
-         var that = this
-         storage.request = new XMLHttpRequest()
-         storage.request.onreadystatechange = function() {
-            if (this.readyState == 4) {
-               var data = JSON.parse(this.responseText)
-               storage.data = data
-               checkDone()
-            }
-         }
-         storage.request.open("GET", './' + storage.path + '.json?v=' + this.version, true)
-         storage.request.send()
-      }
    }
 }
 

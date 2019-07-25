@@ -1358,6 +1358,128 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.inputTouch = new CSENGINE_INPUT_TOUCH(cs)
 })()
 
+},{}],"../node_modules/cs-engine/src/parts/Loader.js":[function(require,module,exports) {
+//----------------------------------------------------------------------------//
+//----------------------------| CS ENGINE: LOADER |---------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_LOADER {
+      constructor(cs) {
+         this.cs = cs
+
+         this.start = 0
+         console.log(cs, cs.assets)
+         this.loading =
+            cs.assets.sprites.length +
+            cs.assets.scripts.length +
+            cs.assets.sounds.length +
+            cs.assets.storages.length
+      }
+
+      load() {
+         if (!this.loading) {
+            return this.cs.setup.run()
+         }
+
+         this.start = Date.now()
+         console.groupCollapsed('Loading Assets...')
+
+         this.loadScripts()
+         this.loadSounds()
+         this.loadSprites()
+         this.loadStorages()
+      }
+
+      checkDone() {
+         this.loading -= 1
+         if (!this.loading) {
+            console.groupEnd()
+            const assetsLoadTime = Math.round(Date.now() - this.start)
+            console.log(`Assets Loaded in ${assetsLoadTime}ms`)
+            this.cs.setup.run()
+         }
+      }
+
+      loadScripts() {
+         for (const script of this.cs.assets.scripts) {
+            console.log(`Loading Script: ${script.path}`)
+            const htmlScript = document.createElement('script')
+            htmlScript.src = `${script.path}.js?v=${this.version}`
+            htmlScript.onload = this.checkDone.bind(this)
+            document.body.appendChild(htmlScript)
+         }
+      }
+
+      loadSprites() {
+         for (const sprite of this.cs.assets.sprites) {
+            cs.sprites.push(sprite)
+            console.log(`Loading Sprite: ${sprite.path}`)
+            sprite.html = document.createElement('img')
+            sprite.html.src = sprite.path + '.png?v=' + this.version
+            sprite.html.onload = this.checkDone.bind(this)
+         }
+      }
+
+      loadSounds() {
+         for (const sound of this.cs.assets.sounds) {
+            this.cs.sounds.push(sound)
+            console.log(`Loading Sound: ${sound.path}`)
+            sound.loaded = false
+            sound.src = sound.path + '.wav?v=' + this.version
+            sound.buffer = null
+            sound.request = new XMLHttpRequest()
+
+            sound.request.open('GET', sound.src, true);
+            sound.request.responseType = 'arraybuffer';
+
+            sound.request.onload = (data) => {
+               window.AudioContext = window.AudioContext || window.webkitAudioContext
+               if (window.AudioContext) {
+                  new AudioContext().decodeAudioData(data.currentTarget.response, function(buffer) {
+                     sound.buffer = buffer
+                  })
+               }
+               this.checkDone()
+            }
+            sound.request.send()
+         }
+      }
+
+      loadStorages() {
+         for (const storage of this.cs.assets.storages) {
+            this.cs.storages.push(storage)
+            storage.data = {}
+
+            // attempt to use localstorage
+            if (!storage.path) {
+               storage.data = JSON.parse(window.localStorage.getItem(storage.location))
+               this.checkDone()
+            }
+
+            // fetch the storage .json
+            if (storage.path) {
+               var that = this
+               storage.request = new XMLHttpRequest()
+               storage.request.onreadystatechange = function() {
+                  if (this.readyState == 4) {
+                     var data = JSON.parse(this.responseText)
+                     storage.data = data
+                     this.checkDone()
+                  }
+               }
+               storage.request.open("GET", './' + storage.path + '.json?v=' + this.version, true)
+               storage.request.send()
+            }
+         }
+      }
+   }
+
+   // export (node / web)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_LOADER
+      : cs.loader = new CSENGINE_LOADER(cs)
+})()
+
 },{}],"../node_modules/cs-engine/src/parts/Loop.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //------------------------------| CS ENGINE: LOOP |---------------------------//
@@ -1753,7 +1875,6 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       }
 
       create(options) {
-         console.log('hello wtf', options)
          if (!this.cs.objects[options.type]) {
             console.log('object type "' + options.type + '" does not exist')
             return undefined
@@ -1959,7 +2080,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          this.cs.canvas.style.touchAction = 'none'
 
          this.cs.canvas.addEventListener('click', () => {
-            this.cs.sound.enable.bind(this.cs.sound)
+            this.cs.sound.enable()
             this.cs.canvas.focus()
          })
 
@@ -2096,7 +2217,6 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
       init() {
          this.initiated = true
-         this.list = {};
          window.AudioContext = window.AudioContext || window.webkitAudioContext
          if (window.AudioContext) {
             this.context = new AudioContext()
@@ -2107,7 +2227,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
       loadSounds() {
          for (var sound of cs.sounds) {
-            var name = sound.path.split('/').pop()
+            var name = sound.name || sound.path.split('/').pop()
             this.list[name] = sound
          }
       }
@@ -2170,7 +2290,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
    // export (node / web)
    typeof module !== 'undefined'
-      ? module.exports = CSENGINE_SOUND 
+      ? module.exports = CSENGINE_SOUND
       : cs.sound = new CSENGINE_SOUND(cs)
 })()
 
@@ -2528,12 +2648,11 @@ Types of surfaces
       constructor(cs) {
          this.cs = cs
 
-         this.loaded = []
          this.data = {}
       }
 
       init() {
-         for (var storage of this.loaded) {
+         for (var storage of this.cs.storages) {
             this.write(storage)
          }
       }
@@ -2720,25 +2839,26 @@ Types of surfaces
 })()
 
 },{}],"../node_modules/cs-engine/src/main.node.js":[function(require,module,exports) {
-const Camera = require('./parts/Camera')
-const Draw = require('./parts/Draw')
-const Fps = require('./parts/Fps')
-const Fullscreen = require('./parts/Fullscreen')
-const InputKeyboard = require('./parts/InputKeyboard')
-const InputMouse = require('./parts/InputMouse')
-const InputTouch = require('./parts/InputTouch')
-const Loop = require('./parts/Loop')
-const Math = require('./parts/Math')
-const Network = require('./parts/Network')
-const Object = require('./parts/Object')
-const Room = require('./parts/Room')
-const Setup = require('./parts/Setup')
-const Sound = require('./parts/Sound')
-const Sprite = require('./parts/Sprite')
-const Surface = require('./parts/Surface')
-const Storage = require('./parts/Storage')
-const Timer = require('./parts/Timer')
-const Vector = require('./parts/Vector')
+const PartCamera = require('./parts/Camera')
+const PartDraw = require('./parts/Draw')
+const PartFps = require('./parts/Fps')
+const PartFullscreen = require('./parts/Fullscreen')
+const PartInputKeyboard = require('./parts/InputKeyboard')
+const PartInputMouse = require('./parts/InputMouse')
+const PartInputTouch = require('./parts/InputTouch')
+const PartLoader = require('./parts/Loader')
+const PartLoop = require('./parts/Loop')
+const PartMath = require('./parts/Math')
+const PartNetwork = require('./parts/Network')
+const PartObject = require('./parts/Object')
+const PartRoom = require('./parts/Room')
+const PartSetup = require('./parts/Setup')
+const PartSound = require('./parts/Sound')
+const PartSprite = require('./parts/Sprite')
+const PartSurface = require('./parts/Surface')
+const PartStorage = require('./parts/Storage')
+const PartTimer = require('./parts/Timer')
+const PartVector = require('./parts/Vector')
 
 module.exports = class cs {
    constructor(options) {
@@ -2751,53 +2871,61 @@ module.exports = class cs {
       this.clone = function(object) { return JSON.parse(JSON.stringify(object)) }
       this.default = function(want, ifnot) { return want != null ? want : ifnot }
 
+      // 1. build the engine
       this.canvas = canvas
       this.ctx = canvas.getContext('2d')
+      this.path = options.path
       this.maxSize = options.maxSize || 2000
       this.start = options.start
       this.userStep = options.step
       this.userDraw = options.draw
+      this.progress = options.progress || function() {}
+      this.focus = options.focus || function() {}
+      this.version = options.version || Math.random()
       this.global = options.global || {}
       this.progress = options.progress || function() {}
       this.focus = options.focus || function() {}
 
-      this.camera = new Camera(this)
-      this.draw = new Draw(this)
-      this.fps = new Fps(this)
-      this.fullscreen = new Fullscreen(this)
-      this.inputKeyboard = new InputKeyboard(this)
-      this.inputMouse = new InputMouse(this)
-      this.inputTouch = new InputTouch(this)
-      this.loop = new Loop(this)
-      this.math = new Math(this)
-      this.network = new Network(this)
-      this.object = new Object(this)
-      this.room = new Room(this)
-      this.setup = new Setup(this)
-      this.sound = new Sound(this)
-      this.sprite = new Sprite(this)
-      this.storage = new Storage(this)
-      this.surface = new Surface(this)
-      this.timer = new Timer(this)
-      this.vector = new Vector(this)
-
-      // 2. load assets
       this.objects = options.objects || {}
+      this.script = options.script || {}
       this.sprites = options.sprites || []
+      this.storages = options.storages || []
+      this.sounds = options.sounds || []
 
       this.assets = {
-         sounds: assets && assets.sounds ? assets.sounds : [],
          scripts: assets && assets.scripts ? assets.scripts : [],
          sprites: assets && assets.sprites ? assets.sprites : [],
          storages: assets && assets.storages ? assets.storages : [],
+         sounds: assets && assets.sounds ? assets.sounds : [],
       }
 
+      this.camera = new PartCamera(this)
+      this.draw = new PartDraw(this)
+      this.fps = new PartFps(this)
+      this.fullscreen = new PartFullscreen(this)
+      this.inputKeyboard = new PartInputKeyboard(this)
+      this.inputMouse = new PartInputMouse(this)
+      this.inputTouch = new PartInputTouch(this)
+      this.loader = new PartLoader(this)
+      this.loop = new PartLoop(this)
+      this.math = new PartMath(this)
+      this.network = new PartNetwork(this)
+      this.object = new PartObject(this)
+      this.room = new PartRoom(this)
+      this.setup = new PartSetup(this)
+      this.sound = new PartSound(this)
+      this.sprite = new PartSprite(this)
+      this.storage = new PartStorage(this)
+      this.surface = new PartSurface(this)
+      this.timer = new PartTimer(this)
+      this.vector = new PartVector(this)
+
       // 3. setup
-      this.setup.run()
+      this.loader.load()
    }
 }
 
-},{"./parts/Camera":"../node_modules/cs-engine/src/parts/Camera.js","./parts/Draw":"../node_modules/cs-engine/src/parts/Draw.js","./parts/Fps":"../node_modules/cs-engine/src/parts/Fps.js","./parts/Fullscreen":"../node_modules/cs-engine/src/parts/Fullscreen.js","./parts/InputKeyboard":"../node_modules/cs-engine/src/parts/InputKeyboard.js","./parts/InputMouse":"../node_modules/cs-engine/src/parts/InputMouse.js","./parts/InputTouch":"../node_modules/cs-engine/src/parts/InputTouch.js","./parts/Loop":"../node_modules/cs-engine/src/parts/Loop.js","./parts/Math":"../node_modules/cs-engine/src/parts/Math.js","./parts/Network":"../node_modules/cs-engine/src/parts/Network.js","./parts/Object":"../node_modules/cs-engine/src/parts/Object.js","./parts/Room":"../node_modules/cs-engine/src/parts/Room.js","./parts/Setup":"../node_modules/cs-engine/src/parts/Setup.js","./parts/Sound":"../node_modules/cs-engine/src/parts/Sound.js","./parts/Sprite":"../node_modules/cs-engine/src/parts/Sprite.js","./parts/Surface":"../node_modules/cs-engine/src/parts/Surface.js","./parts/Storage":"../node_modules/cs-engine/src/parts/Storage.js","./parts/Timer":"../node_modules/cs-engine/src/parts/Timer.js","./parts/Vector":"../node_modules/cs-engine/src/parts/Vector.js"}],"objects/block.js":[function(require,module,exports) {
+},{"./parts/Camera":"../node_modules/cs-engine/src/parts/Camera.js","./parts/Draw":"../node_modules/cs-engine/src/parts/Draw.js","./parts/Fps":"../node_modules/cs-engine/src/parts/Fps.js","./parts/Fullscreen":"../node_modules/cs-engine/src/parts/Fullscreen.js","./parts/InputKeyboard":"../node_modules/cs-engine/src/parts/InputKeyboard.js","./parts/InputMouse":"../node_modules/cs-engine/src/parts/InputMouse.js","./parts/InputTouch":"../node_modules/cs-engine/src/parts/InputTouch.js","./parts/Loader":"../node_modules/cs-engine/src/parts/Loader.js","./parts/Loop":"../node_modules/cs-engine/src/parts/Loop.js","./parts/Math":"../node_modules/cs-engine/src/parts/Math.js","./parts/Network":"../node_modules/cs-engine/src/parts/Network.js","./parts/Object":"../node_modules/cs-engine/src/parts/Object.js","./parts/Room":"../node_modules/cs-engine/src/parts/Room.js","./parts/Setup":"../node_modules/cs-engine/src/parts/Setup.js","./parts/Sound":"../node_modules/cs-engine/src/parts/Sound.js","./parts/Sprite":"../node_modules/cs-engine/src/parts/Sprite.js","./parts/Surface":"../node_modules/cs-engine/src/parts/Surface.js","./parts/Storage":"../node_modules/cs-engine/src/parts/Storage.js","./parts/Timer":"../node_modules/cs-engine/src/parts/Timer.js","./parts/Vector":"../node_modules/cs-engine/src/parts/Vector.js"}],"objects/block.js":[function(require,module,exports) {
 module.exports = {
   create: function create(_ref) {
     var object = _ref.object,
@@ -2861,7 +2989,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57266" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64821" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
