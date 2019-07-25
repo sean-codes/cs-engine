@@ -13,6 +13,8 @@
             cs.assets.scripts.length +
             cs.assets.sounds.length +
             cs.assets.storages.length
+
+         this.loadTotal = this.loading
       }
 
       load() {
@@ -31,6 +33,19 @@
 
       checkDone() {
          this.loading -= 1
+
+         var loadInfo = {
+            percent: Math.floor(this.loading / this.loadTotal * 100),
+            finished: !this.loading,
+            // type: type,
+            // file: this[type][this.loading.total.item],
+            current: this.loading,
+            totalRequired: this.loadTotal,
+            // totalType: this.loading[type].required
+         }
+
+         this.cs.progress(loadInfo)
+
          if (!this.loading) {
             console.groupEnd()
             const assetsLoadTime = Math.round(Date.now() - this.start)
@@ -103,7 +118,7 @@
                   if (this.readyState == 4) {
                      var data = JSON.parse(this.responseText)
                      storage.data = data
-                     this.checkDone()
+                     that.checkDone()
                   }
                }
                storage.request.open("GET", './' + storage.path + '.json?v=' + this.version, true)
