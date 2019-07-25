@@ -10,18 +10,9 @@ cs.load = function(options) {
    this.default = (want, ifnot) => { return want != null ? want : ifnot }
 
    // 1. build the engine
-   this.objects = options.objects || {}
-   this.sprites = options.sprites || []
-   this.storages = options.storages || {}
-
-   this.assets = {
-      scripts: assets && assets.scripts ? assets.scripts : [],
-      sprites: assets && assets.sprites ? assets.sprites : [],
-      storages: assets && assets.storages ? assets.storages : []
-   }
-
    this.canvas = canvas
    this.ctx = canvas.getContext('2d')
+   this.path = options.path
    this.maxSize = options.maxSize || 2000
    this.start = options.start
    this.userStep = options.step
@@ -32,49 +23,21 @@ cs.load = function(options) {
    this.global = options.global || {}
    this.progress = options.progress || function() {}
    this.focus = options.focus || function() {}
-   this.path = options.parts
-   this.script = {}
 
-   // 2. load core
-   let loadedCore = false
-   this.dateStartLoading = Date.now()
-   this.loading = 0
-   console.groupCollapsed('Loading Engine...')
+   this.objects = options.objects || {}
+   this.script = options.script || {}
+   this.sprites = options.sprites || []
+   this.storages = options.storages || []
+   this.sounds = options.sounds || []
 
-   const checkDone = () => {
-      this.loading -= 1
-      if (!this.loading) {
-         console.groupEnd()
-         const engineLoadTime = Math.round(Date.now() - this.dateStartLoading)
-         console.log(`Engine Loaded in ${engineLoadTime}ms`)
-         cs.setup.run()
-      }
+   this.assets = {
+      scripts: assets && assets.scripts ? assets.scripts : [],
+      sprites: assets && assets.sprites ? assets.sprites : [],
+      storages: assets && assets.storages ? assets.storages : [],
+      sounds: assets && assets.sounds ? assets.sounds : [],
    }
 
-   const loadScripts = (scripts = [], done) => {
-      for (var script of scripts) {
-         this.loading += 1
-         const htmlScript = document.createElement('script')
-         htmlScript.src = `${script.path}.js?v=${this.version}`
-         htmlScript.onload = checkDone
-         document.body.appendChild(htmlScript)
-         console.log(`Loading Script: ${script.path}`)
-      }
-   }
-
-   const loadSprites = (sprites = []) => {
-      for (var sprite of sprites) {
-         this.loading += 1
-         cs.sprites.push(sprite)
-         console.log(`Loading Sprite: ${sprite.path}`)
-         sprite.html = document.createElement('img')
-         sprite.html.src = sprite.path + '.png?v=' + this.version
-         sprite.html.onload = checkDone
-      }
-   }
-
-   loadSprites(this.assets.sprites)
-   loadScripts([
+   this.assets.scripts.push(
       { path: this.path + '/parts/Camera' },
       { path: this.path + '/parts/Draw' },
       { path: this.path + '/parts/Fps' },
@@ -93,35 +56,104 @@ cs.load = function(options) {
       { path: this.path + '/parts/Storage' },
       { path: this.path + '/parts/Surface' },
       { path: this.path + '/parts/Timer' },
-      { path: this.path + '/parts/vector' },
-      ...this.assets.scripts
-   ])
+      { path: this.path + '/parts/Vector' },
+   )
+
+   // 2. load core
+   console.groupCollapsed('Loading Engine...')
+   this.dateStartLoading = Date.now()
+   this.loading =
+      this.assets.scripts.length +
+      this.assets.sprites.length +
+      this.assets.storages.length +
+      this.assets.sounds.length
+
+   const checkDone = () => {
+      this.loading -= 1
+      if (!this.loading) {
+         console.groupEnd()
+         const engineLoadTime = Math.round(Date.now() - this.dateStartLoading)
+         console.log(`Engine Loaded in ${engineLoadTime}ms`)
+         cs.setup.run()
+      }
+   }
+
+   // load scripts
+   for (const script of this.assets.scripts) {
+      console.log(`Loading Script: ${script.path}`)
+      const htmlScript = document.createElement('script')
+      htmlScript.src = `${script.path}.js?v=${this.version}`
+      htmlScript.onload = checkDone
+      document.body.appendChild(htmlScript)
+   }
+
+   // load sprites
+   for (const sprite of this.assets.sprites) {
+      cs.sprites.push(sprite)
+      console.log(`Loading Sprite: ${sprite.path}`)
+      sprite.html = document.createElement('img')
+      sprite.html.src = sprite.path + '.png?v=' + this.version
+      sprite.html.onload = checkDone
+   }
+
+   // load sounds
+   for (const sound of this.assets.sounds) {
+      this.sounds.push(sound)
+      console.log(`Loading Sound: ${sound.path}`)
+      sound.loaded = false
+      sound.src = sound.path + '.wav?v=' + this.version
+      sound.buffer = null
+      sound.request = new XMLHttpRequest()
+
+      sound.request.open('GET', sound.src, true);
+      sound.request.responseType = 'arraybuffer';
+
+      sound.request.onload = (data) => {
+         window.AudioContext = window.AudioContext || window.webkitAudioContext
+         if (window.AudioContext) {
+            new AudioContext().decodeAudioData(data.currentTarget.response, function(buffer) {
+               console.log(buffer)
+               sound.buffer = buffer
+            })
+         }
+         checkDone()
+      }
+      sound.request.send()
+   }
+
+   // load storages
+   for (const storage of this.assets.storages) {
+      this.storages.push(storage)
+      storage.data = {}
+
+      // attempt to use localstorage
+      if (!storage.path) {
+         storage.data = JSON.parse(window.localStorage.getItem(storage.location))
+         checkDone()
+      }
+
+      // fetch the storage .json
+      if (storage.path) {
+         var that = this
+         storage.request = new XMLHttpRequest()
+         storage.request.onreadystatechange = function() {
+            if (this.readyState == 4) {
+               var data = JSON.parse(this.responseText)
+               storage.data = data
+               checkDone()
+            }
+         }
+         storage.request.open("GET", './' + storage.path + '.json?v=' + this.version, true)
+         storage.request.send()
+      }
+   }
 }
 
 //    // Initialize: Load Scripts and Sprites. Setup canvas
 //    this.load = (assets) => {
 //       // Resources
 //       this.parts = [
-//          { path: this.path + '/parts/camera' },
-//          { path: this.path + '/parts/draw' },
-//          { path: this.path + '/parts/fps' },
-//          { path: this.path + '/parts/fullscreen' },
-//          { path: this.path + '/parts/keys' },
-//          { path: this.path + '/parts/loop' },
-//          { path: this.path + '/parts/math' },
-//          { path: this.path + '/parts/mouse' },
-//          { path: this.path + '/parts/network' },
-//          { path: this.path + '/parts/object' },
-//          { path: this.path + '/parts/room' },
-//          { path: this.path + '/parts/setup' },
-//          { path: this.path + '/parts/sound' },
-//          { path: this.path + '/parts/sprite' },
-//          { path: this.path + '/parts/storage' },
-//          { path: this.path + '/parts/surface' },
-//          //{ path: this.path + '/parts/text' },
-//          { path: this.path + '/parts/touch' },
-//          { path: this.path + '/parts/timer' },
-//          { path: this.path + '/parts/vector' },
+//
 //       ]
 //       this.scripts = this.scripts.concat(this.assets.scripts || [])
 //       this.sprites = this.sprites.concat(this.assets.sprites || [])

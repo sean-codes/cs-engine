@@ -11,28 +11,28 @@
    <canvas class="cs-canvas" style="background: #000; -ms-touch-action: none; touch-action: none" oncontextmenu="return false;"/>
    <script>
       cs.load({
-         parts: '../../src',
+         path: '../../src',
          canvas: document.querySelector('canvas'),
          objects: {
             touch: {
                create: ({ object, cs }) => {
-                  this.touch = cs.inputTouch.observer()
+                  object.touch = cs.inputTouch.observer()
                },
                draw: ({ object, cs }) => {
-                  this.touch.check({
-                     x: this.x,
-                     y: this.y,
-                     width: this.width,
-                     height: this.height
+                  object.touch.check({
+                     x: object.x,
+                     y: object.y,
+                     width: object.width,
+                     height: object.height
                   })
 
-                  if (this.touch.isHeld()) {
+                  if (object.touch.isHeld()) {
                      var pointerSize = 100
-                     cs.draw.setColor(this.color)
+                     cs.draw.setColor(object.color)
                      cs.draw.circle({
                         fill: true,
-                        x: this.touch.x,
-                        y: this.touch.y,
+                        x: object.touch.x,
+                        y: object.touch.y,
                         radius: pointerSize
                      })
                   }
@@ -54,7 +54,7 @@
                         'held: ' + touch.held,
                         'used: ' + touch.used,
                      ].join(' ')
-                     
+
                      cs.draw.setColor('#fff')
                      cs.draw.text({
                         x: x,

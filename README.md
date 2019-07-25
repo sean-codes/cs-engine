@@ -42,7 +42,7 @@ engine for building 2D games
     <script>
 
       cs.load({
-        parts: '../../src', // path to parts
+        path: '../../src', // path to parts
         canvas: document.querySelector('canvas'),
         objects: {
           player: {

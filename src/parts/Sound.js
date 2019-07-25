@@ -30,7 +30,6 @@
 
       init() {
          this.initiated = true
-         this.list = {};
          window.AudioContext = window.AudioContext || window.webkitAudioContext
          if (window.AudioContext) {
             this.context = new AudioContext()
@@ -41,7 +40,7 @@
 
       loadSounds() {
          for (var sound of cs.sounds) {
-            var name = sound.path.split('/').pop()
+            var name = sound.name || sound.path.split('/').pop()
             this.list[name] = sound
          }
       }
@@ -104,6 +103,6 @@
 
    // export (node / web)
    typeof module !== 'undefined'
-      ? module.exports = CSENGINE_SOUND 
+      ? module.exports = CSENGINE_SOUND
       : cs.sound = new CSENGINE_SOUND(cs)
 })()

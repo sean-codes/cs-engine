@@ -1,19 +1,19 @@
 cs.objects['circle'] = {
    create: ({ object, cs }) => {
       // console.log('wtf')
-      this.x = cs.default(this.x, 40)
-      this.y = cs.default(this.y, 40)
-      this.radius = cs.default(this.radius, 40)
-      this.color = cs.default(this.color, '#f22')
+      object.x = cs.default(object.x, 40)
+      object.y = cs.default(object.y, 40)
+      object.radius = cs.default(object.radius, 40)
+      object.color = cs.default(object.color, '#f22')
 
-      this.body = Matter.Bodies.circle(this.x + this.radius/2, this.y + this.radius/2, this.radius)
-      Matter.World.add(cs.global.matter.engine.world, [this.body])
+      object.body = Matter.Bodies.circle(object.x + object.radius/2, object.y + object.radius/2, object.radius)
+      Matter.World.add(cs.global.matter.engine.world, [object.body])
    },
 
    draw: ({ object, cs }) => {
-      cs.draw.setColor(this.color)
+      cs.draw.setColor(object.color)
       cs.draw.shape({
-         vertices: this.body.vertices,
+         vertices: object.body.vertices,
          fill: false,
       })
    }

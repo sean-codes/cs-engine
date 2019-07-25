@@ -15,7 +15,7 @@
          this.cs.canvas.style.touchAction = 'none'
 
          this.cs.canvas.addEventListener('click', () => {
-            this.cs.sound.enable.bind(this.cs.sound)
+            this.cs.sound.enable()
             this.cs.canvas.focus()
          })
 

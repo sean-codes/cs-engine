@@ -6,12 +6,11 @@
       constructor(cs) {
          this.cs = cs
 
-         this.loaded = []
          this.data = {}
       }
 
       init() {
-         for (var storage of this.loaded) {
+         for (var storage of this.cs.storages) {
             this.write(storage)
          }
       }
