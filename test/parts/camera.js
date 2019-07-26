@@ -5,7 +5,7 @@ testUtility.test({
          should: 'initial camera setup width/height/etc',
          pass: function(pass, fail) {
             var checks = [
-               { width: 100, height: 200 }
+               { maxWidth: 100, maxHeight: 200, scale: 1 }
             ]
 
             for (var check of checks) {
@@ -69,7 +69,7 @@ testUtility.test({
          should: 'attempt to center the camera to follow position',
          pass: function(pass, fail) {
             cs.room.setup({ width: 100, height: 100 })
-            cs.camera.setup({ width: 50, height: 100 })
+            cs.camera.setup({ maxWidth: 50, maxHeight: 100 })
             cs.camera.follow({ x: 50, y: 10 })
             cs.camera.update()
 

@@ -9,7 +9,7 @@ var exampleKeyBoardEvent2 = {
 }
 
 testUtility.test({
-   title: "cs.inputKeyboards",
+   title: "cs.inputKeyboard",
    tests: [
       {
          name: 'keyEvent down/up',
