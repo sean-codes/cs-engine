@@ -25,7 +25,7 @@
 
          if (!this.run || once) return
          this.timeout = setTimeout(() => this.step(), this.speed)
-
+         // window.requestAnimationFrame(() => this.step())
          this.cs.fps.update()
          this.cs.draw.debugReset()
          this.cs.network.read()
@@ -50,7 +50,7 @@
          this.cs.object.loop((object) => {
             if (!object.core.active || !object.core.live) return
             var stepEvent = this.cs.objects[object.core.type].step
-            stepEvent && stepEvent({ object, cs: this.cs })
+            stepEvent && stepEvent.call(object, { object, cs: this.cs })
          })
 
          this.cs.userDraw && this.cs.userDraw({ cs })
@@ -64,9 +64,10 @@
             this.cs.draw.setSurface(object.core.surface)
 
             if (drawOnceFunction) {
+               var surface = this.cs.surface.list[object.core.surface]
                if (surface.clear || !object.core.drawn) {
                   object.core.drawn = true
-                  drawOnceEvent({ object, cs: this.cs })
+                  drawOnceFunction.call(object, { object, cs: this.cs })
                }
             }
 
