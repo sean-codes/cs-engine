@@ -61,8 +61,7 @@
             var drawFunction = template.draw
             var drawOnceFunction = template.drawOnce
 
-            var surface = this.cs.surface.list[object.core.surface]
-            this.cs.draw.setSurface(surface)
+            this.cs.draw.setSurface(object.core.surface)
 
             if (drawOnceFunction) {
                if (surface.clear || !object.core.drawn) {

@@ -7,7 +7,6 @@
          this.cs = cs
 
          this.start = 0
-         console.log(cs, cs.assets)
          this.loading =
             cs.assets.sprites.length +
             cs.assets.scripts.length +
@@ -37,11 +36,8 @@
          var loadInfo = {
             percent: Math.floor(this.loading / this.loadTotal * 100),
             finished: !this.loading,
-            // type: type,
-            // file: this[type][this.loading.total.item],
             current: this.loading,
-            totalRequired: this.loadTotal,
-            // totalType: this.loading[type].required
+            totalRequired: this.loadTotal
          }
 
          this.cs.progress(loadInfo)

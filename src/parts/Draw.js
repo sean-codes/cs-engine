@@ -23,8 +23,8 @@
          }
       }
 
-      setSurface(surface) {
-         this.surface = surface
+      setSurface(surfaceName) {
+         this.surface = this.cs.surface.list[surfaceName]
          this.scale = 1
          this.cameraX = 0
          this.cameraY = 0

@@ -1,6 +1,6 @@
 {
   "name": "cs-engine",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "engine for building 2D games",
   "main": "src/main.node.js",
   "directories": {
