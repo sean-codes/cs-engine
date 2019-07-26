@@ -42,7 +42,7 @@
          // Execute before steps
          // disconnect to allow adding within a beforestep
          var temporaryBeforeSteps = []
-         while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
+         while (this.beforeSteps.length) { temporaryBeforeSteps.push(this.beforeSteps.pop()) }
          while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
 
          this.cs.userStep && this.cs.userStep({ cs })
