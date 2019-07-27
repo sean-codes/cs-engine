@@ -21,17 +21,13 @@ const PartVector = require('./parts/Vector')
 
 module.exports = class cs {
    constructor(options) {
-      const {
-         canvas,
-         assets
-      } = options
-
-      // 1. setup
+      // handy
       this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
       this.default = (want, ifnot) => { return want != null ? want : ifnot }
 
-      this.canvas = canvas
-      this.ctx = canvas.getContext('2d')
+      // 1. setup
+      this.canvas = options.canvas
+      this.ctx = this.canvas.getContext('2d')
       this.path = options.path
       this.maxSize = options.maxSize || 2000
       this.start = options.start
@@ -51,10 +47,10 @@ module.exports = class cs {
       this.sounds = options.sounds || []
 
       this.assets = {
-         scripts: assets && assets.scripts ? assets.scripts : [],
-         sprites: assets && assets.sprites ? assets.sprites : [],
-         storages: assets && assets.storages ? assets.storages : [],
-         sounds: assets && assets.sounds ? assets.sounds : [],
+         scripts: options.assets && options.assets.scripts ? options.assets.scripts : [],
+         sprites: options.assets && options.assets.sprites ? options.assets.sprites : [],
+         storages: options.assets && options.assets.storages ? options.assets.storages : [],
+         sounds: options.assets && options.assets.sounds ? options.assets.sounds : [],
       }
 
       this.camera = new PartCamera(this)
