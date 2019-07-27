@@ -10,7 +10,7 @@
       run() {
          // Initiate Inputs
          this.cs.ctx = this.cs.canvas.getContext('2d')
-         this.cs.canvas.tabIndex = 1000
+         this.cs.canvas.tabIndex = 0
          this.cs.canvas.style.outline = 'none'
          this.cs.canvas.style.touchAction = 'none'
 
