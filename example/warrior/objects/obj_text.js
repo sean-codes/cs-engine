@@ -1,12 +1,13 @@
 cs.objects['obj_text'] = {
-   create: function() {
+   create: ({ object, cs }) => {
       this.text = ''
       this.timer = { time: 60, total: 60 }
       this.color = '#FFF'
       this.vspeed = -1
       this.hspeed = 0
    },
-   step: function() {
+   
+   draw: ({ object, cs }) => {
       this.x += this.hspeed
       this.y += this.vspeed
 

@@ -1,0 +1,59 @@
+//----------------------------------------------------------------------------//
+//--------------------------| CS ENGINE: INPUT MOUSE |------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_INPUT_MOUSE {
+      constructor(cs) {
+         this.cs = cs
+
+         this.x = undefined
+         this.y = undefined
+      }
+
+      pos() {
+         var convert = this.cs.inputTouch.convertToGameCords(this.x, this.y)
+         return (cs.draw.raw)
+            ? { x: this.x, y: this.y }
+            : { x: convert.x, y: convert.y }
+      }
+
+      eventDown(e) {
+         this.cs.inputTouch.touchUse(-1)
+         this.x = e.clientX
+         this.y = e.clientY
+
+         this.cs.inputTouch.eventsDownMove.push({
+            type: 'down',
+            id: -1,
+            x: this.x,
+            y: this.y
+         })
+
+         this.eventMove(e)
+      }
+
+      eventMove(e) {
+         this.x = e.clientX
+         this.y = e.clientY
+
+         this.cs.inputTouch.eventsDownMove.push({
+            type: 'move',
+            id: -1,
+            x: this.x,
+            y: this.y
+         })
+      }
+
+      eventUp(e) {
+         this.cs.inputTouch.eventsUp.push({
+            type: 'up',
+            id: -1
+         })
+      }
+   }
+
+   // export (node / web)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_INPUT_MOUSE
+      : cs.inputMouse = new CSENGINE_INPUT_MOUSE(cs)
+})()

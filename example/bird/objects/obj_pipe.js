@@ -1,18 +1,19 @@
 cs.objects['obj_pipe'] = {
    zIndex: 15,
-   create: function() {
-      this.mask = { x: 0, y: 0, width: 24, height: 256 }
-      this.pipe = 'up'
-      this.hspeed = cs.global.speed
+   create: ({ object, cs }) => {
+      object.mask = { x: 0, y: 0, width: 24, height: 256 }
+      object.pipe = 'up'
+      object.hspeed = cs.global.speed
    },
-   step: function() {
-      cs.draw.sprite({ spr: 'pipe_' + this.pipe, x: this.x, y: this.y })
+
+   draw: ({ object, cs }) => {
+      cs.draw.sprite({ spr: 'pipe_' + object.pipe, x: object.x, y: object.y })
       if (cs.save.state == 'WRECKED') return
 
-      this.x -= this.hspeed
+      object.x -= object.hspeed
 
-      if (this.x < -this.mask.width) {
-         cs.object.destroy(this)
+      if (object.x < -object.mask.width) {
+         cs.object.destroy(object)
       }
    }
 }

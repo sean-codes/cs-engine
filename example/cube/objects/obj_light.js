@@ -1,24 +1,18 @@
 cs.objects['obj_light'] = {
-   create: function() {
-      this.width = 30;
-      this.height = 30;
+   surface: 'light',
 
-      //Create New Layer
-      cs.surface.create({ name: 'light', raw: false, zIndex: 10 })
-      this.core.surface = 'light'
-
-      //Create Global Variable
-      cs.global.lightList = [];
-
+   create: ({ object, cs }) => {
+      object.width = 30
+      object.height = 30
    },
-   step: function() {
-      cs.draw.setAlpha(0.9);
+
+   draw: ({ object, cs }) => {
+      cs.draw.setAlpha(0.9)
       cs.draw.fillRect({ x: 0, y: 0, width: cs.room.width, height: cs.room.height });
 
-      for (var i = 0; i < cs.global.lightList.length; i++) {
-         var light = cs.global.lightList[i];
+      for (var light of cs.global.lightList) {
+         var obj = light.obj
 
-         var obj = light.obj;
          cs.draw.setOperation('xor');
          cs.draw.circleGradient({
             x: obj.x + light.xoff,

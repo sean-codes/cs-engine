@@ -1,105 +1,106 @@
 cs.objects['obj_player'] = {
    zIndex: 10,
-   create: function() {
-      this.mask = { x: 0, y: 0, width: 8, height: 15 }
-      this.hspeed = 0;
-      this.vspeed = 0;
-      this.dir = -1;
-      this.speed = 2;
-      this.gravity = 5;
-      this.jump = 10;
+   create: ({ object, cs }) => {
+      object.mask = { x: 0, y: 0, width: 8, height: 15 }
+      object.hspeed = 0;
+      object.vspeed = 0;
+      object.dir = -1;
+      object.speed = 2;
+      object.gravity = 5;
+      object.jump = 10;
 
-      this.bounce = 0;
-      this.bounceTimer = 20;
+      object.bounce = 0;
+      object.bounceTimer = 20;
 
-      this.attacking = 0;
-      this.attackTimer = {
+      object.attacking = 0;
+      object.attackTimer = {
          load: 5,
          loadHold: 1,
          swing: 10,
          swingHold: 10,
          reload: 5
       }
-      this.attackTotal = 0;
-      for (var i in this.attackTimer)
-         this.attackTotal += this.attackTimer[i]
+      object.attackTotal = 0;
+      for (var i in object.attackTimer)
+         object.attackTotal += object.attackTimer[i]
    },
-   step: function() {
-      cs.camera.follow({ x: this.x + this.mask.width / 2, y: this.y + this.mask.height / 2 });
+   
+   draw: ({ object, cs }) => {
+      cs.camera.follow({ x: object.x + object.mask.width / 2, y: object.y + object.mask.height / 2 });
       //Vertical Collisions
       var keys = {
-         left: cs.key.held(37),
-         right: cs.key.held(39),
-         up: cs.key.held(38),
-         down: cs.key.held(40),
-         space: cs.key.held(32)
+         left: cs.inputKeyboard.held(37),
+         right: cs.inputKeyboard.held(39),
+         up: cs.inputKeyboard.held(38),
+         down: cs.inputKeyboard.held(40),
+         space: cs.inputKeyboard.held(32)
       }
 
       //Horizontal Movement
       if (keys.left) {
-         if (this.hspeed > -this.speed) { this.dir = -1;
-            this.hspeed -= 0.25 }
+         if (object.hspeed > -object.speed) { object.dir = -1;
+            object.hspeed -= 0.25 }
       } else if (keys.right) {
-         if (this.hspeed < this.speed) { this.dir = 1;
-            this.hspeed += 0.25 }
+         if (object.hspeed < object.speed) { object.dir = 1;
+            object.hspeed += 0.25 }
       } else {
-         if (this.hspeed !== 0) {
-            var sign = cs.math.sign(this.hspeed);
-            this.hspeed -= sign / 4;
+         if (object.hspeed !== 0) {
+            var sign = cs.math.sign(object.hspeed);
+            object.hspeed -= sign / 4;
          }
       }
 
-      this.h_col = cs.script.collide.obj(this, 'obj_block')
-      if (this.h_col || (this.x + this.hspeed) <= 0 || (this.x + this.hspeed) + this.width >= cs.room.width) {
-         this.hspeed = 0;
+      object.h_col = cs.script.collide.obj(object, 'obj_block')
+      if (object.h_col || (object.x + object.hspeed) <= 0 || (object.x + object.hspeed) + object.width >= cs.room.width) {
+         object.hspeed = 0;
       }
-      this.x += this.hspeed;
+      object.x += object.hspeed;
 
       //Vertical Movement
-      if (this.vspeed < this.gravity)
-         this.vspeed += 1;
+      if (object.vspeed < object.gravity)
+         object.vspeed += 1;
 
-      this.y += this.vspeed;
-      this.v_col = cs.script.collide.obj(this, 'obj_block')
+      object.y += object.vspeed;
+      object.v_col = cs.script.collide.obj(object, 'obj_block')
 
-      if (this.v_col) {
-         this.y -= this.vspeed;
-         this.vspeed = 0;
+      if (object.v_col) {
+         object.y -= object.vspeed;
+         object.vspeed = 0;
       }
 
-      //console.log(this.v_col)
+      //console.log(object.v_col)
       //Check if jumping
-      if (keys.up && this.v_col && this.v_col.y > this.y)
-         this.vspeed = -this.jump
+      if (keys.up && object.v_col && object.v_col.y > object.y)
+         object.vspeed = -object.jump
       //Drawing
-      this.bounceTimer -= 1;
-      if (this.bounceTimer == 0) {
-         this.bounceTimer = 20;
-         if (this.bounce >= 0) {
-            this.bounce = -1;
+      object.bounceTimer -= 1;
+      if (object.bounceTimer == 0) {
+         object.bounceTimer = 20;
+         if (object.bounce >= 0) {
+            object.bounce = -1;
          } else {
-            this.bounce = 1;
+            object.bounce = 1;
          }
-         if (this.hspeed == 0) {
-            this.bounce = 0;
+         if (object.hspeed == 0) {
+            object.bounce = 0;
          }
       }
 
       //Attacking
-      if (keys.space && this.attacking == 0)
-         this.attacking = this.attackTotal
+      if (keys.space && object.attacking == 0)
+         object.attacking = object.attackTotal
 
       var attackAngle = 0;
       var attackX = 0;
       var attackY = 0;
       var state = '';
-      if (this.attacking > 0) {
-         this.attacking -= 1;
-         var curAttack = this.attackTotal - this.attacking;
+      if (object.attacking > 0) {
+         object.attacking -= 1;
+         var curAttack = object.attackTotal - object.attacking;
          var add = 0;
-         for (state in this.attackTimer) {
-            if (curAttack >= add && curAttack < add + this.attackTimer[state]) {
-               var percent = (curAttack - add) / this.attackTimer[state];
+         for (state in object.attackTimer) {
+            if (curAttack >= add && curAttack < add + object.attackTimer[state]) {
+               var percent = (curAttack - add) / object.attackTimer[state];
                switch (state) {
                   case 'load':
                      attackAngle = percent * 45;
@@ -124,33 +125,33 @@ cs.objects['obj_player'] = {
                }
                break;
             }
-            add += this.attackTimer[state];
+            add += object.attackTimer[state];
          }
       }
 
-      if (this.dir > 0) {
+      if (object.dir > 0) {
          //Going Right
-         cs.draw.sprite({ spr: 'spr_sword', x: this.x + 9 + this.bounce - attackX, y: this.y + 10, angle: -attackAngle })
-         cs.draw.sprite({ spr: 'spr_head', x: this.x, y: this.y })
-         cs.draw.sprite({ spr: 'spr_foot', x: this.x + 1, y: this.y + 13 + this.bounce })
-         cs.draw.sprite({ spr: 'spr_foot', x: this.x + 6, y: this.y + 13 - this.bounce })
-         cs.draw.sprite({ spr: 'spr_hand', x: this.x - 1, y: this.y + 9 })
-         cs.draw.sprite({ spr: 'spr_hand', x: this.x + 7 + this.bounce - attackX, y: this.y + 9 })
-         cs.draw.sprite({ spr: 'spr_body', x: this.x + 1, y: this.y + 7 })
-         cs.draw.sprite({ spr: 'spr_shield', x: this.x - 4 - this.bounce, y: this.y + 8 })
+         cs.draw.sprite({ spr: 'spr_sword', x: object.x + 9 + object.bounce - attackX, y: object.y + 10, angle: -attackAngle })
+         cs.draw.sprite({ spr: 'spr_head', x: object.x, y: object.y })
+         cs.draw.sprite({ spr: 'spr_foot', x: object.x + 1, y: object.y + 13 + object.bounce })
+         cs.draw.sprite({ spr: 'spr_foot', x: object.x + 6, y: object.y + 13 - object.bounce })
+         cs.draw.sprite({ spr: 'spr_hand', x: object.x - 1, y: object.y + 9 })
+         cs.draw.sprite({ spr: 'spr_hand', x: object.x + 7 + object.bounce - attackX, y: object.y + 9 })
+         cs.draw.sprite({ spr: 'spr_body', x: object.x + 1, y: object.y + 7 })
+         cs.draw.sprite({ spr: 'spr_shield', x: object.x - 4 - object.bounce, y: object.y + 8 })
       } else {
          //Going Left
-         cs.draw.sprite({ spr: 'spr_sword', x: this.x - 1 - this.bounce + attackX, y: this.y + 10, angle: attackAngle })
-         cs.draw.sprite({ spr: 'spr_head', x: this.x + 9, y: this.y, scaleX: -1 })
-         cs.draw.sprite({ spr: 'spr_foot', x: this.x + 1, y: this.y + 13 + this.bounce })
-         cs.draw.sprite({ spr: 'spr_foot', x: this.x + 6, y: this.y + 13 - this.bounce })
-         cs.draw.sprite({ spr: 'spr_hand', x: this.x - 1 - this.bounce + attackX, y: this.y + 9 })
-         cs.draw.sprite({ spr: 'spr_hand', x: this.x + 7 - this.bounce, y: this.y + 9 })
-         cs.draw.sprite({ spr: 'spr_body', x: this.x + 1, y: this.y + 7 })
-         cs.draw.sprite({ spr: 'spr_shield', x: this.x + 4 + this.bounce, y: this.y + 8 })
+         cs.draw.sprite({ spr: 'spr_sword', x: object.x - 1 - object.bounce + attackX, y: object.y + 10, angle: attackAngle })
+         cs.draw.sprite({ spr: 'spr_head', x: object.x + 9, y: object.y, scaleX: -1 })
+         cs.draw.sprite({ spr: 'spr_foot', x: object.x + 1, y: object.y + 13 + object.bounce })
+         cs.draw.sprite({ spr: 'spr_foot', x: object.x + 6, y: object.y + 13 - object.bounce })
+         cs.draw.sprite({ spr: 'spr_hand', x: object.x - 1 - object.bounce + attackX, y: object.y + 9 })
+         cs.draw.sprite({ spr: 'spr_hand', x: object.x + 7 - object.bounce, y: object.y + 9 })
+         cs.draw.sprite({ spr: 'spr_body', x: object.x + 1, y: object.y + 7 })
+         cs.draw.sprite({ spr: 'spr_shield', x: object.x + 4 + object.bounce, y: object.y + 8 })
       }
 
-      if (cs.key.down[33]) { cs.camera.zoomIn(); }
-      if (cs.key.down[34]) { cs.camera.zoomOut(); }
+      if (cs.inputKeyboard.down[33]) { cs.camera.zoomIn(); }
+      if (cs.inputKeyboard.down[34]) { cs.camera.zoomOut(); }
    }
 }

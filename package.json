@@ -1,0 +1,23 @@
+{
+  "name": "cs-engine",
+  "version": "0.0.1",
+  "description": "engine for building 2D games",
+  "main": "src/main.require.js",
+  "directories": {
+    "example": "example",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sean-codes/cs-engine.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sean-codes/cs-engine/issues"
+  },
+  "homepage": "https://github.com/sean-codes/cs-engine#readme"
+}

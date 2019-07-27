@@ -22,7 +22,7 @@
          background: #222;
       }
    </style>
-   <script id="cs-core" src="../../engine/core.js"></script>
+   <script id="cs-core" src="../../src/main.web.js"></script>
 </head>
 
 <body>
@@ -30,41 +30,26 @@
 
    <script>
       cs.load({
-         parts: '../../engine',
+         path: '../../src',
          canvas: document.querySelector('canvas'),
+
          assets: {
-            scripts: [{
-               path: 'scripts/particles'
-            }]
+            scripts: [
+               { path: 'scripts/particles' }
+            ],
+            storages: [
+               { location: 'particles', path: 'storages/particles' }
+            ]
          },
+
          objects: {
-            player: {
-               create: function() {
-                  this.particleSystem = cs.script.particles.createSystem({
-                     "shape": "square",
-                     "colorStart": "#ffffff",
-                     "colorEnd": "#0fff0f",
-                     "size": 10,
-                     "grow": -5,
-                     "alpha": 1,
-                     "fade": -6,
-                     "speedMin": 43,
-                     "speedMax": 43,
-                     "dirMin": 0,
-                     "dirMax": 360,
-                     "wobbleX": 0,
-                     "wobbleY": 0,
-                     "lifeMin": 152,
-                     "lifeMax": 152,
-                     "accel": -5,
-                     "gravity": 0,
-                     "particlesPerStep": 2
-                  })
+            emitter: {
+               create: ({ object, cs }) => {
+                  object.particleSystem = cs.script.particles.createSystem(cs.global.particles.test)
                },
-               step: function() {},
-               draw: function() {
+               draw: ({ object, cs }) => {
                   cs.script.particles.burst({
-                     system: this.particleSystem,
+                     system: object.particleSystem,
                      x: cs.room.width / 2,
                      y: cs.room.height / 2,
                      w: 5,
@@ -73,16 +58,16 @@
                   })
 
                   cs.script.particles.step({
-                     system: this.particleSystem
+                     system: object.particleSystem
                   })
                }
             }
          },
+         
          start: function() {
-            console.log('starting')
-
+            cs.global.particles = cs.storage.read('particles')
             cs.object.create({
-               type: 'player',
+               type: 'emitter',
                attr: {
                   x: 50,
                   y: 50

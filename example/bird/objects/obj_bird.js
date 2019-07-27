@@ -1,62 +1,63 @@
 cs.objects['obj_bird'] = {
    zIndex: 20,
-   create: function() {
-      this.sprite = 'bird'
-      this.mask = cs.sprite.info({ spr: this.sprite }).mask
-      this.x -= this.mask.width / 2
-      this.timer = 1
-      this.direction = .1
-      this.vspeed = 0
-      this.diving = 0
-      this.soaring = 0
+   create: ({ object, cs }) => {
+      object.sprite = 'bird'
+      object.mask = cs.sprite.info({ spr: object.sprite }).mask
+      object.x -= object.mask.width / 2
+      object.timer = 1
+      object.direction = .1
+      object.vspeed = 0
+      object.diving = 0
+      object.soaring = 0
    },
-   step: function() {
-      var angle = -30 * (this.vspeed / -5)
-      if (this.vspeed > 0) {
-         angle = 75 * (this.vspeed / 4)
+
+   draw: ({ object, cs }) => {
+      var angle = -30 * (object.vspeed / -5)
+      if (object.vspeed > 0) {
+         angle = 75 * (object.vspeed / 4)
       }
 
-      var spr = (this.vspeed > 0) ? 'bird2' : 'bird'
-      cs.draw.sprite({ spr: spr, x: this.x + this.mask.width / 2, y: this.y + this.mask.height / 2, angle: angle })
+      var spr = (object.vspeed > 0) ? 'bird2' : 'bird'
+      cs.draw.sprite({ spr: spr, x: object.x + object.mask.width / 2, y: object.y + object.mask.height / 2, angle: angle })
 
-      cs.camera.follow({ x: this.x + this.mask.width / 2, y: this.y + this.mask.height / 2 })
+      cs.camera.follow({ x: object.x + object.mask.width / 2, y: object.y + object.mask.height / 2 })
       if (cs.save.state == 'PLAYING') {
-         if (this.vspeed < 4)
-            this.vspeed += 0.25
+         if (object.vspeed < 4)
+            object.vspeed += 0.25
       } else {
-         this.vspeed += this.direction
-         if (Math.abs(this.vspeed) > 3) {
-            this.direction = this.direction * -1
-            this.vspeed += this.direction * 2
+         object.vspeed += object.direction
+         if (Math.abs(object.vspeed) > 3) {
+            object.direction = object.direction * -1
+            object.vspeed += object.direction * 2
          }
       }
-      this.y += this.vspeed
+      object.y += object.vspeed
 
       if (cs.save.state == 'WRECKED') {
          cs.global.flap = false
-         this.vspeed = 1.5
+         object.vspeed = 1.5
          return
       }
       //Check for touch
       if (cs.global.flap) {
-         this.vspeed = -5
+         object.vspeed = -5
          cs.sound.play('flap')
          cs.global.flap = false
-         if (this.diving > 24) {
+         if (object.diving > 24) {
             cs.global.score += 1
-            cs.object.create({ type: 'obj_score_text', attr: { x: this.x, y: this.y } })
+            cs.object.create({ type: 'obj_score_text', attr: { x: object.x, y: object.y } })
             cs.sound.play('score')
          }
-         this.diving = 0
+         object.diving = 0
       }
-      if (this.vspeed > 3)
-         this.diving += 1
+      if (object.vspeed > 3)
+         object.diving += 1
 
       //Building more pipes
       if (cs.save.state == 'PLAYING') {
-         this.timer -= 1
-         if (this.timer == 0) {
-            this.timer = 120
+         object.timer -= 1
+         if (object.timer == 0) {
+            object.timer = 120
             var space = 40
             var roomCenterVertical = cs.room.height / 2
             var randomY = roomCenterVertical - cs.math.iRandomRange(-80, 80)
@@ -77,10 +78,10 @@ cs.objects['obj_bird'] = {
 
       //Colliding With Pipes
       if (cs.save.state == 'TAPTOFLAP') return
-      var collisionScore = cs.script.collide(this, 'obj_score')
-      var collisionPipe = cs.script.collide(this, 'obj_pipe')
+      var collisionScore = cs.script.collide(object, 'obj_score')
+      var collisionPipe = cs.script.collide(object, 'obj_pipe')
 
-      if (collisionPipe || this.y > cs.room.height + 50 || this.y < -50) {
+      if (collisionPipe || object.y > cs.room.height + 50 || object.y < -50) {
          cs.save.state = 'WRECKED'
       }
 

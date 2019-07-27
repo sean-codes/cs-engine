@@ -7,9 +7,9 @@
    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 
    <!-- Game Engine -->
-   <link rel="stylesheet" type="text/css" href="../../engine/fullscreen.css?v=1" />
-   <link rel="stylesheet" type="text/css" href="../../engine/pixelart.css?v=1" />
-   <script src='../../engine/core.js' id="cs-core"></script>
+   <link rel="stylesheet" type="text/css" href="../../styles/fullscreen.css?v=1" />
+   <link rel="stylesheet" type="text/css" href="../../styles/pixelart.css?v=1" />
+   <script src='../../src/main.web.js'></script>
 </head>
 
 <body>
@@ -18,7 +18,7 @@
    <script>
       // Wait for the core to load
       cs.load({
-         parts: '../../engine',
+         path: '../../src',
          canvas: document.querySelector('canvas'),
          assets: {
             scripts: [
@@ -30,16 +30,12 @@
                { path: 'objects/obj_inventory' },
                { path: 'objects/obj_joystick' },
                { path: 'objects/obj_light' },
-               { path: 'objects/obj_otherplayer' },
                { path: 'objects/obj_player' },
                // Scripts
                { path: 'scripts/compareObj' },
                { path: 'scripts/lightAdd' },
-               { path: 'scripts/network' },
                { path: 'scripts/scr_collide' },
-               { path: 'scripts/scr_particles' },
-               // Events
-               { path: 'events/network' }
+               { path: 'scripts/scr_particles' }
             ],
             sprites: [
                 { path: 'sprites/spr_block' },
@@ -53,8 +49,9 @@
             cs.camera.setup({ maxWidth: 400, maxHeight: 300, smoothing: 5 })
             cs.room.setup({ width: 600, height: 400 })
 
-            cs.global.networkControl = { id: -1, list: {} }
-            cs.network.connect({ host: '134.209.212.165', port: 9999, ssl: false })
+            cs.surface.create({ name: 'light', raw: false, zIndex: 10 })
+
+            cs.global.lightList = []
 
             cs.object.create({ type: 'obj_light' })
             cs.object.create({ type: 'obj_buttons' })

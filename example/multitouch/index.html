@@ -3,36 +3,36 @@
 
 <body>
    <!-- engine -->
-   <script src="../../engine/core.js"></script>
-   <link rel="stylesheet" href="../../engine/fullscreen.css" />
+   <script src="../../src/main.web.js"></script>
+   <link rel="stylesheet" href="../../styles/fullscreen.css" />
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
    <!-- example -->
    <canvas class="cs-canvas" style="background: #000; -ms-touch-action: none; touch-action: none" oncontextmenu="return false;"/>
    <script>
       cs.load({
-         parts: '../../engine',
+         path: '../../src',
          canvas: document.querySelector('canvas'),
          objects: {
             touch: {
-               create: function() {
-                  this.touch = cs.touch.observer()
+               create: ({ object, cs }) => {
+                  object.touch = cs.inputTouch.observer()
                },
-               draw: function() {
-                  this.touch.check({
-                     x: this.x,
-                     y: this.y,
-                     width: this.width,
-                     height: this.height
+               draw: ({ object, cs }) => {
+                  object.touch.check({
+                     x: object.x,
+                     y: object.y,
+                     width: object.width,
+                     height: object.height
                   })
 
-                  if (this.touch.isHeld()) {
+                  if (object.touch.isHeld()) {
                      var pointerSize = 100
-                     cs.draw.setColor(this.color)
+                     cs.draw.setColor(object.color)
                      cs.draw.circle({
                         fill: true,
-                        x: this.touch.x,
-                        y: this.touch.y,
+                        x: object.touch.x,
+                        y: object.touch.y,
                         radius: pointerSize
                      })
                   }
@@ -40,11 +40,11 @@
             },
             display: {
                zIndex: 100,
-               draw: function() {
+               draw: ({ object, cs }) => {
                   var x = 25
                   var y = 25
 
-                  for (var touch of cs.touch.list) {
+                  for (var touch of cs.inputTouch.list) {
                      var text = [
                         'x: ' + Math.round(touch.x),
                         'y: ' + Math.round(touch.y),
@@ -54,7 +54,7 @@
                         'held: ' + touch.held,
                         'used: ' + touch.used,
                      ].join(' ')
-                     
+
                      cs.draw.setColor('#fff')
                      cs.draw.text({
                         x: x,
