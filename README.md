@@ -23,36 +23,32 @@ engine for building 2D games
    - integrating a 3rd party physics engine
 
 ## Boilerplate
-- include `core.js`
-- add a canvas element
-- run `cs.load` with configuration
-
 ```html
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- include core -->
+    <!-- 1. include cs-engine -->
     <script id="cs-engine" src='../../src/main.web.js'></script>
   </head>
   <body style="-ms-touch-action: none; touch-action: none">
-    <!-- canvas -->
+    <!-- 2. add a canvas -->
     <canvas></canvas>
 
-    <!-- run cs.load with config -->
+    <!-- 3. run cs.load with config -->
     <script>
 
       cs.load({
         path: '../../src', // path to parts
         canvas: document.querySelector('canvas'),
         objects: {
-          player: {
+          aRectangle: {
             draw: ({ object, cs }) => {
               cs.draw.fillRect({ x: 0, y: 0, width: 50, height: 50 })
             }
           }
         },
-        start: function(){
-          cs.object.create({ type:'player' })
+        start: ({ object, cs }) => {
+          cs.object.create({ type: 'aRectangle' })
         }
       })
 
@@ -62,21 +58,21 @@ engine for building 2D games
 ```
 
 ## Initialization
-The cs.load function loads the assets and initializes a canvas
+cs.load loads assets and initializes a canvas
 
 ```js
 /**
-* load function
-* @arg {object} options - the options
-* @arg {string} options.parts - path to cs-engine parts
-* @arg {string} options.canvas - the id of the canvas to use
-* @arg {array of objects} options.sprites - the list of sprites to load
-* @arg {array of objects} options.scripts - the list of sprites to load
-* @arg {array of objects} options.sounds - the list of sounds to load
-* @arg {array of objects} options.storages - the list of storages to load
-* @arg {array of objects} options.objects - initial game objects
-* @arg {function} options.start - called when finished loading
-**/
+ * load function
+ * @arg {object} options - the options
+ * @arg {string} options.parts - path to cs-engine parts
+ * @arg {string} options.canvas - the id of the canvas to use
+ * @arg {array of objects} options.sprites - the list of sprites to load
+ * @arg {array of objects} options.scripts - the list of sprites to load
+ * @arg {array of objects} options.sounds - the list of sounds to load
+ * @arg {array of objects} options.storages - the list of storages to load
+ * @arg {array of objects} options.objects - initial game objects
+ * @arg {function} options.start - called when finished loading
+ **/
 ```
 
 ## Sprite Loading Options
@@ -84,18 +80,17 @@ When loading sprites we can specify some options. Only path is required
 
 ```js
 /**
-* sprite load
-* @arg {object} options - the options
-* @arg {string} options.path - the id of the canvas to use
-* @arg {string} [options.name=calculated] - override the filename and set sprite name]
-* @arg {number} [options.frames=0] - how many frames in the sprite sheet
-* @arg {number} [options.width=calculated] - The width of a frame
-* @arg {number} [options.height=calculated] - The height of a frame
-* @arg {number} [options.xoff=0] - The horizontal offset when drawing
-* @arg {number} [options.yoff=0] - The vertical offset when drawing
-* @arg {object} [options.mask=calculated] - And object with { width, height }
-**/
-
+ * sprite load
+ * @arg {object} options - the options
+ * @arg {string} options.path - the relative path to the .png file
+ * @arg {string} [options.name=calculated] - override the filename and set sprite name]
+ * @arg {number} [options.frames=0] - how many frames in the sprite sheet
+ * @arg {number} [options.width=calculated] - The width of a frame
+ * @arg {number} [options.height=calculated] - The height of a frame
+ * @arg {number} [options.xoff=0] - The horizontal offset when drawing
+ * @arg {number} [options.yoff=0] - The vertical offset when drawing
+ * @arg {object} [options.mask=calculated] - And object with { width, height }
+ **/
 
 cs.load({
    ...
@@ -109,10 +104,10 @@ cs.load({
 Any `.js` files that are required for the project
 ```js
 /**
-* script load
-* @arg {object} options - the options
-* @arg {string} options.path - the id of the canvas to use
-**/
+ * script load
+ * @arg {object} options - the options
+ * @arg {string} options.path - the the relative path to the .js file
+ **/
 
 cs.load({
    ...
@@ -129,12 +124,12 @@ In the start function define the room size.
 
 ```js
 /**
-* room setup
-* @arg {object} options - the options
-* @arg {number} [options.width] - The width of a room
-* @arg {number} [options.height] - The height of a room
-* @arg {string} [options.background] - The background of the room
-**/
+ * room setup
+ * @arg {object} options - the options
+ * @arg {number} [options.width] - The width of a room
+ * @arg {number} [options.height] - The height of a room
+ * @arg {string} [options.background] - The background of the room
+ **/
 
 // example room 192px by 192px and a grey background
 cs.room.setup({ width: 192, height: 192, background: "#222" })
@@ -152,17 +147,16 @@ In the start function define the camera settings.
 > note: this can be changed at any time
 
 ```js
+/**
+ * camera setup
+ * @arg {object} options - the options
+ * @arg {number} [options.maxWidth] - The max width of the camera
+ * @arg {number} [options.maxHeight] - The max height of the camera
+ * @arg {number} [options.smoothing=1] - Amount of smoothing when updating follow position
+ **/
+
 // example camera maxWidth and Height
 cs.camera.setup({ maxWidth:300, maxHeight:200 })
-
-/**
-* camera setup
-* @arg {object} options - the options
-* @arg {number} [options.maxWidth] - The max width of the camera
-* @arg {number} [options.maxHeight] - The max height of the camera
-* @arg {number} [options.smoothing=1] - Amount of smoothing when updating follow position
-**/
-
 ```
 
 ## Game Objects
@@ -177,7 +171,7 @@ cs.load({
     myObjName: {
       create: ({ object, cs }) => { console.log('i run when created') },
       step: ({ object, cs }) => { console.log('i run each frame of the game') },
-      draw: ({ object, cs }) => { console.log('i run before the step for drawing') }
+      draw: ({ object, cs }) => { console.log('i run after the step for drawing') }
 	 }
   }
   ...
@@ -187,14 +181,24 @@ cs.load({
 > External script file
 
 ```js
-// /object/obj_name.js
+// FILE: objects/obj_name.js
 cs.objects.myObjName = {
   create: ({ object, cs }) => { console.log('i run when created') },
   step: ({ object, cs }) => { console.log('i run each frame of the game') },
-  draw: ({ object, cs }) => { console.log('i run before the step for drawing') }
+  draw: ({ object, cs }) => { console.log('i run after the step for drawing') }
 }
-```
 
+// Add as script path to assets
+cs.load({
+   ...
+   assets: {
+      scripts: [
+         { path: 'objects/obj_name.js' }
+      ]
+   }
+   ...
+})
+```
 
 Create an object using `cs.object.create()`
 ```js
@@ -212,95 +216,95 @@ cs.object.create({
 
 #### Sprites
 ```js
+/**
+ * @arg {object} options - the options
+ * @arg {string} options.spr - The name of the sprite
+ * @arg {number} [options.y] - the y position
+ * @arg {number} [options.y] - the y position
+ * @arg {number} [options.width=width] - The width to draw the sprite
+ * @arg {number} [options.height=height] - The height to draw the sprite
+ * @arg {number} [options.scaleX=1] - Horizontal scaling
+ * @arg {number} [options.scaleY=1] - Vertical scaling
+ * @arg {number} [options.angle=0] - (0 - 360) draw sprite rotated in degrees
+ **/
+
 // example drawing player sprite at coordinates (50, 50)
 cs.draw.sprite({ spr: 'spr_player', x: 50, y: 50 })
-
-/**
-* @arg {object} options - the options
-* @arg {string} options.spr - The name of the sprite
-* @arg {number} [options.y] - the y position
-* @arg {number} [options.y] - the y position
-* @arg {number} [options.width=width] - The width to draw the sprite
-* @arg {number} [options.height=height] - The height to draw the sprite
-* @arg {number} [options.scaleX=1] - Horizontal scaling
-* @arg {number} [options.scaleY=1] - Vertical scaling
-* @arg {number} [options.angle=0] - (0 - 360) draw sprite rotated in degrees
-**/
 ```
 
 #### Text
 ```js
+/**
+ * @arg {object} options - the options
+ * @arg {string} options.text - The text to draw
+ * @arg {number} [options.x] - The x position
+ * @arg {number} [options.y] - the y position
+ **/
+
 // example drawing text 'hello world' at coordinated (50, 50)
 cs.draw.text({ text: 'hello world', x: 50, y: 50 })
-
-/**
-* @arg {object} options - the options
-* @arg {string} options.text - The text to draw
-* @arg {number} [options.x] - The x position
-* @arg {number} [options.y] - the y position
-**/
 ```
 
 #### Shapes
 
 ###### Fill Recangle
 ```js
-// example fill rectangle in top corner with width 50 and height 50
-cs.draw.fillRect({ x:0, y:0, width:50, height: 50 })
-
 /**
-* @arg {object} options - the options
-* @arg {number} [options.x] - The x position
-* @arg {number} [options.y] - the y position
-* @arg {number} [options.width] - the width
-* @arg {number} [options.height] - the height
-**/
+ * @arg {object} options - the options
+ * @arg {number} [options.x] - The x position
+ * @arg {number} [options.y] - the y position
+ * @arg {number} [options.width] - the width
+ * @arg {number} [options.height] - the height
+ **/
+
+// example fill rectangle in top corner with width 50 and height 50
+cs.draw.fillRect({ x: 0, y: 0, width: 50, height: 50 })
 ```
 
 ###### Stroke Rectangle
 ```js
-// example outlined rectangle in top corner with width 50 and height 50
-cs.draw.strokeRect({ x:0, y:0, width:50, height: 50 })
-
 /**
-* @arg {object} options - the options
-* @arg {number} [options.x] - The x position
-* @arg {number} [options.y] - the y position
-* @arg {number} [options.width] - the width
-* @arg {number} [options.height] - the height
-**/
+ * @arg {object} options - the options
+ * @arg {number} [options.x] - The x position
+ * @arg {number} [options.y] - the y position
+ * @arg {number} [options.width] - the width
+ * @arg {number} [options.height] - the height
+ **/
+
+// example outlined rectangle in top corner with width 50 and height 50
+cs.draw.strokeRect({ x: 0, y: 0, width: 50, height: 50 })
 ```
 
 ###### Line
 ```js
-// example of a line starting in top left corner to (50, 50)
-cs.draw.line({ points: [ {x:0, y:0}, {x:50, y:50} ] })
-
 /**
-* @arg {object} options - the options
-* @arg {number} [options.x1] - The start x position
-* @arg {number} [options.y1] - the start y position
-* @arg {number} [options.x2] - the end x position
-* @arg {number} [options.y2] - the end y position
-**/
+ * @arg {object} options - the options
+ * @arg {number} [options.x1] - The start x position
+ * @arg {number} [options.y1] - the start y position
+ * @arg {number} [options.x2] - the end x position
+ * @arg {number} [options.y2] - the end y position
+ **/
+
+// example of a line starting in top left corner to (50, 50)
+cs.draw.line({ points: [ { x:0, y:0 }, { x:50, y:50 } ] })
 ```
 
-##### Draw Settings
+#### Settings
 > Note: Draw settings are reset after any drawing event!
 
 ```js
-// example setting draw color to red and font to 16px arial
-cs.draw.settings({ color:'red', font:'16px Arial' })
-
 /**
-* @arg {object} options - the options
-* @arg {number} [options.color='#000'] - HEX/RGB/String value of color
-* @arg {number} [options.font='12px Arial'] - Font setting. Font Size space Font Name
-* @arg {number} [options.width=1] - line width for stroke functions
-* @arg {number} [options.alpha=1] - 0 being invisible 1 being fully visible
-* @arg {number} [options.textAlign='start'] - start/middle/end horizontal align
-* @arg {number} [options.textBaseline='top'] - top/bottom/middle/baseline vertical align
-* @arg {number} [options.lineHeight=10] - line height spacing for text
-* @arg {number} [options.operation='source-over'] - set canvas manual on draw operations
-**/
+ * @arg {object} options - the options
+ * @arg {number} [options.color='#000'] - HEX/RGB/String value of color
+ * @arg {number} [options.font='12px Arial'] - Font setting. Font Size space Font Name
+ * @arg {number} [options.width=1] - line width for stroke functions
+ * @arg {number} [options.alpha=1] - 0 being invisible 1 being fully visible
+ * @arg {number} [options.textAlign='start'] - start/middle/end horizontal align
+ * @arg {number} [options.textBaseline='top'] - top/bottom/middle/baseline vertical align
+ * @arg {number} [options.lineHeight=10] - line height spacing for text
+ * @arg {number} [options.operation='source-over'] - set canvas manual on draw operations
+ **/
+
+// example setting draw color to red and font to 16px arial
+cs.draw.settings({ color: 'red', font: '16px Arial' })
 ```
