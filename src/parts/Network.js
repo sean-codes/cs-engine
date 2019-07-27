@@ -31,8 +31,8 @@
       }
 
       updateMetrics() {
-         var metrics = cs.network.metrics
-         var now = Date.now()
+         const metrics = this.cs.network.metrics
+         const now = Date.now()
          if (now - metrics.last > 1000) {
             metrics.count++
             metrics.last = now
@@ -49,28 +49,29 @@
       }
 
       connect(options) {
-         // console.log('cs.network.connect', options)
+         // console.log('this.cs.network.connect', options)
          try {
-            var host = options.host || window.location.host
+            const host = options.host || window.location.host
+            let url = "wss://" + host + ":" + options.port
+
             if (options.ssl == undefined || options.ssl == false) {
-               var url = "ws://" + host + ":" + options.port
-            } else {
-               var url = "wss://" + host + ":" + options.port
+               url = "ws://" + host + ":" + options.port
             }
-            var ws = new WebSocket(url);
-            ws.onopen = function() {
-               cs.network.onconnect()
+
+            const ws = new WebSocket(url);
+            ws.onopen = () => {
+               this.cs.network.onconnect()
             }
-            ws.onclose = function() { cs.network.ondisconnect() }
-            ws.onmessage = function(event) { cs.network.onmessage(event.data) }
-            cs.network.ws = ws;
+            ws.onclose = () => { this.cs.network.ondisconnect() }
+            ws.onmessage = (event) => { this.cs.network.onmessage(event.data) }
+            this.cs.network.ws = ws;
          } catch(e) {
             console.log(e);
          }
       }
 
       isConnected() {
-         return cs.network.ws.readyState !== cs.network.ws.CLOSED
+         return this.cs.network.ws.readyState !== this.cs.network.ws.CLOSED
       }
 
       send(data) {
@@ -78,25 +79,25 @@
          if (typeof data !== 'string') {
             data = JSON.stringify(data)
          }
-         cs.network.metrics.upWatch += data.length
-         cs.network.ws.send(data)
+         this.cs.network.metrics.upWatch += data.length
+         this.cs.network.ws.send(data)
       }
 
       read() {
          while(this.buffer.length) {
-            var data = this.buffer.shift()
-            cs.network.metrics.downWatch += data.length
+            const data = this.buffer.shift()
+            this.cs.network.metrics.downWatch += data.length
             this.overrides.message(data)
          }
       }
 
       onconnect() {
-         cs.network.status = true
+         this.cs.network.status = true
          this.overrides.connect()
       }
 
       ondisconnect() {
-         cs.network.status = false
+         this.cs.network.status = false
          this.overrides.disconnect()
       }
 
@@ -105,8 +106,8 @@
       }
 
       setup(options) {
-         for (var optionName in options) {
-            cs.network.overrides[optionName] = options[optionName]
+         for (const optionName in options) {
+            this.cs.network.overrides[optionName] = options[optionName]
          }
       }
    }
@@ -114,5 +115,5 @@
    // export (node / web)
    typeof module !== 'undefined'
       ? module.exports = CSENGINE_NETWORK
-      : cs.network = new CSENGINE_NETWORK(cs)
+      : this.cs.network = new CSENGINE_NETWORK(cs)
 })()
