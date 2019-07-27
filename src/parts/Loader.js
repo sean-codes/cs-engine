@@ -54,7 +54,7 @@
          for (const script of this.cs.assets.scripts) {
             console.log('Loading Script: ' + script.path)
             const htmlScript = document.createElement('script')
-            htmlScript.src = `${script.path}.js?v=${this.version}`
+            htmlScript.src = script.path + '.js?v=' + this.cs.version
             htmlScript.onload = this.checkDone.bind(this)
             document.body.appendChild(htmlScript)
          }
@@ -65,7 +65,7 @@
             cs.sprites.push(sprite)
             console.log(`Loading Sprite: ${sprite.path}`)
             sprite.html = document.createElement('img')
-            sprite.html.src = sprite.path + '.png?v=' + this.version
+            sprite.html.src = sprite.path + '.png?v=' + this.cs.version
             sprite.html.onload = this.checkDone.bind(this)
          }
       }
