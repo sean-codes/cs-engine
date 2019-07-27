@@ -9,7 +9,7 @@ cs.load = function(options) {
    this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
    this.default = (want, ifnot) => { return want != null ? want : ifnot }
 
-   // 1. build the engine
+   // 1. setup
    this.canvas = canvas
    this.ctx = canvas.getContext('2d')
    this.path = options.path
@@ -37,9 +37,6 @@ cs.load = function(options) {
       sounds: assets && assets.sounds ? assets.sounds : [],
    }
 
-   // 2. load parts
-   console.groupCollapsed('Loading Engine...')
-
    const parts = [
       { path: this.path + '/parts/Camera' },
       { path: this.path + '/parts/Draw' },
@@ -63,25 +60,25 @@ cs.load = function(options) {
       { path: this.path + '/parts/Vector' },
    ]
 
+   // 2. load
+   console.groupCollapsed('Loading Engine...')
    let loading = parts.length
    const dateStartLoading = Date.now()
 
-   const checkDone = () => {
-      loading -= 1
-
-      if (!loading) {
-         console.groupEnd()
-         const engineLoadTime = Math.round(Date.now() - dateStartLoading)
-         console.log(`Engine Loaded in ${engineLoadTime}ms`)
-         cs.loader.load()
-      }
-   }
-
    for (var part of parts) {
-      console.log(`Loading Part: ${part.path.split('/').pop()}`)
+      console.log('Loading Part: ' + part.path.split('/').pop())
       const htmlScript = document.createElement('script')
       htmlScript.src = `${part.path}.js?v=${this.version}`
-      htmlScript.onload = checkDone
+
+      htmlScript.onload = () => {
+         if (loading-- <= 1) {
+            const engineLoadTime = Math.round(Date.now() - dateStartLoading)
+            console.groupEnd()
+            console.log(`Engine Loaded in ${engineLoadTime}ms`)
+            cs.loader.load() // loader will call cs.start()
+         }
+      }
+
       document.body.appendChild(htmlScript)
    }
 }

@@ -52,7 +52,7 @@
 
       loadScripts() {
          for (const script of this.cs.assets.scripts) {
-            console.log(`Loading Script: ${script.path}`)
+            console.log('Loading Script: ' + script.path)
             const htmlScript = document.createElement('script')
             htmlScript.src = `${script.path}.js?v=${this.version}`
             htmlScript.onload = this.checkDone.bind(this)

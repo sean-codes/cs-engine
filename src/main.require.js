@@ -26,11 +26,10 @@ module.exports = class cs {
          assets
       } = options
 
-      // 1. build engine
-      this.clone = function(object) { return JSON.parse(JSON.stringify(object)) }
-      this.default = function(want, ifnot) { return want != null ? want : ifnot }
+      // 1. setup
+      this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
+      this.default = (want, ifnot) => { return want != null ? want : ifnot }
 
-      // 1. build the engine
       this.canvas = canvas
       this.ctx = canvas.getContext('2d')
       this.path = options.path
@@ -79,7 +78,7 @@ module.exports = class cs {
       this.timer = new PartTimer(this)
       this.vector = new PartVector(this)
 
-      // 3. setup
-      this.loader.load()
+      // load
+      this.loader.load() // loader will call cs.start()
    }
 }
