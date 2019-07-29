@@ -297,6 +297,8 @@
          var scale = this.scale
          var x = options.pos ? options.pos.x : options.x
          var y = options.pos ? options.pos.y : options.y
+         var start = (cs.default(options.start, 0) - 90) * Math.PI/180
+         var end = (cs.default(options.end, 360) - 90) * Math.PI/180
          var radius = options.radius
 
          if (this.outside({
@@ -318,9 +320,9 @@
             (x - this.cameraX) * scale,
             (y - this.cameraY) * scale,
             radius * scale,
-            0, Math.PI * 2, true
+            start,
+            end
          )
-         this.surface.ctx.closePath()
          fill ? this.surface.ctx.fill() : this.surface.ctx.stroke()
          this.settingsDefault()
       }
