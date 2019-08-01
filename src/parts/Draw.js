@@ -314,7 +314,7 @@
             this.debug.circleDrawnCount += 1
          }
 
-         var fill = this.cs.default(options.fill, false)
+
          this.surface.ctx.beginPath()
          this.surface.ctx.arc(
             (x - this.cameraX) * scale,
@@ -323,7 +323,10 @@
             start,
             end
          )
+
+         var fill = this.cs.default(options.fill, false)
          fill ? this.surface.ctx.fill() : this.surface.ctx.stroke()
+
          this.settingsDefault()
       }
 
@@ -409,26 +412,26 @@
       }
 
       setColor(color) {
-         if(this.surface.ctx.fillStyle === color && this.surface.ctx.strokeStyle === color) return
-         this.surface.ctx.fillStyle = color;
-         this.surface.ctx.strokeStyle = color;
+         if (this.surface.ctx.fillStyle === color && this.surface.ctx.strokeStyle === color) return
+         this.surface.ctx.fillStyle = color
+         this.surface.ctx.strokeStyle = color
       }
 
       setAlpha(alpha) {
          if(this.surface.ctx.globalAlpha === alpha) return
-         this.surface.ctx.globalAlpha = alpha;
+         this.surface.ctx.globalAlpha = alpha
       }
 
       setWidth(width) {
          if(this.surface.ctx.lineWidth === width * this.scale) return
-         this.surface.ctx.lineWidth = width * this.scale;
+         this.surface.ctx.lineWidth = width * this.scale
       }
 
       setFont(options) {
          if(this.surface.ctx.fontSize === options.size * this.scale && this.surface.ctx.fontFamily === options.family) return
          this.surface.ctx.fontSize = options.size * this.scale
          this.surface.ctx.fontFamily = options.family
-         this.surface.ctx.font = (options.effect ? options.effect + ' ' : '') + options.size * this.scale + 'px ' + options.family;
+         this.surface.ctx.font = (options.effect ? options.effect + ' ' : '') + options.size * this.scale + 'px ' + options.family
       }
 
       setLineHeight(height) {
