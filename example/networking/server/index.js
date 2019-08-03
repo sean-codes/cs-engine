@@ -22,7 +22,9 @@ app.listen(CONFIG.PORT.STATIC_ASSETS, () => {
 // ----------------------------
 const server = new Server()
 const wss = new WebSocket.Server({ port: CONFIG.PORT.WEBSOCKET })
+console.log(`websockets on ${CONFIG.PORT.WEBSOCKET}`)
 
 wss.on('connection', (ws, req) => {
-   server.newConnection(ws, req)
+   console.log('new connection')
+   server.openConnection(ws, req)
 })
