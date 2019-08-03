@@ -101,7 +101,9 @@
 
          // remove from objGroup
          var type = destroyObj.core.type
-         if (cs.objects[type].destroy) cs.objects[type].destroy.call(destroyObj, { object: destroyObj, cs: this.cs })
+         if (this.cs.objects[type].destroy) {
+            this.cs.objects[type].destroy.call(destroyObj, { object: destroyObj, cs: this.cs })
+         }
          this.objGroups[type] = this.objGroups[type].filter(function(obj) { return obj.core.live })
       }
 

@@ -3,16 +3,16 @@
 //----------------------------------------------------------------------------//
 (() => {
    class CSENGINE_ROOM {
-      constructor(cs) {
+      constructor(cs, width, height) {
          this.cs = cs
 
-         this.width = 100
-         this.height = 100
+         this.width = cs.default(cs.options.room && cs.options.room.width, 100)
+         this.height = cs.default(cs.options.room && cs.options.room.width, 100)
          this.rect = {
             x: 0,
             y: 0,
-            width: 100,
-            height: 100
+            width: this.width,
+            height: this.height
          }
       }
 
