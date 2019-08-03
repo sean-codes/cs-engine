@@ -24,7 +24,8 @@ cs.load({
 
       cs.camera.setup({
          maxWidth: 150,
-         maxHeight: 150
+         maxHeight: 150,
+         smoothing: 2
       })
 
       cs.surface.create({ name: 'background', oneToOne: false, drawOutside: true, manualClear: true, depth: 100 })

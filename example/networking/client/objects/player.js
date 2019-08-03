@@ -5,22 +5,22 @@ cs.objects.player = {
       this.ny = 0
       this.x = cs.default(this.x, 0)
       this.y = cs.default(this.y, 0)
-      this.speed = 1
-      this.speedX = 0
-      this.speedY = 0
+
+      this.maxSpeed = 1
       this.radius = 3
-      this.keys = { up: false, down: false, left: false, right: false }
+      this.speed = 0
+      this.direction = 0
+      this.turnSpeed = 4
+      this.keys = { up: false, left: false, right: false }
    },
 
    step: function() {
-      var speed = 1
-      if (this.keys.left && !this.keys.right) this.speedX = -speed
-      if (this.keys.right && !this.keys.left) this.speedX = speed
-      if (!this.keys.left && !this.keys.right) this.speedX = 0
-      if (this.keys.up && !this.keys.down) this.speedY = -speed
-      if (this.keys.down && !this.keys.up) this.speedY = speed
-      if (!this.keys.down && !this.keys.up) this.speedY = 0
-
+      if (this.networkId == cs.global.self) {
+         if (this.keys.right) this.direction += this.turnSpeed
+         if (this.keys.left) this.direction -= this.turnSpeed
+         if (this.keys.up) this.speed = this.maxSpeed
+         if (!this.keys.up) this.speed = 0
+      }
 
       if (Math.abs(this.nx) > 2) {
          this.x += Math.sign(this.nx) * 0.1
@@ -32,8 +32,8 @@ cs.objects.player = {
          this.ny += Math.sign(this.ny) * 0.1
       }
 
-      this.x += this.speedX// * cs.loop.delta
-      this.y += this.speedY //* cs.loop.delta
+      this.x += cs.math.cos(this.direction) * this.speed
+      this.y += cs.math.sin(this.direction) * this.speed
 
       if (this.networkId == cs.global.self) {
          cs.camera.follow({
@@ -62,6 +62,18 @@ cs.objects.player = {
             `ny: ${cs.math.round(this.nx, 100)}`
          ],
          lineHeight: 2
+      })
+
+      // draw direction
+      var dirPoint = {
+         x: this.x + cs.math.cos(this.direction) * this.radius,
+         y: this.y + cs.math.sin(this.direction) * this.radius
+      }
+
+      cs.draw.setWidth(0.5)
+      cs.draw.setColor('#FFF')
+      cs.draw.line({
+         points: [{ x: this.x, y: this.y }, dirPoint ]
       })
    }
 }

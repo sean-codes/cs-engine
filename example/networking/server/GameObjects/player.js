@@ -3,20 +3,22 @@ module.exports = {
       this.share = true
       this.keys = { up: false, down: false, left: false, right: false }
       this.networkId = this.networkId
-      this.speedX = 0
-      this.speedY = 0
+
+      this.x = this.x
+      this.y = this.y
+      this.speed = 0
+      this.maxSpeed = 1
+      this.direction = 0
+      this.turnSpeed = 4
    },
 
    step: function({ cs }) {
-      var speed = 1
-      if (this.keys.left && !this.keys.right) this.speedX = -speed
-      if (this.keys.right && !this.keys.left) this.speedX = speed
-      if (!this.keys.left && !this.keys.right) this.speedX = 0
-      if (this.keys.up && !this.keys.down) this.speedY = -speed
-      if (this.keys.down && !this.keys.up) this.speedY = speed
-      if (!this.keys.down && !this.keys.up) this.speedY = 0
+      if (this.keys.right) this.direction += this.turnSpeed
+      if (this.keys.left) this.direction -= this.turnSpeed
+      if (this.keys.up) this.speed = this.maxSpeed
+      if (!this.keys.up) this.speed = 0
 
-      this.x += this.speedX * cs.loop.delta
-      this.y += this.speedY * cs.loop.delta
+      this.x += cs.math.cos(this.direction) * (this.speed * cs.loop.delta)
+      this.y += cs.math.sin(this.direction) * (this.speed * cs.loop.delta)
    }
 }

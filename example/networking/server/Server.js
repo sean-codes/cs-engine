@@ -61,8 +61,8 @@ module.exports = class Server {
                      id: object.core.id,
                      x: Math.round(object.x),
                      y: Math.round(object.y),
-                     speedX: object.speedX,
-                     speedY: object.speedY
+                     speed: object.speed,
+                     direction: object.direction
                   }
                })
             }

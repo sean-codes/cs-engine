@@ -20,24 +20,11 @@ cs.script.networkFunctions = {
 
          var update = networkObjects.find(n => n.attr.id === object.networkId)
          if (update) {
-            var fix = (cs.global.ping/2) / cs.loop.speed
-
-            var predictXBackward = !update.attr.speedX && object.speedX
-            var predictX = predictXBackward
-               ? fix * -object.speedX
-               : fix * update.attr.speedX
-
-            var predictYBackward = !update.attr.speedY && object.speedY
-            var predictY = predictXBackward
-               ? fix * -object.speedY
-               : fix * update.attr.speedY
-
-
             update.used = true
-            object.nx = (update.attr.x + (predictX)) - object.x
-            object.ny = (update.attr.y + (predictY)) - object.y
-            object.speedX = update.attr.speedX
-            object.speedY = update.attr.speedY
+            object.nx = update.attr.x - object.x
+            object.ny = update.attr.y - object.y
+            object.speed = update.attr.speed
+            object.direction = update.attr.direction
 
          } else {
             cs.object.destroy(object)
