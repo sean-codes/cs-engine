@@ -20,7 +20,7 @@ module.exports = class Socket {
             var newKeys = parsedJson.data
             var oldKeys = object.keys
 
-            // can we do something here? possibly boost/slow by socket ping
+            // maybe you can try +/- on up/down
             for (const key of [
                { name: 'left', dir: -1, axis: 'x' },
                { name: 'right', dir: 1, axis: 'x' },

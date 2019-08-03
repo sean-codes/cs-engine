@@ -1,6 +1,6 @@
 cs.load({
-   path: "http://localhost/cs-engine/src",
-   // path: "https://sean-codes.github.io/cs-engine/src",
+   // path: "http://localhost/cs-engine/src",
+   path: "https://sean-codes.github.io/cs-engine/src",
    canvas: canvas,
 
    assets: {
