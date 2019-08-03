@@ -18,24 +18,14 @@ cs.objects.player = {
       // if (this.keys.right && !this.keys.left) this.x += speed
       // if (this.keys.up && !this.keys.down) this.y -= speed
       // if (this.keys.down && !this.keys.up) this.y += speed
-      if (this.nx !== 0) {
-         this.x -= Math.sign(this.nx) * 0.1
-         this.nx -= Math.sign(this.nx) * 0.1
-
-         if (Math.abs(this.nx) <= 0.1) {
-            this.x -= this.nx
-            this.nx = 0
-         }
+      if (Math.abs(this.nx) > 5) {
+         this.x += Math.sign(this.nx) * 0.1
+         this.nx += Math.sign(this.nx) * 0.1
       }
 
-      if (this.ny !== 0) {
-         this.y -= Math.sign(this.ny) * 0.1
-         this.ny -= Math.sign(this.ny) * 0.1
-
-         if (Math.abs(this.ny) <= 0.1) {
-            this.y -= this.ny
-            this.ny = 0
-         }
+      if (Math.abs(this.ny) > 5) {
+         this.y += Math.sign(this.ny) * 0.1
+         this.ny += Math.sign(this.ny) * 0.1
       }
 
       this.x += this.speedX// * cs.loop.delta
@@ -60,11 +50,11 @@ cs.objects.player = {
       cs.draw.setColor('#FFF')
       cs.draw.setFont({ size: 2, family: 'monospace' })
       cs.draw.setTextCenter()
-      // cs.draw.text({
-      //    x: this.x,
-      //    y: this.y + 5,
-      //    lines: [`nx: ${this.nx}`, `ny: ${this.ny}`],
-      //    lineHeight: 2
-      // })
+      cs.draw.text({
+         x: this.x,
+         y: this.y + 5,
+         lines: [`nx: ${this.nx}`, `ny: ${this.ny}`],
+         lineHeight: 2
+      })
    }
 }

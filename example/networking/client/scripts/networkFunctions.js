@@ -33,8 +33,8 @@ cs.script.networkFunctions = {
 
 
             update.used = true
-            object.nx = object.x - (update.attr.x + (predictX))
-            object.ny = object.y - (update.attr.y + (predictY))
+            object.nx = (update.attr.x + (predictX)) - object.x
+            object.ny = (update.attr.y + (predictY)) - object.y
             object.speedX = update.attr.speedX
             object.speedY = update.attr.speedY
 

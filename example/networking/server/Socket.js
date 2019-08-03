@@ -16,6 +16,27 @@ module.exports = class Socket {
 
       switch (parsedJson.func) {
          case 'keyboard': {
+            var object = this.gameObject
+            var newKeys = parsedJson.data
+            var oldKeys = object.keys
+
+            // can we do something here? possibly boost/slow by socket ping
+            for (const key of [
+               { name: 'left', dir: -1, axis: 'x' },
+               { name: 'right', dir: 1, axis: 'x' },
+               { name: 'up', dir: -1, axis: 'y' },
+               { name: 'down', dir: 1, axis: 'y' },
+            ]) {
+               const { name, dir, axis } = key
+               const up = !newKeys[name] && oldKeys[name]
+               const down = newKeys[name] && !oldKeys[name]
+
+               const fix = this.ping / (1000/60)
+               if (down) object[axis] += dir * fix
+               if (up) object[axis] -= dir * fix
+            }
+
+
             this.gameObject.keys = parsedJson.data
             break;
          }
