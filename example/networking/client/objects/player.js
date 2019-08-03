@@ -13,11 +13,15 @@ cs.objects.player = {
    },
 
    step: function() {
-      // var speed = 1 * cs.loop.delta
-      // if (this.keys.left && !this.keys.right) this.x -= speed
-      // if (this.keys.right && !this.keys.left) this.x += speed
-      // if (this.keys.up && !this.keys.down) this.y -= speed
-      // if (this.keys.down && !this.keys.up) this.y += speed
+      var speed = 1
+      if (this.keys.left && !this.keys.right) this.speedX = -speed
+      if (this.keys.right && !this.keys.left) this.speedX = speed
+      if (!this.keys.left && !this.keys.right) this.speedX = 0
+      if (this.keys.up && !this.keys.down) this.speedY = -speed
+      if (this.keys.down && !this.keys.up) this.speedY = speed
+      if (!this.keys.down && !this.keys.up) this.speedY = 0
+
+
       if (Math.abs(this.nx) > 5) {
          this.x += Math.sign(this.nx) * 0.1
          this.nx += Math.sign(this.nx) * 0.1

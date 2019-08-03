@@ -19,6 +19,7 @@ cs.objects.controller = {
          this.oldKeys.left !== keys.left
       ) {
          this.oldKeys = cs.clone(keys)
+         cs.global.selfObject.keys = this.oldKeys
          cs.script.network.send({
             func: 'keyboard',
             data: keys

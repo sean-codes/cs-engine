@@ -16,6 +16,7 @@ cs.script.networkFunctions = {
 
       for (var object of cs.object.every()) {
          if (object.networkId == null) continue
+         if (object.networkId == cs.global.self) cs.global.selfObject = object
 
          var update = networkObjects.find(n => n.attr.id === object.networkId)
          if (update) {
