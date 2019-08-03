@@ -1,5 +1,7 @@
 cs = {}
 cs.load = function(options) {
+   this.options = options
+   
    // handy
    this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
    this.default = (want, ifnot) => { return want != null ? want : ifnot }

@@ -51,7 +51,7 @@
       connect(options) {
          // console.log('this.cs.network.connect', options)
          try {
-            const host = options.host || window.location.host
+            const host = options.host || window.location.hostname
             let url = "wss://" + host + ":" + options.port
 
             if (options.ssl == undefined || options.ssl == false) {
