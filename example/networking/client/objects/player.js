@@ -22,12 +22,12 @@ cs.objects.player = {
       if (!this.keys.down && !this.keys.up) this.speedY = 0
 
 
-      if (Math.abs(this.nx) > 5) {
+      if (Math.abs(this.nx) > 2) {
          this.x += Math.sign(this.nx) * 0.1
          this.nx += Math.sign(this.nx) * 0.1
       }
 
-      if (Math.abs(this.ny) > 5) {
+      if (Math.abs(this.ny) > 2) {
          this.y += Math.sign(this.ny) * 0.1
          this.ny += Math.sign(this.ny) * 0.1
       }
@@ -57,7 +57,10 @@ cs.objects.player = {
       cs.draw.text({
          x: this.x,
          y: this.y + 5,
-         lines: [`nx: ${this.nx}`, `ny: ${this.ny}`],
+         lines: [
+            `nx: ${cs.math.round(this.nx, 100)}`,
+            `ny: ${cs.math.round(this.nx, 100)}`
+         ],
          lineHeight: 2
       })
    }
