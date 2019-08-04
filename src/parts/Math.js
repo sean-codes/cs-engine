@@ -93,7 +93,7 @@
          var xOff = p2.x - p1.x
          var yOff = p2.y - p1.y
 
-         return this.angle(xOff, yOff)
+         return this.angleXY(xOff, yOff)
       }
 
       angleXY(xOff, yOff) {
