@@ -1,5 +1,5 @@
 const Socket = require('./Socket')
-const CS = require('cs-engine/src/main.headless.js')
+const CS = require('cs-engine/main.headless.js')
 const GameObjectPlayer = require('./GameObjects/player')
 
 module.exports = class Server {

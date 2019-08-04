@@ -1,7 +1,7 @@
 cs = {}
 cs.load = function(options) {
    this.options = options
-   
+
    // handy
    this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
    this.default = (want, ifnot) => { return want != null ? want : ifnot }
@@ -10,6 +10,15 @@ cs.load = function(options) {
    this.canvas = options.canvas
    this.ctx = this.canvas.getContext('2d')
    this.path = options.path
+   if (!options.path) {
+      var scriptTag = document.querySelector('#cs-main-web')
+      if (!scriptTag) return console.log(
+         'ERROR: could not load parts.',
+         '\r\nneed options.path or id="cs-main-web" on script tag'
+      )
+      this.path = scriptTag.src.replace('main.web.js', '')
+   }
+
    this.maxSize = options.maxSize || 2000
    this.start = options.start
    this.userStep = options.step
@@ -35,26 +44,26 @@ cs.load = function(options) {
    }
 
    const parts = [
-      { path: this.path + '/parts/Camera' },
-      { path: this.path + '/parts/Draw' },
-      { path: this.path + '/parts/Fps' },
-      { path: this.path + '/parts/Fullscreen' },
-      { path: this.path + '/parts/InputKeyboard' },
-      { path: this.path + '/parts/InputMouse' },
-      { path: this.path + '/parts/InputTouch' },
-      { path: this.path + '/parts/Loop' },
-      { path: this.path + '/parts/Loader' },
-      { path: this.path + '/parts/Math' },
-      { path: this.path + '/parts/Network' },
-      { path: this.path + '/parts/Object' },
-      { path: this.path + '/parts/Room' },
-      { path: this.path + '/parts/Setup' },
-      { path: this.path + '/parts/Sound' },
-      { path: this.path + '/parts/Sprite' },
-      { path: this.path + '/parts/Storage' },
-      { path: this.path + '/parts/Surface' },
-      { path: this.path + '/parts/Timer' },
-      { path: this.path + '/parts/Vector' },
+      { path: this.path + '/src/Camera' },
+      { path: this.path + '/src/Draw' },
+      { path: this.path + '/src/Fps' },
+      { path: this.path + '/src/Fullscreen' },
+      { path: this.path + '/src/InputKeyboard' },
+      { path: this.path + '/src/InputMouse' },
+      { path: this.path + '/src/InputTouch' },
+      { path: this.path + '/src/Loop' },
+      { path: this.path + '/src/Loader' },
+      { path: this.path + '/src/Math' },
+      { path: this.path + '/src/Network' },
+      { path: this.path + '/src/Object' },
+      { path: this.path + '/src/Room' },
+      { path: this.path + '/src/Setup' },
+      { path: this.path + '/src/Sound' },
+      { path: this.path + '/src/Sprite' },
+      { path: this.path + '/src/Storage' },
+      { path: this.path + '/src/Surface' },
+      { path: this.path + '/src/Timer' },
+      { path: this.path + '/src/Vector' },
    ]
 
    // 2. load

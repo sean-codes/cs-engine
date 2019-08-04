@@ -2,7 +2,7 @@
   "name": "cs-engine",
   "version": "0.0.1",
   "description": "engine for building 2D games",
-  "main": "src/main.require.js",
+  "main": "main.require.js",
   "directories": {
     "example": "example",
     "test": "test"

@@ -28,7 +28,7 @@ engine for building 2D games
 <html>
   <head>
     <!-- 1. include cs-engine -->
-    <script id="cs-engine" src='../../src/main.web.js'></script>
+    <script id="cs-engine" src='../../main.web.js'></script>
   </head>
   <body style="-ms-touch-action: none; touch-action: none">
     <!-- 2. add a canvas -->
@@ -38,7 +38,7 @@ engine for building 2D games
     <script>
 
       cs.load({
-        path: '../../src', // path to parts
+        path: '../../', // path to parts
         canvas: document.querySelector('canvas'),
         objects: {
           aRectangle: {

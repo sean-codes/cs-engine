@@ -1,5 +1,5 @@
 cs.load({
-   path: "/cs-engine/src",
+   path: "/cs-engine/",
    canvas: canvas,
 
    assets: {

@@ -1,39 +1,36 @@
-const PartCamera = require('./parts/Camera')
-const PartDraw = require('./parts/Draw')
-const PartFps = require('./parts/Fps')
-const PartFullscreen = require('./parts/Fullscreen')
-const PartInputKeyboard = require('./parts/InputKeyboard')
-const PartInputMouse = require('./parts/InputMouse')
-const PartInputTouch = require('./parts/InputTouch')
-const PartLoader = require('./parts/Loader')
-const PartLoop = require('./parts/Loop')
-const PartMath = require('./parts/Math')
-const PartNetwork = require('./parts/Network')
-const PartObject = require('./parts/Object')
-const PartRoom = require('./parts/Room')
-const PartSetup = require('./parts/Setup')
-const PartSound = require('./parts/Sound')
-const PartSprite = require('./parts/Sprite')
-const PartSurface = require('./parts/Surface')
-const PartStorage = require('./parts/Storage')
-const PartTimer = require('./parts/Timer')
-const PartVector = require('./parts/Vector')
+const PartCamera = require('./src/Camera')
+const PartDraw = require('./src/Draw')
+const PartFps = require('./src/Fps')
+const PartFullscreen = require('./src/Fullscreen')
+const PartInputKeyboard = require('./src/InputKeyboard')
+const PartInputMouse = require('./src/InputMouse')
+const PartInputTouch = require('./src/InputTouch')
+const PartLoader = require('./src/Loader')
+const PartLoop = require('./src/Loop')
+const PartMath = require('./src/Math')
+const PartNetwork = require('./src/Network')
+const PartObject = require('./src/Object')
+const PartRoom = require('./src/Room')
+const PartSetup = require('./src/Setup')
+const PartSound = require('./src/Sound')
+const PartSprite = require('./src/Sprite')
+const PartSurface = require('./src/Surface')
+const PartStorage = require('./src/Storage')
+const PartTimer = require('./src/Timer')
+const PartVector = require('./src/Vector')
 
 module.exports = class cs {
-   constructor(options) {
+   constructor(options = {}) {
       this.options = options
-      
+
       // handy
       this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
       this.default = (want, ifnot) => { return want != null ? want : ifnot }
 
       // 1. setup
-      this.canvas = options.canvas
-      this.ctx = this.canvas.getContext('2d')
-
+      this.headless = true
       this.path = options.path
-      this.maxSize = options.maxSize || 2000
-      this.start = options.start
+      this.start = options.start || function() {}
       this.userStep = options.step
       this.userDraw = options.draw
       this.progress = options.progress || function() {}
@@ -42,7 +39,6 @@ module.exports = class cs {
       this.global = options.global || {}
       this.progress = options.progress || function() {}
       this.focus = options.focus || function() {}
-
 
       this.objects = options.objects || {}
       this.script = options.script || {}
@@ -57,13 +53,7 @@ module.exports = class cs {
          sounds: options.assets && options.assets.sounds ? options.assets.sounds : [],
       }
 
-      this.camera = new PartCamera(this)
-      this.draw = new PartDraw(this)
       this.fps = new PartFps(this)
-      this.fullscreen = new PartFullscreen(this)
-      this.inputKeyboard = new PartInputKeyboard(this)
-      this.inputMouse = new PartInputMouse(this)
-      this.inputTouch = new PartInputTouch(this)
       this.loader = new PartLoader(this)
       this.loop = new PartLoop(this)
       this.math = new PartMath(this)
@@ -71,14 +61,12 @@ module.exports = class cs {
       this.object = new PartObject(this)
       this.room = new PartRoom(this)
       this.setup = new PartSetup(this)
-      this.sound = new PartSound(this)
-      this.sprite = new PartSprite(this)
       this.storage = new PartStorage(this)
-      this.surface = new PartSurface(this)
       this.timer = new PartTimer(this)
       this.vector = new PartVector(this)
 
       // load
-      this.loader.load() // loader will call cs.start()
+      this.start({ cs: this })
+      this.loop.start()
    }
 }
