@@ -25,8 +25,10 @@ module.exports = class Server {
          type: 'player',
          attr: {
             socketId: id,
-            x: this.cs.room.width / 2,
-            y: this.cs.room.height / 2,
+            pos: {
+               x: this.cs.room.width / 2,
+               y: this.cs.room.height / 2,
+            }
          }
       })
 
@@ -59,10 +61,10 @@ module.exports = class Server {
                   type: object.core.type,
                   attr: {
                      id: object.core.id,
-                     x: Math.round(object.x),
-                     y: Math.round(object.y),
+                     pos: object.pos,
                      speed: object.speed,
-                     direction: object.direction
+                     turnSpeed: object.turnSpeed,
+                     angle: object.angle
                   }
                })
             }

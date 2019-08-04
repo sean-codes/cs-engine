@@ -15,49 +15,14 @@ module.exports = class Socket {
       const parsedJson = JSON.parse(jsonData)
 
       switch (parsedJson.func) {
-         case 'keyboard': {
+         case 'control': {
             const fix = this.ping / (1000/60)
             var cs = this.server.cs
             var object = this.gameObject
-            var newKeys = parsedJson.data
-            var oldKeys = object.keys
+            var { forward, angle } = parsedJson.data
 
-
-            // turn prediction
-            for (const key of [
-               { name: 'left', dir: -object.turnSpeed },
-               { name: 'right', dir: object.turnSpeed },
-            ]) {
-               const { name, dir, axis } = key
-               const up = !newKeys[name] && oldKeys[name]
-               const down = newKeys[name] && !oldKeys[name]
-
-               if (down || up) console.log('fix', fix * dir)
-               if (down) object.direction += dir * fix
-               if (up) object.direction -= dir * fix
-            }
-
-            // forward prediction
-            const forwardUp = !newKeys.up && oldKeys.up
-            const forwardDown = newKeys.up && !oldKeys.up
-            const xFix = cs.math.cos(object.direction) * fix
-            const yFix = cs.math.sin(object.direction) * fix
-
-            if (forwardUp) {
-               console.log('up', -xFix, -yFix)
-               object.x -= xFix
-               object.y -= yFix
-            }
-
-            if (forwardDown) {
-               console.log('down', xFix, yFix)
-               object.x += xFix
-               object.y += yFix
-            }
-
-
-
-            this.gameObject.keys = parsedJson.data
+            object.angle = angle
+            object.forward = forward
             break;
          }
 

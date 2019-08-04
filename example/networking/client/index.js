@@ -25,7 +25,7 @@ cs.load({
       cs.camera.setup({
          maxWidth: 150,
          maxHeight: 150,
-         smoothing: 2
+         smoothing: 10
       })
 
       cs.surface.create({ name: 'background', oneToOne: false, drawOutside: true, manualClear: true, depth: 100 })
@@ -33,13 +33,13 @@ cs.load({
       cs.global.keymap = cs.storage.read('keymap')
       cs.global.self = undefined
 
-      var joystick = cs.object.create({ type: 'joystick' })
-      cs.object.create({ type: 'controller' })
+      cs.global.joystick = cs.object.create({ type: 'joystick' })
+      cs.global.controller = cs.object.create({ type: 'controller' })
       cs.object.create({ type: 'background' })
       cs.script.network.init()
 
       window.addEventListener('keydown', () => {
-         cs.object.destroy(joystick)
+         cs.object.destroy(cs.global.joystick)
       })
    },
 

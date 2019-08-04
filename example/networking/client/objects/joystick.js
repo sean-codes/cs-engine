@@ -6,6 +6,8 @@ cs.objects.joystick = {
       this.joySize = 75
       this.xFromCenter = 0
       this.yFromCenter = 0
+      this.angle = 0
+      this.forward = false
    },
 
    step: function() {
@@ -28,27 +30,13 @@ cs.objects.joystick = {
          var yFromCenter =  this.touch.y - (touchArea.y + touchArea.size/2)
          this.xFromCenter = Math.min(this.joySize, Math.max(xFromCenter, -this.joySize))
          this.yFromCenter = Math.min(this.joySize, Math.max(yFromCenter, -this.joySize))
+         var distanceFromCenter = cs.vector.length({ x: xFromCenter, y: yFromCenter })
 
-         if (Math.abs(xFromCenter) > this.joySize/2) {
-            var downKey = Math.sign(xFromCenter) > 0 ? 'arrow-right' : 'arrow-left'
-            var upKey = Math.sign(xFromCenter) > 0 ? 'arrow-left' : 'arrow-right'
-            cs.inputKeyboard.virtualDown(cs.global.keymap[downKey])
-            cs.inputKeyboard.virtualUp(cs.global.keymap[upKey])
-         } else {
-            cs.inputKeyboard.virtualUp(cs.global.keymap['arrow-left'])
-            cs.inputKeyboard.virtualUp(cs.global.keymap['arrow-right'])
-         }
 
-         if (Math.abs(yFromCenter) > this.joySize/2) {
-            var downKey = Math.sign(yFromCenter) > 0 ? 'arrow-down' : 'arrow-up'
-            var upKey = Math.sign(yFromCenter) > 0 ? 'arrow-up' : 'arrow-down'
-            cs.inputKeyboard.virtualDown(cs.global.keymap[downKey])
-            cs.inputKeyboard.virtualUp(cs.global.keymap[upKey])
-         } else {
-            cs.inputKeyboard.virtualUp(cs.global.keymap['arrow-up'])
-            cs.inputKeyboard.virtualUp(cs.global.keymap['arrow-down'])
-         }
+         this.forward = distanceFromCenter > this.joySize / 2
+         this.angle = cs.math.angleXY(xFromCenter, yFromCenter)
       } else {
+         this.forward = false
          this.xFromCenter = 0
          this.yFromCenter = 0
          cs.inputKeyboard.virtualUp(cs.global.keymap['arrow-left'])

@@ -21,10 +21,10 @@ cs.script.networkFunctions = {
          var update = networkObjects.find(n => n.attr.id === object.networkId)
          if (update) {
             update.used = true
-            object.nx = update.attr.x - object.x
-            object.ny = update.attr.y - object.y
+            object.posFix = cs.vector.min(update.attr.pos, object.pos)
             object.speed = update.attr.speed
-            object.direction = update.attr.direction
+            object.turnSpeed = update.attr.turnSpeed
+            object.angle = update.attr.angle
 
          } else {
             cs.object.destroy(object)

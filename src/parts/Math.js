@@ -84,7 +84,7 @@
          return Math.sqrt(a2 + b2)
       }
 
-      direction(p1, p2) {
+      anglePointToPoint(p1, p2) {
          if (p2 == undefined) {
             p2 = p1
             p1 = { x: 0, y: 0 }
@@ -92,6 +92,11 @@
 
          var xOff = p2.x - p1.x
          var yOff = p2.y - p1.y
+
+         return this.angle(xOff, yOff)
+      }
+
+      angleXY(xOff, yOff) {
          var beforeTurn = this.degrees(Math.atan2(xOff, -yOff)) + 180
          var afterTurn = beforeTurn + 180
          if (afterTurn > 360) {
@@ -100,7 +105,7 @@
          return afterTurn
       }
 
-      shortestDirection(d1, d2) {
+      angleToAngle(d1, d2) {
           var right = d2 - d1
           if (right < 0) {
               right = 360 + right
