@@ -16,7 +16,9 @@ cs.load = function(options) {
          'ERROR: could not load parts.',
          '\r\nneed options.path or id="cs-main-web" on script tag'
       )
-      this.path = scriptTag.src.replace('main.web.js', '')
+      
+      var path = new URL(scriptTag.src)
+      this.path = path.pathname.replace('/main.web.js', '')
    }
 
    this.maxSize = options.maxSize || 2000
