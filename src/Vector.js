@@ -3,30 +3,34 @@
 //----------------------------------------------------------------------------//
 (() => {
    class CSENGINE_VECTOR {
+      constructor(cs) {
+         this.cs = cs
+      }
+
       create(x, y) {
          return { x: x, y: y }
       }
 
       clone(v) {
-         return cs.vector.create(v.x, v.y)
+         return this.cs.vector.create(v.x, v.y)
       }
 
       add(v0, v1) {
-         return cs.vector.create(
+         return this.cs.vector.create(
             v0.x + v1.x,
             v0.y + v1.y
          )
       }
 
       min(v0, v1) {
-         return cs.vector.create(
+         return this.cs.vector.create(
             v0.x - v1.x,
             v0.y - v1.y
          )
       }
 
       scale(v, s) {
-         return cs.vector.create(
+         return this.cs.vector.create(
             v.x * s,
             v.y * s
          )
@@ -41,19 +45,19 @@
       }
 
       unit(v) {
-         return cs.vector.scale(v, 1/cs.vector.length(v))
+         return this.cs.vector.scale(v, 1/this.cs.vector.length(v))
       }
 
       distance(v0, v1) {
-         return cs.vector.length(cs.vector.min(v0, v1))
+         return this.cs.vector.length(this.cs.vector.min(v0, v1))
       }
 
       cross(v) {
-         return cs.vector.create(-v.y, v.x)
+         return this.cs.vector.create(-v.y, v.x)
       }
 
       direction(v0, v1) {
-         return cs.vector.unit(cs.vector.min(v1, v0))
+         return this.cs.vector.unit(this.cs.vector.min(v1, v0))
       }
 
       round(v0, hundreths) {
