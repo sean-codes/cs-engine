@@ -19,7 +19,7 @@ cs.objects.player = {
    step: function() {
       if (this.networkId == cs.global.self) {
          cs.camera.follow(this.pos)
-         // uncomment to use clients angle (can be out of sync) 
+         // uncomment to use clients angle (can be out of sync)
          // this.angle = cs.global.controller.angle
       }
 
@@ -45,18 +45,19 @@ cs.objects.player = {
       cs.draw.setWidth(0.5)
       cs.draw.circle({ x: this.pos.x, y: this.pos.y, radius: this.radius })
 
-      cs.draw.setColor('#FFF')
-      cs.draw.setFont({ size: 2, family: 'monospace' })
-      cs.draw.setTextCenter()
-      cs.draw.text({
-         x: this.pos.x,
-         y: this.pos.y + 5,
-         lines: [
-            `fixX: ${cs.math.round(this.posFix.x, 100)}`,
-            `fixY: ${cs.math.round(this.posFix.y, 100)}`
-         ],
-         lineHeight: 2
-      })
+      // for debuggin fixes
+      // cs.draw.setColor('#FFF')
+      // cs.draw.setFont({ size: 2, family: 'monospace' })
+      // cs.draw.setTextCenter()
+      // cs.draw.text({
+      //    x: this.pos.x,
+      //    y: this.pos.y + 5,
+      //    lines: [
+      //       `fixX: ${cs.math.round(this.posFix.x, 100)}`,
+      //       `fixY: ${cs.math.round(this.posFix.y, 100)}`
+      //    ],
+      //    lineHeight: 2
+      // })
 
       // draw direction
       var dirPoint = {
