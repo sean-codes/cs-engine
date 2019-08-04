@@ -1,6 +1,6 @@
 const Socket = require('./Socket')
 const CS = require('cs-engine/src/main.headless.js')
-const GameObjectPlayer = require('./GameObjects/Player')
+const GameObjectPlayer = require('./GameObjects/player')
 
 module.exports = class Server {
    constructor() {
@@ -25,8 +25,10 @@ module.exports = class Server {
          type: 'player',
          attr: {
             socketId: id,
-            x: this.cs.room.width / 2,
-            y: this.cs.room.height / 2,
+            pos: {
+               x: this.cs.room.width / 2,
+               y: this.cs.room.height / 2,
+            }
          }
       })
 
@@ -59,10 +61,10 @@ module.exports = class Server {
                   type: object.core.type,
                   attr: {
                      id: object.core.id,
-                     x: Math.round(object.x),
-                     y: Math.round(object.y),
-                     speedX: object.speedX,
-                     speedY: object.speedY
+                     pos: this.cs.vector.round(object.pos, 1),
+                     speed: object.speed,
+                     turnSpeed: object.turnSpeed,
+                     angle: object.angle
                   }
                })
             }

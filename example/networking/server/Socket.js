@@ -15,8 +15,14 @@ module.exports = class Socket {
       const parsedJson = JSON.parse(jsonData)
 
       switch (parsedJson.func) {
-         case 'keyboard': {
-            this.gameObject.keys = parsedJson.data
+         case 'control': {
+            const fix = this.ping / (1000/60)
+            var cs = this.server.cs
+            var object = this.gameObject
+            var { forward, angle } = parsedJson.data
+
+            object.targetAngle = angle
+            object.forward = forward
             break;
          }
 

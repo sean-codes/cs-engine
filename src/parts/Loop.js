@@ -36,12 +36,14 @@
             // input
             this.cs.inputKeyboard.execute()
             this.cs.inputTouch.batchDownMove()
+            // move camera before clear
+            this.cs.camera.update()
+
          }
 
          this.cs.fps.update()
          this.cs.network.read()
 
-         // move camera before clear
          this.cs.object.addNewObjects()
 
          // Execute before steps
@@ -86,11 +88,10 @@
 
          if (!headless) {
             // Touch / Keyboard
+            this.cs.surface.displayAll()
             this.cs.inputKeyboard.reset()
             this.cs.inputTouch.reset()
             this.cs.inputTouch.batchUp()
-            this.cs.camera.update()
-            this.cs.surface.displayAll()
          }
 
          // Execute next steps

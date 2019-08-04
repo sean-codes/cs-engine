@@ -13,6 +13,11 @@ app.use(express.static('./client', {
    maxage: '1d'
 }))
 
+app.use('/cs-engine', express.static('../../', {
+   maxage: '1d'
+}))
+
+
 app.listen(CONFIG.PORT.STATIC_ASSETS, () => {
    console.log(`listening on ${CONFIG.PORT.STATIC_ASSETS}`)
 })

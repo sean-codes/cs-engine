@@ -214,18 +214,18 @@
       }
 
       line(options) {
-         var lineWidth = this.surface.ctx.lineWidth
-         var lineWidthAdjust = lineWidth / 2 / this.scale
          var scale = this.scale
+         var lineWidth = this.surface.ctx.lineWidth
+         var lineWidthAdjust = lineWidth / 2 / scale
 
-         var x1 = options.points[0].x + lineWidthAdjust - this.cameraX
-         var x2 = options.points[1].x + lineWidthAdjust - this.cameraX
-         var y1 = options.points[0].y - lineWidthAdjust - this.cameraY
-         var y2 = options.points[1].y - lineWidthAdjust - this.cameraY
+         var x1 = options.points[0].x * scale + lineWidthAdjust - this.cameraX * scale
+         var x2 = options.points[1].x * scale + lineWidthAdjust - this.cameraX * scale
+         var y1 = options.points[0].y * scale - lineWidthAdjust - this.cameraY * scale
+         var y2 = options.points[1].y * scale - lineWidthAdjust - this.cameraY * scale
 
          this.surface.ctx.beginPath();
-         this.surface.ctx.moveTo(x1 * scale, y1 * scale);
-         this.surface.ctx.lineTo(x2 * scale, y2 * scale);
+         this.surface.ctx.moveTo(x1, y1);
+         this.surface.ctx.lineTo(x2, y2);
          this.surface.ctx.stroke()
          this.settingsDefault()
       }

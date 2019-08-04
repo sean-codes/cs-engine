@@ -3,20 +3,28 @@ module.exports = {
       this.share = true
       this.keys = { up: false, down: false, left: false, right: false }
       this.networkId = this.networkId
-      this.speedX = 0
-      this.speedY = 0
+
+      this.pos = this.pos
+      this.speed = 0
+      this.maxSpeed = 1
+      this.angle = 0
+      this.targetAngle = 0
+      this.turnSpeed = 0
+      this.maxTurnSpeed = 4
+      this.forward = false
    },
 
    step: function({ cs }) {
-      var speed = 1
-      if (this.keys.left && !this.keys.right) this.speedX = -speed
-      if (this.keys.right && !this.keys.left) this.speedX = speed
-      if (!this.keys.left && !this.keys.right) this.speedX = 0
-      if (this.keys.up && !this.keys.down) this.speedY = -speed
-      if (this.keys.down && !this.keys.up) this.speedY = speed
-      if (!this.keys.down && !this.keys.up) this.speedY = 0
+      if (this.forward) this.speed = this.maxSpeed
+      if (!this.forward) this.speed = 0
 
-      this.x += this.speedX * cs.loop.delta
-      this.y += this.speedY * cs.loop.delta
+      var changeAngleDirection = cs.math.angleToAngle(this.targetAngle, this.angle)
+      if (Math.abs(changeAngleDirection > this.maxTurnSpeed)) {
+         changeAngleDirection = this.maxTurnSpeed * cs.math.sign(changeAngleDirection)
+      }
+      
+      this.angle -= changeAngleDirection
+      this.pos.x += cs.math.cos(this.angle) * (this.speed * cs.loop.delta)
+      this.pos.y += cs.math.sin(this.angle) * (this.speed * cs.loop.delta)
    }
 }
