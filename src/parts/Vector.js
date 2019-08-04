@@ -55,6 +55,14 @@
       direction(v0, v1) {
          return cs.vector.unit(cs.vector.min(v1, v0))
       }
+
+      round(v0, hundreths) {
+         if (hundreths == null) hundreths = 1
+         return {
+            x: Math.round(v0.x * hundreths) / hundreths,
+            y: Math.round(v0.y * hundreths) / hundreths
+         }
+      }
    }
 
    // export (node / web)

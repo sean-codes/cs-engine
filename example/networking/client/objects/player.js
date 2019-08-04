@@ -19,12 +19,15 @@ cs.objects.player = {
    step: function() {
       if (this.networkId == cs.global.self) {
          cs.camera.follow(this.pos)
-         this.angle = cs.global.controller.angle
+         // uncomment to use clients angle (can be out of sync) 
+         // this.angle = cs.global.controller.angle
       }
 
       var posFixLength = cs.vector.length(this.posFix)
       if (posFixLength > 1) {
          var adjustSpeed = 0.1
+         if (posFixLength > 10) adjustSpeed = 0.5
+         if (posFixLength > 20) adjustSpeed = 1
          var fix = cs.vector.scale(cs.vector.unit(this.posFix), adjustSpeed)
          this.pos = cs.vector.add(this.pos, fix)
          this.posFix = cs.vector.min(this.posFix, fix)

@@ -61,7 +61,7 @@ module.exports = class Server {
                   type: object.core.type,
                   attr: {
                      id: object.core.id,
-                     pos: object.pos,
+                     pos: this.cs.vector.round(object.pos, 1),
                      speed: object.speed,
                      turnSpeed: object.turnSpeed,
                      angle: object.angle

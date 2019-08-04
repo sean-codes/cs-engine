@@ -21,7 +21,7 @@ module.exports = class Socket {
             var object = this.gameObject
             var { forward, angle } = parsedJson.data
 
-            object.angle = angle
+            object.targetAngle = angle
             object.forward = forward
             break;
          }
