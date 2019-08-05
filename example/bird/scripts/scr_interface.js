@@ -1,5 +1,5 @@
-cs.script.interface = {}
-cs.script.interface.drawButtons = function(btns) {
+cs.scripts.interface = {}
+cs.scripts.interface.drawButtons = function(btns) {
    var btnHeight = 150
    var btnWidth = 300
    var totalHeight = cs.draw.surface.height

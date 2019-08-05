@@ -21,7 +21,7 @@ cs.objects['obj_blob'] = {
    
    draw: ({ object, cs }) => {
       //Horizontal Movement
-      pcol = cs.script.collide.rect('obj_player', {
+      pcol = cs.scripts.collide.rect('obj_player', {
          x: object.x - 50,
          y: object.y - 100,
          width: object.mask.width + 100,
@@ -43,7 +43,7 @@ cs.objects['obj_blob'] = {
          object.hspeed -= (object.hspeed * 0.5)
       }
 
-      object.h_col = cs.script.collide.obj(object, 'obj_block')
+      object.h_col = cs.scripts.collide.obj(object, 'obj_block')
       if (object.h_col || (object.x + object.hspeed) <= 0 || (object.x + object.hspeed) + object.mask.width >= cs.room.width)
          object.hspeed = 0;
 
@@ -54,7 +54,7 @@ cs.objects['obj_blob'] = {
          object.vspeed += 1
 
       object.y += object.vspeed
-      object.v_col = cs.script.collide.obj(object, 'obj_block')
+      object.v_col = cs.scripts.collide.obj(object, 'obj_block')
 
       if (object.v_col) {
          object.y -= object.vspeed

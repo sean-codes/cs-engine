@@ -46,6 +46,7 @@
             console.groupEnd()
             const assetsLoadTime = Math.round(Date.now() - this.start)
             console.log(`Assets Loaded in ${assetsLoadTime}ms`)
+            // run setup
             this.cs.setup.run()
          }
       }

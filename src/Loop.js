@@ -56,8 +56,7 @@
 
          this.cs.object.loop((object) => {
             if (!object.core.active || !object.core.live) return
-            var stepEvent = this.cs.objects[object.core.type].step
-            stepEvent && stepEvent.call(object, { object, cs: this.cs })
+            object.step && object.step({ object, cs: this.cs })
          })
 
          if (!headless) {
@@ -71,15 +70,15 @@
 
                this.cs.draw.setSurface(object.core.surface)
 
-               if (drawOnceFunction) {
+               if (object.drawOnce) {
                   var surface = this.cs.surface.list[object.core.surface]
                   if (surface.clear || !object.core.drawn) {
                      object.core.drawn = true
-                     drawOnceFunction.call(object, { object, cs: this.cs })
+                     object.drawOnce({ object, cs: this.cs })
                   }
                }
 
-               drawFunction && drawFunction.call(object, { object, cs: this.cs })
+               object.draw && object.draw({ object, cs: this.cs })
             })
          }
 

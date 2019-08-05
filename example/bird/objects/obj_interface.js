@@ -36,7 +36,7 @@ cs.objects['obj_interface'] = {
 
       switch (cs.save.state) {
          case 'START':
-            cs.script.interface.drawButtons(['Please tap to start'])
+            cs.scripts.interface.drawButtons(['Please tap to start'])
             if (object.touch.isDown())
                cs.save.state = 'TAPTOFLAP'
             if (!object.backgroundPlaying)
@@ -44,7 +44,7 @@ cs.objects['obj_interface'] = {
             break
 
          case 'TAPTOFLAP':
-            cs.script.interface.drawButtons(['Tap to flap!', 'Your Best Score: ' + cs.save.topScore])
+            cs.scripts.interface.drawButtons(['Tap to flap!', 'Your Best Score: ' + cs.save.topScore])
             if (object.touch.isDown()) {
                cs.save.state = 'PLAYING'
                cs.global.flap = true
@@ -82,13 +82,13 @@ cs.objects['obj_interface'] = {
             break
 
          case 'WRECKED':
-            cs.script.interface.drawButtons(['Replay!', 'Your Best Score: ' + cs.save.topScore])
+            cs.scripts.interface.drawButtons(['Replay!', 'Your Best Score: ' + cs.save.topScore])
             if (cs.global.score > cs.save.topScore)
                cs.save.topScore = cs.global.score
 
             if (object.touch.isDown()) {
                cs.save.state = 'TAPTOFLAP'
-               cs.script.reset()
+               cs.scripts.reset()
             }
             break
       }

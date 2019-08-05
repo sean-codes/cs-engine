@@ -1,41 +1,38 @@
-cs.script.networkFunctions = {
+cs.scripts.networkFunctions = {
    'connect': function(data) {
       console.log('connected', data)
       cs.global.self = data.gameObjectId
    },
 
-   'state': function(data) {
-      var networkObjects = data.objects
+   'snapshot': function(data) {
       cs.global.ping = data.ping
-      var sent = data.sent
-
-      cs.script.network.send({
+      cs.scripts.network.send({
          func: 'ping',
          data: data.sent
       })
+
+      var snapshot = data.snapshot
 
       for (var object of cs.object.every()) {
          if (object.networkId == null) continue
          if (object.networkId == cs.global.self) cs.global.selfObject = object
 
-         var update = networkObjects.find(n => n.attr.id === object.networkId)
+         var update = snapshot.find(n => n.id === object.networkId)
          if (update) {
             update.used = true
-            object.posFix = cs.vector.min(update.attr.pos, object.pos)
-            object.speed = update.attr.speed
-            object.turnSpeed = update.attr.turnSpeed
-            object.angle = update.attr.angle
-
+            object.read(update)
          } else {
             cs.object.destroy(object)
          }
       }
 
-      for (var object of networkObjects) {
-         if (!object.used) cs.object.create({
-            type: object.type,
-            attr: object.attr
-         })
+      for (var objectSnapshot of snapshot) {
+         if (!objectSnapshot.used) {
+            cs.object.create({
+               type: objectSnapshot.type,
+               attr: { snapshot: objectSnapshot }
+            })
+         }
       }
    }
 }

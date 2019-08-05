@@ -1,28 +1,37 @@
 cs.objects.player = {
    create: function() {
-      this.networkId = this.id
+      if (this.snapshot) this.read(this.snapshot)
+      this.networkId = this.networkId
 
       this.pos = this.pos
       this.posFix = cs.vector.create(0, 0)
 
-      this.maxSpeed = 1
-      this.radius = 3
       this.speed = 0
       this.turnSpeed = 0
-      this.maxTurnSpeed = 4
       this.angle = 0
+      this.angleFix = 0
+      this.radius = 3
 
-      this.controlForward = false
-      this.controlAngle = 0
+      this.snapshot = {
+         frames: [],
+         time: 0,
+         when: Date.now()
+      }
+   },
+
+   read: function(snapshot) {
+
+      this.networkId = snapshot.id
+      if (!this.pos) this.pos = cs.vector.create(snapshot.x, snapshot.y)
+
+      this.posFix = cs.vector.min(cs.vector.create(snapshot.x, snapshot.y), this.pos)
+      this.speed = snapshot.s
+      this.angle = snapshot.a
+      this.turnSpeed = snapshot.t
    },
 
    step: function() {
-      if (this.networkId == cs.global.self) {
-         cs.camera.follow(this.pos)
-         // uncomment to use clients angle (can be out of sync)
-         // this.angle = cs.global.controller.angle
-      }
-
+      // smoothing sync with server
       var posFixLength = cs.vector.length(this.posFix)
       if (posFixLength > 1) {
          var adjustSpeed = 0.1
@@ -33,6 +42,7 @@ cs.objects.player = {
          this.posFix = cs.vector.min(this.posFix, fix)
       }
 
+      this.angle += this.turnSpeed
       this.pos.x += cs.math.cos(this.angle) * (this.speed * cs.loop.delta)
       this.pos.y += cs.math.sin(this.angle) * (this.speed * cs.loop.delta)
    },
@@ -44,20 +54,6 @@ cs.objects.player = {
       cs.draw.setColor('#FFF')
       cs.draw.setWidth(0.5)
       cs.draw.circle({ x: this.pos.x, y: this.pos.y, radius: this.radius })
-
-      // for debuggin fixes
-      // cs.draw.setColor('#FFF')
-      // cs.draw.setFont({ size: 2, family: 'monospace' })
-      // cs.draw.setTextCenter()
-      // cs.draw.text({
-      //    x: this.pos.x,
-      //    y: this.pos.y + 5,
-      //    lines: [
-      //       `fixX: ${cs.math.round(this.posFix.x, 100)}`,
-      //       `fixY: ${cs.math.round(this.posFix.y, 100)}`
-      //    ],
-      //    lineHeight: 2
-      // })
 
       // draw direction
       var dirPoint = {

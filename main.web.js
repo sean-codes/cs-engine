@@ -16,7 +16,7 @@ cs.load = function(options) {
          'ERROR: could not load parts.',
          '\r\nneed options.path or id="cs-main-web" on script tag'
       )
-      
+
       var path = new URL(scriptTag.src)
       this.path = path.pathname.replace('/main.web.js', '')
    }
@@ -33,7 +33,7 @@ cs.load = function(options) {
    this.focus = options.focus || function() {}
 
    this.objects = options.objects || {}
-   this.script = options.script || {}
+   this.scripts = options.scripts || {}
    this.sprites = options.sprites || []
    this.storages = options.storages || []
    this.sounds = options.sounds || []
@@ -59,6 +59,7 @@ cs.load = function(options) {
       { path: this.path + '/src/Network' },
       { path: this.path + '/src/Object' },
       { path: this.path + '/src/Room' },
+      { path: this.path + '/src/Script' },
       { path: this.path + '/src/Setup' },
       { path: this.path + '/src/Sound' },
       { path: this.path + '/src/Sprite' },

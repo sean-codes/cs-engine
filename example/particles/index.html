@@ -45,10 +45,10 @@
          objects: {
             emitter: {
                create: ({ object, cs }) => {
-                  object.particleSystem = cs.script.particles.createSystem(cs.global.particles.test)
+                  object.particleSystem = cs.scripts.particles.createSystem(cs.global.particles.test)
                },
                draw: ({ object, cs }) => {
-                  cs.script.particles.burst({
+                  cs.scripts.particles.burst({
                      system: object.particleSystem,
                      x: cs.room.width / 2,
                      y: cs.room.height / 2,
@@ -57,7 +57,7 @@
                      qty: 5
                   })
 
-                  cs.script.particles.step({
+                  cs.scripts.particles.step({
                      system: object.particleSystem
                   })
                }

@@ -11,6 +11,21 @@
          this.types = {}
          this.objGroups = {}
          this.shouldClean = false
+         this.objectGenerators = {}
+      }
+
+      init() {
+         for (const objectName in this.cs.objects) {
+            this.objectGenerators[objectName] = class GAMEOBJECT {}
+
+            for (const prop in this.cs.objects[objectName]) {
+               var propValue = this.cs.objects[objectName][prop]
+
+               if (typeof propValue === 'function') {
+                  this.objectGenerators[objectName].prototype[prop] = propValue
+               }
+            }
+         }
       }
 
       loop(call) {
@@ -28,38 +43,38 @@
          }
 
          var attr = options.attr
+         var Generator = this.objectGenerators[options.type]
          var template = this.cs.objects[options.type]
          var zIndex = options.zIndex || template.zIndex || 0
 
          // create the object
-         var newObj = {
-            core: {
-               zIndex: zIndex,
-               live: true,
-               active: true,
-               drawn: false,
-               type: options.type,
-               id: this.unique,
-               surface: this.cs.default(template.surface, 'game')
-            }
+         var newObject = new Generator()
+         newObject.core = {
+            zIndex: zIndex,
+            live: true,
+            active: true,
+            drawn: false,
+            type: options.type,
+            id: this.unique,
+            surface: this.cs.default(template.surface, 'game')
          }
 
          // predefined / custom Attr
-         for (var name in template.attr) { newObj[name] = template.attr[name] }
-         for (var name in attr) { newObj[name] = attr[name] }
+         for (var name in template.attr) { newObject[name] = template.attr[name] }
+         for (var name in attr) { newObject[name] = attr[name] }
 
          // run create event
-         template.create && template.create.call(newObj, { object: newObj, cs: this.cs });
+         newObject.create({ object: newObject, cs: this.cs })
 
          // add to list
-         this.new.push({ obj: newObj, zIndex: zIndex })
+         this.new.push({ obj: newObject, zIndex: zIndex })
          this.unique += 1
 
          // grouping
          if (!this.objGroups[options.type]) this.objGroups[options.type] = []
-         this.objGroups[options.type].push(newObj)
+         this.objGroups[options.type].push(newObject)
 
-         return newObj
+         return newObject
       }
 
       addNewObjects() {

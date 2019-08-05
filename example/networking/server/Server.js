@@ -1,21 +1,24 @@
 const Socket = require('./Socket')
 const CS = require('cs-engine/main.headless.js')
-const GameObjectPlayer = require('./GameObjects/player')
 
 module.exports = class Server {
    constructor() {
       this.sockets = []
       this.nextId = 1
       this.lastUpdate = Date.now()
-      this.updateInterval = 1000 / 60
+      this.updateInterval = 1000 / 30
 
       this.cs = new CS({
          objects: {
-            player: GameObjectPlayer
+            player: require('./Game/objects/player')
+         },
+
+         scripts: {
+            snapshot: require('./Game/scripts/snapshot')
          },
 
          room: { width: 300, height: 300 },
-         step: this.networkStep.bind(this)
+         step: this.gamestep.bind(this)
       })
    }
 
@@ -42,6 +45,7 @@ module.exports = class Server {
       })
 
       this.sockets.push(socket)
+
    }
 
    closeConnection(socket) {
@@ -49,34 +53,23 @@ module.exports = class Server {
       this.sockets = this.sockets.filter(s => s.id !== socket.id)
    }
 
-   networkStep() {
-      // console.log('hi')
+   gamestep() {
+      this.sendSnapshotSmall()
+   }
+
+   sendSnapshotSmall() {
       if (Date.now() - this.lastUpdate > this.updateInterval) {
          this.lastUpdate = Date.now()
 
-         let update = []
-         for (let object of this.cs.object.every()) {
-            if (object.share) {
-               update.push({
-                  type: object.core.type,
-                  attr: {
-                     id: object.core.id,
-                     pos: this.cs.vector.round(object.pos, 1),
-                     speed: object.speed,
-                     turnSpeed: object.turnSpeed,
-                     angle: object.angle
-                  }
-               })
-            }
-         }
+         const snapshot = this.cs.script.exec('snapshot')
 
          for (var socket of this.sockets) {
             socket.send({
-               func: 'state',
+               func: 'snapshot',
                data: {
                   sent: Date.now(),
                   ping: socket.ping,
-                  objects: update
+                  snapshot
                }
             })
          }

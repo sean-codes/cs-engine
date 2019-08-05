@@ -1,4 +1,4 @@
-cs.script.particles = {
+cs.scripts.particles = {
    init: function(settings) {
       return {
          particles: [],

@@ -1,4 +1,4 @@
-cs.script.collide = {
+cs.scripts.collide = {
    obj: function(obj1, objtype) {
       var i = cs.object.list.length;
       while (i--) {

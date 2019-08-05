@@ -46,7 +46,7 @@ cs.objects['obj_player'] = {
          }
       }
 
-      object.h_col = cs.script.collide(object, 'obj_block', { vspeed: 0 })
+      object.h_col = cs.scripts.collide(object, 'obj_block', { vspeed: 0 })
       if (
          object.h_col ||
          (object.x + object.hspeed) <= 0 ||
@@ -60,7 +60,7 @@ cs.objects['obj_player'] = {
       if (object.vspeed < object.gravity) {
          object.vspeed += 1;
       }
-      object.v_col = cs.script.collide(object, 'obj_block')
+      object.v_col = cs.scripts.collide(object, 'obj_block')
 
       if (object.v_col) {
          object.vspeed = 0;

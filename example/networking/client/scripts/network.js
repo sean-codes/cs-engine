@@ -1,4 +1,4 @@
-cs.script.network = {
+cs.scripts.network = {
    init: function() {
       cs.network.setup({
          connect: this.onConnect.bind(this),
@@ -28,7 +28,7 @@ cs.script.network = {
    onMessage: function(data) {
       try {
          var message = JSON.parse(data)
-         cs.script.networkFunctions[message.func](message.data)
+         cs.scripts.networkFunctions[message.func](message.data)
       } catch(e) {
          console.log('message error', e)
       }

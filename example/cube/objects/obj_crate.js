@@ -20,7 +20,7 @@ cs.objects['obj_crate'] = {
             object.vspeed += 1;
          }
 
-         object.v_col = cs.script.collide(object, 'obj_block')
+         object.v_col = cs.scripts.collide(object, 'obj_block')
 
          if (object.v_col) {
             object.vspeed = 0;

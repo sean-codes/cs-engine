@@ -11,6 +11,7 @@ const PartMath = require('./src/Math')
 const PartNetwork = require('./src/Network')
 const PartObject = require('./src/Object')
 const PartRoom = require('./src/Room')
+const PartScript = require('./src/Script')
 const PartSetup = require('./src/Setup')
 const PartSound = require('./src/Sound')
 const PartSprite = require('./src/Sprite')
@@ -41,7 +42,7 @@ module.exports = class cs {
       this.focus = options.focus || function() {}
 
       this.objects = options.objects || {}
-      this.script = options.script || {}
+      this.scripts = options.scripts || {}
       this.sprites = options.sprites || []
       this.storages = options.storages || []
       this.sounds = options.sounds || []
@@ -60,13 +61,13 @@ module.exports = class cs {
       this.network = new PartNetwork(this)
       this.object = new PartObject(this)
       this.room = new PartRoom(this)
+      this.script = new PartScript(this)
       this.setup = new PartSetup(this)
       this.storage = new PartStorage(this)
       this.timer = new PartTimer(this)
       this.vector = new PartVector(this)
 
       // load
-      this.start({ cs: this })
-      this.loop.start()
+      this.loader.load({ cs: this })
    }
 }

@@ -36,7 +36,7 @@ cs.load({
       cs.global.joystick = cs.object.create({ type: 'joystick' })
       cs.global.controller = cs.object.create({ type: 'controller' })
       cs.object.create({ type: 'background' })
-      cs.script.network.init()
+      cs.scripts.network.init()
 
       window.addEventListener('keydown', () => {
          cs.object.destroy(cs.global.joystick)
@@ -44,7 +44,9 @@ cs.load({
    },
 
    step: () => {
-
+      if (cs.global.selfObject) {
+         cs.camera.follow(cs.global.selfObject.pos)
+      }
    },
 
    draw: () => {
