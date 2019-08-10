@@ -1,50 +1,71 @@
 cs.objects.player = {
    create: function() {
-      if (this.snapshot) this.read(this.snapshot)
       this.networkId = this.networkId
 
       this.pos = this.pos
-      this.posFix = cs.vector.create(0, 0)
-
       this.speed = 0
-      this.turnSpeed = 0
       this.angle = 0
-      this.angleFix = 0
       this.radius = 3
 
-      this.snapshot = {
-         frames: [],
+      this.timeline = {
+         snapshots: [],
+         curr: 0,
          time: 0,
-         when: Date.now()
+         last: Date.now()
       }
+
+      // read intial snapshot
+      this.snapshot && this.read(this.snapshot)
    },
 
    read: function(snapshot) {
-
       this.networkId = snapshot.id
-      if (!this.pos) this.pos = cs.vector.create(snapshot.x, snapshot.y)
 
-      this.posFix = cs.vector.min(cs.vector.create(snapshot.x, snapshot.y), this.pos)
-      this.speed = snapshot.s
-      this.angle = snapshot.a
-      this.turnSpeed = snapshot.t
+      if (!this.timeline.snapshots.length) {
+         this.pos = cs.vector.create(snapshot.x, snapshot.y)
+         this.speed = snapshot.s
+         this.angle = snapshot.a
+         this.turnSpeed = snapshot.t
+         this.timeline.time = Date.now()
+      }
+
+      var lastSnapshot = this.timeline.snapshots[this.timeline.snapshots.length - 1]
+      var frametime = lastSnapshot ? Date.now() - lastSnapshot.time : 100
+
+      this.timeline.totalTime += frametime
+      this.timeline.snapshots.push({
+         pos: cs.vector.create(snapshot.x, snapshot.y),
+         speed: snapshot.s,
+         angle: snapshot.a,
+         now: Date.now(),
+         time: this.timeline.time + frametime,
+         frameTime: frametime
+      })
+
    },
 
    step: function() {
-      // smoothing sync with server
-      var posFixLength = cs.vector.length(this.posFix)
-      if (posFixLength > 1) {
-         var adjustSpeed = 0.1
-         if (posFixLength > 10) adjustSpeed = 0.5
-         if (posFixLength > 20) adjustSpeed = 1
-         var fix = cs.vector.scale(cs.vector.unit(this.posFix), adjustSpeed)
-         this.pos = cs.vector.add(this.pos, fix)
-         this.posFix = cs.vector.min(this.posFix, fix)
-      }
+      // we have an array of snapshots
+      // 1. find the first and last snapshot
+      var currSnapshot = this.timeline.snapshots[this.timeline.curr]
+      var nextSnapshot = this.timeline.snapshots[this.timeline.snapshots.length - 1]
 
-      this.angle += this.turnSpeed
-      this.pos.x += cs.math.cos(this.angle) * (this.speed * cs.loop.delta)
-      this.pos.y += cs.math.sin(this.angle) * (this.speed * cs.loop.delta)
+      // find the difference between curr and next
+      var timeDifference = nextSnapshot.time - currSnapshot.time
+
+      // where are we in this?
+      // var percent =
+      console.log('timeDifference', timeDifference, this.timeline.curr)
+
+      // update time
+      var now = Date.now()
+      var timePassed = now - this.timeline.last
+      this.timeline.last = now
+      this.timeline.time += timePassed
+
+      if (this.timeline.time > currSnapshot.time) {
+         this.timeline.curr = Math.min(this.timeline.curr + 1, this.timeline.snapshots.length-1)
+      }
    },
 
    draw: function() {
