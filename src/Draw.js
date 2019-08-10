@@ -474,7 +474,6 @@
          for (var setting in settings) {
             this.config.defaults[setting] = settings[setting]
          }
-         this.settingsDefault()
       }
 
       settingsUpdate() {

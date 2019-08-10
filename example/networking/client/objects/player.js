@@ -1,9 +1,8 @@
 cs.objects.player = {
    create: function() {
-      if (this.snapshot) this.read(this.snapshot)
       this.networkId = this.networkId
 
-      this.pos = this.pos
+      this.pos = cs.vector.create(0, 0)
       this.posFix = cs.vector.create(0, 0)
 
       this.speed = 0
@@ -12,22 +11,16 @@ cs.objects.player = {
       this.angleFix = 0
       this.radius = 3
 
-      this.snapshot = {
-         frames: [],
-         time: 0,
-         when: Date.now()
-      }
+      this.read(this.snapshot)
    },
 
    read: function(snapshot) {
-
       this.networkId = snapshot.id
-      if (!this.pos) this.pos = cs.vector.create(snapshot.x, snapshot.y)
 
-      this.posFix = cs.vector.min(cs.vector.create(snapshot.x, snapshot.y), this.pos)
-      this.speed = snapshot.s
-      this.angle = snapshot.a
-      this.turnSpeed = snapshot.t
+      this.posFix = cs.vector.min(cs.vector.create(snapshot[0], snapshot[1]), this.pos)
+      this.speed = snapshot[2]
+      this.angle = snapshot[3]
+      this.turnSpeed = snapshot[4]
    },
 
    step: function() {
@@ -42,6 +35,11 @@ cs.objects.player = {
          this.posFix = cs.vector.min(this.posFix, fix)
       }
 
+      if (posFixLength > 20) {
+         this.pos = this.posFix
+         this.posFix = cs.vector.create(0, 0)
+      }
+
       this.angle += this.turnSpeed
       this.pos.x += cs.math.cos(this.angle) * (this.speed * cs.loop.delta)
       this.pos.y += cs.math.sin(this.angle) * (this.speed * cs.loop.delta)
@@ -51,7 +49,6 @@ cs.objects.player = {
       cs.draw.setColor('#39D')
       cs.draw.circle({ x: this.pos.x, y: this.pos.y, radius: this.radius, fill: true })
 
-      cs.draw.setColor('#FFF')
       cs.draw.setWidth(0.5)
       cs.draw.circle({ x: this.pos.x, y: this.pos.y, radius: this.radius })
 
@@ -62,9 +59,18 @@ cs.objects.player = {
       }
 
       cs.draw.setWidth(0.5)
-      cs.draw.setColor('#FFF')
       cs.draw.line({
          points: [{ x: this.pos.x, y: this.pos.y }, dirPoint ]
+      })
+
+      // pos fix
+      cs.draw.text({
+         x: this.pos.x - 6,
+         y: this.pos.y + 4,
+         lines: [
+            'xfix: ' + cs.math.round(this.posFix.x, 100),
+            'yfix: ' + cs.math.round(this.posFix.y, 100),
+         ]
       })
    }
 }

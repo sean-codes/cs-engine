@@ -14,13 +14,13 @@ module.exports = {
    },
 
    share: function({ cs }) {
-      return {
-         x: cs.math.round(this.pos.x, 10),
-         y: cs.math.round(this.pos.y, 10),
-         s: cs.math.round(this.speed, 10),
-         a: cs.math.round(this.angle, 10),
-         t: cs.math.round(this.turnSpeed, 10),
-      }
+      return [
+         cs.math.round(this.pos.x, 10),
+         cs.math.round(this.pos.y, 10),
+         cs.math.round(this.speed, 10),
+         cs.math.round(this.angle, 10),
+         cs.math.round(this.turnSpeed, 10),
+      ]
    },
 
    step: function({ cs }) {

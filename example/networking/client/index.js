@@ -28,6 +28,12 @@ cs.load({
          smoothing: 10
       })
 
+      cs.draw.default({
+         color: '#FFF',
+         font: { size: 2, family: 'monospace' },
+         lineHeight: 2.5
+      })
+
       cs.surface.create({ name: 'background', oneToOne: false, drawOutside: true, manualClear: true, depth: 100 })
 
       cs.global.keymap = cs.storage.read('keymap')
