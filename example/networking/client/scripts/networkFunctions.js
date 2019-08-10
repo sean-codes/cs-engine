@@ -6,6 +6,9 @@ cs.scripts.networkFunctions = {
 
    'snapshot': function(data) {
       cs.global.ping = data.ping
+      cs.global.snapshotInterval = cs.math.round(1000 / (Date.now() - cs.global.snapshotLast))
+      cs.global.snapshotLast = Date.now()
+
       cs.scripts.network.send({
          func: 'ping',
          data: data.sent

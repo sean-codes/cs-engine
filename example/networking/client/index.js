@@ -30,14 +30,16 @@ cs.load({
 
       cs.draw.default({
          color: '#FFF',
-         font: { size: 2, family: 'monospace' },
-         lineHeight: 2.5
+         font: { size: 20, family: 'monospace' },
+         lineHeight: 22
       })
 
       cs.surface.create({ name: 'background', oneToOne: false, drawOutside: true, manualClear: true, depth: 100 })
 
       cs.global.keymap = cs.storage.read('keymap')
       cs.global.self = undefined
+      cs.global.snapshotInterval = 0
+      cs.global.snapshotLast = 0
 
       cs.global.joystick = cs.object.create({ type: 'joystick' })
       cs.global.controller = cs.object.create({ type: 'controller' })
@@ -57,19 +59,14 @@ cs.load({
 
    draw: () => {
       cs.draw.setSurface('gui')
-      // debug info
-      cs.draw.setColor('#FFF')
       cs.draw.text({
          x: 10,
          y: 10,
-         text: cs.global.ping + 'ms'
-      })
-
-      cs.draw.setColor('#FFF')
-      cs.draw.text({
-         x: 10,
-         y: 24,
-         text: Math.round(cs.network.metrics.downAverage / 1000) + 'kb'
+         lines: [
+            cs.global.ping + 'ms',
+            Math.round(cs.network.metrics.downAverage / 1000) + 'kb down',
+            '~' + cs.global.snapshotInterval + 'sps'
+         ]
       })
    }
 })

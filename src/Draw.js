@@ -428,15 +428,24 @@
       }
 
       setFont(options) {
-         if(this.surface.ctx.fontSize === options.size * this.scale && this.surface.ctx.fontFamily === options.family) return
-         this.surface.ctx.fontSize = options.size * this.scale
-         this.surface.ctx.fontFamily = options.family
-         this.surface.ctx.font = (options.effect ? options.effect + ' ' : '') + options.size * this.scale + 'px ' + options.family
+         if(
+            this.surface.ctx.fontSize === options.size &&
+            this.surface.ctx.fontFamily === options.family &&
+            !this.surface.clear
+         ) return
+
+         if(options.size) this.surface.ctx.fontSize = options.size
+         if(options.family) this.surface.ctx.fontFamily = options.family
+
+         var effect = options.effect ? options.effect + ' ' : ''
+         var fontFamily = this.surface.ctx.fontFamily
+         var fontSize = this.surface.ctx.fontSize + 'px'
+         this.surface.ctx.font = effect + ' ' + fontSize + ' ' + fontFamily
       }
 
       setLineHeight(height) {
-         if(this.surface.ctx.lineHeight === height) return
-         this.surface.ctx.lineHeight = height
+         if(this.surface.ctx.lineHeight === height / this.scale) return
+         this.surface.ctx.lineHeight = height / this.scale
       }
 
       setLineDash(lineDash) {
