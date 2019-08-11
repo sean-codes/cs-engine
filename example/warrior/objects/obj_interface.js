@@ -1,12 +1,12 @@
 cs.objects['obj_interface'] = {
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       cs.object.create({ type: 'obj_joystick', x: 0, y: 0 })
       cs.object.create({ type: 'obj_buttons', x: 0, y: 0 })
    }
 }
 
 cs.objects['obj_buttons'] = {
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.touch = cs.inputTouch.observer()
       object.width = 30;
       object.height = 30;
@@ -36,7 +36,7 @@ cs.objects['obj_buttons'] = {
 }
 
 cs.objects['obj_joystick'] = {
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.touch = cs.inputTouch.observer()
       object.width = 64;
       object.height = 64;

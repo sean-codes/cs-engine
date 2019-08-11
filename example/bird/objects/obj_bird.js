@@ -1,9 +1,11 @@
 cs.objects['obj_bird'] = {
    zIndex: 20,
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.sprite = 'bird'
       object.mask = cs.sprite.info({ spr: object.sprite }).mask
-      object.x -= object.mask.width / 2
+      object.x = attr.x - object.mask.width / 2
+      object.y = attr.y
+
       object.timer = 1
       object.direction = .1
       object.vspeed = 0

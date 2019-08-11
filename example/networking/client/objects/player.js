@@ -1,5 +1,5 @@
 cs.objects.player = {
-   create: function() {
+   create: function({ attr }) {
       this.networkId = this.networkId
 
       this.pos = cs.vector.create(0, 0)
@@ -13,7 +13,8 @@ cs.objects.player = {
       this.angleFix = 0
       this.radius = 3
 
-      this.read(this.snapshot)
+      console.log('create', attr)
+      this.read(attr.snapshot)
    },
 
    read: function(snapshot) {

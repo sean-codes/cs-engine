@@ -1,11 +1,11 @@
 cs.objects['obj_demo_0'] = {
-   create: ({ object, cs }) => {},
+   create: ({ object, cs, attr }) => {},
    step: ({ object, cs }) => {},
    draw: ({ object, cs }) => {}
 }
 
 cs.objects['obj_demo_1'] = {
-   create: ({ object, cs }) => {},
+   create: ({ object, cs, attr }) => {},
    step: ({ object, cs }) => {},
    draw: ({ object, cs }) => {}
 }

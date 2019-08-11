@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../node_modules/cs-engine/src/parts/Camera.js":[function(require,module,exports) {
+})({"../node_modules/cs-engine/src/Camera.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //-----------------------------| CS ENGINE: CAMERA |--------------------------//
 //----------------------------------------------------------------------------//
@@ -276,7 +276,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.camera = new CSENGINE_CAMERA(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Draw.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Draw.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //------------------------------| CS ENGINE: DRAW |---------------------------//
 //----------------------------------------------------------------------------//
@@ -302,8 +302,8 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          }
       }
 
-      setSurface(surface) {
-         this.surface = surface
+      setSurface(surfaceName) {
+         this.surface = this.cs.surface.list[surfaceName]
          this.scale = 1
          this.cameraX = 0
          this.cameraY = 0
@@ -493,18 +493,18 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       }
 
       line(options) {
-         var lineWidth = this.surface.ctx.lineWidth
-         var lineWidthAdjust = lineWidth / 2 / this.scale
          var scale = this.scale
+         var lineWidth = this.surface.ctx.lineWidth
+         var lineWidthAdjust = lineWidth / 2 / scale
 
-         var x1 = options.points[0].x + lineWidthAdjust - this.cameraX
-         var x2 = options.points[1].x + lineWidthAdjust - this.cameraX
-         var y1 = options.points[0].y - lineWidthAdjust - this.cameraY
-         var y2 = options.points[1].y - lineWidthAdjust - this.cameraY
+         var x1 = options.points[0].x * scale + lineWidthAdjust - this.cameraX * scale
+         var x2 = options.points[1].x * scale + lineWidthAdjust - this.cameraX * scale
+         var y1 = options.points[0].y * scale - lineWidthAdjust - this.cameraY * scale
+         var y2 = options.points[1].y * scale - lineWidthAdjust - this.cameraY * scale
 
          this.surface.ctx.beginPath();
-         this.surface.ctx.moveTo(x1 * scale, y1 * scale);
-         this.surface.ctx.lineTo(x2 * scale, y2 * scale);
+         this.surface.ctx.moveTo(x1, y1);
+         this.surface.ctx.lineTo(x2, y2);
          this.surface.ctx.stroke()
          this.settingsDefault()
       }
@@ -576,6 +576,8 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          var scale = this.scale
          var x = options.pos ? options.pos.x : options.x
          var y = options.pos ? options.pos.y : options.y
+         var start = (cs.default(options.start, 0) - 90) * Math.PI/180
+         var end = (cs.default(options.end, 360) - 90) * Math.PI/180
          var radius = options.radius
 
          if (this.outside({
@@ -591,16 +593,19 @@ parcelRequire = (function (modules, cache, entry, globalName) {
             this.debug.circleDrawnCount += 1
          }
 
-         var fill = this.cs.default(options.fill, false)
+
          this.surface.ctx.beginPath()
          this.surface.ctx.arc(
             (x - this.cameraX) * scale,
             (y - this.cameraY) * scale,
             radius * scale,
-            0, Math.PI * 2, true
+            start,
+            end
          )
-         this.surface.ctx.closePath()
+
+         var fill = this.cs.default(options.fill, false)
          fill ? this.surface.ctx.fill() : this.surface.ctx.stroke()
+
          this.settingsDefault()
       }
 
@@ -686,31 +691,40 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       }
 
       setColor(color) {
-         if(this.surface.ctx.fillStyle === color && this.surface.ctx.strokeStyle === color) return
-         this.surface.ctx.fillStyle = color;
-         this.surface.ctx.strokeStyle = color;
+         if (this.surface.ctx.fillStyle === color && this.surface.ctx.strokeStyle === color) return
+         this.surface.ctx.fillStyle = color
+         this.surface.ctx.strokeStyle = color
       }
 
       setAlpha(alpha) {
          if(this.surface.ctx.globalAlpha === alpha) return
-         this.surface.ctx.globalAlpha = alpha;
+         this.surface.ctx.globalAlpha = alpha
       }
 
       setWidth(width) {
          if(this.surface.ctx.lineWidth === width * this.scale) return
-         this.surface.ctx.lineWidth = width * this.scale;
+         this.surface.ctx.lineWidth = width * this.scale
       }
 
       setFont(options) {
-         if(this.surface.ctx.fontSize === options.size * this.scale && this.surface.ctx.fontFamily === options.family) return
-         this.surface.ctx.fontSize = options.size * this.scale
-         this.surface.ctx.fontFamily = options.family
-         this.surface.ctx.font = (options.effect ? options.effect + ' ' : '') + options.size * this.scale + 'px ' + options.family;
+         if(
+            this.surface.ctx.fontSize === options.size &&
+            this.surface.ctx.fontFamily === options.family &&
+            !this.surface.clear
+         ) return
+
+         if(options.size) this.surface.ctx.fontSize = options.size
+         if(options.family) this.surface.ctx.fontFamily = options.family
+
+         var effect = options.effect ? options.effect + ' ' : ''
+         var fontFamily = this.surface.ctx.fontFamily
+         var fontSize = this.surface.ctx.fontSize + 'px'
+         this.surface.ctx.font = effect + ' ' + fontSize + ' ' + fontFamily
       }
 
       setLineHeight(height) {
-         if(this.surface.ctx.lineHeight === height) return
-         this.surface.ctx.lineHeight = height
+         if(this.surface.ctx.lineHeight === height / this.scale) return
+         this.surface.ctx.lineHeight = height / this.scale
       }
 
       setLineDash(lineDash) {
@@ -748,6 +762,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          for (var setting in settings) {
             this.config.defaults[setting] = settings[setting]
          }
+
          this.settingsDefault()
       }
 
@@ -778,7 +793,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.draw = new CSENGINE_DRAW(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Fps.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Fps.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //------------------------------| CS ENGINE: FPS |---------------------------//
 //----------------------------------------------------------------------------//
@@ -813,7 +828,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.fps = new CSENGINE_FPS(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Fullscreen.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Fullscreen.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //--------------------------| CS ENGINE: FULLSCREEN |-------------------------//
 //----------------------------------------------------------------------------//
@@ -880,7 +895,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.fullscreen = new CSENGINE_FULLSCREEN(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/InputKeyboard.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/InputKeyboard.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //------------------------| CS ENGINE: INPUT KEYBOARD |-----------------------//
 //----------------------------------------------------------------------------//
@@ -999,7 +1014,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.inputKeyboard = new CSENGINE_INPUT_KEYBOARD(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/InputMouse.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/InputMouse.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //--------------------------| CS ENGINE: INPUT MOUSE |------------------------//
 //----------------------------------------------------------------------------//
@@ -1060,7 +1075,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.inputMouse = new CSENGINE_INPUT_MOUSE(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/InputTouch.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/InputTouch.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //--------------------------| CS ENGINE: INPUT TOUCH |------------------------//
 //----------------------------------------------------------------------------//
@@ -1358,7 +1373,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.inputTouch = new CSENGINE_INPUT_TOUCH(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Loader.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Loader.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //----------------------------| CS ENGINE: LOADER |---------------------------//
 //----------------------------------------------------------------------------//
@@ -1368,12 +1383,13 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          this.cs = cs
 
          this.start = 0
-         console.log(cs, cs.assets)
          this.loading =
             cs.assets.sprites.length +
             cs.assets.scripts.length +
             cs.assets.sounds.length +
             cs.assets.storages.length
+
+         this.loadTotal = this.loading
       }
 
       load() {
@@ -1392,19 +1408,30 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
       checkDone() {
          this.loading -= 1
+
+         var loadInfo = {
+            percent: Math.floor((this.loadTotal - this.loading) / this.loadTotal * 100),
+            finished: !this.loading,
+            current: this.loading,
+            totalRequired: this.loadTotal
+         }
+
+         this.cs.progress(loadInfo)
+
          if (!this.loading) {
             console.groupEnd()
             const assetsLoadTime = Math.round(Date.now() - this.start)
             console.log(`Assets Loaded in ${assetsLoadTime}ms`)
+            // run setup
             this.cs.setup.run()
          }
       }
 
       loadScripts() {
          for (const script of this.cs.assets.scripts) {
-            console.log(`Loading Script: ${script.path}`)
+            console.log('Loading Script: ' + script.path)
             const htmlScript = document.createElement('script')
-            htmlScript.src = `${script.path}.js?v=${this.version}`
+            htmlScript.src = script.path + '.js?v=' + this.cs.version
             htmlScript.onload = this.checkDone.bind(this)
             document.body.appendChild(htmlScript)
          }
@@ -1415,7 +1442,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
             cs.sprites.push(sprite)
             console.log(`Loading Sprite: ${sprite.path}`)
             sprite.html = document.createElement('img')
-            sprite.html.src = sprite.path + '.png?v=' + this.version
+            sprite.html.src = sprite.path + '.png?v=' + this.cs.version
             sprite.html.onload = this.checkDone.bind(this)
          }
       }
@@ -1464,7 +1491,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
                   if (this.readyState == 4) {
                      var data = JSON.parse(this.responseText)
                      storage.data = data
-                     this.checkDone()
+                     that.checkDone()
                   }
                }
                storage.request.open("GET", './' + storage.path + '.json?v=' + this.version, true)
@@ -1480,7 +1507,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.loader = new CSENGINE_LOADER(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Loop.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Loop.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //------------------------------| CS ENGINE: LOOP |---------------------------//
 //----------------------------------------------------------------------------//
@@ -1509,63 +1536,72 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          if (!this.run || once) return
          this.timeout = setTimeout(() => this.step(), this.speed)
 
+         var headless = this.cs.headless
+
+         if (!headless) {
+            this.cs.draw.debugReset()
+
+            this.cs.surface.clearAll()
+
+            // input
+            this.cs.inputKeyboard.execute()
+            this.cs.inputTouch.batchDownMove()
+            // move camera before clear
+            this.cs.camera.update()
+
+         }
+
          this.cs.fps.update()
-         this.cs.draw.debugReset()
          this.cs.network.read()
 
-         // move camera before clear
-         this.cs.camera.update()
-         this.cs.surface.clearAll()
          this.cs.object.addNewObjects()
-
-         // input
-         this.cs.inputKeyboard.execute()
-         this.cs.inputTouch.batchDownMove()
 
          // Execute before steps
          // disconnect to allow adding within a beforestep
          var temporaryBeforeSteps = []
-         while(this.beforeSteps.length){ temporaryBeforeSteps.push(this.beforeSteps.pop()) }
+         while (this.beforeSteps.length) { temporaryBeforeSteps.push(this.beforeSteps.pop()) }
          while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
 
-         this.cs.userStep && this.cs.userStep({ cs })
+         this.cs.userStep && this.cs.userStep({ cs: this.cs })
 
          this.cs.object.loop((object) => {
             if (!object.core.active || !object.core.live) return
-            var stepEvent = this.cs.objects[object.core.type].step
-            stepEvent && stepEvent({ object, cs: this.cs })
+            object.step && object.step({ object, cs: this.cs })
          })
 
-         this.cs.userDraw && this.cs.userDraw({ cs })
+         if (!headless) {
+            this.cs.userDraw && this.cs.userDraw({ cs: this.cs })
 
-         this.cs.object.loop((object) => {
-            if (!object.core.active || !object.core.live) return
-            var template = this.cs.objects[object.core.type]
-            var drawFunction = template.draw
-            var drawOnceFunction = template.drawOnce
+            this.cs.object.loop((object) => {
+               if (!object.core.active || !object.core.live) return
+               var template = this.cs.objects[object.core.type]
+               var drawFunction = template.draw
+               var drawOnceFunction = template.drawOnce
 
-            var surface = this.cs.surface.list[object.core.surface]
-            this.cs.draw.setSurface(surface)
+               this.cs.draw.setSurface(object.core.surface)
 
-            if (drawOnceFunction) {
-               if (surface.clear || !object.core.drawn) {
-                  object.core.drawn = true
-                  drawOnceEvent({ object, cs: this.cs })
+               if (object.drawOnce) {
+                  var surface = this.cs.surface.list[object.core.surface]
+                  if (surface.clear || !object.core.drawn) {
+                     object.core.drawn = true
+                     object.drawOnce({ object, cs: this.cs })
+                  }
                }
-            }
 
-            drawFunction && drawFunction.call(object, { object, cs: this.cs })
-         })
+               object.draw && object.draw({ object, cs: this.cs })
+            })
+         }
 
          // timers
          this.cs.timer.loop()
 
-         // Touch / Keyboard
-         this.cs.inputKeyboard.reset()
-         this.cs.inputTouch.reset()
-         this.cs.inputTouch.batchUp()
-
-         this.cs.surface.displayAll()
+         if (!headless) {
+            // Touch / Keyboard
+            this.cs.surface.displayAll()
+            this.cs.inputKeyboard.reset()
+            this.cs.inputTouch.reset()
+            this.cs.inputTouch.batchUp()
+         }
 
          // Execute next steps
          while (this.endSteps.length) {
@@ -1606,7 +1642,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.loop = new CSENGINE_LOOP(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Math.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Math.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //------------------------------| CS ENGINE: MATH |---------------------------//
 //----------------------------------------------------------------------------//
@@ -1619,6 +1655,11 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       sign(number) {
          if (!number) return 0
          return number < 0 ? -1 : 1
+      }
+
+      round(number, tenths) {
+         if (tenths == null) tenths = 1
+         return Math.round(number * tenths) / tenths
       }
 
       between(num, min, max) {
@@ -1688,7 +1729,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          return Math.sqrt(a2 + b2)
       }
 
-      direction(p1, p2) {
+      anglePointToPoint(p1, p2) {
          if (p2 == undefined) {
             p2 = p1
             p1 = { x: 0, y: 0 }
@@ -1696,6 +1737,11 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
          var xOff = p2.x - p1.x
          var yOff = p2.y - p1.y
+
+         return this.angleXY(xOff, yOff)
+      }
+
+      angleXY(xOff, yOff) {
          var beforeTurn = this.degrees(Math.atan2(xOff, -yOff)) + 180
          var afterTurn = beforeTurn + 180
          if (afterTurn > 360) {
@@ -1704,7 +1750,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          return afterTurn
       }
 
-      shortestDirection(d1, d2) {
+      angleToAngle(d1, d2) {
           var right = d2 - d1
           if (right < 0) {
               right = 360 + right
@@ -1730,7 +1776,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.math = new CSENGINE_MATH(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Network.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Network.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //----------------------------| CS ENGINE: NETWORK |--------------------------//
 //----------------------------------------------------------------------------//
@@ -1764,8 +1810,8 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       }
 
       updateMetrics() {
-         var metrics = cs.network.metrics
-         var now = Date.now()
+         const metrics = this.cs.network.metrics
+         const now = Date.now()
          if (now - metrics.last > 1000) {
             metrics.count++
             metrics.last = now
@@ -1782,28 +1828,29 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       }
 
       connect(options) {
-         // console.log('cs.network.connect', options)
+         // console.log('this.cs.network.connect', options)
          try {
-            var host = options.host || window.location.host
+            const host = options.host || window.location.hostname
+            let url = "wss://" + host + ":" + options.port
+
             if (options.ssl == undefined || options.ssl == false) {
-               var url = "ws://" + host + ":" + options.port
-            } else {
-               var url = "wss://" + host + ":" + options.port
+               url = "ws://" + host + ":" + options.port
             }
-            var ws = new WebSocket(url);
-            ws.onopen = function() {
-               cs.network.onconnect()
+
+            const ws = new WebSocket(url);
+            ws.onopen = () => {
+               this.cs.network.onconnect()
             }
-            ws.onclose = function() { cs.network.ondisconnect() }
-            ws.onmessage = function(event) { cs.network.onmessage(event.data) }
-            cs.network.ws = ws;
+            ws.onclose = () => { this.cs.network.ondisconnect() }
+            ws.onmessage = (event) => { this.cs.network.onmessage(event.data) }
+            this.cs.network.ws = ws;
          } catch(e) {
             console.log(e);
          }
       }
 
       isConnected() {
-         return cs.network.ws.readyState !== cs.network.ws.CLOSED
+         return this.cs.network.ws.readyState !== this.cs.network.ws.CLOSED
       }
 
       send(data) {
@@ -1811,25 +1858,25 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          if (typeof data !== 'string') {
             data = JSON.stringify(data)
          }
-         cs.network.metrics.upWatch += data.length
-         cs.network.ws.send(data)
+         this.cs.network.metrics.upWatch += data.length
+         this.cs.network.ws.send(data)
       }
 
       read() {
          while(this.buffer.length) {
-            var data = this.buffer.shift()
-            cs.network.metrics.downWatch += data.length
+            const data = this.buffer.shift()
+            this.cs.network.metrics.downWatch += data.length
             this.overrides.message(data)
          }
       }
 
       onconnect() {
-         cs.network.status = true
+         this.cs.network.status = true
          this.overrides.connect()
       }
 
       ondisconnect() {
-         cs.network.status = false
+         this.cs.network.status = false
          this.overrides.disconnect()
       }
 
@@ -1838,8 +1885,8 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       }
 
       setup(options) {
-         for (var optionName in options) {
-            cs.network.overrides[optionName] = options[optionName]
+         for (const optionName in options) {
+            this.cs.network.overrides[optionName] = options[optionName]
          }
       }
    }
@@ -1847,10 +1894,10 @@ parcelRequire = (function (modules, cache, entry, globalName) {
    // export (node / web)
    typeof module !== 'undefined'
       ? module.exports = CSENGINE_NETWORK
-      : cs.network = new CSENGINE_NETWORK(cs)
+      : this.cs.network = new CSENGINE_NETWORK(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Object.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Object.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //-----------------------------| CS ENGINE: OBJECT |--------------------------//
 //----------------------------------------------------------------------------//
@@ -1864,6 +1911,21 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          this.types = {}
          this.objGroups = {}
          this.shouldClean = false
+         this.objectGenerators = {}
+      }
+
+      init() {
+         for (const objectName in this.cs.objects) {
+            this.objectGenerators[objectName] = class GAMEOBJECT {}
+
+            for (const prop in this.cs.objects[objectName]) {
+               var propValue = this.cs.objects[objectName][prop]
+
+               if (typeof propValue === 'function') {
+                  this.objectGenerators[objectName].prototype[prop] = propValue
+               }
+            }
+         }
       }
 
       loop(call) {
@@ -1881,38 +1943,42 @@ parcelRequire = (function (modules, cache, entry, globalName) {
          }
 
          var attr = options.attr
+         var Generator = this.objectGenerators[options.type]
          var template = this.cs.objects[options.type]
          var zIndex = options.zIndex || template.zIndex || 0
 
          // create the object
-         var newObj = {
-            core: {
-               zIndex: zIndex,
-               live: true,
-               active: true,
-               drawn: false,
-               type: options.type,
-               id: this.unique,
-               surface: this.cs.default(template.surface, 'game')
-            }
+         var newObject = new Generator()
+         newObject.core = {
+            zIndex: zIndex,
+            live: true,
+            active: true,
+            drawn: false,
+            type: options.type,
+            id: this.unique,
+            surface: this.cs.default(template.surface, 'game')
          }
 
          // predefined / custom Attr
-         for (var name in template.attr) { newObj[name] = template.attr[name] }
-         for (var name in attr) { newObj[name] = attr[name] }
+         for (var name in template.attr) { newObject[name] = template.attr[name] }
+         // for (var name in attr) { newObject[name] = attr[name] }
 
          // run create event
-         template.create && template.create.call(newObj, { object: newObj, cs: this.cs });
+         newObject.create && newObject.create({
+            object: newObject,
+            cs: this.cs,
+            attr: attr || {}
+         })
 
          // add to list
-         this.new.push({ obj: newObj, zIndex: zIndex })
+         this.new.push({ obj: newObject, zIndex: zIndex })
          this.unique += 1
 
          // grouping
          if (!this.objGroups[options.type]) this.objGroups[options.type] = []
-         this.objGroups[options.type].push(newObj)
+         this.objGroups[options.type].push(newObject)
 
-         return newObj
+         return newObject
       }
 
       addNewObjects() {
@@ -1954,7 +2020,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
          // remove from objGroup
          var type = destroyObj.core.type
-         if (cs.objects[type].destroy) cs.objects[type].destroy.call(destroyObj)
+         if (this.cs.objects[type].destroy) {
+            this.cs.objects[type].destroy.call(destroyObj, { object: destroyObj, cs: this.cs })
+         }
          this.objGroups[type] = this.objGroups[type].filter(function(obj) { return obj.core.live })
       }
 
@@ -2016,22 +2084,22 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.object = new CSENGINE_OBJECT(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Room.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Room.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //------------------------------| CS ENGINE: ROOM |---------------------------//
 //----------------------------------------------------------------------------//
 (() => {
    class CSENGINE_ROOM {
-      constructor(cs) {
+      constructor(cs, width, height) {
          this.cs = cs
 
-         this.width = 100
-         this.height = 100
+         this.width = cs.default(cs.options.room && cs.options.room.width, 100)
+         this.height = cs.default(cs.options.room && cs.options.room.width, 100)
          this.rect = {
             x: 0,
             y: 0,
-            width: 100,
-            height: 100
+            width: this.width,
+            height: this.height
          }
       }
 
@@ -2062,7 +2130,44 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.room = new CSENGINE_ROOM(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Setup.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Script.js":[function(require,module,exports) {
+//----------------------------------------------------------------------------//
+//------------------------------| CS ENGINE: SETUP |--------------------------//
+//----------------------------------------------------------------------------//
+(() => {
+   class CSENGINE_SCRIPT {
+      constructor(cs) {
+         this.cs = cs
+
+         this.map = {}
+      }
+
+      init() {
+         this.mapScripts('', this.cs.scripts)
+      }
+
+      mapScripts(path, object) {
+         for (let scriptName in object) {
+            let script = object[scriptName]
+            this.map[path + scriptName] = script
+            this.mapScripts(scriptName + '.', this.cs.scripts[scriptName])
+         }
+      }
+
+      exec(scriptName, options) {
+         if (options == null) options = {}
+         options.cs = this.cs
+         return this.map[scriptName](options)
+      }
+   }
+
+   // export (node / web)
+   typeof module !== 'undefined'
+      ? module.exports = CSENGINE_SCRIPT
+      : cs.script = new CSENGINE_SCRIPT(cs)
+})()
+
+},{}],"../node_modules/cs-engine/src/Setup.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //------------------------------| CS ENGINE: SETUP |--------------------------//
 //----------------------------------------------------------------------------//
@@ -2074,106 +2179,110 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
       run() {
          // Initiate Inputs
-         this.cs.ctx = this.cs.canvas.getContext('2d')
-         this.cs.canvas.tabIndex = 1000
-         this.cs.canvas.style.outline = 'none'
-         this.cs.canvas.style.touchAction = 'none'
+         if (!this.cs.headless) {
+            this.cs.ctx = this.cs.canvas.getContext('2d')
+            this.cs.canvas.tabIndex = 0
+            this.cs.canvas.style.outline = 'none'
+            this.cs.canvas.style.touchAction = 'none'
 
-         this.cs.canvas.addEventListener('click', () => {
-            this.cs.sound.enable()
-            this.cs.canvas.focus()
-         })
+            this.cs.canvas.addEventListener('click', () => {
+               this.cs.sound.enable()
+               this.cs.canvas.focus()
+            })
 
-         this.cs.canvas.addEventListener('keydown', (e) => this.cs.inputKeyboard.eventDown(e))
-         this.cs.canvas.addEventListener('keyup', (e) => this.cs.inputKeyboard.eventUp(e))
+            this.cs.canvas.addEventListener('keydown', (e) => this.cs.inputKeyboard.eventDown(e))
+            this.cs.canvas.addEventListener('keyup', (e) => this.cs.inputKeyboard.eventUp(e))
 
-         if (this.cs.canvas.setPointerCapture) {
-            this.cs.canvas.addEventListener("pointerdown", (e) => this.cs.inputTouch.eventPointerDown(e))
-            this.cs.canvas.addEventListener("pointermove", (e) => this.cs.inputTouch.eventPointerMove(e))
-            this.cs.canvas.addEventListener("pointerup", (e) => this.cs.inputTouch.eventPointerUp(e))
-            this.cs.canvas.addEventListener("pointerout", (e) => this.cs.inputTouch.eventPointerUp(e))
-         } else {
-            this.cs.canvas.addEventListener("touchstart", (e) => this.cs.inputTouch.eventTouchDown(e))
-            this.cs.canvas.addEventListener("touchmove", (e) => his.cs.inputTouch.eventTouchMove(e))
-            this.cs.canvas.addEventListener("touchend", (e) => this.cs.inputTouch.eventTouchUp(e))
+            if (this.cs.canvas.setPointerCapture) {
+               this.cs.canvas.addEventListener("pointerdown", (e) => this.cs.inputTouch.eventPointerDown(e))
+               this.cs.canvas.addEventListener("pointermove", (e) => this.cs.inputTouch.eventPointerMove(e))
+               this.cs.canvas.addEventListener("pointerup", (e) => this.cs.inputTouch.eventPointerUp(e))
+               this.cs.canvas.addEventListener("pointerout", (e) => this.cs.inputTouch.eventPointerUp(e))
+            } else {
+               this.cs.canvas.addEventListener("touchstart", (e) => this.cs.inputTouch.eventTouchDown(e))
+               this.cs.canvas.addEventListener("touchmove", (e) => his.cs.inputTouch.eventTouchMove(e))
+               this.cs.canvas.addEventListener("touchend", (e) => this.cs.inputTouch.eventTouchUp(e))
 
-            this.cs.canvas.addEventListener('mousedown', (e) => this.cs.inputMouse.eventDown(e))
-            this.cs.canvas.addEventListener('mousemove', (e) => this.cs.inputMouse.eventMove(e))
-            this.cs.canvas.addEventListener('mouseup', (e) => this.cs.inputMouse.eventUp(e))
-            this.cs.canvas.addEventListener('mouseout', (e) => this.cs.inputMouse.eventUp(e))
-         }
-
-         // View, Game and GUI surfaces
-         this.cs.surface.create({ name: 'gui', oneToOne: true, useCamera: false, depth: 0 })
-         this.cs.surface.create({ name: 'game', oneToOne: true, useCamera: true,  depth: 10 })
-
-         // Sound
-         //this.cs.sound.active = this.cs.sound.init();
-
-         // watch for resizing
-         this.cs.resize = () => {
-            var maxSize = this.cs.maxSize
-            this.cs.width = this.cs.canvas.clientWidth
-            this.cs.height = this.cs.canvas.clientHeight
-            this.cs.clampWidth = this.cs.width
-            this.cs.clampHeight = this.cs.height
-
-            if (this.cs.clampWidth > maxSize) {
-               this.cs.clampHeight = this.cs.clampHeight / this.cs.clampWidth * maxSize
-               this.cs.clampWidth = maxSize
+               this.cs.canvas.addEventListener('mousedown', (e) => this.cs.inputMouse.eventDown(e))
+               this.cs.canvas.addEventListener('mousemove', (e) => this.cs.inputMouse.eventMove(e))
+               this.cs.canvas.addEventListener('mouseup', (e) => this.cs.inputMouse.eventUp(e))
+               this.cs.canvas.addEventListener('mouseout', (e) => this.cs.inputMouse.eventUp(e))
             }
 
-            if (this.cs.clampHeight > maxSize) {
-               this.cs.clampWidth = this.cs.clampWidth / this.cs.clampHeight * maxSize
-               this.cs.clampHeight = maxSize
+            // View, Game and GUI surfaces
+            this.cs.surface.create({ name: 'gui', oneToOne: true, useCamera: false, depth: 0 })
+            this.cs.surface.create({ name: 'game', oneToOne: true, useCamera: true,  depth: 10 })
+
+            // Sound
+            //this.cs.sound.active = this.cs.sound.init();
+
+            // watch for resizing
+            this.cs.resize = () => {
+               var maxSize = this.cs.maxSize
+               this.cs.width = this.cs.canvas.clientWidth
+               this.cs.height = this.cs.canvas.clientHeight
+               this.cs.clampWidth = this.cs.width
+               this.cs.clampHeight = this.cs.height
+
+               if (this.cs.clampWidth > maxSize) {
+                  this.cs.clampHeight = this.cs.clampHeight / this.cs.clampWidth * maxSize
+                  this.cs.clampWidth = maxSize
+               }
+
+               if (this.cs.clampHeight > maxSize) {
+                  this.cs.clampWidth = this.cs.clampWidth / this.cs.clampHeight * maxSize
+                  this.cs.clampHeight = maxSize
+               }
+
+               this.cs.clampWidth = Math.ceil(this.cs.clampWidth)
+               this.cs.clampHeight = Math.ceil(this.cs.clampHeight)
+
+               this.cs.canvas.width = this.cs.clampWidth
+               this.cs.canvas.height = this.cs.clampHeight
+
+               this.cs.camera.resize()
+               this.cs.surface.resize()
+               this.cs.object.resize()
             }
 
-            this.cs.clampWidth = Math.ceil(this.cs.clampWidth)
-            this.cs.clampHeight = Math.ceil(this.cs.clampHeight)
+            // room/camera
+            this.cs.room.setup({
+               width: this.cs.canvas.getBoundingClientRect().width,
+               height: this.cs.canvas.getBoundingClientRect().height
+            })
 
-            this.cs.canvas.width = this.cs.clampWidth
-            this.cs.canvas.height = this.cs.clampHeight
+            this.cs.camera.setup({
+               width: this.cs.canvas.getBoundingClientRect().width,
+               height: this.cs.canvas.getBoundingClientRect().height
+            })
 
-            this.cs.camera.resize()
-            this.cs.surface.resize()
-            this.cs.object.resize()
+            // window global functions
+            if (window) {
+               window.onerror = function(errorMsg, url, lineNumber) { this.cs.loop.stop() }
+
+               window.onfocus = function(e) {
+                  this.cs.focus(true)
+               }
+
+               window.onblur = function(e) {
+                  this.cs.focus(false)
+                  this.cs.sound.toggleActive(false, e)
+                  this.cs.inputKeyboard.blur()
+               }
+
+               window.onresize = this.cs.resize.bind(this)
+            }
+            this.cs.resize()
+            this.cs.sprite.init()
          }
 
-         // Sprites/Storage/Sound
-         this.cs.sprite.init()
+         // Sprites/Storage/Sound/Scripts
          this.cs.storage.init()
-
-         // room/camera
-         this.cs.room.setup({
-            width: this.cs.canvas.getBoundingClientRect().width,
-            height: this.cs.canvas.getBoundingClientRect().height
-         })
-
-         this.cs.camera.setup({
-            width: this.cs.canvas.getBoundingClientRect().width,
-            height: this.cs.canvas.getBoundingClientRect().height
-         })
-
-         // window global functions
-         if (window) {
-            window.onerror = function(errorMsg, url, lineNumber) { this.cs.loop.stop() }
-
-            window.onfocus = function(e) {
-               this.cs.focus(true)
-            }
-
-            window.onblur = function(e) {
-               this.cs.focus(false)
-               this.cs.sound.toggleActive(false, e)
-               this.cs.inputKeyboard.blur()
-            }
-
-            window.onresize = this.cs.resize.bind(this)
-         }
+         this.cs.object.init()
+         this.cs.script.init()
 
          // bootstrapping
          this.cs.start({ cs: this.cs })
-         this.cs.resize()
          this.cs.loop.start()
       }
    }
@@ -2184,7 +2293,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.setup = new CSENGINE_SETUP(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Sound.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Sound.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //------------------------------| CS ENGINE: SOUND |--------------------------//
 //----------------------------------------------------------------------------//
@@ -2294,7 +2403,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
       : cs.sound = new CSENGINE_SOUND(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Sprite.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Sprite.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //------------------------------| CS ENGINE: SPRITE |--------------------------//
 //----------------------------------------------------------------------------//
@@ -2434,7 +2543,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
        : cs.sprite = new CSENGINE_SPRITE(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Surface.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Surface.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //-----------------------------| CS ENGINE: SURFACE |-------------------------//
 //----------------------------------------------------------------------------//
@@ -2639,7 +2748,7 @@ Types of surfaces
    typeof module !== 'undefined' ? module.exports = CSENGINE_SURFACE : cs.surface = new CSENGINE_SURFACE(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Storage.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Storage.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //-----------------------------| CS ENGINE: STORAGE |-------------------------//
 //----------------------------------------------------------------------------//
@@ -2694,7 +2803,7 @@ Types of surfaces
       : cs.storage = new CSENGINE_STORAGE(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Timer.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Timer.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //------------------------------| CS ENGINE: TIMER |--------------------------//
 //----------------------------------------------------------------------------//
@@ -2772,36 +2881,40 @@ Types of surfaces
       : cs.timer = new CSENGINE_TIMER(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/parts/Vector.js":[function(require,module,exports) {
+},{}],"../node_modules/cs-engine/src/Vector.js":[function(require,module,exports) {
 //----------------------------------------------------------------------------//
 //-----------------------------| CS ENGINE: VECTOR |--------------------------//
 //----------------------------------------------------------------------------//
 (() => {
    class CSENGINE_VECTOR {
+      constructor(cs) {
+         this.cs = cs
+      }
+
       create(x, y) {
          return { x: x, y: y }
       }
 
       clone(v) {
-         return cs.vector.create(v.x, v.y)
+         return this.cs.vector.create(v.x, v.y)
       }
 
       add(v0, v1) {
-         return cs.vector.create(
+         return this.cs.vector.create(
             v0.x + v1.x,
             v0.y + v1.y
          )
       }
 
       min(v0, v1) {
-         return cs.vector.create(
+         return this.cs.vector.create(
             v0.x - v1.x,
             v0.y - v1.y
          )
       }
 
       scale(v, s) {
-         return cs.vector.create(
+         return this.cs.vector.create(
             v.x * s,
             v.y * s
          )
@@ -2816,19 +2929,27 @@ Types of surfaces
       }
 
       unit(v) {
-         return cs.vector.scale(v, 1/cs.vector.length(v))
+         return this.cs.vector.scale(v, 1/this.cs.vector.length(v))
       }
 
       distance(v0, v1) {
-         return cs.vector.length(cs.vector.min(v0, v1))
+         return this.cs.vector.length(this.cs.vector.min(v0, v1))
       }
 
       cross(v) {
-         return cs.vector.create(-v.y, v.x)
+         return this.cs.vector.create(-v.y, v.x)
       }
 
       direction(v0, v1) {
-         return cs.vector.unit(cs.vector.min(v1, v0))
+         return this.cs.vector.unit(this.cs.vector.min(v1, v0))
+      }
+
+      round(v0, hundreths) {
+         if (hundreths == null) hundreths = 1
+         return {
+            x: Math.round(v0.x * hundreths) / hundreths,
+            y: Math.round(v0.y * hundreths) / hundreths
+         }
       }
    }
 
@@ -2838,42 +2959,41 @@ Types of surfaces
       : cs.vector = new CSENGINE_VECTOR(cs)
 })()
 
-},{}],"../node_modules/cs-engine/src/main.node.js":[function(require,module,exports) {
-const PartCamera = require('./parts/Camera')
-const PartDraw = require('./parts/Draw')
-const PartFps = require('./parts/Fps')
-const PartFullscreen = require('./parts/Fullscreen')
-const PartInputKeyboard = require('./parts/InputKeyboard')
-const PartInputMouse = require('./parts/InputMouse')
-const PartInputTouch = require('./parts/InputTouch')
-const PartLoader = require('./parts/Loader')
-const PartLoop = require('./parts/Loop')
-const PartMath = require('./parts/Math')
-const PartNetwork = require('./parts/Network')
-const PartObject = require('./parts/Object')
-const PartRoom = require('./parts/Room')
-const PartSetup = require('./parts/Setup')
-const PartSound = require('./parts/Sound')
-const PartSprite = require('./parts/Sprite')
-const PartSurface = require('./parts/Surface')
-const PartStorage = require('./parts/Storage')
-const PartTimer = require('./parts/Timer')
-const PartVector = require('./parts/Vector')
+},{}],"../node_modules/cs-engine/main.require.js":[function(require,module,exports) {
+const PartCamera = require('./src/Camera')
+const PartDraw = require('./src/Draw')
+const PartFps = require('./src/Fps')
+const PartFullscreen = require('./src/Fullscreen')
+const PartInputKeyboard = require('./src/InputKeyboard')
+const PartInputMouse = require('./src/InputMouse')
+const PartInputTouch = require('./src/InputTouch')
+const PartLoader = require('./src/Loader')
+const PartLoop = require('./src/Loop')
+const PartMath = require('./src/Math')
+const PartNetwork = require('./src/Network')
+const PartObject = require('./src/Object')
+const PartRoom = require('./src/Room')
+const PartScript = require('./src/Script')
+const PartSetup = require('./src/Setup')
+const PartSound = require('./src/Sound')
+const PartSprite = require('./src/Sprite')
+const PartSurface = require('./src/Surface')
+const PartStorage = require('./src/Storage')
+const PartTimer = require('./src/Timer')
+const PartVector = require('./src/Vector')
 
 module.exports = class cs {
    constructor(options) {
-      const {
-         canvas,
-         assets
-      } = options
+      this.options = options
 
-      // 1. build engine
-      this.clone = function(object) { return JSON.parse(JSON.stringify(object)) }
-      this.default = function(want, ifnot) { return want != null ? want : ifnot }
+      // handy
+      this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
+      this.default = (want, ifnot) => { return want != null ? want : ifnot }
 
-      // 1. build the engine
-      this.canvas = canvas
-      this.ctx = canvas.getContext('2d')
+      // 1. setup
+      this.canvas = options.canvas
+      this.ctx = this.canvas.getContext('2d')
+
       this.path = options.path
       this.maxSize = options.maxSize || 2000
       this.start = options.start
@@ -2886,17 +3006,18 @@ module.exports = class cs {
       this.progress = options.progress || function() {}
       this.focus = options.focus || function() {}
 
+
       this.objects = options.objects || {}
-      this.script = options.script || {}
+      this.scripts = options.scripts || {}
       this.sprites = options.sprites || []
       this.storages = options.storages || []
       this.sounds = options.sounds || []
 
       this.assets = {
-         scripts: assets && assets.scripts ? assets.scripts : [],
-         sprites: assets && assets.sprites ? assets.sprites : [],
-         storages: assets && assets.storages ? assets.storages : [],
-         sounds: assets && assets.sounds ? assets.sounds : [],
+         scripts: options.assets && options.assets.scripts ? options.assets.scripts : [],
+         sprites: options.assets && options.assets.sprites ? options.assets.sprites : [],
+         storages: options.assets && options.assets.storages ? options.assets.storages : [],
+         sounds: options.assets && options.assets.sounds ? options.assets.sounds : [],
       }
 
       this.camera = new PartCamera(this)
@@ -2912,6 +3033,7 @@ module.exports = class cs {
       this.network = new PartNetwork(this)
       this.object = new PartObject(this)
       this.room = new PartRoom(this)
+      this.script = new PartScript(this)
       this.setup = new PartSetup(this)
       this.sound = new PartSound(this)
       this.sprite = new PartSprite(this)
@@ -2920,21 +3042,16 @@ module.exports = class cs {
       this.timer = new PartTimer(this)
       this.vector = new PartVector(this)
 
-      // 3. setup
-      this.loader.load()
+      // load
+      this.loader.load() // loader will call cs.start()
    }
 }
 
-},{"./parts/Camera":"../node_modules/cs-engine/src/parts/Camera.js","./parts/Draw":"../node_modules/cs-engine/src/parts/Draw.js","./parts/Fps":"../node_modules/cs-engine/src/parts/Fps.js","./parts/Fullscreen":"../node_modules/cs-engine/src/parts/Fullscreen.js","./parts/InputKeyboard":"../node_modules/cs-engine/src/parts/InputKeyboard.js","./parts/InputMouse":"../node_modules/cs-engine/src/parts/InputMouse.js","./parts/InputTouch":"../node_modules/cs-engine/src/parts/InputTouch.js","./parts/Loader":"../node_modules/cs-engine/src/parts/Loader.js","./parts/Loop":"../node_modules/cs-engine/src/parts/Loop.js","./parts/Math":"../node_modules/cs-engine/src/parts/Math.js","./parts/Network":"../node_modules/cs-engine/src/parts/Network.js","./parts/Object":"../node_modules/cs-engine/src/parts/Object.js","./parts/Room":"../node_modules/cs-engine/src/parts/Room.js","./parts/Setup":"../node_modules/cs-engine/src/parts/Setup.js","./parts/Sound":"../node_modules/cs-engine/src/parts/Sound.js","./parts/Sprite":"../node_modules/cs-engine/src/parts/Sprite.js","./parts/Surface":"../node_modules/cs-engine/src/parts/Surface.js","./parts/Storage":"../node_modules/cs-engine/src/parts/Storage.js","./parts/Timer":"../node_modules/cs-engine/src/parts/Timer.js","./parts/Vector":"../node_modules/cs-engine/src/parts/Vector.js"}],"objects/block.js":[function(require,module,exports) {
+},{"./src/Camera":"../node_modules/cs-engine/src/Camera.js","./src/Draw":"../node_modules/cs-engine/src/Draw.js","./src/Fps":"../node_modules/cs-engine/src/Fps.js","./src/Fullscreen":"../node_modules/cs-engine/src/Fullscreen.js","./src/InputKeyboard":"../node_modules/cs-engine/src/InputKeyboard.js","./src/InputMouse":"../node_modules/cs-engine/src/InputMouse.js","./src/InputTouch":"../node_modules/cs-engine/src/InputTouch.js","./src/Loader":"../node_modules/cs-engine/src/Loader.js","./src/Loop":"../node_modules/cs-engine/src/Loop.js","./src/Math":"../node_modules/cs-engine/src/Math.js","./src/Network":"../node_modules/cs-engine/src/Network.js","./src/Object":"../node_modules/cs-engine/src/Object.js","./src/Room":"../node_modules/cs-engine/src/Room.js","./src/Script":"../node_modules/cs-engine/src/Script.js","./src/Setup":"../node_modules/cs-engine/src/Setup.js","./src/Sound":"../node_modules/cs-engine/src/Sound.js","./src/Sprite":"../node_modules/cs-engine/src/Sprite.js","./src/Surface":"../node_modules/cs-engine/src/Surface.js","./src/Storage":"../node_modules/cs-engine/src/Storage.js","./src/Timer":"../node_modules/cs-engine/src/Timer.js","./src/Vector":"../node_modules/cs-engine/src/Vector.js"}],"objects/block.js":[function(require,module,exports) {
 module.exports = {
-  create: function create(_ref) {
+  draw: function draw(_ref) {
     var object = _ref.object,
         cs = _ref.cs;
-  },
-  draw: function draw(_ref2) {
-    var object = _ref2.object,
-        cs = _ref2.cs;
-    // console.log('draw')
     cs.draw.setColor('red');
     cs.draw.fillRect({
       x: 0,
@@ -2961,7 +3078,7 @@ window.cs = new CS({
     });
   }
 });
-},{"cs-engine":"../node_modules/cs-engine/src/main.node.js","./objects/block":"objects/block.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"cs-engine":"../node_modules/cs-engine/main.require.js","./objects/block":"objects/block.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2989,7 +3106,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64821" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58967" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

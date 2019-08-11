@@ -2,7 +2,7 @@ cs.objects['obj_interface'] = {
    zIndex: 30,
    surface: 'gui',
 
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.width = 30
       object.height = 30
       object.backgroundPlaying = undefined

@@ -15,7 +15,12 @@
          canvas: document.querySelector('canvas'),
          objects: {
             touch: {
-               create: ({ object, cs }) => {
+               create: ({ object, cs, attr }) => {
+                  object.x = 0
+                  object.y = 0
+                  object.width = cs.room.width
+                  object.height = cs.room.height
+                  object.color = attr.color
                   object.touch = cs.inputTouch.observer()
                },
                draw: ({ object, cs }) => {

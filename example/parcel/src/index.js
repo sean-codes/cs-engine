@@ -10,7 +10,7 @@ window.cs = new CS({
 
    start: ({ cs }) => {
       console.log('running start')
-
+      
       cs.object.create({
          type: 'block'
       })

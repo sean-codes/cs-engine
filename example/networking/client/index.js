@@ -5,9 +5,10 @@ cs.load({
    assets: {
       scripts: [
          { path: '/objects/background' },
-         { path: '/objects/player' },
-         { path: '/objects/joystick' },
+         { path: '/objects/bullet' },
          { path: '/objects/controller' },
+         { path: '/objects/joystick' },
+         { path: '/objects/player' },
          { path: '/scripts/network' },
          { path: '/scripts/networkFunctions' },
          { path: '/scripts/smooth' },

@@ -1,11 +1,13 @@
 cs.objects['obj_crate'] = {
 
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.touch = cs.inputTouch.observer(true)
       object.mask = cs.sprite.info({ spr: 'spr_crate' }).mask
-      object.vspeed = 0;
-      object.hspeed = 0;
-      object.gravity = 8;
+      object.x = attr.x
+      object.y = attr.y
+      object.vspeed = 0
+      object.hspeed = 0
+      object.gravity = 8
    },
 
    draw: ({ object, cs }) => {

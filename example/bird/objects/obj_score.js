@@ -1,5 +1,5 @@
 cs.objects['obj_score'] = {
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.mask = { x: 0, y: 0, width: 2, height: 40 }
    },
 
@@ -10,7 +10,9 @@ cs.objects['obj_score'] = {
 
 cs.objects['obj_score_text'] = {
    zIndex: 21,
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
+      object.x = attr.x
+      object.y = attr.y
       object.text = cs.math.choose([
          '+1 Nice dive!',
          '+1 Daredevil!',

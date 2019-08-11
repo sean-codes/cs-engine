@@ -1,6 +1,6 @@
 cs.objects['obj_buttons'] = {
 
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.width = 30;
       object.height = 30;
       object.touch = cs.inputTouch.observer()

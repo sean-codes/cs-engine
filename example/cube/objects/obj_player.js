@@ -1,6 +1,8 @@
 cs.objects['obj_player'] = {
 
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
+      object.x = attr.x
+      object.y = attr.y
       object.mask = { x: 0, y: 0, width: 16, height: 16 }
       object.gravity = 7;
       object.vspeed = 0;

@@ -1,5 +1,5 @@
 cs.objects['obj_text'] = {
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       this.text = ''
       this.timer = { time: 60, total: 60 }
       this.color = '#FFF'

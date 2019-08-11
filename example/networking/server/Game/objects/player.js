@@ -1,8 +1,8 @@
 module.exports = {
-   create: function({ cs }) {
+   create: function({ cs, attr }) {
       this.networkId = this.networkId
 
-      this.pos = this.pos
+      this.pos = attr.pos
 
       this.friction = 0.9
       this.speed = cs.vector.create(0, 0)

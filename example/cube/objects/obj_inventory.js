@@ -1,6 +1,6 @@
 cs.objects['obj_inventory'] = {
 
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.touch = cs.inputTouch.observer()
       object.width = 32;
       object.height = 32;
