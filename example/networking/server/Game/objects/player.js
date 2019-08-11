@@ -4,9 +4,9 @@ module.exports = {
 
       this.pos = attr.pos
 
-      this.friction = 0.9
+      this.friction = 0.95
       this.speed = cs.vector.create(0, 0)
-      this.maxSpeed = 1
+      this.maxSpeed = 1.5
       this.angle = 0
       this.targetAngle = 0
       this.turnSpeed = 0
@@ -43,8 +43,8 @@ module.exports = {
          cs.math.round(this.pos.y, 10),
          cs.math.round(this.angle, 10),
          cs.math.round(this.turnSpeed, 10),
-         cs.math.round(this.speed.x, 10),
-         cs.math.round(this.speed.y, 10),
+         cs.math.round(this.speed.x, 1000),
+         cs.math.round(this.speed.y, 1000),
          this.forward ? 1 : 0,
       ]
    },
@@ -58,12 +58,12 @@ module.exports = {
       }
 
       if (this.fire && cs.timer.start(this.fireTimer)) {
-         console.log('firing')
          cs.object.create({
             type: 'bullet',
             attr: {
                pos: this.pos,
-               speed: cs.vector.create(cs.math.cos(this.angle), cs.math.sin(this.angle))
+               angle: this.angle,
+               speed: this.maxSpeed + 0.5
             }
          })
       }
@@ -79,5 +79,8 @@ module.exports = {
       this.angle += this.turnSpeed
       this.pos = cs.vector.add(this.pos, cs.vector.scale(this.speed, cs.loop.delta))
       if (!this.forward) this.speed = cs.vector.scale(this.speed, this.friction)
+
+      if (this.pos.x < 0 || this.pos.x > cs.room.width) this.pos.x = this.pos.x < 0 ? 0 : cs.room.width
+      if (this.pos.y < 0 || this.pos.y > cs.room.width) this.pos.y = this.pos.y < 0 ? 0 : cs.room.height
    },
 }

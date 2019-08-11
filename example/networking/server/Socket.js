@@ -24,8 +24,8 @@ module.exports = class Socket {
             object.targetAngle = angle
             object.forward = forward
             object.fire = fire
-            console.log(object.fire, 'fire change')
-            break;
+
+            break
          }
 
          case 'ping': {

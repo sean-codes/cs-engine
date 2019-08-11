@@ -1,14 +1,23 @@
 cs.objects.bullet = {
+   zIndex: 1,
    create: function({ cs, attr }) {
-      this.radius = 4
+      this.radius = 1
+
+      this.pos = cs.vector.create(
+         attr.snapshot.x,
+         attr.snapshot.y
+      )
+
+      this.read(attr.snapshot)
    },
 
    read: function(snapshot) {
-      console.log(snapshot)
-      var x = snapshot[0]
-      var y = snapshot[1]
-      var speedX = snapshot[2]
-      var speedY = snapshot[3]
+      this.networkId = snapshot.id
+
+      var x = cs.scripts.smooth(this.pos.x, snapshot.x, 100)
+      var y = cs.scripts.smooth(this.pos.y, snapshot.y, 100)
+      var speedX = snapshot.sx
+      var speedY = snapshot.sy
 
       this.pos = cs.vector.create(x, y)
       this.speed = cs.vector.create(speedX, speedY)
@@ -19,10 +28,12 @@ cs.objects.bullet = {
    },
 
    draw: function({ cs }) {
+      cs.draw.setWidth(0.5)
       cs.draw.circle({
          x: this.pos.x,
          y: this.pos.y,
-         radius: this.radius
+         radius: this.radius,
+         fill: true
       })
    }
 }

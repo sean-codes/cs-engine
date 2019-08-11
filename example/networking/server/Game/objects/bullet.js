@@ -1,18 +1,20 @@
 module.exports = {
    create: function({ cs, attr }) {
-      console.log(attr)
       this.radius = 4
       this.pos = attr.pos
-      this.speed = attr.speed
+      this.speed = cs.vector.scale(cs.vector.create(
+         cs.math.cos(attr.angle),
+         cs.math.sin(attr.angle)
+      ), attr.speed)
    },
 
    share: function({ cs }) {
-      return [
-         cs.math.round(this.pos.x, 100),
-         cs.math.round(this.pos.y, 100),
-         cs.math.round(this.speed.x, 100),
-         cs.math.round(this.speed.y, 100)
-      ]
+      return {
+         x: cs.math.round(this.pos.x, 100),
+         y: cs.math.round(this.pos.y, 100),
+         sx: cs.math.round(this.speed.x, 1000),
+         sy: cs.math.round(this.speed.y, 1000)
+      }
    },
 
    step: function({ cs }) {

@@ -9,7 +9,7 @@ cs.scripts.smooth = (from, to, speed) => {
    }
 
    // i smooth at some rate
-   if (Math.abs(diff) > 0.5) {
+   if (Math.abs(diff) > 0.25) {
       return from + diff * (Math.abs(diff) / cs.default(speed, 100))
    }
 
