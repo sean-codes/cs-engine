@@ -1,14 +1,11 @@
 cs.objects.player = {
    zIndex: 2,
    create: function({ attr }) {
-      this.networkId = this.networkId
-
-      this.pos = cs.vector.create(0, 0)
-      this.posFix = cs.vector.create(0, 0)
-
-      this.speed = 0
+      this.networkId = attr.networkId
+      this.friction = attr.share.friction
+      this.pos = attr.share.pos
+      this.speed = attr.share.speed
       this.forward = false
-      this.friction = 0.975
       this.turnSpeed = 0
       this.angle = 0
       this.angleFix = 0
@@ -16,19 +13,15 @@ cs.objects.player = {
 
       this.controlTime = 0
       this.controlTimeMax = 120
-
-      this.read(attr.snapshot)
    },
 
-   read: function(snapshot) {
-      this.networkId = snapshot.id
-
-      this.pos.x = cs.scripts.smooth(this.pos.x, snapshot[0], 10)
-      this.pos.y = cs.scripts.smooth(this.pos.y, snapshot[1], 10)
-      this.angle = cs.scripts.smooth(this.angle, snapshot[2], 100)
-      this.turnSpeed = snapshot[3]
-      this.speed = cs.vector.create(snapshot[4], snapshot[5])
-      this.forward = snapshot[6] ? true : false
+   snapshotRead: function(snapshot) {
+      this.pos.x = cs.scripts.smooth(this.pos.x, snapshot.x, 50)
+      this.pos.y = cs.scripts.smooth(this.pos.y, snapshot.y, 50)
+      this.angle = cs.scripts.smooth(this.angle, snapshot.a, 100)
+      this.turnSpeed = snapshot.ts
+      this.speed = cs.vector.create(snapshot.sx, snapshot.sy)
+      this.forward = snapshot.f ? true : false
    },
 
    step: function() {
@@ -41,8 +34,6 @@ cs.objects.player = {
    },
 
    draw: function() {
-      var targetAngle = cs.global.controller.angle
-
       cs.draw.setColor('#39D')
       cs.draw.circle({ x: this.pos.x, y: this.pos.y, radius: this.radius, fill: true })
 
@@ -61,32 +52,36 @@ cs.objects.player = {
       })
 
       // draw direction
-      if (cs.global.controller.turning) {
-         this.controlTime = Math.min(this.controlTimeMax, this.controlTime + 20)
-      }
+      if (cs.global.self == this.networkId) {
+         var targetAngle = cs.global.controller.angle
 
-      this.controlTime = Math.max(0, this.controlTime - 1)
-      var controlAlpha = 1 * (this.controlTime / this.controlTimeMax)
-      var controlRadius = this.radius + 3
-      var controlWidth = 10
-      var controlHeight = 2
-      cs.draw.setAlpha(controlAlpha)
-      cs.draw.shape({
-         vertices: [
-            cs.vector.create(
-               this.pos.x + cs.math.cos(targetAngle) * (controlRadius + controlHeight),
-               this.pos.y + cs.math.sin(targetAngle) * (controlRadius + controlHeight)
-            ),
-            cs.vector.create(
-               this.pos.x + cs.math.cos(targetAngle + controlWidth) * (controlRadius + 0.25),
-               this.pos.y + cs.math.sin(targetAngle + controlWidth) * (controlRadius + 0.25)
-            ),
-            cs.vector.create(
-               this.pos.x + cs.math.cos(targetAngle - controlWidth) * (controlRadius + 0.25),
-               this.pos.y + cs.math.sin(targetAngle - controlWidth) * (controlRadius + 0.25)
-            ),
-         ],
-         fill: true
-      })
+         if (cs.global.controller.turning) {
+            this.controlTime = Math.min(this.controlTimeMax, this.controlTime + 20)
+         }
+
+         this.controlTime = Math.max(0, this.controlTime - 1)
+         var controlAlpha = 1 * (this.controlTime / this.controlTimeMax)
+         var controlRadius = this.radius + 3
+         var controlWidth = 10
+         var controlHeight = 2
+         cs.draw.setAlpha(controlAlpha)
+         cs.draw.shape({
+            vertices: [
+               cs.vector.create(
+                  this.pos.x + cs.math.cos(targetAngle) * (controlRadius + controlHeight),
+                  this.pos.y + cs.math.sin(targetAngle) * (controlRadius + controlHeight)
+               ),
+               cs.vector.create(
+                  this.pos.x + cs.math.cos(targetAngle + controlWidth) * (controlRadius + 0.25),
+                  this.pos.y + cs.math.sin(targetAngle + controlWidth) * (controlRadius + 0.25)
+               ),
+               cs.vector.create(
+                  this.pos.x + cs.math.cos(targetAngle - controlWidth) * (controlRadius + 0.25),
+                  this.pos.y + cs.math.sin(targetAngle - controlWidth) * (controlRadius + 0.25)
+               ),
+            ],
+            fill: true
+         })
+      }
    }
 }

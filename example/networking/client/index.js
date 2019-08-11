@@ -13,7 +13,7 @@ cs.load({
          { path: '/objects/joystick' },
          { path: '/objects/player' },
          { path: '/scripts/network' },
-         { path: '/scripts/networkFunctions' },
+         { path: '/scripts/networkObjects' },
          { path: '/scripts/smooth' },
       ],
       storages: [
@@ -48,6 +48,7 @@ cs.load({
 
       cs.global.joystick = cs.object.create({ type: 'joystick' })
       cs.global.controller = cs.object.create({ type: 'controller' })
+      cs.global.ping = 0
       cs.object.create({ type: 'background' })
       cs.scripts.network.init()
 
@@ -69,7 +70,7 @@ cs.load({
          y: 10,
          lines: [
             cs.global.ping + 'ms',
-            cs.math.round(cs.network.metrics.downAverage / 1000, 100) + 'kb down',
+            cs.math.round(cs.network.metrics.downNow / 1000, 100) + 'kb down',
             '~' + cs.global.snapshotInterval + 'sps'
          ]
       })

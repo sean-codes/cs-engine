@@ -1,6 +1,6 @@
 module.exports = {
    create: function({ cs, attr }) {
-      this.networkId = this.networkId
+      this.socket = attr.socket
 
       this.pos = attr.pos
 
@@ -34,19 +34,32 @@ module.exports = {
             return false
          }
       }
-      this.fireTimer = cs.timer.create({ duration: 30 })
+
+      this.fireTimer = cs.timer.create({ duration: 15 })
+
+      cs.script.exec('networkObjects.objectCreate', { object: this })
    },
 
    share: function({ cs }) {
-      return [
-         cs.math.round(this.pos.x, 10),
-         cs.math.round(this.pos.y, 10),
-         cs.math.round(this.angle, 10),
-         cs.math.round(this.turnSpeed, 10),
-         cs.math.round(this.speed.x, 1000),
-         cs.math.round(this.speed.y, 1000),
-         this.forward ? 1 : 0,
-      ]
+      return {
+         pos: this.pos,
+         speed: this.speed,
+         maxSpeed: this.maxSpeed,
+         turnSpeed: this.maxTurnSpeed,
+         friction: this.friction
+      }
+   },
+
+   snapshotWrite: function({ cs }) {
+      return {
+         x: cs.math.round(this.pos.x, 1000),
+         y: cs.math.round(this.pos.y, 1000),
+         a: cs.math.round(this.angle, 10),
+         ts: cs.math.round(this.turnSpeed, 10),
+         sx: cs.math.round(this.speed.x, 1000),
+         sy: cs.math.round(this.speed.y, 1000),
+         f: this.forward ? 1 : 0,
+      }
    },
 
    step: function({ cs }) {
@@ -68,7 +81,6 @@ module.exports = {
          })
       }
 
-
       // calculate turnSpeed
       var changeAngleDirection = cs.math.angleToAngle(this.angle, this.targetAngle)
       if (Math.abs(changeAngleDirection) > this.maxTurnSpeed) {
@@ -76,11 +88,15 @@ module.exports = {
       }
       this.turnSpeed = changeAngleDirection
 
-      this.angle += this.turnSpeed
+      this.angle += this.turnSpeed * cs.loop.delta
       this.pos = cs.vector.add(this.pos, cs.vector.scale(this.speed, cs.loop.delta))
       if (!this.forward) this.speed = cs.vector.scale(this.speed, this.friction)
 
       if (this.pos.x < 0 || this.pos.x > cs.room.width) this.pos.x = this.pos.x < 0 ? 0 : cs.room.width
       if (this.pos.y < 0 || this.pos.y > cs.room.width) this.pos.y = this.pos.y < 0 ? 0 : cs.room.height
    },
+
+   destroy: function({ cs }) {
+      cs.script.exec('networkObjects.objectDestroy', { object: this })
+   }
 }

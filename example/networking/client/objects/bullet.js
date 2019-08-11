@@ -2,16 +2,12 @@ cs.objects.bullet = {
    zIndex: 1,
    create: function({ cs, attr }) {
       this.radius = 1
-
-      this.pos = cs.vector.create(
-         attr.snapshot.x,
-         attr.snapshot.y
-      )
-
-      this.read(attr.snapshot)
+      this.networkId = attr.networkId
+      this.pos = attr.share.pos
+      this.speed = attr.share.speed
    },
 
-   read: function(snapshot) {
+   snapshotRead: function(snapshot) {
       this.networkId = snapshot.id
 
       var x = cs.scripts.smooth(this.pos.x, snapshot.x, 100)

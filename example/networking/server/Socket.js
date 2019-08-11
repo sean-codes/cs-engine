@@ -1,14 +1,37 @@
 module.exports = class Socket {
-   constructor(ws, server, id, gameObject) {
+   constructor(ws, server, id, game) {
       console.log('SOCKET: open')
       this.server = server
       this.ws = ws
       this.id = id
-      this.gameObject = gameObject
+      this.game = game
+      this.gameObject = undefined
       this.ping = 0
 
       this.ws.on('message', (data) => this.message(data))
       this.ws.on('close', (data) => this.close(data))
+      this.pingInterval = setInterval(() => this.checkPing(), 1000)
+   }
+
+   createPlayer() {
+      this.gameObject = this.game.playerCreate(this)
+      this.send({
+         func: 'connect',
+         data: {
+            socketId: this.id,
+            gameObjectId: this.gameObject.core.id
+         }
+      })
+   }
+
+   checkPing() {
+      this.send({
+         func: 'ping',
+         data: {
+            now: Date.now(),
+            ping: this.ping
+         }
+      })
    }
 
    message(jsonData) {
@@ -37,6 +60,7 @@ module.exports = class Socket {
    close(data) {
       console.log('SOCKET: close')
       this.server.closeConnection(this)
+      clearInterval(this.pingInterval)
    }
 
    send(data) {

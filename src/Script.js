@@ -16,7 +16,11 @@
       mapScripts(path, object) {
          for (let scriptName in object) {
             let script = object[scriptName]
-            this.map[path + scriptName] = script
+            this.map[path + scriptName] = {
+               function: script,
+               parent: object
+            }
+
             this.mapScripts(scriptName + '.', this.cs.scripts[scriptName])
          }
       }
@@ -24,7 +28,9 @@
       exec(scriptName, options) {
          if (options == null) options = {}
          options.cs = this.cs
-         return this.map[scriptName](options)
+
+         const script = this.map[scriptName]
+         return script.function.call(script.parent, options)
       }
    }
 
