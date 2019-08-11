@@ -117,7 +117,7 @@
 
       start() {
          this.run = true
-         this.step()
+         this.timeout = setTimeout(() => this.step(), this.speed)
       }
 
       stop() {

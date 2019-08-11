@@ -164,6 +164,10 @@
          return this.objGroups[type] ? this.objGroups[type].length : 0
       }
 
+      countAll() {
+         return this.list.length + this.new.length
+      }
+
       reset() {
          this.list = []
          this.new = []
