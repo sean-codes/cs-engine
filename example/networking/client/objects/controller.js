@@ -6,12 +6,14 @@ cs.objects.controller = {
       this.oldAngle = 0
       this.angle = 0
       this.forward = false
+      this.keys = {}
+      this.turning = false
    },
 
    step: function() {
       if (!cs.global.selfObject) return
 
-      var keys = {
+      this.keys = {
          up: cs.inputKeyboard.isHeld(cs.global.keymap['arrow-up']),
          down: cs.inputKeyboard.isHeld(cs.global.keymap['arrow-down']),
          left: cs.inputKeyboard.isHeld(cs.global.keymap['arrow-left']),
@@ -19,24 +21,19 @@ cs.objects.controller = {
          space: cs.inputKeyboard.isHeld(cs.global.keymap['spacebar'])
       }
 
-      this.fire = keys.space
+      this.fire = this.keys.space
 
-      if (keys.left) this.angle -= 4
-      if (keys.right) this.angle += 4
-      this.forward = keys.up
+      if (this.keys.left) this.angle -= 5
+      if (this.keys.right) this.angle += 5
+      this.forward = this.keys.up
 
       var joystick = cs.object.find('joystick')
       if (joystick) {
-         var angleToAngle = cs.math.angleToAngle(this.angle, joystick.angle)
-
-         if (Math.abs(angleToAngle) < 5) {
-            this.angle = joystick.angle
-         } else {
-            this.angle += Math.sign(angleToAngle) * 4
-         }
-
+         this.angle = joystick.angle
          this.forward = joystick.forward
       }
+
+      this.turning = this.angle != this.oldAngle
 
       if (
          this.oldFire !== this.fire ||

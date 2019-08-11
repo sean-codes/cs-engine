@@ -18,7 +18,7 @@ module.exports = class Server {
             snapshot: require('./Game/scripts/snapshot')
          },
 
-         room: { width: 300, height: 300 },
+         room: { width: 400, height: 400 },
          step: this.gamestep.bind(this)
       })
    }

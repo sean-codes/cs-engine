@@ -4,9 +4,9 @@ module.exports = {
 
       this.pos = attr.pos
 
-      this.friction = 0.95
+      this.friction = 0.975
       this.speed = cs.vector.create(0, 0)
-      this.maxSpeed = 1
+      this.maxSpeed = 1.25
       this.angle = 0
       this.targetAngle = 0
       this.turnSpeed = 0
