@@ -4,7 +4,8 @@ module.exports = {
 
       this.pos = this.pos
 
-      this.speed = 0
+      this.friction = 0.95
+      this.speed = cs.vector.create(0, 0)
       this.maxSpeed = 1
       this.angle = 0
       this.targetAngle = 0
@@ -17,14 +18,21 @@ module.exports = {
       return [
          cs.math.round(this.pos.x, 10),
          cs.math.round(this.pos.y, 10),
-         cs.math.round(this.speed, 10),
+         cs.math.round(this.speed.x, 10),
+         cs.math.round(this.speed.y, 10),
+         this.forward ? 1 : 0,
          cs.math.round(this.angle, 10),
          cs.math.round(this.turnSpeed, 10),
       ]
    },
 
    step: function({ cs }) {
-      this.speed = this.forward ? this.maxSpeed : 0
+      if (this.forward) {
+         this.speed = cs.vector.create(
+            cs.math.cos(this.angle) * this.maxSpeed,
+            cs.math.sin(this.angle) * this.maxSpeed
+         )
+      }
 
       // calculate turnSpeed
       var changeAngleDirection = cs.math.angleToAngle(this.angle, this.targetAngle)
@@ -34,7 +42,7 @@ module.exports = {
       this.turnSpeed = changeAngleDirection
 
       this.angle += this.turnSpeed
-      this.pos.x += cs.math.cos(this.angle) * (this.speed * cs.loop.delta)
-      this.pos.y += cs.math.sin(this.angle) * (this.speed * cs.loop.delta)
+      this.pos = cs.vector.add(this.pos, cs.vector.scale(this.speed, cs.loop.delta))
+      if (!this.forward) this.speed = cs.vector.scale(this.speed, this.friction)
    },
 }

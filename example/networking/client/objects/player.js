@@ -6,6 +6,8 @@ cs.objects.player = {
       this.posFix = cs.vector.create(0, 0)
 
       this.speed = 0
+      this.forward = false
+      this.friction = 0.95
       this.turnSpeed = 0
       this.angle = 0
       this.angleFix = 0
@@ -18,9 +20,10 @@ cs.objects.player = {
       this.networkId = snapshot.id
 
       this.posFix = cs.vector.min(cs.vector.create(snapshot[0], snapshot[1]), this.pos)
-      this.speed = snapshot[2]
-      this.angle = snapshot[3]
-      this.turnSpeed = snapshot[4]
+      this.speed = cs.vector.create(snapshot[2], snapshot[3])
+      this.forward = snapshot[4] ? true : false
+      this.angle = snapshot[5]
+      this.turnSpeed = snapshot[6]
    },
 
    step: function() {
@@ -28,7 +31,6 @@ cs.objects.player = {
       var posFixLength = cs.vector.length(this.posFix)
       if (posFixLength > 1) {
          var adjustSpeed = 0.1
-         if (posFixLength > 10) adjustSpeed = 0.5
          if (posFixLength > 20) adjustSpeed = 1
          var fix = cs.vector.scale(cs.vector.unit(this.posFix), adjustSpeed)
          this.pos = cs.vector.add(this.pos, fix)
@@ -41,8 +43,8 @@ cs.objects.player = {
       }
 
       this.angle += this.turnSpeed
-      this.pos.x += cs.math.cos(this.angle) * (this.speed * cs.loop.delta)
-      this.pos.y += cs.math.sin(this.angle) * (this.speed * cs.loop.delta)
+      this.pos = cs.vector.add(this.pos, cs.vector.scale(this.speed, cs.loop.delta))
+      if (!this.forward) this.speed = cs.vector.scale(this.speed, this.friction)
    },
 
    draw: function() {

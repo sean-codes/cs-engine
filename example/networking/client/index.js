@@ -64,7 +64,7 @@ cs.load({
          y: 10,
          lines: [
             cs.global.ping + 'ms',
-            Math.round(cs.network.metrics.downAverage / 1000) + 'kb down',
+            cs.math.round(cs.network.metrics.downAverage / 1000, 100) + 'kb down',
             '~' + cs.global.snapshotInterval + 'sps'
          ]
       })
