@@ -4,7 +4,7 @@ module.exports = {
 
       this.pos = this.pos
 
-      this.friction = 0.95
+      this.friction = 0.9
       this.speed = cs.vector.create(0, 0)
       this.maxSpeed = 1
       this.angle = 0
@@ -18,11 +18,11 @@ module.exports = {
       return [
          cs.math.round(this.pos.x, 10),
          cs.math.round(this.pos.y, 10),
+         cs.math.round(this.angle, 10),
+         cs.math.round(this.turnSpeed, 10),
          cs.math.round(this.speed.x, 10),
          cs.math.round(this.speed.y, 10),
          this.forward ? 1 : 0,
-         cs.math.round(this.angle, 10),
-         cs.math.round(this.turnSpeed, 10),
       ]
    },
 

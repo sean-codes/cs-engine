@@ -7,7 +7,7 @@ cs.objects.player = {
 
       this.speed = 0
       this.forward = false
-      this.friction = 0.95
+      this.friction = 0.9
       this.turnSpeed = 0
       this.angle = 0
       this.angleFix = 0
@@ -19,30 +19,16 @@ cs.objects.player = {
    read: function(snapshot) {
       this.networkId = snapshot.id
 
-      this.posFix = cs.vector.min(cs.vector.create(snapshot[0], snapshot[1]), this.pos)
-      this.speed = cs.vector.create(snapshot[2], snapshot[3])
-      this.forward = snapshot[4] ? true : false
-      this.angle = snapshot[5]
-      this.turnSpeed = snapshot[6]
+      this.pos.x = cs.scripts.smooth(this.pos.x, snapshot[0], 100)
+      this.pos.y = cs.scripts.smooth(this.pos.y, snapshot[1], 100)
+      this.angle = cs.scripts.smooth(this.angle, snapshot[2], 100)
+      this.turnSpeed = snapshot[3]
+      this.speed = cs.vector.create(snapshot[4], snapshot[5])
+      this.forward = snapshot[6] ? true : false
    },
 
    step: function() {
-      // smoothing sync with server
-      var posFixLength = cs.vector.length(this.posFix)
-      if (posFixLength > 1) {
-         var adjustSpeed = 0.1
-         if (posFixLength > 20) adjustSpeed = 1
-         var fix = cs.vector.scale(cs.vector.unit(this.posFix), adjustSpeed)
-         this.pos = cs.vector.add(this.pos, fix)
-         this.posFix = cs.vector.min(this.posFix, fix)
-      }
-
-      if (posFixLength > 20) {
-         this.pos = this.posFix
-         this.posFix = cs.vector.create(0, 0)
-      }
-
-      this.angle += this.turnSpeed
+      this.angle += this.turnSpeed * cs.loop.delta
       this.pos = cs.vector.add(this.pos, cs.vector.scale(this.speed, cs.loop.delta))
       if (!this.forward) this.speed = cs.vector.scale(this.speed, this.friction)
    },

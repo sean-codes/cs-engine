@@ -10,6 +10,7 @@ cs.load({
          { path: '/objects/controller' },
          { path: '/scripts/network' },
          { path: '/scripts/networkFunctions' },
+         { path: '/scripts/smooth' },
       ],
       storages: [
          { path: '/storage/keymap', location: 'keymap' },
