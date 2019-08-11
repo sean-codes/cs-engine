@@ -10,7 +10,8 @@ module.exports = class Server {
 
       this.cs = new CS({
          objects: {
-            player: require('./Game/objects/player')
+            player: require('./Game/objects/player'),
+            bullet: require('./Game/objects/bullet'),
          },
 
          scripts: {

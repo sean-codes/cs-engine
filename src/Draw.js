@@ -6,7 +6,7 @@
       constructor(cs) {
          this.cs = cs
          this.debug = {}
-         this.surface = {}
+         this.surface = undefined
          this.config = {
             defaults: {
                alpha: 1,
@@ -504,7 +504,7 @@
             this.config.current[setting] = this.config.defaults[setting]
          }
 
-         this.settingsUpdate()
+         if (this.surface) this.settingsUpdate()
       }
    }
 

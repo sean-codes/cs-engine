@@ -19,10 +19,12 @@ module.exports = class Socket {
             const fix = this.ping / (1000/60)
             var cs = this.server.cs
             var object = this.gameObject
-            var { forward, angle } = parsedJson.data
+            var { forward, angle, fire } = parsedJson.data
 
             object.targetAngle = angle
             object.forward = forward
+            object.fire = fire
+            console.log(object.fire, 'fire change')
             break;
          }
 

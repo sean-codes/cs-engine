@@ -11,7 +11,30 @@ module.exports = {
       this.targetAngle = 0
       this.turnSpeed = 0
       this.maxTurnSpeed = 4
+
       this.forward = false
+      this.fire = false
+
+      var Timer = function(options) {
+         this.duration = options.duration
+         this.time = cs.default(options.start, this.duration)
+         this.percent = 0
+
+         this.tick = function() {
+            this.time = Math.max(this.time - 1, 0)
+            this.percent = 1 - (this.time / this.duration)
+         }
+
+         this.start = function() {
+            if (!this.time) {
+               this.time = this.duration
+               return true
+            }
+
+            return false
+         }
+      }
+      this.fireTimer = cs.timer.create({ duration: 30 })
    },
 
    share: function({ cs }) {
@@ -33,6 +56,18 @@ module.exports = {
             cs.math.sin(this.angle) * this.maxSpeed
          )
       }
+
+      if (this.fire && cs.timer.start(this.fireTimer)) {
+         console.log('firing')
+         cs.object.create({
+            type: 'bullet',
+            attr: {
+               pos: this.pos,
+               speed: cs.vector.create(cs.math.cos(this.angle), cs.math.sin(this.angle))
+            }
+         })
+      }
+
 
       // calculate turnSpeed
       var changeAngleDirection = cs.math.angleToAngle(this.angle, this.targetAngle)

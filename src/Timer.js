@@ -18,7 +18,6 @@
 
             if(timer.percent == 1) {
                timer.running = false
-
                this.unWatch(timer)
                timer.end && timer.end()
             }
@@ -40,8 +39,6 @@
             }
          }
 
-
-         //this.list.push(timer)
          return timer
       }
 
@@ -52,6 +49,9 @@
          timer.start && timer.start()
          timer.running = true
          timer.time = 1
+         timer.percent = 0
+
+         return true
       }
 
       watch(timer) {
@@ -65,7 +65,7 @@
       }
 
       isOn(timer) {
-         return timer.time > 0
+         return timer.running
       }
    }
 
