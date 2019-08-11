@@ -6,7 +6,7 @@ module.exports = class Server {
       this.sockets = []
       this.nextId = 1
       this.lastUpdate = Date.now()
-      this.updateInterval = 1000 / 20
+      this.updateInterval = 1000 / 40
 
       this.cs = new CS({
          objects: {

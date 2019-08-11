@@ -22,7 +22,7 @@ cs.objects.player = {
 
       this.pos.x = cs.scripts.smooth(this.pos.x, snapshot[0], 10)
       this.pos.y = cs.scripts.smooth(this.pos.y, snapshot[1], 10)
-      this.angle = cs.scripts.smooth(this.angle, snapshot[2], 100)
+      this.angle = cs.scripts.smooth(this.angle, snapshot[2], 10)
       this.turnSpeed = snapshot[3]
       this.speed = cs.vector.create(snapshot[4], snapshot[5])
       this.forward = snapshot[6] ? true : false
@@ -45,24 +45,15 @@ cs.objects.player = {
       cs.draw.circle({ x: this.pos.x, y: this.pos.y, radius: this.radius })
 
       // draw direction
+      var targetAngle = cs.global.controller.angle
       var dirPoint = {
-         x: this.pos.x + cs.math.cos(this.angle) * this.radius,
-         y: this.pos.y + cs.math.sin(this.angle) * this.radius
+         x: this.pos.x + cs.math.cos(targetAngle) * this.radius,
+         y: this.pos.y + cs.math.sin(targetAngle) * this.radius
       }
 
       cs.draw.setWidth(0.5)
       cs.draw.line({
          points: [{ x: this.pos.x, y: this.pos.y }, dirPoint ]
-      })
-
-      // pos fix
-      cs.draw.text({
-         x: this.pos.x - 6,
-         y: this.pos.y + 4,
-         lines: [
-            'xfix: ' + cs.math.round(this.posFix.x, 100),
-            'yfix: ' + cs.math.round(this.posFix.y, 100),
-         ]
       })
    }
 }

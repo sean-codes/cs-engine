@@ -3,6 +3,9 @@ cs.load({
    canvas: canvas,
 
    assets: {
+      sprites: [
+         { path: './sprites/ship', name: 'ship0', fwidth: 14, yoff: 8},
+      ],
       scripts: [
          { path: '/objects/background' },
          { path: '/objects/bullet' },
