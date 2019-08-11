@@ -1,7 +1,7 @@
 cs.objects['obj_light'] = {
    surface: 'light',
 
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.width = 30
       object.height = 30
    },

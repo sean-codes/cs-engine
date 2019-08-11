@@ -43,7 +43,7 @@
          },
          objects: {
             box: {
-               create: ({ object, cs }) => {
+               create: ({ object, cs, attr }) => {
                   this.x = 0
                   this.y = cs.room.height / 2
                   this.xSpeed = 1.1
@@ -64,16 +64,16 @@
                   cs.draw.setColor('#fff')
                   cs.draw.setFont({
                      family: 'monospace',
-                     size: 6
+                     size: 16
                   })
 
                   cs.draw.text({
                      x: this.x - 10,
                      y: this.y - 20,
-                     lineHeight: 32,
+                     lineHeight: 6,
                      lines: [
-                        'camera.x: ' + cs.camera.x,
-                        'this.x: ' + this.x,
+                        'camera.x: ~' + cs.math.round(cs.camera.x, 100),
+                        'this.x: ~' + cs.math.round(this.x, 100),
                      ]
                   })
 

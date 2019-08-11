@@ -169,7 +169,7 @@ cs.load({
   ...
   objects: {
     myObjName: {
-      create: ({ object, cs }) => { console.log('i run when created') },
+      create: ({ object, cs, attr }) => { console.log('i run when created') },
       step: ({ object, cs }) => { console.log('i run each frame of the game') },
       draw: ({ object, cs }) => { console.log('i run after the step for drawing') }
 	 }
@@ -183,7 +183,7 @@ cs.load({
 ```js
 // FILE: objects/obj_name.js
 cs.objects.myObjName = {
-  create: ({ object, cs }) => { console.log('i run when created') },
+  create: ({ object, cs, attr }) => { console.log('i run when created') },
   step: ({ object, cs }) => { console.log('i run each frame of the game') },
   draw: ({ object, cs }) => { console.log('i run after the step for drawing') }
 }

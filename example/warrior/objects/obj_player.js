@@ -1,16 +1,18 @@
 cs.objects['obj_player'] = {
    zIndex: 10,
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.mask = { x: 0, y: 0, width: 8, height: 15 }
-      object.hspeed = 0;
-      object.vspeed = 0;
-      object.dir = -1;
-      object.speed = 2;
-      object.gravity = 5;
-      object.jump = 10;
+      object.x = attr.x
+      object.y = attr.y
+      object.hspeed = 0
+      object.vspeed = 0
+      object.dir = -1
+      object.speed = 2
+      object.gravity = 5
+      object.jump = 10
 
-      object.bounce = 0;
-      object.bounceTimer = 20;
+      object.bounce = 0
+      object.bounceTimer = 20
 
       object.attacking = 0;
       object.attackTimer = {
@@ -24,7 +26,7 @@ cs.objects['obj_player'] = {
       for (var i in object.attackTimer)
          object.attackTotal += object.attackTimer[i]
    },
-   
+
    draw: ({ object, cs }) => {
       cs.camera.follow({ x: object.x + object.mask.width / 2, y: object.y + object.mask.height / 2 });
       //Vertical Collisions

@@ -1,5 +1,5 @@
 cs.objects['obj_background'] = {
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.timer = 0
    },
 
@@ -27,7 +27,7 @@ cs.objects['obj_background'] = {
 
 cs.objects['obj_bgPart'] = {
    zIndex: 10,
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.timer = 600
       object.bgType = cs.math.choose(['mountain', 'cloud'])
 
@@ -38,6 +38,7 @@ cs.objects['obj_bgPart'] = {
       ])
       object.mask = cs.sprite.info({ spr: object.sprite }).mask
       //Cloud
+      object.x = attr.x
       object.y = cs.math.iRandomRange(0, cs.room.height - object.mask.height * 2)
       object.hspeed = cs.global.speed + Math.random() * 1.5
       //Mountain

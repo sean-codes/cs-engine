@@ -1,6 +1,8 @@
 cs.objects['obj_fire'] = {
 
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
+      object.x = attr.x
+      object.y = attr.y
       object.width = 32
       object.height = 48
       object.vspeed = 0

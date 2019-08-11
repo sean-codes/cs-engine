@@ -1,7 +1,9 @@
 cs.objects['obj_pipe'] = {
    zIndex: 15,
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.mask = { x: 0, y: 0, width: 24, height: 256 }
+      object.x = attr.x
+      object.y = attr.y
       object.pipe = 'up'
       object.hspeed = cs.global.speed
    },

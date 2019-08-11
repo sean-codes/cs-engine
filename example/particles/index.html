@@ -44,7 +44,7 @@
 
          objects: {
             emitter: {
-               create: ({ object, cs }) => {
+               create: ({ object, cs, attr }) => {
                   object.particleSystem = cs.scripts.particles.createSystem(cs.global.particles.test)
                },
                draw: ({ object, cs }) => {

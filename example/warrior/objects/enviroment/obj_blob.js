@@ -1,8 +1,10 @@
 cs.objects['obj_blob'] = {
    zIndex: 1,
-   create: ({ object, cs }) => {
+   create: ({ object, cs, attr }) => {
       object.sprite = 'spr_blob'
       object.mask = cs.sprite.info({ spr: object.sprite }).mask
+      object.x = attr.x
+      object.y = attr.y
       object.hspeed = 0
       object.vspeed = 0
       object.speed = 2
@@ -18,7 +20,7 @@ cs.objects['obj_blob'] = {
          timerLength: 0
       }
    },
-   
+
    draw: ({ object, cs }) => {
       //Horizontal Movement
       pcol = cs.scripts.collide.rect('obj_player', {

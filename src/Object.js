@@ -61,10 +61,14 @@
 
          // predefined / custom Attr
          for (var name in template.attr) { newObject[name] = template.attr[name] }
-         for (var name in attr) { newObject[name] = attr[name] }
+         // for (var name in attr) { newObject[name] = attr[name] }
 
          // run create event
-         newObject.create({ object: newObject, cs: this.cs })
+         newObject.create && newObject.create({
+            object: newObject,
+            cs: this.cs,
+            attr: attr || {}
+         })
 
          // add to list
          this.new.push({ obj: newObject, zIndex: zIndex })
