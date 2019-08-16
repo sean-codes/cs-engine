@@ -85,20 +85,27 @@
 
       read() {
          while(this.buffer.length) {
-            const data = this.buffer.shift()
-            this.cs.network.metrics.downWatch += data.length
-            this.overrides.message(data)
+            const message = this.buffer.shift()
+            this.cs.network.metrics.downWatch += message.length
+            try {
+               this.overrides.message({
+                  cs: this.cs,
+                  message: message
+               })
+            } catch(e) {
+               console.error('could not parse message', e)
+            }
          }
       }
 
       onconnect() {
          this.cs.network.status = true
-         this.overrides.connect()
+         this.overrides.connect({ cs: this.cs })
       }
 
       ondisconnect() {
          this.cs.network.status = false
-         this.overrides.disconnect()
+         this.overrides.disconnect({ cs: this.cs })
       }
 
       onmessage(message) {

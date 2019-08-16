@@ -10,21 +10,31 @@
       }
 
       init() {
-         this.mapScripts('', this.cs.scripts)
+         this.mapScripts('', this.cs.scripts, undefined)
       }
 
-      mapScripts(path, object) {
+      mapScripts(path, object, parent) {
          for (let scriptName in object) {
+            // keep base parent this scope through scripts (allows nesting)
+            let thisParent = parent ? parent : object[scriptName]
             let script = object[scriptName]
-            this.map[path + scriptName] = script
-            this.mapScripts(scriptName + '.', this.cs.scripts[scriptName])
+
+            this.map[path + scriptName] = {
+               function: script,
+               parent: thisParent
+            }
+
+            this.mapScripts(scriptName + '.', this.cs.scripts[scriptName], thisParent)
          }
       }
 
       exec(scriptName, options) {
          if (options == null) options = {}
          options.cs = this.cs
-         return this.map[scriptName](options)
+
+         const script = this.map[scriptName]
+         if (!script) return console.log('COULD NOT FIND SCRIPT: ' + scriptName)
+         return script.function.call(script.parent, options)
       }
    }
 

@@ -56,6 +56,7 @@
 
          this.cs.object.loop((object) => {
             if (!object.core.active || !object.core.live) return
+            if (!headless) this.cs.draw.setSurface(object.core.surface)
             object.step && object.step({ object, cs: this.cs })
          })
 
@@ -117,7 +118,7 @@
 
       start() {
          this.run = true
-         this.step()
+         this.timeout = setTimeout(() => this.step(), this.speed)
       }
 
       stop() {

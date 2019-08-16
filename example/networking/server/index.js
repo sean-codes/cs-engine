@@ -1,7 +1,6 @@
 const express = require('express')
 const WebSocket = require('ws')
 const Server = new require('./Server')
-
 const CONFIG = require('../config')
 
 // ----------------------------
