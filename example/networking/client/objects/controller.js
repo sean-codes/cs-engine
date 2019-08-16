@@ -51,11 +51,14 @@ cs.objects.controller = {
 
          // send to network
          cs.scripts.network.send({
-            func: 'control',
+            func: 'game',
             data: {
-               fire: this.oldFire,
-               forward: this.oldForward,
-               angle: this.oldAngle
+               func: 'control',
+               data: {
+                  fire: this.oldFire,
+                  forward: this.oldForward,
+                  angle: this.oldAngle
+               }
             }
          })
       }

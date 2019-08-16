@@ -20,27 +20,22 @@ cs.scripts.network = {
       cs.network.send(data)
    },
 
-   onConnect: function() {
+   onConnect: function() {},
+   onDisconnect: function() {},
 
-   },
-
-   onDisconnect: function() {
-
-   },
-
-   onMessage: function(data) {
+   onMessage: function({ message }) {
       try {
-         var message = JSON.parse(data)
+         message = JSON.parse(message)
          this.functions[message.func](message.data)
       } catch(e) {
-         console.log('message error', e)
+         console.log('message error', message, e)
       }
    },
 
    functions: {
       'connect': function(data) {
-         cs.global.self = data.gameObjectId
-         cs.global.selfObject = cs.scripts.networkObjects.objectMap[cs.global.self]
+         console.log('connect', data)
+         cs.global.socketId = data
       },
 
       'ping': function(data) {

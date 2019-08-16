@@ -12,7 +12,7 @@ cs.load({
          { path: '/objects/controller' },
          { path: '/objects/joystick' },
          { path: '/objects/player' },
-         { path: '/scripts/network' },
+         { path: '/scripts/networkClient' },
          { path: '/scripts/networkObjects' },
          { path: '/scripts/smooth' },
       ],

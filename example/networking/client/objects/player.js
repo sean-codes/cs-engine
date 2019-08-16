@@ -2,6 +2,7 @@ cs.objects.player = {
    zIndex: 2,
    create: function({ attr }) {
       this.networkId = attr.networkId
+      this.socketId = attr.share.socketId
       this.friction = attr.share.friction
       this.pos = attr.share.pos
       this.speed = attr.share.speed
@@ -31,6 +32,10 @@ cs.objects.player = {
 
       if (this.pos.x < 0 || this.pos.x > cs.room.width) this.pos.x = this.pos.x < 0 ? 0 : cs.room.width
       if (this.pos.y < 0 || this.pos.y > cs.room.height) this.pos.y = this.pos.y < 0 ? 0 : cs.room.height
+
+      if (this.socketId == cs.global.socketId) {
+         cs.camera.follow(this.pos)
+      }
    },
 
    draw: function() {
@@ -52,7 +57,8 @@ cs.objects.player = {
       })
 
       // draw direction
-      if (cs.global.self == this.networkId) {
+      if (cs.global.socketId == this.socketId) {
+         cs.global.selfObject = this
          var targetAngle = cs.global.controller.angle
 
          if (cs.global.controller.turning) {

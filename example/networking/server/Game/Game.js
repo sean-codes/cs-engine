@@ -4,9 +4,6 @@ module.exports = class Game {
    constructor(server) {
       this.server = server
 
-      this.lastUpdate = Date.now()
-      this.updateInterval = 1000 / 20
-
       this.cs = new CS({
          objects: {
             player: require('./objects/player'),
@@ -14,51 +11,40 @@ module.exports = class Game {
          },
 
          scripts: {
-            snapshot: require('./scripts/snapshot'),
-            networkObjects: require('./scripts/networkObjects')
+            networkObjects: require('./scripts/networkObjects'),
+            network: require('./scripts/networkServer')
          },
 
          room: { width: 400, height: 400 },
-         step: this.gamestep.bind(this),
+
          global: {
-            server: this.server
-         }
-      })
-   }
+            server: this.server,
+            lastUpdate: Date.now(),
+            updateInterval: 1000 / 20
+         },
 
-   playerCreate(socket) {
-      this.cs.script.exec('networkObjects.sendSocketNetworkObjects', { socket })
+         start: function({ cs }) {
+            cs.script.exec('network.init')
+         },
 
-      return this.cs.object.create({
-         type: 'player',
-         attr: {
-            socket: socket,
-            pos: {
-               x: this.cs.room.width / 2,
-               y: this.cs.room.height / 2,
+         step: function({ cs }) {
+            if (Date.now() - cs.global.lastUpdate > cs.global.updateInterval) {
+               cs.global.lastUpdate = Date.now()
+               cs.script.exec('networkObjects.snapshot')
             }
-         }
+         },
       })
    }
 
-   playerDestroy(gameObject) {
-      this.cs.object.destroy(gameObject)
+   socketConnect(socket) {
+      this.cs.script.exec('network.connect', { socket })
    }
 
-   gamestep() {
-      this.sendSnapshotSmall()
+   socketDisconnect(socket) {
+      this.cs.script.exec('network.disconnect', { socket })
    }
 
-   sendSnapshotSmall() {
-      if (Date.now() - this.lastUpdate > this.updateInterval) {
-         this.lastUpdate = Date.now()
-
-         const snapshot = this.cs.script.exec('snapshot')
-
-         this.server.broadcast({
-            func: 'snapshot',
-            data: snapshot
-         })
-      }
+   message(data) {
+      this.cs.network.onmessage(data)
    }
 }

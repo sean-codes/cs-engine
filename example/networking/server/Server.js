@@ -12,14 +12,16 @@ module.exports = class Server {
    }
 
    openConnection(ws, req) {
-      const id = this.nextId++
+      this.nextId += 1
+      const id = this.nextId
       const socket = new Socket(ws, this, id, this.game)
       this.sockets.push(socket)
-      socket.createPlayer()
+      socket.send({ func: 'connect', data: id })
+      this.game.socketConnect(socket)
    }
 
    closeConnection(socket) {
-      this.game.playerDestroy(socket.gameObject)
+      this.game.socketDisconnect(socket)
       this.sockets = this.sockets.filter(s => s.id !== socket.id)
    }
 

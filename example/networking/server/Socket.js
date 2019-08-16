@@ -15,13 +15,6 @@ module.exports = class Socket {
 
    createPlayer() {
       this.gameObject = this.game.playerCreate(this)
-      this.send({
-         func: 'connect',
-         data: {
-            socketId: this.id,
-            gameObjectId: this.gameObject.core.id
-         }
-      })
    }
 
    checkPing() {
@@ -36,23 +29,18 @@ module.exports = class Socket {
 
    message(jsonData) {
       const parsedJson = JSON.parse(jsonData)
-
       switch (parsedJson.func) {
-         case 'control': {
-            const fix = this.ping / (1000/60)
-            var cs = this.server.cs
-            var object = this.gameObject
-            var { forward, angle, fire } = parsedJson.data
-
-            object.targetAngle = angle
-            object.forward = forward
-            object.fire = fire
-
+         case 'ping': {
+            this.ping = Date.now() - parsedJson.data
             break
          }
 
-         case 'ping': {
-            this.ping = Date.now() - parsedJson.data
+         case 'game': {
+            this.game.message({
+               socket: this,
+               message: parsedJson.data
+            })
+            break
          }
       }
    }

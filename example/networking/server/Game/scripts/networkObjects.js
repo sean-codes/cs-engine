@@ -17,7 +17,7 @@ module.exports = {
 
    objectCreate: function({ cs, object }) {
       this.objectMap[object.core.id] = object
-      cs.script.exec('networkObjects.broadcast', { message: {
+      cs.script.exec('network.broadcast', { message: {
          func: 'object-create',
          data: {
             type: object.core.type,
@@ -28,7 +28,7 @@ module.exports = {
    },
 
    objectDestroy: function({ cs, object }) {
-      cs.script.exec('networkObjects.broadcast', { message: {
+      cs.script.exec('network.broadcast', { message: {
          func: 'object-destroy',
          data: { id: object.core.id }
       }})
@@ -36,7 +36,21 @@ module.exports = {
       delete this.objectMap[object.core.id]
    },
 
-   broadcast: function({ cs, message }) {
-      cs.global.server.broadcast(message)
+   snapshot: function({ cs }) {
+      let snapshot = []
+      for (let object of cs.object.every()) {
+         if (object.snapshotWrite) {
+            snapshot.push({
+               type: object.core.type,
+               id: object.core.id,
+               ...object.snapshotWrite({ cs })
+            })
+         }
+      }
+
+      cs.script.exec('network.broadcast', { message: {
+         func: 'snapshot',
+         data: snapshot
+      }})
    }
 }

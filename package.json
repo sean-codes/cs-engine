@@ -5,10 +5,12 @@
   "main": "main.require.js",
   "directories": {
     "example": "example",
-    "test": "test"
+    "test": "test",
+    "src": "src"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./src"
   },
   "repository": {
     "type": "git",
@@ -19,5 +21,10 @@
   "bugs": {
     "url": "https://github.com/sean-codes/cs-engine/issues"
   },
-  "homepage": "https://github.com/sean-codes/cs-engine#readme"
+  "homepage": "https://github.com/sean-codes/cs-engine#readme",
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2"
+  }
 }

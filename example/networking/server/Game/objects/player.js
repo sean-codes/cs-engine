@@ -1,7 +1,6 @@
 module.exports = {
    create: function({ cs, attr }) {
       this.socket = attr.socket
-
       this.pos = attr.pos
 
       this.friction = 0.975
@@ -42,6 +41,7 @@ module.exports = {
 
    share: function({ cs }) {
       return {
+         socketId: this.socket.id,
          pos: this.pos,
          speed: this.speed,
          maxSpeed: this.maxSpeed,
