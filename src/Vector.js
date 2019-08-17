@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//-----------------------------| CS ENGINE: VECTOR |--------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// ----------------------------| CS ENGINE: VECTOR |------------------------- //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_VECTOR {
       constructor(cs) {
@@ -8,7 +9,7 @@
       }
 
       create(x, y) {
-         return { x: x, y: y }
+         return { x, y }
       }
 
       clone(v) {
@@ -18,21 +19,21 @@
       add(v0, v1) {
          return this.cs.vector.create(
             v0.x + v1.x,
-            v0.y + v1.y
+            v0.y + v1.y,
          )
       }
 
       min(v0, v1) {
          return this.cs.vector.create(
             v0.x - v1.x,
-            v0.y - v1.y
+            v0.y - v1.y,
          )
       }
 
       scale(v, s) {
          return this.cs.vector.create(
             v.x * s,
-            v.y * s
+            v.y * s,
          )
       }
 
@@ -45,7 +46,7 @@
       }
 
       unit(v) {
-         return this.cs.vector.scale(v, 1/this.cs.vector.length(v))
+         return this.cs.vector.scale(v, 1 / this.cs.vector.length(v))
       }
 
       distance(v0, v1) {
@@ -60,17 +61,15 @@
          return this.cs.vector.unit(this.cs.vector.min(v1, v0))
       }
 
-      round(v0, hundreths) {
-         if (hundreths == null) hundreths = 1
+      round(v0, hundreths = 1) {
          return {
             x: Math.round(v0.x * hundreths) / hundreths,
-            y: Math.round(v0.y * hundreths) / hundreths
+            y: Math.round(v0.y * hundreths) / hundreths,
          }
       }
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_VECTOR
-      : cs.vector = new CSENGINE_VECTOR(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_VECTOR
+   else cs.vector = new CSENGINE_VECTOR(cs) // eslint-disable-line no-undef
 })()

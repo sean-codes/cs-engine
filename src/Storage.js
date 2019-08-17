@@ -1,16 +1,16 @@
-//----------------------------------------------------------------------------//
-//-----------------------------| CS ENGINE: STORAGE |-------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// ----------------------------| CS ENGINE: STORAGE |------------------------ //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_STORAGE {
       constructor(cs) {
          this.cs = cs
-
          this.data = {}
       }
 
       init() {
-         for (var storage of this.cs.storages) {
+         for (const storage of this.cs.storages) {
             this.write(storage)
          }
       }
@@ -26,9 +26,9 @@
 
       // reminds me of bash ls command
       ls(location) {
-         var startsWith = cs.default(location, '')
-         var list = []
-         for (var storageName of Object.keys(this.data)) {
+         const startsWith = this.cs.default(location, '')
+         const list = []
+         for (const storageName of Object.keys(this.data)) {
             if (storageName.startsWith(startsWith)) {
                list.push(storageName)
             }
@@ -46,8 +46,6 @@
       }
    }
 
-   // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_STORAGE
-      : cs.storage = new CSENGINE_STORAGE(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_STORAGE
+   else cs.storage = new CSENGINE_STORAGE(cs) // eslint-disable-line no-undef
 })()

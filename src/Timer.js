@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//------------------------------| CS ENGINE: TIMER |--------------------------//
-//----------------------------------------------------------------------------//
+// --------------------------------------------------------------------------- //
+// ------------------------------| CS ENGINE: TIMER |------------------------- //
+// --------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_TIMER {
       constructor(cs) {
@@ -11,42 +12,37 @@
       }
 
       loop() {
-         for (var timer of this.list) {
-            if(timer.time) timer.time += 1
+         this.list.forEach(timer => {
+            if (timer.time) timer.time += 1
 
             timer.percent = timer.time / timer.duration
 
-            if(timer.percent == 1) {
+            if (timer.percent === 1) {
                timer.running = false
                this.unWatch(timer)
-               timer.end && timer.end()
+               if (timer.end) timer.end()
             }
-         }
+         })
       }
 
       create(options) {
-         var timer = options.timer
-         if(!timer) {
-            this.count += 1
+         this.count += 1
 
-            timer = {
-               id: this.count,
-               start: options.start,
-               end: options.end,
-               duration: options.duration,
-               time: 0,
-               percent: 0
-            }
+         return {
+            id: this.count,
+            start: options.start,
+            end: options.end,
+            duration: options.duration,
+            time: 0,
+            percent: 0,
          }
-
-         return timer
       }
 
       start(timer) {
-         if (timer.running) return
+         if (timer.running) return false
 
          this.watch(timer)
-         timer.start && timer.start()
+         if (timer.start) timer.start()
          timer.running = true
          timer.time = 1
          timer.percent = 0
@@ -59,9 +55,7 @@
       }
 
       unWatch(timer) {
-         this.list = this.list.filter(function(num) {
-            return num.id !== timer.id
-         })
+         this.list = this.list.filter(num => num.id !== timer.id)
       }
 
       isOn(timer) {
@@ -70,7 +64,6 @@
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_TIMER
-      : cs.timer = new CSENGINE_TIMER(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_TIMER
+   else cs.timer = new CSENGINE_TIMER(cs) // eslint-disable-line no-undef
 })()

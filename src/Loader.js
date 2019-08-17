@@ -1,17 +1,17 @@
-//----------------------------------------------------------------------------//
-//----------------------------| CS ENGINE: LOADER |---------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// ---------------------------| CS ENGINE: LOADER |-------------------------- //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_LOADER {
       constructor(cs) {
          this.cs = cs
 
          this.start = 0
-         this.loading =
-            cs.assets.sprites.length +
-            cs.assets.scripts.length +
-            cs.assets.sounds.length +
-            cs.assets.storages.length
+         this.loading = cs.assets.sprites.length
+            + cs.assets.scripts.length
+            + cs.assets.sounds.length
+            + cs.assets.storages.length
 
          this.loadTotal = this.loading
       }
@@ -28,16 +28,18 @@
          this.loadSounds()
          this.loadSprites()
          this.loadStorages()
+
+         return false
       }
 
       checkDone() {
          this.loading -= 1
 
-         var loadInfo = {
-            percent: Math.floor((this.loadTotal - this.loading) / this.loadTotal * 100),
+         const loadInfo = {
+            percent: Math.floor((this.loadTotal - this.loading) / (this.loadTotal * 100)),
             finished: !this.loading,
             current: this.loading,
-            totalRequired: this.loadTotal
+            totalRequired: this.loadTotal,
          }
 
          this.cs.progress(loadInfo)
@@ -63,7 +65,7 @@
 
       loadSprites() {
          for (const sprite of this.cs.assets.sprites) {
-            cs.sprites.push(sprite)
+            this.cs.sprites.push(sprite)
             console.log(`Loading Sprite: ${sprite.path}`)
             sprite.html = document.createElement('img')
             sprite.html.src = sprite.path + '.png?v=' + this.cs.version
@@ -80,13 +82,13 @@
             sound.buffer = null
             sound.request = new XMLHttpRequest()
 
-            sound.request.open('GET', sound.src, true);
-            sound.request.responseType = 'arraybuffer';
+            sound.request.open('GET', sound.src, true)
+            sound.request.responseType = 'arraybuffer'
 
             sound.request.onload = (data) => {
                window.AudioContext = window.AudioContext || window.webkitAudioContext
                if (window.AudioContext) {
-                  new AudioContext().decodeAudioData(data.currentTarget.response, function(buffer) {
+                  new AudioContext().decodeAudioData(data.currentTarget.response, (buffer) => {
                      sound.buffer = buffer
                   })
                }
@@ -98,6 +100,7 @@
 
       loadStorages() {
          for (const storage of this.cs.assets.storages) {
+            console.log('Loading Storage: ' + storage.path)
             this.cs.storages.push(storage)
             storage.data = {}
 
@@ -109,16 +112,16 @@
 
             // fetch the storage .json
             if (storage.path) {
-               var that = this
                storage.request = new XMLHttpRequest()
-               storage.request.onreadystatechange = function() {
-                  if (this.readyState == 4) {
-                     var data = JSON.parse(this.responseText)
+               storage.request.onreadystatechange = () => {
+                  if (storage.request.readyState === 4) {
+                     const data = JSON.parse(storage.request.responseText)
                      storage.data = data
-                     that.checkDone()
+                     this.checkDone()
                   }
                }
-               storage.request.open("GET", './' + storage.path + '.json?v=' + this.version, true)
+
+               storage.request.open('GET', './' + storage.path + '.json?v=' + this.version, true)
                storage.request.send()
             }
          }
@@ -126,7 +129,6 @@
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_LOADER
-      : cs.loader = new CSENGINE_LOADER(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_LOADER
+   else cs.loader = new CSENGINE_LOADER(cs) // eslint-disable-line no-undef
 })()

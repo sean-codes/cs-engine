@@ -1,6 +1,6 @@
-//----------------------------------------------------------------------------//
-//------------------------------| CS ENGINE: SOUND |--------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// ----------------------------| CS ENGINE: SOUND |-------------------------- //
+// -------------------------------------------------------------------------- //
 (() => {
    class CSENGINE_SOUND {
       constructor(cs) {
@@ -21,11 +21,11 @@
          if (this.initiated && !this.canPlayAudio) return
          if (!this.context) return
 
-         cs.sound.toggleActive(true)
-         var source = this.context.createBufferSource();
-         source.buffer = this.context.createBuffer(1, 1, 22050);
-         source.connect(this.context.destination);
-         source.start(0);
+         this.cs.sound.toggleActive(true)
+         const source = this.context.createBufferSource()
+         source.buffer = this.context.createBuffer(1, 1, 22050)
+         source.connect(this.context.destination)
+         source.start(0)
       }
 
       init() {
@@ -39,54 +39,58 @@
       }
 
       loadSounds() {
-         for (var sound of cs.sounds) {
-            var name = sound.name || sound.path.split('/').pop()
+         for (const sound of this.cs.sounds) {
+            const name = sound.name || sound.path.split('/').pop()
             this.list[name] = sound
          }
       }
 
       play(audioName, options) {
-         var sound = this.list[audioName]
+         const sound = this.list[audioName]
          if (this.canPlayAudio && sound) {
-            this.playList.forEach(function(audioObj) {
-               if (audioObj.name == audioName) {
-                  //console.log('Reuse this sound');
+            this.playList.forEach(audioObj => {
+               if (audioObj.name === audioName) {
+                  // console.log('Reuse this sound');
                }
             })
-            var csAudioObj = this.context.createBufferSource();
-            csAudioObj.name = audioName;
-            csAudioObj.buffer = sound.buffer;
-            for (var opt in options) { csAudioObj[opt] = options[opt] }
-            csAudioObj.gainNode = this.context.createGain();
-            csAudioObj.connect(csAudioObj.gainNode);
-            csAudioObj.gainNode.connect(this.context.destination);
-            csAudioObj.gainNode.gain.value = cs.sound.mute ? 0 : 1;
-            csAudioObj.start(0);
-            this.playList.push(csAudioObj);
-            return csAudioObj;
+
+            const csAudioObj = this.context.createBufferSource()
+            csAudioObj.name = audioName
+            csAudioObj.buffer = sound.buffer
+            for (const opt in options) { csAudioObj[opt] = options[opt] }
+            csAudioObj.gainNode = this.context.createGain()
+            csAudioObj.connect(csAudioObj.gainNode)
+            csAudioObj.gainNode.connect(this.context.destination)
+            csAudioObj.gainNode.gain.value = this.cs.sound.mute ? 0 : 1
+            csAudioObj.start(0)
+            this.playList.push(csAudioObj)
+            return csAudioObj
          }
-         return undefined;
+
+         return undefined
       }
 
       reset() {
-         for (var sound in this.playList) {
-            //TODO there is an error here take a look in a second I got to go wash my cloths~!!!
-            if (!this.playList) return;
-            this.playList[sound].stop();
-            this.playList[sound].disconnect();
+         for (const sound in this.playList) {
+            // TODO there is an error here take a look in a second I got to go wash my cloths~!!!
+            if (!this.playList) return
+            this.playList[sound].stop()
+            this.playList[sound].disconnect()
          }
       }
 
       toggleMute(bool) {
-         this.mute = bool;
-         (bool) ? this.setGain(0): this.setGain(1);
+         this.mute = bool
+         if (bool) this.setGain(0)
+         else this.setGain(1)
       }
 
       setGain(gainValue) {
-         console.log('GainValue: ' + gainValue);
-         for (var audioObj in this.playList) {
-            console.log('Muting...', audioObj);
-            this.playList[audioObj].gainNode.gain.value = gainValue;
+         // console.log(`GainValue: ${gainValue}`)
+
+         for (const audioObj in this.playList) {
+            // console.log('Muting...', audioObj)
+            this.playList[audioObj].gainNode.gain.value = gainValue
          }
       }
 
@@ -102,7 +106,6 @@
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_SOUND
-      : cs.sound = new CSENGINE_SOUND(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_SOUND
+   else cs.sound = new CSENGINE_SOUND(cs) // eslint-disable-line no-undef
 })()

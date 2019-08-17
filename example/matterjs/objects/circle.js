@@ -1,4 +1,6 @@
-cs.objects['circle'] = {
+/* global cs, Matter */
+
+cs.objects.circle = {
    create: ({ object, cs, attr }) => {
       // console.log('wtf')
       object.x = cs.default(attr.x, 40)
@@ -6,7 +8,12 @@ cs.objects['circle'] = {
       object.radius = cs.default(attr.radius, 40)
       object.color = cs.default(attr.color, '#f22')
 
-      object.body = Matter.Bodies.circle(object.x + object.radius/2, object.y + object.radius/2, object.radius)
+      object.body = Matter.Bodies.circle(
+         object.x + object.radius / 2,
+         object.y + object.radius / 2,
+         object.radius,
+      )
+
       Matter.World.add(cs.global.matter.engine.world, [object.body])
    },
 
@@ -16,5 +23,5 @@ cs.objects['circle'] = {
          vertices: object.body.vertices,
          fill: false,
       })
-   }
+   },
 }

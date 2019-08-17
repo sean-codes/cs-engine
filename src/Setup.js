@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//------------------------------| CS ENGINE: SETUP |--------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// -----------------------------| CS ENGINE: SETUP |------------------------- //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_SETUP {
       constructor(cs) {
@@ -24,14 +25,14 @@
             this.cs.canvas.addEventListener('keyup', (e) => this.cs.inputKeyboard.eventUp(e))
 
             if (this.cs.canvas.setPointerCapture) {
-               this.cs.canvas.addEventListener("pointerdown", (e) => this.cs.inputTouch.eventPointerDown(e))
-               this.cs.canvas.addEventListener("pointermove", (e) => this.cs.inputTouch.eventPointerMove(e))
-               this.cs.canvas.addEventListener("pointerup", (e) => this.cs.inputTouch.eventPointerUp(e))
-               this.cs.canvas.addEventListener("pointerout", (e) => this.cs.inputTouch.eventPointerUp(e))
+               this.cs.canvas.addEventListener('pointerdown', (e) => this.cs.inputTouch.eventPointerDown(e))
+               this.cs.canvas.addEventListener('pointermove', (e) => this.cs.inputTouch.eventPointerMove(e))
+               this.cs.canvas.addEventListener('pointerup', (e) => this.cs.inputTouch.eventPointerUp(e))
+               this.cs.canvas.addEventListener('pointerout', (e) => this.cs.inputTouch.eventPointerUp(e))
             } else {
-               this.cs.canvas.addEventListener("touchstart", (e) => this.cs.inputTouch.eventTouchDown(e))
-               this.cs.canvas.addEventListener("touchmove", (e) => his.cs.inputTouch.eventTouchMove(e))
-               this.cs.canvas.addEventListener("touchend", (e) => this.cs.inputTouch.eventTouchUp(e))
+               this.cs.canvas.addEventListener('touchstart', (e) => this.cs.inputTouch.eventTouchDown(e))
+               this.cs.canvas.addEventListener('touchmove', (e) => this.cs.inputTouch.eventTouchMove(e))
+               this.cs.canvas.addEventListener('touchend', (e) => this.cs.inputTouch.eventTouchUp(e))
 
                this.cs.canvas.addEventListener('mousedown', (e) => this.cs.inputMouse.eventDown(e))
                this.cs.canvas.addEventListener('mousemove', (e) => this.cs.inputMouse.eventMove(e))
@@ -41,26 +42,26 @@
 
             // View, Game and GUI surfaces
             this.cs.surface.create({ name: 'gui', oneToOne: true, useCamera: false, depth: 0 })
-            this.cs.surface.create({ name: 'game', oneToOne: true, useCamera: true,  depth: 10 })
+            this.cs.surface.create({ name: 'game', oneToOne: true, useCamera: true, depth: 10 })
 
             // Sound
-            //this.cs.sound.active = this.cs.sound.init();
+            // this.cs.sound.active = this.cs.sound.init();
 
             // watch for resizing
             this.cs.resize = () => {
-               var maxSize = this.cs.maxSize
+               const { maxSize } = this.cs
                this.cs.width = this.cs.canvas.clientWidth
                this.cs.height = this.cs.canvas.clientHeight
                this.cs.clampWidth = this.cs.width
                this.cs.clampHeight = this.cs.height
 
                if (this.cs.clampWidth > maxSize) {
-                  this.cs.clampHeight = this.cs.clampHeight / this.cs.clampWidth * maxSize
+                  this.cs.clampHeight = (this.cs.clampHeight / this.cs.clampWidth) * maxSize
                   this.cs.clampWidth = maxSize
                }
 
                if (this.cs.clampHeight > maxSize) {
-                  this.cs.clampWidth = this.cs.clampWidth / this.cs.clampHeight * maxSize
+                  this.cs.clampWidth = (this.cs.clampWidth / this.cs.clampHeight) * maxSize
                   this.cs.clampHeight = maxSize
                }
 
@@ -78,24 +79,27 @@
             // room/camera
             this.cs.room.setup({
                width: this.cs.canvas.getBoundingClientRect().width,
-               height: this.cs.canvas.getBoundingClientRect().height
+               height: this.cs.canvas.getBoundingClientRect().height,
             })
 
             this.cs.camera.setup({
                width: this.cs.canvas.getBoundingClientRect().width,
-               height: this.cs.canvas.getBoundingClientRect().height
+               height: this.cs.canvas.getBoundingClientRect().height,
             })
 
             // window global functions
             if (window) {
-               window.onerror = function(errorMsg, url, lineNumber) { this.cs.loop.stop() }
-
-               window.onfocus = function(e) {
-                  this.cs.focus(true)
+               window.onerror = (errorMsg, url, lineNumber) => {
+                  console.log('error', errorMsg, url, lineNumber)
+                  this.cs.loop.stop()
                }
 
-               window.onblur = function(e) {
-                  this.cs.focus(false)
+               window.onfocus = (e) => {
+                  this.cs.focus(true, e)
+               }
+
+               window.onblur = (e) => {
+                  this.cs.focus(false, e)
                   this.cs.sound.toggleActive(false, e)
                   this.cs.inputKeyboard.blur()
                }
@@ -118,7 +122,6 @@
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_SETUP
-      : cs.setup = new CSENGINE_SETUP(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_SETUP
+   else cs.setup = new CSENGINE_SETUP(cs) // eslint-disable-line no-undef
 })()

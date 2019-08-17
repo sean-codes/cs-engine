@@ -1,5 +1,5 @@
-cs = {}
-cs.load = function(options) {
+const cs = {}
+cs.load = function (options) {
    this.options = options
 
    // handy
@@ -11,13 +11,13 @@ cs.load = function(options) {
    this.ctx = this.canvas.getContext('2d')
    this.path = options.path
    if (!options.path) {
-      var scriptTag = document.querySelector('#cs-main-web')
-      if (!scriptTag) return console.log(
-         'ERROR: could not load parts.',
-         '\r\nneed options.path or id="cs-main-web" on script tag'
-      )
+      const scriptTag = document.querySelector('#cs-main-web')
+      if (!scriptTag) {
+         throw 'ERROR: could not load parts.'
+            + '\r\nneed options.path or id="cs-main-web" on script tag'
+      }
 
-      var path = new URL(scriptTag.src)
+      const path = new URL(scriptTag.src)
       this.path = path.pathname.replace('/main.web.js', '')
    }
 
@@ -25,12 +25,12 @@ cs.load = function(options) {
    this.start = options.start
    this.userStep = options.step
    this.userDraw = options.draw
-   this.progress = options.progress || function() {}
-   this.focus = options.focus || function() {}
+   this.progress = options.progress || function () {}
+   this.focus = options.focus || function () {}
    this.version = options.version || Math.random()
    this.global = options.global || {}
-   this.progress = options.progress || function() {}
-   this.focus = options.focus || function() {}
+   this.progress = options.progress || function () {}
+   this.focus = options.focus || function () {}
 
    this.objects = options.objects || {}
    this.scripts = options.scripts || {}
@@ -71,16 +71,16 @@ cs.load = function(options) {
 
    // 2. load
    console.groupCollapsed('Loading Engine...')
-   let loading = parts.length
+   this.loading = parts.length
    const dateStartLoading = Date.now()
 
-   for (var part of parts) {
-      console.log('Loading Part: ' + part.path.split('/').pop())
+   for (const part of parts) {
+      console.log(this.loading, 'Loading Part: ' + part.path.split('/').pop())
       const htmlScript = document.createElement('script')
       htmlScript.src = `${part.path}.js?v=${this.version}`
-
       htmlScript.onload = () => {
-         if (loading-- <= 1) {
+         this.loading -= 1
+         if (this.loading <= 0) {
             const engineLoadTime = Math.round(Date.now() - dateStartLoading)
             console.groupEnd()
             console.log(`Engine Loaded in ${engineLoadTime}ms`)
@@ -88,6 +88,6 @@ cs.load = function(options) {
          }
       }
 
-      document.body.appendChild(htmlScript)
+      document.body.append(htmlScript)
    }
 }

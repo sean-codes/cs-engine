@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//------------------------------| CS ENGINE: SETUP |--------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// -----------------------------| CS ENGINE: SETUP |------------------------- //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_SCRIPT {
       constructor(cs) {
@@ -14,14 +15,14 @@
       }
 
       mapScripts(path, object, parent) {
-         for (let scriptName in object) {
+         for (const scriptName in object) {
             // keep base parent this scope through scripts (allows nesting)
-            let thisParent = parent ? parent : object[scriptName]
-            let script = object[scriptName]
+            const thisParent = parent || object[scriptName]
+            const script = object[scriptName]
 
             this.map[path + scriptName] = {
                function: script,
-               parent: thisParent
+               parent: thisParent,
             }
 
             this.mapScripts(scriptName + '.', this.cs.scripts[scriptName], thisParent)
@@ -39,7 +40,6 @@
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_SCRIPT
-      : cs.script = new CSENGINE_SCRIPT(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_SCRIPT
+   else cs.script = new CSENGINE_SCRIPT(cs) // eslint-disable-line no-undef
 })()
