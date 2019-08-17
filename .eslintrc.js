@@ -4,9 +4,6 @@ module.exports = {
     es6: true,
     node: true,
   },
-  extends: [
-    'airbnb-base',
-  ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
@@ -35,6 +32,11 @@ module.exports = {
      'max-classes-per-file': 'off',
      'arrow-body-style': 'off',
      'func-names': 'off',
-     'no-throw-literal': 'off'
+     'no-throw-literal': 'off',
+     'comma-dangle': 'off',
+     'object-curly-spacing': 'off',
+     'max-len': 'off',
+     "eqeqeq": ['error', 'always'],
+     "no-undef": 'error'
   },
 };

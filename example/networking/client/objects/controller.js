@@ -1,3 +1,5 @@
+/* global cs */
+
 cs.objects.controller = {
    surface: 'gui',
    create: function() {
@@ -33,7 +35,7 @@ cs.objects.controller = {
          this.forward = joystick.forward
       }
 
-      this.turning = this.angle != this.oldAngle
+      this.turning = this.angle !== this.oldAngle
 
       if (
          this.oldFire !== this.fire ||

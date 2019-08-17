@@ -1,3 +1,5 @@
+/* global cs */
+
 // prevents rapid snapping!
 // it can allow for non exact syncing! :<
 cs.scripts.smooth = (from, to, speed) => {

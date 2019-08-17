@@ -1,3 +1,5 @@
+/* global cs */
+
 cs.objects.bullet = {
    zIndex: 1,
    create: function({ cs, attr }) {
@@ -8,15 +10,10 @@ cs.objects.bullet = {
    },
 
    snapshotRead: function(snapshot) {
-      this.networkId = snapshot.id
+      const [ id, x, y ] = snapshot
 
-      var x = cs.scripts.smooth(this.pos.x, snapshot.x, 100)
-      var y = cs.scripts.smooth(this.pos.y, snapshot.y, 100)
-      var speedX = snapshot.sx
-      var speedY = snapshot.sy
-
-      this.pos = cs.vector.create(x, y)
-      this.speed = cs.vector.create(speedX, speedY)
+      this.pos.x = cs.scripts.smooth(this.pos.x, x, 100)
+      this.pos.y = cs.scripts.smooth(this.pos.y, y, 100)
    },
 
    step: function({ cs }) {
@@ -31,5 +28,6 @@ cs.objects.bullet = {
          radius: this.radius,
          fill: true
       })
+
    }
 }

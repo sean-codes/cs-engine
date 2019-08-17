@@ -1,3 +1,5 @@
+/* global cs */
+
 cs.objects.joystick = {
    surface: 'gui',
    create: function() {

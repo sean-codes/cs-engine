@@ -25,17 +25,15 @@ module.exports = {
    },
 
    disconnect({ cs, socket }) {
-      let gameSocket = this.connections[socket.id]
-      if (gameSocket) {
-         cs.object.destroy(gameSocket.object)
-         this.connections = this.connections.filter(c => c.socket.id !== socket.id)
-      }
+      const gameSocket = this.connections[socket.id]
+      cs.object.destroy(gameSocket.object)
+      delete this.connections[socket.id]
    },
 
-   onMessage({ cs, message: { socket, message } }) {
+   onMessage({ message: { socket, message } }) {
       // message has the socket that sent it plus the message
       if (this.functions[message.func]) {
-         var gameSocket = this.connections[socket.id]
+         const gameSocket = this.connections[socket.id]
          if (gameSocket) {
             this.functions[message.func]({
                socket: gameSocket,
@@ -47,16 +45,16 @@ module.exports = {
       }
    },
 
-   broadcast({ cs, message }) {
-      for (let socketId in this.connections) {
-         let connection = this.connections[socketId]
+   broadcast({ message }) {
+      for (const socketId in this.connections) {
+         const connection = this.connections[socketId]
          connection.socket.send(message)
       }
    },
 
    functions: {
-      'control': function({ socket, data }) {
-         let object = socket.object
+      control: function ({ socket, data }) {
+         const { object } = socket
 
          if (object) {
             object.targetAngle = data.angle

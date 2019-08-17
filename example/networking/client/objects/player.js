@@ -1,3 +1,5 @@
+/* global cs */
+
 cs.objects.player = {
    zIndex: 2,
    create: function({ attr }) {
@@ -17,12 +19,13 @@ cs.objects.player = {
    },
 
    snapshotRead: function(snapshot) {
-      this.pos.x = cs.scripts.smooth(this.pos.x, snapshot.x, 50)
-      this.pos.y = cs.scripts.smooth(this.pos.y, snapshot.y, 50)
-      this.angle = cs.scripts.smooth(this.angle, snapshot.a, 100)
-      this.turnSpeed = snapshot.ts
-      this.speed = cs.vector.create(snapshot.sx, snapshot.sy)
-      this.forward = snapshot.f ? true : false
+      const [ id, x, y, angle, turnSpeed, speedX, speedY, forward ] = snapshot
+      this.pos.x = cs.scripts.smooth(this.pos.x, x, 50)
+      this.pos.y = cs.scripts.smooth(this.pos.y, y, 50)
+      this.angle = cs.scripts.smooth(this.angle, angle, 100)
+      this.turnSpeed = turnSpeed
+      this.speed = cs.vector.create(speedX, speedY)
+      this.forward = forward ? true : false
    },
 
    step: function() {
@@ -33,7 +36,7 @@ cs.objects.player = {
       if (this.pos.x < 0 || this.pos.x > cs.room.width) this.pos.x = this.pos.x < 0 ? 0 : cs.room.width
       if (this.pos.y < 0 || this.pos.y > cs.room.height) this.pos.y = this.pos.y < 0 ? 0 : cs.room.height
 
-      if (this.socketId == cs.global.socketId) {
+      if (this.socketId === cs.global.socketId) {
          cs.camera.follow(this.pos)
       }
    },
@@ -57,7 +60,7 @@ cs.objects.player = {
       })
 
       // draw direction
-      if (cs.global.socketId == this.socketId) {
+      if (cs.global.socketId === this.socketId) {
          cs.global.selfObject = this
          var targetAngle = cs.global.controller.angle
 

@@ -1,6 +1,8 @@
+/* global cs */
+
 cs.load({
    path: "/cs-engine/",
-   canvas: canvas,
+   canvas: document.getElementById('canvas'),
 
    assets: {
       sprites: [

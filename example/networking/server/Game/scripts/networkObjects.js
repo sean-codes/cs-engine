@@ -1,9 +1,9 @@
 module.exports = {
    objectMap: {},
 
-   sendSocketNetworkObjects: function({ cs, socket }) {
-      for (var objectId in this.objectMap) {
-         var object= this.objectMap[objectId]
+   sendSocketNetworkObjects: function ({ cs, socket }) {
+      for (const objectId in this.objectMap) {
+         const object = this.objectMap[objectId]
          socket.send({
             func: 'object-create',
             data: {
@@ -15,7 +15,7 @@ module.exports = {
       }
    },
 
-   objectCreate: function({ cs, object }) {
+   objectCreate: function ({ cs, object }) {
       this.objectMap[object.core.id] = object
       cs.script.exec('network.broadcast', { message: {
          func: 'object-create',
@@ -27,7 +27,7 @@ module.exports = {
       }})
    },
 
-   objectDestroy: function({ cs, object }) {
+   objectDestroy: function ({ cs, object }) {
       cs.script.exec('network.broadcast', { message: {
          func: 'object-destroy',
          data: { id: object.core.id }
@@ -36,15 +36,14 @@ module.exports = {
       delete this.objectMap[object.core.id]
    },
 
-   snapshot: function({ cs }) {
-      let snapshot = []
-      for (let object of cs.object.every()) {
+   snapshot: function ({ cs }) {
+      const snapshot = []
+      for (const object of cs.object.every()) {
          if (object.snapshotWrite) {
-            snapshot.push({
-               type: object.core.type,
-               id: object.core.id,
+            snapshot.push([
+               object.core.id,
                ...object.snapshotWrite({ cs })
-            })
+            ])
          }
       }
 

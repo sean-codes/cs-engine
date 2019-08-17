@@ -1,3 +1,5 @@
+/* global cs */
+
 cs.objects.background = {
    surface: 'background',
 
@@ -6,7 +8,7 @@ cs.objects.background = {
    },
 
    drawOnce: function() {
-      bgSquareSize = 5
+      const bgSquareSize = 5
       for (var x = 0; x <= Math.ceil(cs.room.width / bgSquareSize); x++) {
          for (var y = 0; y <= Math.ceil(cs.room.height / bgSquareSize); y++) {
             cs.draw.setColor(cs.math.choose(['#f66', '#b55', '#555']))

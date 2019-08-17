@@ -1,3 +1,5 @@
+/* global cs */
+
 cs.scripts.networkObjects = {
    objectMap: {},
 
@@ -33,7 +35,7 @@ cs.scripts.networkObjects = {
       cs.global.snapshotLast = Date.now()
 
       for (var snap of snapshots) {
-         var object = this.objectMap[snap.id]
+         var object = this.objectMap[snap[0]]
          if (object) {
             object.snapshotRead(snap)
          }

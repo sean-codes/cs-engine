@@ -1,3 +1,5 @@
+/* global cs */
+
 cs.scripts.network = {
    init: function() {
       cs.network.setup({

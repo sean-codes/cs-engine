@@ -20,12 +20,10 @@ module.exports = {
    },
 
    snapshotWrite: function({ cs }) {
-      return {
-         x: cs.math.round(this.pos.x, 100),
-         y: cs.math.round(this.pos.y, 100),
-         sx: cs.math.round(this.speed.x, 1000),
-         sy: cs.math.round(this.speed.y, 1000)
-      }
+      return [
+         cs.math.round(this.pos.x, 100),
+         cs.math.round(this.pos.y, 100)
+      ]
    },
 
    step: function({ cs }) {
