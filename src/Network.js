@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//----------------------------| CS ENGINE: NETWORK |--------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// ---------------------------| CS ENGINE: NETWORK |------------------------- //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_NETWORK {
       constructor(cs) {
@@ -20,21 +21,21 @@
             upWatch: 0,
             downWatch: 0,
             last: Date.now(),
-            count: 0
+            count: 0,
          }
 
          this.overrides = {
-            connect: function() {},
-            disconnect: function() {},
-            message: function() {},
+            connect: undefined,
+            disconnect: undefined,
+            message: undefined,
          }
       }
 
       updateMetrics() {
-         const metrics = this.cs.network.metrics
+         const { metrics } = this.cs.network
          const now = Date.now()
          if (now - metrics.last > 1000) {
-            metrics.count++
+            metrics.count += 1
             metrics.last = now
             metrics.upNow = metrics.upWatch
             metrics.downNow = metrics.downWatch
@@ -52,21 +53,21 @@
          // console.log('this.cs.network.connect', options)
          try {
             const host = options.host || window.location.hostname
-            let url = "wss://" + host + ":" + options.port
+            let url = 'wss://' + host + ':' + options.port
 
-            if (options.ssl == undefined || options.ssl == false) {
-               url = "ws://" + host + ":" + options.port
+            if (options.ssl === undefined || options.ssl === false) {
+               url = 'ws://' + host + ':' + options.port
             }
 
-            const ws = new WebSocket(url);
+            const ws = new WebSocket(url)
             ws.onopen = () => {
                this.cs.network.onconnect()
             }
             ws.onclose = () => { this.cs.network.ondisconnect() }
             ws.onmessage = (event) => { this.cs.network.onmessage(event.data) }
-            this.cs.network.ws = ws;
-         } catch(e) {
-            console.log(e);
+            this.cs.network.ws = ws
+         } catch (e) {
+            console.log(e)
          }
       }
 
@@ -84,15 +85,15 @@
       }
 
       read() {
-         while(this.buffer.length) {
+         while (this.buffer.length) {
             const message = this.buffer.shift()
             this.cs.network.metrics.downWatch += message.length
             try {
                this.overrides.message({
                   cs: this.cs,
-                  message: message
+                  message: message,
                })
-            } catch(e) {
+            } catch (e) {
                console.error('could not parse message', e)
             }
          }
@@ -100,12 +101,12 @@
 
       onconnect() {
          this.cs.network.status = true
-         this.overrides.connect({ cs: this.cs })
+         if (this.overrides.connect) this.overrides.connect({ cs: this.cs })
       }
 
       ondisconnect() {
          this.cs.network.status = false
-         this.overrides.disconnect({ cs: this.cs })
+         if (this.overrides.disconnect) this.overrides.disconnect({ cs: this.cs })
       }
 
       onmessage(message) {
@@ -120,7 +121,6 @@
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_NETWORK
-      : this.cs.network = new CSENGINE_NETWORK(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_NETWORK
+   else cs.network = new CSENGINE_NETWORK(cs) // eslint-disable-line no-undef
 })()

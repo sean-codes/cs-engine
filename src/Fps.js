@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//------------------------------| CS ENGINE: FPS |---------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// -----------------------------| CS ENGINE: FPS |--------------------------- //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_FPS {
       constructor(cs) {
@@ -12,7 +13,8 @@
       }
 
       update() {
-         this.checkReset() ? this.frame += 1 : this.reset()
+         if (this.checkReset()) this.frame += 1
+         else this.reset()
       }
 
       checkReset() {
@@ -27,7 +29,6 @@
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_FPS
-      : cs.fps = new CSENGINE_FPS(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_FPS
+   else cs.fps = new CSENGINE_FPS(cs) // eslint-disable-line no-undef
 })()

@@ -37,12 +37,12 @@ module.exports = class cs {
       this.start = options.start
       this.userStep = options.step
       this.userDraw = options.draw
-      this.progress = options.progress || function() {}
-      this.focus = options.focus || function() {}
+      this.progress = options.progress || function () {}
+      this.focus = options.focus || function () {}
       this.version = options.version || Math.random()
       this.global = options.global || {}
-      this.progress = options.progress || function() {}
-      this.focus = options.focus || function() {}
+      this.progress = options.progress || function () {}
+      this.focus = options.focus || function () {}
 
 
       this.objects = options.objects || {}

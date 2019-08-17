@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//--------------------------| CS ENGINE: INPUT MOUSE |------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// -------------------------| CS ENGINE: INPUT MOUSE |----------------------- //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_INPUT_MOUSE {
       constructor(cs) {
@@ -11,8 +12,8 @@
       }
 
       pos() {
-         var convert = this.cs.inputTouch.convertToGameCords(this.x, this.y)
-         return (cs.draw.raw)
+         const convert = this.cs.inputTouch.convertToGameCords(this.x, this.y)
+         return (this.cs.draw.raw)
             ? { x: this.x, y: this.y }
             : { x: convert.x, y: convert.y }
       }
@@ -26,7 +27,7 @@
             type: 'down',
             id: -1,
             x: this.x,
-            y: this.y
+            y: this.y,
          })
 
          this.eventMove(e)
@@ -40,20 +41,19 @@
             type: 'move',
             id: -1,
             x: this.x,
-            y: this.y
+            y: this.y,
          })
       }
 
-      eventUp(e) {
+      eventUp() {
          this.cs.inputTouch.eventsUp.push({
             type: 'up',
-            id: -1
+            id: -1,
          })
       }
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_INPUT_MOUSE
-      : cs.inputMouse = new CSENGINE_INPUT_MOUSE(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_INPUT_MOUSE
+   else cs.inputMouse = new CSENGINE_INPUT_MOUSE(cs) // eslint-disable-line no-undef
 })()

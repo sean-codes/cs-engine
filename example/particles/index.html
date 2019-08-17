@@ -63,8 +63,9 @@
                }
             }
          },
-         
+
          start: function() {
+            console.log('start')
             cs.global.particles = cs.storage.read('particles')
             cs.object.create({
                type: 'emitter',

@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//--------------------------| CS ENGINE: FULLSCREEN |-------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// -------------------------| CS ENGINE: FULLSCREEN |------------------------ //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_FULLSCREEN {
       constructor(cs) {
@@ -12,31 +13,30 @@
       }
 
       is() {
-         return this.normalize('element') ? true : false
+         return this.normalize('element')
       }
 
       toggle() {
          if (this.possible()) {
-            this.normalize('element')
-               ? this.exit()
-               : this.enter()
+            if (this.normalize('element')) this.exit()
+            else this.enter()
          }
       }
 
       enter() {
-         this.possible() && this.normalize('request')
+         if (this.possible()) this.normalize('request')
       }
 
       exit() {
-         this.possible() && this.normalize('exit')
+         if (this.possible()) this.normalize('exit')
       }
 
       normalize(func) {
-         for (var prefix of [undefined, 'moz', 'webkit']) {
-            var requestFullscreen = prefix + 'RequestFullscreen'
-            var fullscreenElement = prefix + 'FullscreenElement'
-            var fullscreenEnabled = prefix + 'FullscreenEnabled'
-            var exitFullscreen = prefix + 'ExitFullscreen'
+         for (const prefix of [undefined, 'moz', 'webkit']) {
+            let requestFullscreen = prefix + 'RequestFullscreen'
+            let fullscreenElement = prefix + 'FullscreenElement'
+            let fullscreenEnabled = prefix + 'FullscreenEnabled'
+            let exitFullscreen = prefix + 'ExitFullscreen'
 
             if (!prefix) {
                requestFullscreen = 'requestFullscreen'
@@ -46,11 +46,11 @@
             }
 
             if (document.documentElement[requestFullscreen] !== undefined) {
-               if (func == 'possible') return document.documentElement[requestFullscreen] ? true : false
-               if (func == 'element') return document[fullscreenElement]
-               if (func == 'exit') return document[exitFullscreen]()
-               if (func == 'request') return document.documentElement[requestFullscreen]()
-               if (func == 'enabled') return document[fullscreenEnabled]
+               if (func === 'possible') return document.documentElement[requestFullscreen]
+               if (func === 'element') return document[fullscreenElement]
+               if (func === 'exit') return document[exitFullscreen]()
+               if (func === 'request') return document.documentElement[requestFullscreen]()
+               if (func === 'enabled') return document[fullscreenEnabled]
             }
          }
 
@@ -59,7 +59,6 @@
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_FULLSCREEN
-      : cs.fullscreen = new CSENGINE_FULLSCREEN(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_FULLSCREEN
+   else cs.fullscreen = new CSENGINE_FULLSCREEN(cs) // eslint-disable-line no-undef
 })()

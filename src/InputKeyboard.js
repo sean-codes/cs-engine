@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//------------------------| CS ENGINE: INPUT KEYBOARD |-----------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// -----------------------| CS ENGINE: INPUT KEYBOARD |---------------------- //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_INPUT_KEYBOARD {
       constructor(cs) {
@@ -13,25 +14,24 @@
       }
 
       addEvent(keyCode, eventType) {
-         var num = this.events.length
+         const num = this.events.length
          this.events[num] = {
             event: eventType,
-            key: keyCode
+            key: keyCode,
          }
       }
 
       execute() {
-         for (var i = 0; i < this.events.length; i++) {
-            var event = this.events[i].event;
-            var key = this.events[i].key
+         for (let i = 0; i < this.events.length; i += 1) {
+            const { event, key } = this.events[i]
             this.processEvent(key, event)
          }
-         this.events = [];
+         this.events = []
       }
 
       processEvent(keyCode, type) {
-         if (type == 'up') {
-            if(!this.heldList[keyCode]) return
+         if (type === 'up') {
+            if (!this.heldList[keyCode]) return
             this.upList[keyCode] = performance.now()
             return
          }
@@ -41,7 +41,7 @@
       }
 
       reset() {
-         for (var tmp in this.downList) {
+         for (const tmp in this.downList) {
             this.downList[tmp] = false
             if (this.upList[tmp]) {
                this.heldList[tmp] = false
@@ -52,7 +52,7 @@
       }
 
       blur() {
-         for (var keyId in this.downList) {
+         for (const keyId in this.downList) {
             this.downList[keyId] = false
             this.heldList[keyId] = false
             this.upList[keyId] = false
@@ -62,27 +62,27 @@
       }
 
       eventDown(keyEvent) {
-         keyEvent.preventDefault();
+         keyEvent.preventDefault()
          if (!keyEvent.repeat) {
-            this.virtualDown(keyEvent.keyCode);
+            this.virtualDown(keyEvent.keyCode)
          }
       }
 
       eventUp(keyEvent) {
-         this.virtualUp(keyEvent.keyCode);
+         this.virtualUp(keyEvent.keyCode)
       }
 
       virtualDown(keyCode) {
-         this.addEvent(keyCode, 'down');
+         this.addEvent(keyCode, 'down')
       }
 
       virtualUp(keyCode) {
-         this.addEvent(keyCode, 'up');
+         this.addEvent(keyCode, 'up')
       }
 
       virtualPress(key) {
-         this.virtualDown(key);
-         this.virtualUp(key);
+         this.virtualDown(key)
+         this.virtualUp(key)
       }
 
       up(keyID) {
@@ -98,20 +98,19 @@
       }
 
       isUp(keyID) {
-         return this.upList[keyID] ? true : false
+         return this.upList[keyID]
       }
 
       isDown(keyID) {
-         return this.downList[keyID] ? true : false
+         return this.downList[keyID]
       }
 
       isHeld(keyID) {
-         return this.heldList[keyID] ? true : false
+         return this.heldList[keyID]
       }
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_INPUT_KEYBOARD
-      : cs.inputKeyboard = new CSENGINE_INPUT_KEYBOARD(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_INPUT_KEYBOARD
+   else cs.inputKeyboard = new CSENGINE_INPUT_KEYBOARD(cs) // eslint-disable-line no-undef
 })()

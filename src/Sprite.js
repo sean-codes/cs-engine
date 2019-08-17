@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//------------------------------| CS ENGINE: SPRITE |--------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// -----------------------------| CS ENGINE: SPRITE |------------------------ //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_SPRITE {
       constructor(cs) {
@@ -8,38 +9,49 @@
          this.list = {}
       }
 
-      init(sprites) {
-         for (var sprite of this.cs.sprites) {
+      init() {
+         for (const sprite of this.cs.sprites) {
             this.initSprite(sprite)
          }
       }
 
       initSprite(options) {
          // create Sprite
-         var width = options.fwidth || options.html.width
-         var height = options.fheight || options.html.height
-         var newSprite = {
+         const width = this.cs.default(options.fwidth, options.html.width)
+         const height = this.cs.default(options.fheight, options.html.height)
+
+         let maskWidth = width
+         let maskHeight = height
+
+         if (options.mask) {
+            if (options.mask.width) maskWidth = options.maskWidth
+            else maskWidth = width - (options.mask.left || 0) - (options.mask.right || 0)
+
+            if (options.mask.height) maskHeight = options.maskHeight
+            else maskHeight = height - (options.mask.top || 0) - (options.mask.bottom || 0)
+         }
+
+         const newSprite = {
             html: options.html,
             name: options.name || options.path.split('/').pop(),
             texture: document.createElement('canvas'),
-            frames: options.frames || 1,
             fwidth: width,
             fheight: height,
             xoff: options.xoff || 0,
             yoff: options.yoff || 0,
             mask: {
-               width: options.mask ? (options.mask.width || width - (options.mask.left || 0) - (options.mask.right || 0)) : width,
-               height: options.mask ? (options.mask.height || height - (options.mask.top || 0) - (options.mask.bottom || 0)) : height
+               width: maskWidth,
+               height: maskHeight,
             },
-            frames: []
+            frames: [],
          }
 
          // handle Frames
-         var dx = 0
-         var dy = 0
+         let dx = 0
+         let dy = 0
 
          while (dx < newSprite.html.width && dy < newSprite.html.height) {
-            var frame = {}
+            const frame = {}
             frame.canvas = document.createElement('canvas')
             frame.canvas.width = newSprite.fwidth
             frame.canvas.height = newSprite.fheight
@@ -60,7 +72,7 @@
       }
 
       texture(spriteName, width, height) {
-         var sprite = this.cs.sprite.list[spriteName]
+         const sprite = this.cs.sprite.list[spriteName]
          sprite.texture = document.createElement('canvas')
          sprite.texture.ctx = sprite.texture.getContext('2d')
          sprite.texture.width = width
@@ -68,11 +80,11 @@
          sprite.texture.fwidth = width
          sprite.texture.fheight = height
 
-         var x = 0
+         let x = 0
          while (x < width) {
-            var y = 0
+            let y = 0
             while (y < height) {
-               sprite.texture.ctx.drawImage(sprite.html, x, y);
+               sprite.texture.ctx.drawImage(sprite.html, x, y)
                y += sprite.html.height
             }
             x += sprite.html.width
@@ -81,19 +93,19 @@
 
       info(options) {
          // we need something to return info on sprites based on scale etc
-         var sprite = this.list[options.spr]
-         var frame = this.cs.default(options.frame, 0)
-         var scaleX = this.cs.default(options.scaleX, 1)
-         var scaleY = this.cs.default(options.scaleY, 1)
-         var width = this.cs.default(options.width, sprite.fwidth)
-         var height = this.cs.default(options.height, sprite.fheight)
-         var angle = this.cs.default(options.angle, 0)
-         var xoff = this.cs.default(options.xoff, sprite.xoff)
-         var yoff = this.cs.default(options.yoff, sprite.yoff)
+         const sprite = this.list[options.spr]
+         const frame = this.cs.default(options.frame, 0)
+         const scaleX = this.cs.default(options.scaleX, 1)
+         const scaleY = this.cs.default(options.scaleY, 1)
+         const angle = this.cs.default(options.angle, 0)
+         let width = this.cs.default(options.width, sprite.fwidth)
+         let height = this.cs.default(options.height, sprite.fheight)
+         let xoff = this.cs.default(options.xoff, sprite.xoff)
+         let yoff = this.cs.default(options.yoff, sprite.yoff)
 
          if (options.size) {
-            var tall = height > width
-            var ratio = height / width
+            const tall = height > width
+            const ratio = height / width
 
             width = tall ? options.size / ratio : options.size
             height = tall ? options.size : options.size * ratio
@@ -121,18 +133,16 @@
             frame: sprite.frames[frame],
             mask: {
                width: sprite.mask.width,
-               height: sprite.mask.height
-            }
+               height: sprite.mask.height,
+            },
          }
       }
 
       exists(name) {
-         return this.list[name] ? true : false
+         return this.list[name]
       }
    }
 
-   // export (node / web)
-   typeof module !== 'undefined'
-       ? module.exports = CSENGINE_SPRITE
-       : cs.sprite = new CSENGINE_SPRITE(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_SPRITE
+   else cs.sprite = new CSENGINE_SPRITE(cs) // eslint-disable-line no-undef
 })()

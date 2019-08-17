@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//------------------------------| CS ENGINE: LOOP |---------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// -----------------------------| CS ENGINE: LOOP |-------------------------- //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_LOOP {
       constructor(cs) {
@@ -19,14 +20,14 @@
          this.id += 1
 
          // delta fixing
-         var now = Date.now()
+         const now = Date.now()
          this.delta = (now - this.last) / this.speed
          this.last = now
 
          if (!this.run || once) return
          this.timeout = setTimeout(() => this.step(), this.speed)
 
-         var headless = this.cs.headless
+         const { headless } = this.cs
 
          if (!headless) {
             this.cs.draw.debugReset()
@@ -38,7 +39,6 @@
             this.cs.inputTouch.batchDownMove()
             // move camera before clear
             this.cs.camera.update()
-
          }
 
          this.cs.fps.update()
@@ -48,38 +48,34 @@
 
          // Execute before steps
          // disconnect to allow adding within a beforestep
-         var temporaryBeforeSteps = []
+         const temporaryBeforeSteps = []
          while (this.beforeSteps.length) { temporaryBeforeSteps.push(this.beforeSteps.pop()) }
          while (temporaryBeforeSteps.length) { temporaryBeforeSteps.pop()() }
 
-         this.cs.userStep && this.cs.userStep({ cs: this.cs })
+         if (this.cs.userStep) this.cs.userStep({ cs: this.cs })
 
          this.cs.object.loop((object) => {
             if (!object.core.active || !object.core.live) return
             if (!headless) this.cs.draw.setSurface(object.core.surface)
-            object.step && object.step({ object, cs: this.cs })
+            if (object.step) object.step({ object, cs: this.cs })
          })
 
          if (!headless) {
-            this.cs.userDraw && this.cs.userDraw({ cs: this.cs })
+            if (this.cs.userDraw) this.cs.userDraw({ cs: this.cs })
 
             this.cs.object.loop((object) => {
                if (!object.core.active || !object.core.live) return
-               var template = this.cs.objects[object.core.type]
-               var drawFunction = template.draw
-               var drawOnceFunction = template.drawOnce
-
                this.cs.draw.setSurface(object.core.surface)
 
                if (object.drawOnce) {
-                  var surface = this.cs.surface.list[object.core.surface]
+                  const surface = this.cs.surface.list[object.core.surface]
                   if (surface.clear || !object.core.drawn) {
                      object.core.drawn = true
                      object.drawOnce({ object, cs: this.cs })
                   }
                }
 
-               object.draw && object.draw({ object, cs: this.cs })
+               if (object.draw) object.draw({ object, cs: this.cs })
             })
          }
 
@@ -128,7 +124,6 @@
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_LOOP
-      : cs.loop = new CSENGINE_LOOP(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_LOOP
+   else cs.loop = new CSENGINE_LOOP(cs) // eslint-disable-line no-undef
 })()

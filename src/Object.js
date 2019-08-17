@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------------//
-//-----------------------------| CS ENGINE: OBJECT |--------------------------//
-//----------------------------------------------------------------------------//
+// -------------------------------------------------------------------------- //
+// ----------------------------| CS ENGINE: OBJECT |------------------------- //
+// -------------------------------------------------------------------------- //
+
 (() => {
    class CSENGINE_OBJECT {
       constructor(cs) {
@@ -19,7 +20,7 @@
             this.objectGenerators[objectName] = class GAMEOBJECT {}
 
             for (const prop in this.cs.objects[objectName]) {
-               var propValue = this.cs.objects[objectName][prop]
+               const propValue = this.cs.objects[objectName][prop]
 
                if (typeof propValue === 'function') {
                   this.objectGenerators[objectName].prototype[prop] = propValue
@@ -29,10 +30,8 @@
       }
 
       loop(call) {
-         var i = this.cs.object.list.length;
-         while (i--) {
-            var object = this.cs.object.list[i]
-            call(object)
+         for (let i = this.list.length - 1; i >= 0; i -= 1) {
+            call(this.list[i])
          }
       }
 
@@ -42,13 +41,13 @@
             return undefined
          }
 
-         var attr = options.attr
-         var Generator = this.objectGenerators[options.type]
-         var template = this.cs.objects[options.type]
-         var zIndex = options.zIndex || template.zIndex || 0
+         const { attr } = options
+         const Generator = this.objectGenerators[options.type]
+         const template = this.cs.objects[options.type]
+         const zIndex = options.zIndex || template.zIndex || 0
 
          // create the object
-         var newObject = new Generator()
+         const newObject = new Generator()
          newObject.core = {
             zIndex: zIndex,
             live: true,
@@ -56,19 +55,21 @@
             drawn: false,
             type: options.type,
             id: this.unique,
-            surface: this.cs.default(template.surface, 'game')
+            surface: this.cs.default(template.surface, 'game'),
          }
 
          // predefined / custom Attr
-         for (var name in template.attr) { newObject[name] = template.attr[name] }
+         for (const name in template.attr) { newObject[name] = template.attr[name] }
          // for (var name in attr) { newObject[name] = attr[name] }
 
          // run create event
-         newObject.create && newObject.create({
-            object: newObject,
-            cs: this.cs,
-            attr: attr || {}
-         })
+         if (newObject.create) {
+            newObject.create({
+               object: newObject,
+               cs: this.cs,
+               attr: attr || {},
+            })
+         }
 
          // add to list
          this.new.push({ obj: newObject, zIndex: zIndex })
@@ -83,7 +84,7 @@
 
       addNewObjects() {
          while (this.new.length) {
-            var obj = this.new.shift().obj
+            const { obj } = this.new.shift()
             this.list.push(obj)
          }
 
@@ -91,7 +92,7 @@
       }
 
       orderObjectsByZIndex() {
-         this.order = this.list.sort(function(a, b) {
+         this.order = this.list.sort((a, b) => {
             return b.core.zIndex === a.core.zIndex
                ? b.core.id - a.core.id
                : b.core.zIndex - a.core.zIndex
@@ -99,8 +100,8 @@
       }
 
       changeZIndex(object, zIndex) {
-         var listObject = object.list.find(function(listObject) {
-            return listObject.obj.core.id == object.core.id
+         const listObject = object.list.find((findListObject) => {
+            return findListObject.obj.core.id === object.core.id
          })
 
          listObject.core.zIndex = zIndex
@@ -110,7 +111,7 @@
 
       destroy(destroyObjOrID, fadeTimer) {
          this.shouldClean = true
-         var destroyObj = (typeof destroyObjOrID === 'number')
+         const destroyObj = (typeof destroyObjOrID === 'number')
             ? this.id(destroyObjOrID)
             : destroyObjOrID
 
@@ -119,23 +120,20 @@
          destroyObj.core.fadeTimer = fadeTimer || 0
 
          // remove from objGroup
-         var type = destroyObj.core.type
+         const { type } = destroyObj.core
          if (this.cs.objects[type].destroy) {
             this.cs.objects[type].destroy.call(destroyObj, { object: destroyObj, cs: this.cs })
          }
-         this.objGroups[type] = this.objGroups[type].filter(function(obj) { return obj.core.live })
+         this.objGroups[type] = this.objGroups[type].filter(o => o.core.live)
       }
 
       clean() {
-         if(!this.shouldClean) return
-         this.list = this.list.reduce(function(sum, num) {
-            if(num.core.live) sum.push(num)
-            return sum
-         }, [])
+         if (!this.shouldClean) return
+         this.list = this.list.filter(o => o.core.live)
       }
 
       every() {
-         return this.list.concat(this.new.map(function(obj) { return obj.obj }))
+         return this.list.concat(this.new.map(o => o.obj))
       }
 
       all(type) {
@@ -150,14 +148,14 @@
       }
 
       search(call) {
-         return this.every().find(function(obj) {
+         return this.every().find((obj) => {
             if (!obj.core.live) return false
             return call(obj)
          })
       }
 
       id(id) {
-         return this.list.find(function(obj) { return obj.core.id === id })
+         return this.list.find((obj) => obj.core.id === id)
       }
 
       count(type) {
@@ -176,14 +174,13 @@
       }
 
       resize() {
-         for (var object of this.list) {
+         for (const object of this.list) {
             object.core.drawn = false
          }
       }
    }
 
    // export (node / web)
-   typeof module !== 'undefined'
-      ? module.exports = CSENGINE_OBJECT
-      : cs.object = new CSENGINE_OBJECT(cs)
+   if (typeof module !== 'undefined') module.exports = CSENGINE_OBJECT
+   else cs.object = new CSENGINE_OBJECT(cs) // eslint-disable-line no-undef
 })()

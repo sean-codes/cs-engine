@@ -12,7 +12,7 @@ module.exports = class Game {
 
          scripts: {
             networkObjects: require('./scripts/networkObjects'),
-            network: require('./scripts/networkServer')
+            network: require('./scripts/networkServer'),
          },
 
          room: { width: 400, height: 400 },
@@ -20,14 +20,14 @@ module.exports = class Game {
          global: {
             server: this.server,
             lastUpdate: Date.now(),
-            updateInterval: 1000 / 20
+            updateInterval: 1000 / 20,
          },
 
-         start: function({ cs }) {
+         start({ cs }) {
             cs.script.exec('network.init')
          },
 
-         step: function({ cs }) {
+         step({ cs }) {
             if (Date.now() - cs.global.lastUpdate > cs.global.updateInterval) {
                cs.global.lastUpdate = Date.now()
                cs.script.exec('networkObjects.snapshot')
