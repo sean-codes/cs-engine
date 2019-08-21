@@ -13,16 +13,21 @@
          return number < 0 ? -1 : 1
       }
 
-      round(number, tenths) {
-         if (tenths == null) tenths = 1
+      round(number, tenths = 1) {
          return Math.round(number * tenths) / tenths
       }
 
       between(num, min, max) {
+         if (num < min) return min
+         if (num > max) return max
+         return num
+      }
+
+      isBetween(num, min, max) {
          return num >= Math.min(min, max) && num <= Math.max(min, max)
       }
 
-      outside(num, min, max) {
+      isOutside(num, min, max) {
          return num < Math.min(min, max) || num > Math.max(min, max)
       }
 

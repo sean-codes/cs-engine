@@ -12,6 +12,14 @@
          return { x, y }
       }
 
+      createPolar(angle, length) {
+         const { cs } = this
+         return {
+            x: cs.math.cos(angle) * length,
+            y: cs.math.sin(angle) * length
+         }
+      }
+
       clone(v) {
          return this.cs.vector.create(v.x, v.y)
       }
