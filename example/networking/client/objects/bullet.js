@@ -12,8 +12,8 @@ cs.objects.bullet = {
    snapshotRead: function(snapshot) {
       const [ id, x, y ] = snapshot
 
-      this.pos.x = cs.scripts.smooth(this.pos.x, x, 100)
-      this.pos.y = cs.scripts.smooth(this.pos.y, y, 100)
+      this.pos.x = cs.script.smooth(this.pos.x, x, 100)
+      this.pos.y = cs.script.smooth(this.pos.y, y, 100)
    },
 
    step: function({ cs }) {

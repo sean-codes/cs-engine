@@ -52,7 +52,7 @@ cs.objects['obj_player'] = {
          }
       }
 
-      object.h_col = cs.scripts.collide.obj(object, 'obj_block')
+      object.h_col = cs.script.collide.obj(object, 'obj_block')
       if (object.h_col || (object.x + object.hspeed) <= 0 || (object.x + object.hspeed) + object.width >= cs.room.width) {
          object.hspeed = 0;
       }
@@ -63,7 +63,7 @@ cs.objects['obj_player'] = {
          object.vspeed += 1;
 
       object.y += object.vspeed;
-      object.v_col = cs.scripts.collide.obj(object, 'obj_block')
+      object.v_col = cs.script.collide.obj(object, 'obj_block')
 
       if (object.v_col) {
          object.y -= object.vspeed;

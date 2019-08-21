@@ -23,28 +23,30 @@ module.exports = class Game {
             updateInterval: 1000 / 20,
          },
 
-         start({ cs }) {
-            cs.script.exec('network.init')
+         start() {
+            const { cs } = this
+            cs.script.network.init()
          },
 
-         step({ cs }) {
+         step() {
+            const { cs } = this
             if (Date.now() - cs.global.lastUpdate > cs.global.updateInterval) {
                cs.global.lastUpdate = Date.now()
-               cs.script.exec('networkObjects.snapshot')
+               cs.script.networkObjects.snapshot()
             }
          },
       })
    }
 
    socketConnect(socket) {
-      this.cs.script.exec('network.connect', { socket })
+      this.cs.script.network.connect(socket)
    }
 
    socketDisconnect(socket) {
-      this.cs.script.exec('network.disconnect', { socket })
+      this.cs.script.network.disconnect(socket)
    }
 
-   message(data) {
-      this.cs.network.onmessage(data)
+   socketMessage(socket, message) {
+      this.cs.network.onmessage({ socket, message })
    }
 }

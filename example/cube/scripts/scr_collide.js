@@ -1,4 +1,4 @@
-cs.scripts.collide = function(that, objtype, options) {
+cs.script.collide = function(that, objtype, options) {
    if (options == undefined) options = {}
    var vspeed = that.vspeed || 0;
    var hspeed = that.hspeed;

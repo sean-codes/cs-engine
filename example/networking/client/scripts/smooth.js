@@ -2,11 +2,11 @@
 
 // prevents rapid snapping!
 // it can allow for non exact syncing! :<
-cs.scripts.smooth = (from, to, speed) => {
+cs.script.smooth = (from, to, speed) => {
    var diff = to - from
 
    // to much lets use the to
-   if (Math.abs(diff) > 50) {
+   if (Math.abs(diff) > 10) {
       return to
    }
 

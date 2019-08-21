@@ -52,7 +52,7 @@ cs.load({
       cs.global.controller = cs.object.create({ type: 'controller' })
       cs.global.ping = 0
       cs.object.create({ type: 'background' })
-      cs.scripts.network.init()
+      cs.script.network.init()
 
       window.addEventListener('keydown', () => {
          cs.object.destroy(cs.global.joystick)

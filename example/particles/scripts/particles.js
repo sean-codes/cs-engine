@@ -1,4 +1,4 @@
-cs.scripts.particles = {
+cs.script.particles = {
    list: [],
    createSystem: function(settings) {
       var particleSystem = {

@@ -52,7 +52,7 @@ cs.objects.controller = {
          cs.global.selfObject.controlAngle = this.oldAngle
 
          // send to network
-         cs.scripts.network.send({
+         cs.script.network.send({
             func: 'game',
             data: {
                func: 'control',

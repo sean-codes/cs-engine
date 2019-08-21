@@ -78,7 +78,7 @@ cs.load = function (options) {
    const dateStartLoading = Date.now()
 
    for (const part of parts) {
-      console.log(this.loading, 'Loading Part: ' + part.path.split('/').pop())
+      console.log('Loading Part: ' + part.path.split('/').pop())
       const htmlScript = document.createElement('script')
       htmlScript.src = `${part.path}.js?v=${this.version}`
       htmlScript.onload = () => {
