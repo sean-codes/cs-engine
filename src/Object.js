@@ -12,19 +12,27 @@
          this.types = {}
          this.objGroups = {}
          this.shouldClean = false
-         this.objectGenerators = {}
+         this.objectTemplates = {}
       }
 
       init() {
          for (const objectName in this.cs.objects) {
-            this.objectGenerators[objectName] = class GAMEOBJECT {}
+            const template = this.cs.objects[objectName]
+            this.addTemplate(objectName, template)
+         }
+      }
 
-            for (const prop in this.cs.objects[objectName]) {
-               const propValue = this.cs.objects[objectName][prop]
+      addTemplate(objectName, template) {
+         this.cs.objects[objectName] = template
+         this.objectTemplates[objectName] = class GAMEOBJECT {
+            constructor(cs) { this.cs = cs }
+         }
 
-               if (typeof propValue === 'function') {
-                  this.objectGenerators[objectName].prototype[prop] = propValue
-               }
+         for (const prop in this.cs.objects[objectName]) {
+            const propValue = this.cs.objects[objectName][prop]
+
+            if (typeof propValue === 'function') {
+               this.objectTemplates[objectName].prototype[prop] = propValue
             }
          }
       }
@@ -42,12 +50,12 @@
          }
 
          const { attr } = options
-         const Generator = this.objectGenerators[options.type]
+         const Generator = this.objectTemplates[options.type]
          const template = this.cs.objects[options.type]
          const zIndex = options.zIndex || template.zIndex || 0
 
          // create the object
-         const newObject = new Generator()
+         const newObject = new Generator(this.cs)
          newObject.core = {
             zIndex: zIndex,
             live: true,
@@ -60,7 +68,6 @@
 
          // predefined / custom Attr
          for (const name in template.attr) { newObject[name] = template.attr[name] }
-         // for (var name in attr) { newObject[name] = attr[name] }
 
          // run create event
          if (newObject.create) {
