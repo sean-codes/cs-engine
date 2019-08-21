@@ -1,14 +1,17 @@
+/* global cs, testUtility */
+
 var exampleKeyBoardEvent = {
-   keyCode: '39',
+   keyCode: 39,
    preventDefault: () => {}
 }
 
 var exampleKeyBoardEvent2 = {
-   keyCode: '40',
+   keyCode: 40,
    preventDefault: () => {}
 }
 
 testUtility.test({
+   collapse: true,
    title: "cs.inputKeyboard",
    tests: [
       {
@@ -21,9 +24,9 @@ testUtility.test({
             var keyEventUp = cs.inputKeyboard.events[1]
 
             if(keyEventDown && keyEventUp) {
-               var keyIsDown = keyEventDown.event == 'down'
-               var keyIsUp = keyEventUp.event == 'up'
-               var keyMatchesCode = keyEventDown.key == 39 && keyEventUp.key == 39
+               var keyIsDown = keyEventDown.event === 'down'
+               var keyIsUp = keyEventUp.event === 'up'
+               var keyMatchesCode = keyEventDown.key === 39 && keyEventUp.key === 39
                if(keyIsDown && keyIsUp && keyMatchesCode) return pass()
             }
 

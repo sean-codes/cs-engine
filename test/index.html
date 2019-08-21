@@ -13,13 +13,14 @@
    <!-- tests -->
    <script>
       var tests = [
-         './parts/math.js',
-         './parts/camera.js',
-         './parts/fps.js',
-         './parts/loop.js',
-         './parts/inputKeyboard.js',
-         './parts/timer.js',
-         './parts/object.js',
+         './parts/Camera.js',
+         './parts/Fps.js',
+         './parts/InputKeyboard.js',
+         './parts/Loop.js',
+         './parts/Math.js',
+         './parts/Object.js',
+         './parts/Scripts.js',
+         './parts/Timer.js',
       ]
 
       // fake testing framework :]
@@ -47,6 +48,7 @@
                   }
                }).catch((e) => {
                   testResults.failed += 1
+
                   return {
                      pass: false,
                      message: message,
@@ -59,11 +61,11 @@
                var message = `${test.name} - ${test.should}`
                return run(test.pass, message)
             })).then((results) => {
-               var groupStyle = testResults.failed ? 'group' : 'groupCollapsed'
+               var groupStyle = testResults.failed || !testGroup.collapse ? 'group' : 'groupCollapsed'
                console[groupStyle](`${testGroup.title} | ${testResults.executed} tests | ${testResults.passed} passed | ${testResults.failed} failed`)
                for (var result of results) {
                   testUtility.log(result.message, result.pass ? '#495' : '#f22')
-                  if (!result.pass && result.error) console.log(result.error)
+                  if (!result.pass && result.error) console.log('-', result.error)
                }
                console.groupEnd()
             }).catch((e) => {
@@ -73,7 +75,7 @@
       }
 
       cs.load({
-         path: '../src',
+         path: '../',
          canvas: document.querySelector('canvas'),
          start: function() {
 

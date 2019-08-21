@@ -1,16 +1,19 @@
-cs.objects['obj_demo_0'] = {
-   create: ({ object, cs, attr }) => {},
-   step: ({ object, cs }) => {},
-   draw: ({ object, cs }) => {}
-}
+/* global cs, testUtility */
 
-cs.objects['obj_demo_1'] = {
+cs.object.addTemplate('obj_demo_0', {
    create: ({ object, cs, attr }) => {},
    step: ({ object, cs }) => {},
    draw: ({ object, cs }) => {}
-}
+})
+
+cs.object.addTemplate('obj_demo_1', {
+   create: ({ object, cs, attr }) => {},
+   step: ({ object, cs }) => {},
+   draw: ({ object, cs }) => {}
+})
 
 testUtility.test({
+   collapse: true,
    title: "cs.object",
    tests: [
       {
@@ -37,8 +40,8 @@ testUtility.test({
             cs.object.create({ type: 'obj_demo_0' })
             cs.object.create({ type: 'obj_demo_1' })
 
-            everyObject = cs.object.every()
-            everyObject.length == 2 ? pass() : fail()
+            const everyObject = cs.object.every()
+            everyObject.length === 2 ? pass() : fail()
          }
       },
       {
@@ -49,8 +52,8 @@ testUtility.test({
             cs.object.create({ type: 'obj_demo_1' })
             cs.object.create({ type: 'obj_demo_1' })
 
-            allDemo1Objects = cs.object.all('obj_demo_1')
-            allDemo1Objects.length == 2 ? pass() : fail()
+            const allDemo1Objects = cs.object.all('obj_demo_1')
+            allDemo1Objects.length === 2 ? pass() : fail()
          }
       },
       {
@@ -60,7 +63,7 @@ testUtility.test({
             cs.object.reset()
             cs.object.create({ type: 'obj_demo_0' })
             var foundObject = cs.object.find('obj_demo_0')
-            foundObject && foundObject.core.type == 'obj_demo_0' ? pass() : fail()
+            foundObject && foundObject.core.type === 'obj_demo_0' ? pass() : fail()
          }
       }
    ]

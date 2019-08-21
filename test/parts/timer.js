@@ -1,4 +1,7 @@
+/* global cs, testUtility */
+
 testUtility.test({
+   collapse: true,
    title: "cs.timer",
    tests: [
       {
@@ -7,10 +10,9 @@ testUtility.test({
          pass: function(pass, fail) {
             var timerNew = cs.timer.create({ duration: 15 })
 
-            if (
-               typeof timerNew.percent == 'number'
-               && typeof timerNew.time == 'number'
-               && timerNew.duration == 15
+            if ( typeof timerNew.percent === 'number'
+               && typeof timerNew.time === 'number'
+               && timerNew.duration === 15
             ) {
                return pass()
             }
@@ -28,7 +30,7 @@ testUtility.test({
 
             cs.timer.start(timerNew)
 
-            if(cs.timer.list.length == 1) pass()
+            if(cs.timer.list.length === 1) pass()
             fail()
          }
       },
@@ -44,7 +46,7 @@ testUtility.test({
 
             setTimeout(function() {
                var foundTimer = cs.timer.list.find(function(timer) {
-                  timer.id == timerNew.id
+                  timer.id === timerNew.id
                })
 
                if (!foundTimer) {
@@ -55,7 +57,7 @@ testUtility.test({
          }
       },
       {
-         name: 'start functioin called at start',
+         name: 'start function called at start',
          should: 'run start function when started',
          pass: function(pass, fail) {
             var started = false
@@ -63,10 +65,10 @@ testUtility.test({
 
             var timerNew = cs.timer.create({
                duration: 10,
-               start: function() {
+               onStart: function() {
                   started = true
                },
-               end: function() {
+               onEnd: function() {
                   ended = true
                }
             })
