@@ -64,20 +64,20 @@
       eventDown(keyEvent) {
          keyEvent.preventDefault()
          if (!keyEvent.repeat) {
-            this.virtualDown(keyEvent.keyCode)
+            this.virtualDown(Number(keyEvent.keyCode))
          }
       }
 
       eventUp(keyEvent) {
-         this.virtualUp(keyEvent.keyCode)
+         this.virtualUp(Number(keyEvent.keyCode))
       }
 
       virtualDown(keyCode) {
-         this.addEvent(keyCode, 'down')
+         this.addEvent(Number(keyCode), 'down')
       }
 
       virtualUp(keyCode) {
-         this.addEvent(keyCode, 'up')
+         this.addEvent(Number(keyCode), 'up')
       }
 
       virtualPress(key) {
@@ -98,15 +98,15 @@
       }
 
       isUp(keyID) {
-         return this.upList[keyID]
+         return this.upList[keyID] ? true : false
       }
 
       isDown(keyID) {
-         return this.downList[keyID]
+         return this.downList[keyID] ? true : false
       }
 
       isHeld(keyID) {
-         return this.heldList[keyID]
+         return this.heldList[keyID] ? true : false
       }
    }
 

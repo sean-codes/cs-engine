@@ -1,5 +1,6 @@
 // const PartCamera = require('./src/Camera')
 // const PartDraw = require('./src/Draw')
+const PartDestroy = require('./src/Destroy')
 const PartFps = require('./src/Fps')
 // const PartFullscreen = require('./src/Fullscreen')
 // const PartInputKeyboard = require('./src/InputKeyboard')
@@ -11,7 +12,7 @@ const PartMath = require('./src/Math')
 const PartNetwork = require('./src/Network')
 const PartObject = require('./src/Object')
 const PartRoom = require('./src/Room')
-const PartScript = require('./src/Script')
+const PartScripts = require('./src/Scripts')
 const PartSetup = require('./src/Setup')
 // const PartSound = require('./src/Sound')
 // const PartSprite = require('./src/Sprite')
@@ -26,9 +27,10 @@ module.exports = class cs {
 
       // handy
       this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
-      this.default = (want, ifnot) => { return want != null ? want : ifnot }
+      this.default = (want, ifnot) => { return want === undefined ? ifnot : want }
 
       // 1. setup
+      this.cs = this
       this.headless = true
       this.path = options.path
       this.start = options.start || function () {}
@@ -42,7 +44,7 @@ module.exports = class cs {
       this.focus = options.focus || function () {}
 
       this.objects = options.objects || {}
-      this.scripts = options.scripts || {}
+      this.script = options.scripts || {}
       this.sprites = options.sprites || []
       this.storages = options.storages || []
       this.sounds = options.sounds || []
@@ -54,6 +56,7 @@ module.exports = class cs {
          sounds: options.assets && options.assets.sounds ? options.assets.sounds : [],
       }
 
+      this.destroy = PartDestroy
       this.fps = new PartFps(this)
       this.loader = new PartLoader(this)
       this.loop = new PartLoop(this)
@@ -61,7 +64,7 @@ module.exports = class cs {
       this.network = new PartNetwork(this)
       this.object = new PartObject(this)
       this.room = new PartRoom(this)
-      this.script = new PartScript(this)
+      this.scripts = new PartScripts(this)
       this.setup = new PartSetup(this)
       this.storage = new PartStorage(this)
       this.timer = new PartTimer(this)
