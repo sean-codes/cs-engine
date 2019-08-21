@@ -113,7 +113,7 @@
          // Sprites/Storage/Sound/Scripts
          this.cs.storage.init()
          this.cs.object.init()
-         this.cs.script.init()
+         this.cs.scripts.init()
 
          // bootstrapping
          this.cs.start({ cs: this.cs })
