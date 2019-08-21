@@ -20,7 +20,7 @@
             if (timer.percent === 1) {
                timer.running = false
                this.unWatch(timer)
-               if (timer.end) timer.end()
+               if (timer.onEnd) timer.onEnd()
             }
          })
       }
@@ -28,26 +28,42 @@
       create(options) {
          this.count += 1
 
-         return {
+         const timer = {
             id: this.count,
-            start: options.start,
-            end: options.end,
+            onStart: options.onStart,
+            onEnd: options.onEnd,
             duration: options.duration,
             time: 0,
             percent: 0,
+            running: false
          }
+
+         if (options.start) {
+            this.start(timer)
+         }
+
+         return timer
       }
 
       start(timer) {
          if (timer.running) return false
 
-         this.watch(timer)
-         if (timer.start) timer.start()
+         if (timer.onStart) timer.onStart()
          timer.running = true
          timer.time = 1
          timer.percent = 0
+         this.watch(timer)
 
          return true
+      }
+
+      reset(timer) {
+         if (!timer.running) {
+            return this.start(timer)
+         }
+
+         timer.time = 1
+         timer.percent = 0
       }
 
       watch(timer) {
