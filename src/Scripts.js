@@ -12,6 +12,8 @@
          for (const scriptName in this.cs.script) {
             this.add(scriptName, this.cs.script[scriptName])
          }
+         
+         this.cs.script.cs = this.cs
       }
 
       add(scriptName, object) {
