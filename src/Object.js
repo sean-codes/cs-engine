@@ -122,6 +122,8 @@
             ? this.id(destroyObjOrID)
             : destroyObjOrID
 
+         if (destroyObj.core.live === false) return
+
          destroyObj.core.live = false
          destroyObj.core.active = false
          destroyObj.core.fadeTimer = fadeTimer || 0
