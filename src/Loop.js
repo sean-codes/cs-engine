@@ -95,9 +95,6 @@
             this.endSteps.pop()()
          }
 
-         // could clearup !live objects here
-         this.cs.object.clean()
-
          // network metrics
          if (this.cs.network.status) {
             this.cs.network.updateMetrics()

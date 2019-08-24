@@ -11,7 +11,6 @@
          this.unique = 0
          this.types = {}
          this.objGroups = {}
-         this.shouldClean = false
          this.objectTemplates = {}
       }
 
@@ -69,14 +68,6 @@
          // predefined / custom Attr
          for (const name in template.attr) { newObject[name] = template.attr[name] }
 
-         // run create event
-         if (newObject.create) {
-            newObject.create({
-               object: newObject,
-               cs: this.cs,
-               attr: attr || {},
-            })
-         }
 
          // add to list
          this.new.push({ obj: newObject, zIndex: zIndex })
@@ -85,6 +76,15 @@
          // grouping
          if (!this.objGroups[options.type]) this.objGroups[options.type] = []
          this.objGroups[options.type].push(newObject)
+
+         // run create event
+         if (newObject.create) {
+            newObject.create({
+               object: newObject,
+               cs: this.cs,
+               attr: attr || {},
+            })
+         }
 
          return newObject
       }
@@ -117,7 +117,6 @@
       }
 
       destroy(destroyObjOrID, fadeTimer) {
-         this.shouldClean = true
          const destroyObj = (typeof destroyObjOrID === 'number')
             ? this.id(destroyObjOrID)
             : destroyObjOrID
@@ -130,14 +129,18 @@
 
          // remove from objGroup
          const { type } = destroyObj.core
-         if (this.cs.objects[type].destroy) {
-            this.cs.objects[type].destroy.call(destroyObj, { object: destroyObj, cs: this.cs })
-         }
          this.objGroups[type] = this.objGroups[type].filter(o => o.core.live)
+
+         // call destroy function
+         if (destroyObj.destroy) {
+            destroyObj.destroy({ object: destroyObj, cs: this.cs })
+         }
+
+         this.clean()
       }
 
       clean() {
-         if (!this.shouldClean) return
+         this.new = this.new.filter(o => o.obj.core.live)
          this.list = this.list.filter(o => o.core.live)
       }
 

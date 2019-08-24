@@ -1,15 +1,21 @@
 /* global cs, testUtility */
 
 cs.object.addTemplate('obj_demo_0', {
-   create: ({ object, cs, attr }) => {},
-   step: ({ object, cs }) => {},
-   draw: ({ object, cs }) => {}
+   create: function() {},
+   step: function() {},
+   draw: function() {}
 })
 
 cs.object.addTemplate('obj_demo_1', {
-   create: ({ object, cs, attr }) => {},
-   step: ({ object, cs }) => {},
-   draw: ({ object, cs }) => {}
+   create: function() {},
+   step: function() {},
+   draw: function() {}
+})
+
+cs.object.addTemplate('destroy_in_create', {
+   create: function() {
+      cs.object.destroy(this)
+   }
 })
 
 testUtility.test({
@@ -64,6 +70,24 @@ testUtility.test({
             cs.object.create({ type: 'obj_demo_0' })
             var foundObject = cs.object.find('obj_demo_0')
             foundObject && foundObject.core.type === 'obj_demo_0' ? pass() : fail()
+         }
+      },
+      {
+         name: 'destroy in create',
+         should: 'remove object from list if destroyed in create',
+         pass: function(pass, fail) {
+            cs.object.reset()
+            cs.object.create({ type: 'destroy_in_create' })
+
+            var count = cs.object.count('destroy_in_create')
+            var isInAll = cs.object.all().length
+            var isInEvery = cs.object.every().length
+
+            if (count) fail('count is not 0')
+            if (isInAll) fail('all length is not 0')
+            if (isInEvery) fail('every length is not 0')
+            
+            pass()
          }
       }
    ]
