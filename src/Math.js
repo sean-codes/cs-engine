@@ -113,18 +113,26 @@
          return afterTurn
       }
 
-      angleToAngle(d1, d2) {
-         let right = d2 - d1
+      angleToAngle(a1, a2) {
+         let right = a2 - a1
          if (right < 0) {
             right = 360 + right
          }
 
-         let left = d1 - d2
+         let left = a1 - a2
          if (left < 0) {
             left = 360 + left
          }
 
          return right > left ? -left : right
+      }
+
+      circular(num, start, end) {
+         var length = end - start
+         if (num < start) return end + (num % length)
+         if (num > end) return start + (num % length)
+
+         return num
       }
 
       stepsToSeconds(steps, decimals = 1) {
