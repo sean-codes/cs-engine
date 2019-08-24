@@ -13,8 +13,8 @@
 
       loop() {
          this.list.forEach(timer => {
-            if (timer.time) timer.time += 1
-
+            timer.time += 1
+            timer.left -= 1
             timer.percent = timer.time / timer.duration
 
             if (timer.percent === 1) {
@@ -34,6 +34,7 @@
             onEnd: options.onEnd,
             duration: options.duration,
             time: 0,
+            left: 0,
             percent: 0,
             running: false
          }
@@ -50,7 +51,8 @@
 
          if (timer.onStart) timer.onStart()
          timer.running = true
-         timer.time = 1
+         timer.time = 0
+         timer.left = timer.duration
          timer.percent = 0
          this.watch(timer)
 
@@ -62,7 +64,8 @@
             return this.start(timer)
          }
 
-         timer.time = 1
+         timer.time = 0
+         timer.left = timer.duration
          timer.percent = 0
       }
 
@@ -71,7 +74,7 @@
       }
 
       unWatch(timer) {
-         this.list = this.list.filter(num => num.id !== timer.id)
+         this.list = this.list.filter(t => t.id !== timer.id)
       }
 
       isOn(timer) {
