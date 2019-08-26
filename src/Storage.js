@@ -46,6 +46,6 @@
       }
    }
 
-   if (typeof module !== 'undefined') module.exports = CSENGINE_STORAGE
+   if (typeof cs === 'undefined') module.exports = CSENGINE_STORAGE
    else cs.storage = new CSENGINE_STORAGE(cs) // eslint-disable-line no-undef
 })()

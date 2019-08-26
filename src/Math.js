@@ -141,6 +141,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_MATH
+   if (typeof cs === 'undefined') module.exports = CSENGINE_MATH
    else cs.math = new CSENGINE_MATH(cs) // eslint-disable-line no-undef
 })()

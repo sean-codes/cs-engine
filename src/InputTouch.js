@@ -289,6 +289,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_INPUT_TOUCH
+   if (typeof cs === 'undefined') module.exports = CSENGINE_INPUT_TOUCH
    else cs.inputTouch = new CSENGINE_INPUT_TOUCH(cs) // eslint-disable-line no-undef
 })()

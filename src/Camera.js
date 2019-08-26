@@ -165,6 +165,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_CAMERA
+   if (typeof cs === 'undefined') module.exports = CSENGINE_CAMERA
    else cs.camera = new CSENGINE_CAMERA(cs) // eslint-disable-line no-undef
 })()

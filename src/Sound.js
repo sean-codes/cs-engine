@@ -106,6 +106,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_SOUND
+   if (typeof cs === 'undefined') module.exports = CSENGINE_SOUND
    else cs.sound = new CSENGINE_SOUND(cs) // eslint-disable-line no-undef
 })()

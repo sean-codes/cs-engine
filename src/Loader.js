@@ -129,6 +129,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_LOADER
+   if (typeof cs === 'undefined') module.exports = CSENGINE_LOADER
    else cs.loader = new CSENGINE_LOADER(cs) // eslint-disable-line no-undef
 })()

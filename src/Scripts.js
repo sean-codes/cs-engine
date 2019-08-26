@@ -39,6 +39,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_SCRIPTS
+   if (typeof cs === 'undefined') module.exports = CSENGINE_SCRIPTS
    else cs.scripts = new CSENGINE_SCRIPTS(cs) // eslint-disable-line no-undef
 })()

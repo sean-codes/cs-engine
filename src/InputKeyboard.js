@@ -111,6 +111,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_INPUT_KEYBOARD
+   if (typeof cs === 'undefined') module.exports = CSENGINE_INPUT_KEYBOARD
    else cs.inputKeyboard = new CSENGINE_INPUT_KEYBOARD(cs) // eslint-disable-line no-undef
 })()

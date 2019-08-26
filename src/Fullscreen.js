@@ -61,6 +61,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_FULLSCREEN
+   if (typeof cs === 'undefined') module.exports = CSENGINE_FULLSCREEN
    else cs.fullscreen = new CSENGINE_FULLSCREEN(cs) // eslint-disable-line no-undef
 })()

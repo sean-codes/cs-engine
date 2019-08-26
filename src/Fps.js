@@ -29,6 +29,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_FPS
+   if (typeof cs === 'undefined') module.exports = CSENGINE_FPS
    else cs.fps = new CSENGINE_FPS(cs) // eslint-disable-line no-undef
 })()

@@ -9,6 +9,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_DESTROY
+   if (typeof cs === 'undefined') module.exports = CSENGINE_DESTROY
    else cs.destroy = CSENGINE_DESTROY // eslint-disable-line no-undef
 })()

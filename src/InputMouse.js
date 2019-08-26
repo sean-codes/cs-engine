@@ -54,6 +54,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_INPUT_MOUSE
+   if (typeof cs === 'undefined') module.exports = CSENGINE_INPUT_MOUSE
    else cs.inputMouse = new CSENGINE_INPUT_MOUSE(cs) // eslint-disable-line no-undef
 })()

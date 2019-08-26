@@ -121,6 +121,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_LOOP
+   if (typeof cs === 'undefined') module.exports = CSENGINE_LOOP
    else cs.loop = new CSENGINE_LOOP(cs) // eslint-disable-line no-undef
 })()

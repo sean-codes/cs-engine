@@ -70,7 +70,7 @@
 
 
          // add to list
-         this.new.push({ obj: newObject, zIndex: zIndex })
+         this.new.push(newObject)
          this.unique += 1
 
          // grouping
@@ -90,11 +90,8 @@
       }
 
       addNewObjects() {
-         while (this.new.length) {
-            const { obj } = this.new.shift()
-            this.list.push(obj)
-         }
-
+         this.list = this.list.concat(this.new)
+         this.new = []
          this.orderObjectsByZIndex()
       }
 
@@ -107,12 +104,7 @@
       }
 
       changeZIndex(object, zIndex) {
-         const listObject = object.list.find((findListObject) => {
-            return findListObject.obj.core.id === object.core.id
-         })
-
-         listObject.core.zIndex = zIndex
-
+         object.core.zIndex = zIndex
          this.orderObjectsByZIndex()
       }
 
@@ -140,12 +132,12 @@
       }
 
       clean() {
-         this.new = this.new.filter(o => o.obj.core.live)
+         this.new = this.new.filter(o => o.core.live)
          this.list = this.list.filter(o => o.core.live)
       }
 
       every() {
-         return this.list.concat(this.new.map(o => o.obj))
+         return this.list.concat(this.new)
       }
 
       all(type) {
@@ -192,7 +184,7 @@
       }
    }
 
-   // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_OBJECT
-   else cs.object = new CSENGINE_OBJECT(cs) // eslint-disable-line no-undef
+   // export (web / node)
+   if (typeof cs !== 'undefined') cs.object = new CSENGINE_OBJECT(cs) // eslint-disable-line no-undef
+   else module.exports = CSENGINE_OBJECT
 })()
