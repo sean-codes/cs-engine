@@ -18,9 +18,7 @@
             timer.percent = timer.time / timer.duration
 
             if (timer.percent === 1) {
-               timer.running = false
-               this.unWatch(timer)
-               if (timer.onEnd) timer.onEnd()
+               this.end(timer)
             }
          })
       }
@@ -69,6 +67,15 @@
          timer.percent = 0
       }
 
+      end(timer) {
+         timer.running = false
+         timer.time = timer.duration
+         timer.left = 0
+
+         this.unWatch(timer)
+         if (timer.onEnd) timer.onEnd()
+      }
+
       watch(timer) {
          this.list.push(timer)
       }
@@ -83,6 +90,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_TIMER
+   if (typeof cs === 'undefined') module.exports = CSENGINE_TIMER
    else cs.timer = new CSENGINE_TIMER(cs) // eslint-disable-line no-undef
 })()
