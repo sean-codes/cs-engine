@@ -39,6 +39,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_ROOM
+   if (typeof cs === 'undefined') module.exports = CSENGINE_ROOM
    else cs.room = new CSENGINE_ROOM(cs) // eslint-disable-line no-undef
 })()

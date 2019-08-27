@@ -1,4 +1,5 @@
 module.exports = {
+  extends: "eslint:recommended",
   env: {
     browser: true,
     es6: true,
@@ -14,7 +15,7 @@ module.exports = {
   },
   rules: {
      'semi': ['error', 'never'],
-     'indent': ['error', 3],
+     'indent': ['error', 3, { "SwitchCase": 1 }],
      'class-methods-use-this': 'off',
      'global-require': 'off',
      'no-param-reassign': 'off',
@@ -37,6 +38,12 @@ module.exports = {
      'object-curly-spacing': 'off',
      'max-len': 'off',
      "eqeqeq": ['error', 'always'],
-     "no-undef": 'error'
+     "no-undef": 'error',
+     "prefer-const": ["error", {
+        "destructuring": "any",
+        "ignoreReadBeforeAssign": false
+    }],
+    "operator-linebreak": ["error", "before"],
+    "no-cond-assign": "error"
   },
-};
+}

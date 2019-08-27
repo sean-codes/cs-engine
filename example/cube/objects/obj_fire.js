@@ -7,8 +7,8 @@ cs.objects['obj_fire'] = {
       object.height = 48
       object.vspeed = 0
       object.gravity = 8
-      cs.scripts.lightAdd(object, '#FFF', 200, 8, 8)
-      object.particleSystem = cs.scripts.particles.init({
+      cs.script.lightAdd(object, '#FFF', 200, 8, 8)
+      object.particleSystem = cs.script.particles.init({
          "count": 1,
          "interval": 1,
          "gaussian": 1,
@@ -48,7 +48,7 @@ cs.objects['obj_fire'] = {
    },
 
    draw: ({ object, cs }) => {
-      cs.scripts.particles.burst({
+      cs.script.particles.burst({
          system: object.particleSystem,
          area: {
             x: object.x,
@@ -58,6 +58,6 @@ cs.objects['obj_fire'] = {
          }
       })
 
-      cs.scripts.particles.step(object.particleSystem)
+      cs.script.particles.step(object.particleSystem)
    }
 }

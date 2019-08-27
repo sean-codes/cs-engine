@@ -13,16 +13,21 @@
          return number < 0 ? -1 : 1
       }
 
-      round(number, tenths) {
-         if (tenths == null) tenths = 1
+      round(number, tenths = 1) {
          return Math.round(number * tenths) / tenths
       }
 
       between(num, min, max) {
+         if (num < min) return min
+         if (num > max) return max
+         return num
+      }
+
+      isBetween(num, min, max) {
          return num >= Math.min(min, max) && num <= Math.max(min, max)
       }
 
-      outside(num, min, max) {
+      isOutside(num, min, max) {
          return num < Math.min(min, max) || num > Math.max(min, max)
       }
 
@@ -108,18 +113,26 @@
          return afterTurn
       }
 
-      angleToAngle(d1, d2) {
-         let right = d2 - d1
+      angleToAngle(a1, a2) {
+         let right = a2 - a1
          if (right < 0) {
             right = 360 + right
          }
 
-         let left = d1 - d2
+         let left = a1 - a2
          if (left < 0) {
             left = 360 + left
          }
 
          return right > left ? -left : right
+      }
+
+      circular(num, start, end) {
+         var length = end - start
+         if (num < start) return end + (num % length)
+         if (num > end) return start + (num % length)
+
+         return num
       }
 
       stepsToSeconds(steps, decimals = 1) {
@@ -128,6 +141,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_MATH
+   if (typeof cs === 'undefined') module.exports = CSENGINE_MATH
    else cs.math = new CSENGINE_MATH(cs) // eslint-disable-line no-undef
 })()

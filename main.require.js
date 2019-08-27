@@ -1,4 +1,5 @@
 const PartCamera = require('./src/Camera')
+const PartDestroy = require('./src/Destroy')
 const PartDraw = require('./src/Draw')
 const PartFps = require('./src/Fps')
 const PartFullscreen = require('./src/Fullscreen')
@@ -11,7 +12,7 @@ const PartMath = require('./src/Math')
 const PartNetwork = require('./src/Network')
 const PartObject = require('./src/Object')
 const PartRoom = require('./src/Room')
-const PartScript = require('./src/Script')
+const PartScripts = require('./src/Scripts')
 const PartSetup = require('./src/Setup')
 const PartSound = require('./src/Sound')
 const PartSprite = require('./src/Sprite')
@@ -26,9 +27,10 @@ module.exports = class cs {
 
       // handy
       this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
-      this.default = (want, ifnot) => { return want != null ? want : ifnot }
-
+      this.default = (want, ifnot) => { return want === undefined ? ifnot : want }
+      
       // 1. setup
+      this.cs = this
       this.canvas = options.canvas
       this.ctx = this.canvas.getContext('2d')
 
@@ -46,7 +48,7 @@ module.exports = class cs {
 
 
       this.objects = options.objects || {}
-      this.scripts = options.scripts || {}
+      this.script = options.scripts || {}
       this.sprites = options.sprites || []
       this.storages = options.storages || []
       this.sounds = options.sounds || []
@@ -59,6 +61,7 @@ module.exports = class cs {
       }
 
       this.camera = new PartCamera(this)
+      this.destroy = PartDestroy
       this.draw = new PartDraw(this)
       this.fps = new PartFps(this)
       this.fullscreen = new PartFullscreen(this)
@@ -71,7 +74,7 @@ module.exports = class cs {
       this.network = new PartNetwork(this)
       this.object = new PartObject(this)
       this.room = new PartRoom(this)
-      this.script = new PartScript(this)
+      this.scripts = new PartScripts(this)
       this.setup = new PartSetup(this)
       this.sound = new PartSound(this)
       this.sprite = new PartSprite(this)

@@ -36,10 +36,7 @@ module.exports = class Socket {
          }
 
          case 'game': {
-            this.game.message({
-               socket: this,
-               message: parsedJson.data
-            })
+            this.game.socketMessage(this, parsedJson.data)
             break
          }
       }

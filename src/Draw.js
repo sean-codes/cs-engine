@@ -510,6 +510,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_DRAW
+   if (typeof cs === 'undefined') module.exports = CSENGINE_DRAW
    else cs.draw = new CSENGINE_DRAW(cs) // eslint-disable-line no-undef
 })()

@@ -1,5 +1,6 @@
 module.exports = {
-   create: function ({ cs, attr }) {
+   create: function ({ attr }) {
+      const { cs } = this
       this.socket = attr.socket
       this.pos = attr.pos
 
@@ -15,21 +16,22 @@ module.exports = {
       this.fire = false
       this.fireTimer = cs.timer.create({ duration: 15 })
 
-      cs.script.exec('networkObjects.objectCreate', { object: this })
+      cs.script.networkObjects.objectCreate(this)
    },
 
    share: function () {
       return {
          socketId: this.socket.id,
          pos: this.pos,
+         angle: this.angle,
          speed: this.speed,
          maxSpeed: this.maxSpeed,
-         turnSpeed: this.maxTurnSpeed,
          friction: this.friction
       }
    },
 
-   snapshotWrite: function ({ cs }) {
+   snapshotWrite: function () {
+      const { cs } = this
       return [
          cs.math.round(this.pos.x, 100),
          cs.math.round(this.pos.y, 100),
@@ -41,7 +43,8 @@ module.exports = {
       ]
    },
 
-   step: function ({ cs }) {
+   step: function () {
+      const { cs } = this
       if (this.forward) {
          this.speed = cs.vector.create(
             cs.math.cos(this.angle) * this.maxSpeed,
@@ -75,7 +78,8 @@ module.exports = {
       if (this.pos.y < 0 || this.pos.y > cs.room.width) this.pos.y = this.pos.y < 0 ? 0 : cs.room.height
    },
 
-   destroy: function ({ cs }) {
-      cs.script.exec('networkObjects.objectDestroy', { object: this })
+   destroy: function () {
+      const { cs } = this
+      cs.script.networkObjects.objectDestroy(this)
    }
 }

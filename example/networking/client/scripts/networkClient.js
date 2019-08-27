@@ -1,6 +1,6 @@
 /* global cs */
 
-cs.scripts.network = {
+cs.script.network = {
    init: function() {
       cs.network.setup({
          connect: this.onConnect.bind(this),
@@ -42,23 +42,23 @@ cs.scripts.network = {
 
       'ping': function(data) {
          cs.global.ping = data.ping
-         cs.scripts.network.send({ func: 'ping', data: data.now })
+         cs.script.network.send({ func: 'ping', data: data.now })
       },
 
       'object-create': function(data) {
-         cs.scripts.networkObjects.objectCreate(data)
+         cs.script.networkObjects.objectCreate(data)
       },
 
       'object-change': function(data) {
-         cs.scripts.networkObjects.objectChange(data)
+         cs.script.networkObjects.objectChange(data)
       },
 
       'object-destroy': function(data) {
-         cs.scripts.networkObjects.objectDestroy(data)
+         cs.script.networkObjects.objectDestroy(data)
       },
 
       'snapshot': function(snapshots) {
-         cs.scripts.networkObjects.objectSnapshots(snapshots)
+         cs.script.networkObjects.objectSnapshots(snapshots)
       }
    }
 }

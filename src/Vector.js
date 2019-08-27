@@ -12,6 +12,14 @@
          return { x, y }
       }
 
+      createPolar(angle, length) {
+         const { cs } = this
+         return {
+            x: cs.math.cos(angle) * length,
+            y: cs.math.sin(angle) * length
+         }
+      }
+
       clone(v) {
          return this.cs.vector.create(v.x, v.y)
       }
@@ -67,9 +75,36 @@
             y: Math.round(v0.y * hundreths) / hundreths,
          }
       }
+
+      constrain(v, inside) {
+         var sx = inside.x || 0
+         var sy = inside.y || 0
+         var sw = inside.width
+         var sh = inside.height
+
+         var fix = { x: v.x, y: v.y }
+         if (v.x < sx) fix.x = sx
+         if (v.x > sx + sw) fix.x = sx + sw
+         if (v.y < sy) fix.y = sy
+         if (v.y > sy + sh) fix.y = sy + sh
+
+         return fix
+      }
+
+      closestPointOnLine(v, line) {
+         var lineLength = this.distance(line[0], line[1])
+         var lineDirection = this.direction(line[0], line[1])
+         var pointToLine = this.min(v, line[0])
+
+         var dot = this.dot(pointToLine, lineDirection) / lineLength
+         dot = Math.min(Math.max(0, dot), 1)
+
+         var closestPoint = this.add(line[0], this.scale(lineDirection, dot * lineLength))
+         return closestPoint
+      }
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_VECTOR
+   if (typeof cs === 'undefined') module.exports = CSENGINE_VECTOR
    else cs.vector = new CSENGINE_VECTOR(cs) // eslint-disable-line no-undef
 })()

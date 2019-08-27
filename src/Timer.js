@@ -13,14 +13,12 @@
 
       loop() {
          this.list.forEach(timer => {
-            if (timer.time) timer.time += 1
-
+            timer.time += 1
+            timer.left -= 1
             timer.percent = timer.time / timer.duration
 
             if (timer.percent === 1) {
-               timer.running = false
-               this.unWatch(timer)
-               if (timer.end) timer.end()
+               this.end(timer)
             }
          })
       }
@@ -28,26 +26,54 @@
       create(options) {
          this.count += 1
 
-         return {
+         const timer = {
             id: this.count,
-            start: options.start,
-            end: options.end,
+            onStart: options.onStart,
+            onEnd: options.onEnd,
             duration: options.duration,
             time: 0,
+            left: 0,
             percent: 0,
+            running: false
          }
+
+         if (options.start) {
+            this.start(timer)
+         }
+
+         return timer
       }
 
       start(timer) {
          if (timer.running) return false
 
-         this.watch(timer)
-         if (timer.start) timer.start()
+         if (timer.onStart) timer.onStart()
          timer.running = true
-         timer.time = 1
+         timer.time = 0
+         timer.left = timer.duration
          timer.percent = 0
+         this.watch(timer)
 
          return true
+      }
+
+      reset(timer) {
+         if (!timer.running) {
+            return this.start(timer)
+         }
+
+         timer.time = 0
+         timer.left = timer.duration
+         timer.percent = 0
+      }
+
+      end(timer) {
+         timer.running = false
+         timer.time = timer.duration
+         timer.left = 0
+
+         this.unWatch(timer)
+         if (timer.onEnd) timer.onEnd()
       }
 
       watch(timer) {
@@ -55,7 +81,7 @@
       }
 
       unWatch(timer) {
-         this.list = this.list.filter(num => num.id !== timer.id)
+         this.list = this.list.filter(t => t.id !== timer.id)
       }
 
       isOn(timer) {
@@ -64,6 +90,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_TIMER
+   if (typeof cs === 'undefined') module.exports = CSENGINE_TIMER
    else cs.timer = new CSENGINE_TIMER(cs) // eslint-disable-line no-undef
 })()

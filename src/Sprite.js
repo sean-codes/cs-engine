@@ -143,6 +143,6 @@
       }
    }
 
-   if (typeof module !== 'undefined') module.exports = CSENGINE_SPRITE
+   if (typeof cs === 'undefined') module.exports = CSENGINE_SPRITE
    else cs.sprite = new CSENGINE_SPRITE(cs) // eslint-disable-line no-undef
 })()

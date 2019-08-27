@@ -1,12 +1,14 @@
 const cs = {}
+
 cs.load = function (options) {
    this.options = options
 
    // handy
    this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
-   this.default = (want, ifnot) => { return want != null ? want : ifnot }
+   this.default = (want, ifnot) => { return want === undefined ? ifnot : want }
 
    // 1. setup
+   this.cs = this
    this.canvas = options.canvas
    this.ctx = this.canvas.getContext('2d')
    this.path = options.path
@@ -33,7 +35,7 @@ cs.load = function (options) {
    this.focus = options.focus || function () {}
 
    this.objects = options.objects || {}
-   this.scripts = options.scripts || {}
+   this.script = options.scripts || {}
    this.sprites = options.sprites || []
    this.storages = options.storages || []
    this.sounds = options.sounds || []
@@ -47,6 +49,7 @@ cs.load = function (options) {
 
    const parts = [
       { path: this.path + '/src/Camera' },
+      { path: this.path + '/src/Destroy' },
       { path: this.path + '/src/Draw' },
       { path: this.path + '/src/Fps' },
       { path: this.path + '/src/Fullscreen' },
@@ -59,7 +62,7 @@ cs.load = function (options) {
       { path: this.path + '/src/Network' },
       { path: this.path + '/src/Object' },
       { path: this.path + '/src/Room' },
-      { path: this.path + '/src/Script' },
+      { path: this.path + '/src/Scripts' },
       { path: this.path + '/src/Setup' },
       { path: this.path + '/src/Sound' },
       { path: this.path + '/src/Sprite' },
@@ -75,7 +78,7 @@ cs.load = function (options) {
    const dateStartLoading = Date.now()
 
    for (const part of parts) {
-      console.log(this.loading, 'Loading Part: ' + part.path.split('/').pop())
+      console.log('Loading Part: ' + part.path.split('/').pop())
       const htmlScript = document.createElement('script')
       htmlScript.src = `${part.path}.js?v=${this.version}`
       htmlScript.onload = () => {

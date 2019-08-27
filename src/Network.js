@@ -121,6 +121,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_NETWORK
+   if (typeof cs === 'undefined') module.exports = CSENGINE_NETWORK
    else cs.network = new CSENGINE_NETWORK(cs) // eslint-disable-line no-undef
 })()

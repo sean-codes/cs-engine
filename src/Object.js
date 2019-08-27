@@ -11,20 +11,27 @@
          this.unique = 0
          this.types = {}
          this.objGroups = {}
-         this.shouldClean = false
-         this.objectGenerators = {}
+         this.objectTemplates = {}
       }
 
       init() {
          for (const objectName in this.cs.objects) {
-            this.objectGenerators[objectName] = class GAMEOBJECT {}
+            const template = this.cs.objects[objectName]
+            this.addTemplate(objectName, template)
+         }
+      }
 
-            for (const prop in this.cs.objects[objectName]) {
-               const propValue = this.cs.objects[objectName][prop]
+      addTemplate(objectName, template) {
+         this.cs.objects[objectName] = template
+         this.objectTemplates[objectName] = class GAMEOBJECT {
+            constructor(cs) { this.cs = cs }
+         }
 
-               if (typeof propValue === 'function') {
-                  this.objectGenerators[objectName].prototype[prop] = propValue
-               }
+         for (const prop in this.cs.objects[objectName]) {
+            const propValue = this.cs.objects[objectName][prop]
+
+            if (typeof propValue === 'function') {
+               this.objectTemplates[objectName].prototype[prop] = propValue
             }
          }
       }
@@ -42,12 +49,12 @@
          }
 
          const { attr } = options
-         const Generator = this.objectGenerators[options.type]
+         const Generator = this.objectTemplates[options.type]
          const template = this.cs.objects[options.type]
          const zIndex = options.zIndex || template.zIndex || 0
 
          // create the object
-         const newObject = new Generator()
+         const newObject = new Generator(this.cs)
          newObject.core = {
             zIndex: zIndex,
             live: true,
@@ -60,7 +67,15 @@
 
          // predefined / custom Attr
          for (const name in template.attr) { newObject[name] = template.attr[name] }
-         // for (var name in attr) { newObject[name] = attr[name] }
+
+
+         // add to list
+         this.new.push(newObject)
+         this.unique += 1
+
+         // grouping
+         if (!this.objGroups[options.type]) this.objGroups[options.type] = []
+         this.objGroups[options.type].push(newObject)
 
          // run create event
          if (newObject.create) {
@@ -71,23 +86,12 @@
             })
          }
 
-         // add to list
-         this.new.push({ obj: newObject, zIndex: zIndex })
-         this.unique += 1
-
-         // grouping
-         if (!this.objGroups[options.type]) this.objGroups[options.type] = []
-         this.objGroups[options.type].push(newObject)
-
          return newObject
       }
 
       addNewObjects() {
-         while (this.new.length) {
-            const { obj } = this.new.shift()
-            this.list.push(obj)
-         }
-
+         this.list = this.list.concat(this.new)
+         this.new = []
          this.orderObjectsByZIndex()
       }
 
@@ -100,20 +104,16 @@
       }
 
       changeZIndex(object, zIndex) {
-         const listObject = object.list.find((findListObject) => {
-            return findListObject.obj.core.id === object.core.id
-         })
-
-         listObject.core.zIndex = zIndex
-
+         object.core.zIndex = zIndex
          this.orderObjectsByZIndex()
       }
 
       destroy(destroyObjOrID, fadeTimer) {
-         this.shouldClean = true
          const destroyObj = (typeof destroyObjOrID === 'number')
             ? this.id(destroyObjOrID)
             : destroyObjOrID
+
+         if (destroyObj.core.live === false) return
 
          destroyObj.core.live = false
          destroyObj.core.active = false
@@ -121,19 +121,23 @@
 
          // remove from objGroup
          const { type } = destroyObj.core
-         if (this.cs.objects[type].destroy) {
-            this.cs.objects[type].destroy.call(destroyObj, { object: destroyObj, cs: this.cs })
-         }
          this.objGroups[type] = this.objGroups[type].filter(o => o.core.live)
+
+         // call destroy function
+         if (destroyObj.destroy) {
+            destroyObj.destroy({ object: destroyObj, cs: this.cs })
+         }
+
+         this.clean()
       }
 
       clean() {
-         if (!this.shouldClean) return
+         this.new = this.new.filter(o => o.core.live)
          this.list = this.list.filter(o => o.core.live)
       }
 
       every() {
-         return this.list.concat(this.new.map(o => o.obj))
+         return this.list.concat(this.new)
       }
 
       all(type) {
@@ -180,7 +184,7 @@
       }
    }
 
-   // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_OBJECT
-   else cs.object = new CSENGINE_OBJECT(cs) // eslint-disable-line no-undef
+   // export (web / node)
+   if (typeof cs !== 'undefined') cs.object = new CSENGINE_OBJECT(cs) // eslint-disable-line no-undef
+   else module.exports = CSENGINE_OBJECT
 })()

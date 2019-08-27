@@ -1,6 +1,6 @@
 /* global cs */
 
-cs.scripts.networkObjects = {
+cs.script.networkObjects = {
    objectMap: {},
 
    objectCreate: function(data) {
@@ -34,10 +34,11 @@ cs.scripts.networkObjects = {
       cs.global.snapshotInterval = cs.math.round(1000 / (Date.now() - cs.global.snapshotLast))
       cs.global.snapshotLast = Date.now()
 
-      for (var snap of snapshots) {
-         var object = this.objectMap[snap[0]]
+
+      for (var snapshot of snapshots) {
+         var object = this.objectMap[snapshot.i]
          if (object) {
-            object.snapshotRead(snap)
+            object.snapshotRead(snapshot.s)
          }
       }
    }

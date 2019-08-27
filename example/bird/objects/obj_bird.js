@@ -80,8 +80,8 @@ cs.objects['obj_bird'] = {
 
       //Colliding With Pipes
       if (cs.save.state == 'TAPTOFLAP') return
-      var collisionScore = cs.scripts.collide(object, 'obj_score')
-      var collisionPipe = cs.scripts.collide(object, 'obj_pipe')
+      var collisionScore = cs.script.collide(object, 'obj_score')
+      var collisionPipe = cs.script.collide(object, 'obj_pipe')
 
       if (collisionPipe || object.y > cs.room.height + 50 || object.y < -50) {
          cs.save.state = 'WRECKED'

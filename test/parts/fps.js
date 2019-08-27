@@ -1,4 +1,7 @@
+/* global cs, testUtility */
+
 testUtility.test({
+   collapse: true,
    title: "cs.fps",
    tests: [
       {

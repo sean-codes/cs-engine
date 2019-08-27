@@ -30,7 +30,7 @@ cs.objects['obj_score_text'] = {
 
       cs.draw.setTextCenter()
       cs.draw.setColor('#FFF38E')
-      cs.draw.setFont({ effect: 'bold', size: 8, family: 'monospace'})
+      cs.draw.setFont({ effect: 'bold', size: 16, family: 'monospace'})
       cs.draw.text({ x: object.x, y: object.y, text: object.text })
 
       if (object.timer == 0) {

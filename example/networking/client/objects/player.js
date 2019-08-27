@@ -6,11 +6,11 @@ cs.objects.player = {
       this.networkId = attr.networkId
       this.socketId = attr.share.socketId
       this.friction = attr.share.friction
+      this.angle = attr.share.angle
       this.pos = attr.share.pos
       this.speed = attr.share.speed
       this.forward = false
       this.turnSpeed = 0
-      this.angle = 0
       this.angleFix = 0
       this.radius = 3
 
@@ -19,10 +19,10 @@ cs.objects.player = {
    },
 
    snapshotRead: function(snapshot) {
-      const [ id, x, y, angle, turnSpeed, speedX, speedY, forward ] = snapshot
-      this.pos.x = cs.scripts.smooth(this.pos.x, x, 50)
-      this.pos.y = cs.scripts.smooth(this.pos.y, y, 50)
-      this.angle = cs.scripts.smooth(this.angle, angle, 100)
+      const [ x, y, angle, turnSpeed, speedX, speedY, forward ] = snapshot
+      this.pos.x = cs.script.smooth(this.pos.x, x, 50)
+      this.pos.y = cs.script.smooth(this.pos.y, y, 50)
+      this.angle = cs.script.smooth(this.angle, angle, 100)
       this.turnSpeed = turnSpeed
       this.speed = cs.vector.create(speedX, speedY)
       this.forward = forward ? true : false

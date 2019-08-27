@@ -1,15 +1,19 @@
+/* global cs, testUtility */
+
 testUtility.test({
+   collapse: true,
    title: "cs.math",
-   tests: [{
+   tests: [
+      {
          name: 'sign',
          should: 'return a numbers sign -1, 0, or 1',
          pass: function(pass, fail) {
             return (
-               cs.math.sign(-1) == -1 &&
-               cs.math.sign(-100) == -1 &&
-               cs.math.sign(1) == 1 &&
-               cs.math.sign(100) == 1 &&
-               cs.math.sign(0) == 0
+               cs.math.sign(-1) === -1
+               && cs.math.sign(-100) === -1
+               && cs.math.sign(1) === 1
+               && cs.math.sign(100) === 1
+               && cs.math.sign(0) === 0
             ) ? pass() : fail()
          }
       },
@@ -18,12 +22,12 @@ testUtility.test({
          should: 'returns if num is outside two numbers',
          pass: function(pass, fail) {
             return (
-               cs.math.outside(1, 0, 0) &&
-               !cs.math.outside(1, 0, 1) &&
-               !cs.math.outside(100, 100, 0) &&
-               !cs.math.outside(-1, -10, 0) &&
-               cs.math.outside(100, 0, 99) &&
-               cs.math.outside(-10, 0, 99)
+               cs.math.isOutside(1, 0, 0)
+               && !cs.math.isOutside(1, 0, 1)
+               && !cs.math.isOutside(100, 100, 0)
+               && !cs.math.isOutside(-1, -10, 0)
+               && cs.math.isOutside(100, 0, 99)
+               && cs.math.isOutside(-10, 0, 99)
             ) ? pass() : fail()
          }
       },
@@ -31,12 +35,12 @@ testUtility.test({
          name: 'between',
          should: 'returns num is between two numbers',
          pass: function(pass, fail) {
-            return (!cs.math.between(1, 0, 0) &&
-               cs.math.between(1, 0, 1) &&
-               cs.math.between(100, 100, 0) &&
-               cs.math.between(-1, -10, 0) &&
-               !cs.math.between(100, 0, 99) &&
-               !cs.math.between(-10, 0, 99)
+            return (!cs.math.isBetween(1, 0, 0)
+               && cs.math.isBetween(1, 0, 1)
+               && cs.math.isBetween(100, 100, 0)
+               && cs.math.isBetween(-1, -10, 0)
+               && !cs.math.isBetween(100, 0, 99)
+               && !cs.math.isBetween(-10, 0, 99)
             ) ? pass() : fail()
          }
       },
@@ -77,7 +81,7 @@ testUtility.test({
             }
 
             // then make sure all choices have been made
-            return choices.length == choosen.length ? pass() : fail()
+            return choices.length === choosen.length ? pass() : fail()
          }
       },
       {
@@ -93,7 +97,7 @@ testUtility.test({
             ]
 
             for (var check of checks) {
-               if (cs.math.brakingDistance(check) != check.distanceShouldBe) return fail()
+               if (cs.math.brakingDistance(check) !== check.distanceShouldBe) return fail()
             }
 
             return pass()
@@ -112,7 +116,7 @@ testUtility.test({
             ]
 
             for (var check of checks) {
-               if (cs.math.requiredSpeed(check) != check.distanceShouldBe) return fail()
+               if (cs.math.requiredSpeed(check) !== check.distanceShouldBe) return fail()
             }
 
             return pass()
@@ -130,7 +134,29 @@ testUtility.test({
             ]
 
             for (var check of checks) {
-               if (cs.math.inRange(check) != check.shouldBe) return fail()
+               if (cs.math.inRange(check) !== check.shouldBe) return fail()
+            }
+
+            return pass()
+         }
+      },
+      {
+         name: 'circular',
+         should: 'keep the number between the start and end',
+         pass: function(pass, fail) {
+            const checks = [
+               { num: 20, start: 0, end: 100, shouldBe: 20 }, // no change
+               { num: -20, start: 0, end: 100, shouldBe: 80 }, // under
+               { num: 120, start: 0, end: 100, shouldBe: 20 }, // over
+               { num: 999, start: 0, end: 100, shouldBe: 99 }, // way over
+               { num: -999, start: 0, end: 100, shouldBe: 1 }, // way under
+            ]
+
+            for (const check of checks) {
+               const val = cs.math.circular(check.num, check.start, check.end)
+               if (val !== check.shouldBe) {
+                  fail(`cs.math.circular(${check.num}, ${check.start}, ${check.end}) returned ${val}`)
+               }
             }
 
             return pass()

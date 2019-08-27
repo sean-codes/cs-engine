@@ -1,4 +1,4 @@
-cs.scripts.reset = function() {
+cs.script.reset = function() {
    cs.object.reset()
    // globals
    cs.global = {

@@ -203,6 +203,6 @@ Types of surfaces
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_SURFACE
+   if (typeof cs === 'undefined') module.exports = CSENGINE_SURFACE
    else cs.surface = new CSENGINE_SURFACE(cs) // eslint-disable-line no-undef
 })()

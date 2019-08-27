@@ -95,9 +95,6 @@
             this.endSteps.pop()()
          }
 
-         // could clearup !live objects here
-         this.cs.object.clean()
-
          // network metrics
          if (this.cs.network.status) {
             this.cs.network.updateMetrics()
@@ -124,6 +121,6 @@
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_LOOP
+   if (typeof cs === 'undefined') module.exports = CSENGINE_LOOP
    else cs.loop = new CSENGINE_LOOP(cs) // eslint-disable-line no-undef
 })()

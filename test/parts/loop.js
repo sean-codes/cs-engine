@@ -1,4 +1,7 @@
+/* global cs, testUtility */
+
 testUtility.test({
+   collapse: true,
    title: "cs.loop",
    tests: [
       {
@@ -11,7 +14,7 @@ testUtility.test({
             })
 
             setTimeout(() => {
-               functionRan == 1 ? pass() : fail()
+               functionRan === 1 ? pass() : fail()
             }, 100)
          }
       }

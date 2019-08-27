@@ -28,10 +28,12 @@
       }
 
       exit() {
-         if (this.possible()) this.normalize('exit')
+         if (this.possible() && this.is()) this.normalize('exit')
       }
 
       normalize(func) {
+         if (!document.hasFocus) return false
+
          for (const prefix of [undefined, 'moz', 'webkit']) {
             let requestFullscreen = prefix + 'RequestFullscreen'
             let fullscreenElement = prefix + 'FullscreenElement'
@@ -47,18 +49,18 @@
 
             if (document.documentElement[requestFullscreen] !== undefined) {
                if (func === 'possible') return document.documentElement[requestFullscreen]
-               if (func === 'element') return document[fullscreenElement]
-               if (func === 'exit') return document[exitFullscreen]()
-               if (func === 'request') return document.documentElement[requestFullscreen]()
-               if (func === 'enabled') return document[fullscreenEnabled]
+               else if (func === 'element') return document[fullscreenElement]
+               else if (func === 'exit') return document[exitFullscreen]()
+               else if (func === 'request') return document.documentElement[requestFullscreen]()
+               else if (func === 'enabled') return document[fullscreenEnabled]
             }
          }
 
-         return undefined
+         return false
       }
    }
 
    // export (node / web)
-   if (typeof module !== 'undefined') module.exports = CSENGINE_FULLSCREEN
+   if (typeof cs === 'undefined') module.exports = CSENGINE_FULLSCREEN
    else cs.fullscreen = new CSENGINE_FULLSCREEN(cs) // eslint-disable-line no-undef
 })()
