@@ -36,7 +36,7 @@
          this.loading -= 1
 
          const loadInfo = {
-            percent: Math.floor((this.loadTotal - this.loading) / (this.loadTotal * 100)),
+            percent: Math.floor(((this.loadTotal - this.loading) / this.loadTotal) * 100),
             finished: !this.loading,
             current: this.loading,
             totalRequired: this.loadTotal,
