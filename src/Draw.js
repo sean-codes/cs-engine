@@ -450,7 +450,7 @@
       }
 
       setLineDash(lineDash) {
-         this.surface.ctx.setLineDash(lineDash)
+         this.surface.ctx.setLineDash(lineDash.map(d => d * this.scale))
       }
 
       setTextAlign(alignment) {
