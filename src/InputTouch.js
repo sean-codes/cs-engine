@@ -223,10 +223,7 @@
                   }
 
                   // check if within
-                  if (
-                     touchX > area.x && touchX < area.x + (area.width || area.size)
-                     && touchY > area.y && touchY < area.y + (area.height || area.size)
-                  ) {
+                  if (this.checkTouchIsWithinArea(touchX, touchY, area)) {
                      // observe this touch!
                      touch.used = true
 
@@ -241,6 +238,18 @@
                      break
                   }
                }
+            },
+            checkTouchIsWithinArea(touchX, touchY, area) {
+               if (area.radius) {
+                  var a = (touchX - area.x) * (touchX - area.x)
+                  var b = (touchY - area.y) * (touchY - area.y)
+
+                  return Math.sqrt(a + b) < area.radius
+               } else {
+                  return touchX > area.x && touchX < area.x + (area.width || area.size)
+                     && touchY > area.y && touchY < area.y + (area.height || area.size)
+               }
+
             },
             isDown: function () {
                return this.touch && this.touch.down
