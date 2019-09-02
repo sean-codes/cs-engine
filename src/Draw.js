@@ -149,28 +149,29 @@
 
       textInfo(options) {
          // Guessing the size
-         const textArr = (options.text.toString()).split('')
+         const textArr = options.text.toString().split('')
          const lines = []
          let curLine = []
 
          // Setup the lines
-         for (const pos in textArr) {
+         for (let pos = 0; pos < textArr.length; pos += 1) {
             curLine.push(textArr[pos])
 
             if (this.surface.ctx.measureText(curLine.join('')).width > options.width) {
-               // Try to find a space
+
+               // find a space
                let o = curLine.length
                for (o; o > 0; o -= 1) {
                   if (curLine[o] === ' ') break
                }
 
-               // If no space add a dash
+               // no space add a dash
                if (!o) {
                   o = curLine.length - 2
                   curLine.splice(o - 1, 0, '-')
                }
 
-               // Draw and reset
+               // draw and reset
                lines.push(curLine.slice(0, o).join('').trim())
                curLine = curLine.slice(o, curLine.length)
             }

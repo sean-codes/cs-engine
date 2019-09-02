@@ -11,6 +11,7 @@
          this.unique = 0
          this.types = {}
          this.objGroups = {}
+         this.autoApplyAttr = true
          this.objectTemplates = {}
       }
 
@@ -66,8 +67,8 @@
          }
 
          // predefined / custom Attr
+         if (this.autoApplyAttr) for (const name in attr) { newObject[name] = attr[name] }
          for (const name in template.attr) { newObject[name] = template.attr[name] }
-
 
          // add to list
          this.new.push(newObject)

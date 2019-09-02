@@ -24,10 +24,10 @@
          let maskHeight = height
 
          if (options.mask) {
-            if (options.mask.width) maskWidth = options.maskWidth
+            if (options.mask.width) maskWidth = options.mask.width
             else maskWidth = width - (options.mask.left || 0) - (options.mask.right || 0)
 
-            if (options.mask.height) maskHeight = options.maskHeight
+            if (options.mask.height) maskHeight = options.mask.height
             else maskHeight = height - (options.mask.top || 0) - (options.mask.bottom || 0)
          }
 
