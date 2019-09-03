@@ -15,9 +15,9 @@
          this.list.forEach(timer => {
             timer.time += 1
             timer.left -= 1
-            timer.percent = timer.time / timer.duration
+            timer.percent = Math.min(timer.time / timer.duration, 1)
 
-            if (timer.percent === 1) {
+            if (timer.percent >= 1) {
                this.end(timer)
             }
          })
