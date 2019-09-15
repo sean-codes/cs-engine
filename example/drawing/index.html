@@ -35,6 +35,7 @@
             sprites: [
                { path: './spr_arrow' },
                { path: './spr_center', xoff: 7 },
+               { path: './spr_frames', fwidth: 16, frameTime: 10 },
             ]
          },
          objects: {
@@ -102,6 +103,14 @@
                      y: 25,
                      xoff: 1,
                      scaleX: -1
+                  })
+
+                  // looping sprite
+                  cs.draw.sprite({
+                     spr: 'spr_frames',
+                     x: 40,
+                     y: 48,
+                     frame: -1
                   })
                }
             }

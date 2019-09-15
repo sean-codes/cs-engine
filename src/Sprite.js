@@ -19,6 +19,7 @@
          // create Sprite
          const width = this.cs.default(options.fwidth, options.html.width)
          const height = this.cs.default(options.fheight, options.html.height)
+         const frameTime = this.cs.default(options.frameTime, 1)
 
          let maskWidth = width
          let maskHeight = height
@@ -44,6 +45,11 @@
                height: maskHeight,
             },
             frames: [],
+            frameLoop: {
+               next: this.cs.loop.id + frameTime,
+               time: frameTime,
+               show: 0
+            }
          }
 
          // handle Frames
@@ -94,10 +100,10 @@
       info(options) {
          // we need something to return info on sprites based on scale etc
          const sprite = this.list[options.spr]
-         const frame = this.cs.default(options.frame, 0)
          const scaleX = this.cs.default(options.scaleX, 1)
          const scaleY = this.cs.default(options.scaleY, 1)
          const angle = this.cs.default(options.angle, 0)
+         let frame = this.cs.default(options.frame, 0)
          let width = this.cs.default(options.width, sprite.fwidth)
          let height = this.cs.default(options.height, sprite.fheight)
          let xoff = this.cs.default(options.xoff, sprite.xoff)
@@ -116,6 +122,17 @@
          if (options.center) {
             xoff = width / 2
             yoff = height / 2
+         }
+
+         if (frame === -1) {
+            if (this.cs.loop.id >= sprite.frameLoop.next) {
+               sprite.frameLoop.next = this.cs.loop.id + sprite.frameLoop.time
+               sprite.frameLoop.show += 1
+               if (sprite.frameLoop.show === sprite.frames.length) {
+                  sprite.frameLoop.show = 0
+               }
+            }
+            frame = sprite.frameLoop.show
          }
 
          return {
