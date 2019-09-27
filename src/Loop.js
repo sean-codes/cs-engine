@@ -31,12 +31,12 @@
 
          if (!headless) {
             this.cs.draw.debugReset()
-
             this.cs.surface.clearAll()
 
             // input
             this.cs.inputKeyboard.execute()
             this.cs.inputTouch.batchDownMove()
+            this.cs.inputTouch.batchUp()
             // move camera before clear
             this.cs.camera.update()
          }
@@ -44,6 +44,7 @@
          this.cs.fps.update()
          this.cs.network.read()
 
+         this.cs.object.clean()
          this.cs.object.addNewObjects()
 
          // Execute before steps
@@ -87,7 +88,6 @@
             this.cs.surface.displayAll()
             this.cs.inputKeyboard.reset()
             this.cs.inputTouch.reset()
-            this.cs.inputTouch.batchUp()
          }
 
          // Execute next steps

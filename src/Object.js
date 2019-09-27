@@ -123,13 +123,12 @@
          // remove from objGroup
          const { type } = destroyObj.core
          this.objGroups[type] = this.objGroups[type].filter(o => o.core.live)
-
+         this.new = this.new.filter(o => o.core.live)
+         
          // call destroy function
          if (destroyObj.destroy) {
             destroyObj.destroy({ object: destroyObj, cs: this.cs })
          }
-
-         this.clean()
       }
 
       clean() {

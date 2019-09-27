@@ -156,9 +156,9 @@
             return
          }
 
+         if (touch.held) touch.up = true
          touch.used = false
          touch.held = false
-         touch.up = true
       }
 
       touchUpdate(eTouch) {
@@ -188,9 +188,14 @@
             },
             uncheck: function () {
                this.observing = false
+
+               this.down = false
+               this.held = false
+               this.up = false
             },
             observe: function () {
                // im observing. lets update my values
+
                if (this.observing) {
                   this.x = this.touch.x
                   this.y = this.touch.y
@@ -201,14 +206,10 @@
                      this.y = convertedToGameCords.y
                   }
 
-                  this.down = this.touch.down
-                  this.held = this.touch.held
-                  this.up = this.touch.up
-
-                  if (this.up) this.observing = false
+                  if (this.touch.up) this.observing = false
                }
             },
-            findTouchToObserve(area) {
+            findTouchToObserve: function(area) {
                // find a touch to observe
                for (const touch of this.parent.list) {
                   // this touch is being observed or not available to latch
@@ -239,7 +240,7 @@
                   }
                }
             },
-            checkTouchIsWithinArea(touchX, touchY, area) {
+            checkTouchIsWithinArea: function(touchX, touchY, area) {
                if (area.radius) {
                   var a = (touchX - area.x) * (touchX - area.x)
                   var b = (touchY - area.y) * (touchY - area.y)
