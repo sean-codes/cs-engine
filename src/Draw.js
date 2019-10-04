@@ -216,7 +216,7 @@
       }
 
       textWidth(str) {
-         return this.surface.ctx.measureText(str).width
+         return this.surface.ctx.measureText(str).width / this.scale
       }
 
       line(options) {
@@ -436,7 +436,7 @@
             && !this.surface.clear
          ) return
 
-         if (options.size) this.surface.ctx.fontSize = options.size
+         if (options.size) this.surface.ctx.fontSize = options.size * this.scale
          if (options.family) this.surface.ctx.fontFamily = options.family
 
          const effect = options.effect ? options.effect + ' ' : ''
