@@ -27,6 +27,7 @@ cs.load = function (options) {
    this.start = options.start
    this.userStep = options.step
    this.userDraw = options.draw
+   this.userEndDraw = options.endDraw
    this.progress = options.progress || function () {}
    this.focus = options.focus || function () {}
    this.version = options.version || Math.random()

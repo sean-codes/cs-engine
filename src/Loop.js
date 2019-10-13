@@ -24,7 +24,7 @@
          this.delta = (now - this.last) / this.speed
          this.last = now
 
-         if (!this.run || once) return
+         if (!this.run && !once) return
          this.timeout = setTimeout(() => this.step(), this.speed)
 
          const { headless } = this.cs
@@ -78,6 +78,8 @@
 
                if (object.draw) object.draw({ object, cs: this.cs })
             })
+
+            if (this.cs.userEndDraw) this.cs.userEndDraw({ cs: this.cs })
          }
 
          // timers

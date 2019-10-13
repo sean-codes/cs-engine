@@ -28,7 +28,7 @@ module.exports = class cs {
       // handy
       this.clone = (object) => { return JSON.parse(JSON.stringify(object)) }
       this.default = (want, ifnot) => { return want === undefined ? ifnot : want }
-      
+
       // 1. setup
       this.cs = this
       this.canvas = options.canvas
@@ -39,6 +39,7 @@ module.exports = class cs {
       this.start = options.start
       this.userStep = options.step
       this.userDraw = options.draw
+      this.userEndDraw = options.endDraw
       this.progress = options.progress || function () {}
       this.focus = options.focus || function () {}
       this.version = options.version || Math.random()
