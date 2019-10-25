@@ -117,12 +117,18 @@
             height = tall ? options.size : options.size * ratio
          }
 
-         if (options.xCenter) xoff = width / 2
+         if (options.xCenter) {
+            xoff = width / 2 - 1
+            // testing this out... this might hurt us later :]
+            if (scaleX < 0) xoff -= 1
+         }
          if (options.yCenter) yoff = height / 2
          if (options.center) {
             xoff = width / 2
             yoff = height / 2
+            if (scaleX < 0) xoff -= 1
          }
+
 
          if (frame === -1) {
             if (this.cs.loop.id >= sprite.frameLoop.next) {
