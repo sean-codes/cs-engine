@@ -118,7 +118,7 @@
          }
 
          if (options.xCenter) {
-            xoff = width / 2 - 1
+            xoff = width / 2
             // testing this out... this might hurt us later :]
             if (scaleX < 0) xoff -= 1
          }

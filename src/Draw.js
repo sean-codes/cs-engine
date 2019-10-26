@@ -115,7 +115,7 @@
          if (info.scaleX < 0 && xOff) dx += 1
          if (info.scaleY < 0 && yOff) dy += 1
 
-         const rotateOrSomething = (info.scaleX < 0 || info.scaleY < 0 || info.angle)
+         const rotateOrSomething = (info.scaleX !== 1 || info.scaleY !== 1|| info.angle)
          if (rotateOrSomething) {
             this.surface.ctx.save()
             this.surface.ctx.translate((dx * scale), (dy * scale))
