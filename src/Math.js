@@ -17,9 +17,9 @@
          return Math.round(number * tenths) / tenths
       }
 
-      between(num, min, max) {
-         if (num < min) return min
-         if (num > max) return max
+      constrain(num, min, max) {
+         if (num < Math.min(min, max)) return Math.min(min, max)
+         if (num > Math.max(min, max)) return Math.max(min, max)
          return num
       }
 

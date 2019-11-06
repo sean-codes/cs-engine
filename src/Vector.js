@@ -24,6 +24,10 @@
          return this.cs.vector.create(v.x, v.y)
       }
 
+      equal(v0, v1) {
+         return v0.x === v1.x && v0.y === v1.y
+      }
+
       add(v0, v1) {
          return this.cs.vector.create(
             v0.x + v1.x,

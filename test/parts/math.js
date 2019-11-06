@@ -45,6 +45,19 @@ testUtility.test({
          }
       },
       {
+         name: 'constrain',
+         should: 'contrains a number between a min and max',
+         pass: function(pass, fail) {
+            return (cs.math.constrain(1, 0, 1) === 1
+               && cs.math.constrain(1, 1, 0) === 1
+               && cs.math.constrain(100, 0, 1) === 1
+               && cs.math.constrain(100, 1, 0) === 1
+               && cs.math.constrain(-100, 0, 1) === 0
+               && cs.math.constrain(-100, 1, 0) === 0
+            ) ? pass() : fail()
+         }
+      },
+      {
          name: 'iRandomRange',
          should: 'returns a random integer between a min and max',
          pass: function(pass, fail) {
