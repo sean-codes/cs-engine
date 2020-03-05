@@ -1,7 +1,6 @@
 // -------------------------------------------------------------------------- //
 // -------------------------| CS ENGINE: INPUT MOUSE |----------------------- //
 // -------------------------------------------------------------------------- //
-
 (() => {
    class CSENGINE_INPUT_MOUSE {
       constructor(cs) {
@@ -20,8 +19,8 @@
 
       eventDown(e) {
          this.cs.inputTouch.touchUse(-1)
-         this.x = e.clientX
-         this.y = e.clientY
+         this.x = e.clientX / this.cs.width * this.cs.clampWidth
+         this.y = e.clientY / this.cs.height * this.cs.clampHeight
 
          this.cs.inputTouch.eventsDownMove.push({
             type: 'down',
@@ -34,8 +33,8 @@
       }
 
       eventMove(e) {
-         this.x = e.clientX
-         this.y = e.clientY
+         this.x = e.clientX / this.cs.width * this.cs.clampWidth
+         this.y = e.clientY / this.cs.height * this.cs.clampHeight
 
          this.cs.inputTouch.eventsDownMove.push({
             type: 'move',

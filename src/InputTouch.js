@@ -66,8 +66,8 @@
       eventPointerMove(e) {
          e.preventDefault()
 
-         this.cs.inputMouse.x = e.clientX
-         this.cs.inputMouse.y = e.clientY
+         this.cs.inputMouse.x = e.clientX / this.cs.width * this.cs.clampWidth
+         this.cs.inputMouse.y = e.clientY / this.cs.height * this.cs.clampHeight
 
          this.eventsDownMove.push({
             type: 'move',
