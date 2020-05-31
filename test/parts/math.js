@@ -174,6 +174,27 @@ testUtility.test({
 
             return pass()
          }
+      },
+      {
+         name: 'loopAngle',
+         should: 'Make an angle loop around if greater 360 or less than 0',
+         pass: function(pass, fail) {
+            const checks = [
+               { angle: -20, shouldBe: 340 }, // less than 0
+               { angle: 380, shouldBe: 20 }, // greater than 360
+               { angle: 120, shouldBe: 120 }, // within stays the same
+               { angle: 7000, shouldBe: 160 }, // within but needs mod
+            ]
+
+            for (const check of checks) {
+               const val = cs.math.loopAngle(check.angle)
+               if (val !== check.shouldBe) {
+                  fail(`cs.math.circular(${check.angle}) returned ${val}`)
+               }
+            }
+
+            return pass()
+         }
       }
    ]
 })

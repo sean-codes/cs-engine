@@ -113,6 +113,7 @@
          return afterTurn
       }
 
+      // need to add loopAngle into this!
       angleToAngle(a1, a2) {
          let right = a2 - a1
          if (right < 0) {
@@ -125,6 +126,19 @@
          }
 
          return right > left ? -left : right
+      }
+
+      loopAngle(a) {
+         var modAngle = a%360
+         if (modAngle < 0) {
+            modAngle = 360 + modAngle
+         }
+
+         if (modAngle > 360) {
+            modAngle = -360 + modAngle
+         }
+
+         return modAngle
       }
 
       circular(num, start, end) {
