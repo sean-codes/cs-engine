@@ -121,7 +121,7 @@
                   }
                }
 
-               storage.request.open('GET', './' + storage.path + '.json?v=' + this.version, true)
+               storage.request.open('GET', storage.path + '.json?v=' + this.version, true)
                storage.request.send()
             }
          }
